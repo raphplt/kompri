@@ -1,0 +1,47 @@
+{
+  "name": "kompri",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.10.1",
+  "engines": {
+    "node": ">=24.21.0 <25"
+  },
+  "scripts": {
+    "prepare": "husky",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "typecheck": "turbo run typecheck",
+    "test": "vitest run",
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "content:validate": "pnpm --filter @kompri/content validate",
+    "evals": "pnpm --filter @kompri/evals evaluate",
+    "evals:live": "pnpm --filter @kompri/evals evaluate:live",
+    "db:generate": "pnpm --filter @kompri/db generate",
+    "db:migrate": "pnpm --filter @kompri/db migrate",
+    "db:seed": "pnpm --filter @kompri/db seed"
+  },
+  "devDependencies": {
+    "turbo": "2.11.7",
+    "typescript": "6.0.3",
+    "eslint": "10.12.0",
+    "@eslint/js": "10.0.1",
+    "typescript-eslint": "8.71.1",
+    "eslint-config-prettier": "10.1.8",
+    "prettier": "3.9.9",
+    "husky": "9.1.7",
+    "lint-staged": "17.6.0",
+    "@commitlint/cli": "21.2.3",
+    "@commitlint/config-conventional": "21.2.3",
+    "vitest": "5.0.3",
+    "tsx": "4.23.15",
+    "@types/node": "26.6.4"
+  },
+  "lint-staged": {
+    "*.{js,mjs,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,yaml,yml,md,css}": "prettier --write"
+  }
+}

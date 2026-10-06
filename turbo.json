@@ -1,0 +1,32 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "DATABASE_URL",
+    "API_PORT",
+    "API_URL",
+    "NODE_ENV",
+    "LLM_EXAMINER_PROVIDER",
+    "LLM_TUTOR_PROVIDER",
+    "LLM_CONTENT_GENERATION_PROVIDER",
+    "LLM_EXAMINER_MODEL",
+    "LLM_TUTOR_MODEL",
+    "LLM_CONTENT_GENERATION_MODEL",
+    "LLM_BASE_URL",
+    "LLM_API_KEY",
+    "LLM_INPUT_USD_PER_MILLION",
+    "LLM_OUTPUT_USD_PER_MILLION"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

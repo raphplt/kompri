@@ -1,0 +1,10 @@
+{
+  "name": "@kompri/config",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./typescript": "./tsconfig.base.json",
+    "./eslint": "./eslint.js",
+    "./prettier": "./prettier.js"
+  }
+}
