@@ -108,7 +108,7 @@ export async function answerOral(
   if (client.model !== state.model)
     throw new Error('Cannot switch model during an oral');
   const turn = turnSchema.parse({ speaker: 'learner', text: answer, at });
-  if (turn.at < state.turns.at(-1)!.at)
+  if (Date.parse(turn.at) < Date.parse(state.turns.at(-1)!.at))
     throw new Error('Turn timestamp precedes previous turn');
   const turns = [...state.turns, turn];
   const count = turns.filter((t) => t.speaker === 'learner').length;
@@ -170,7 +170,7 @@ export async function gradeReference(
     turns.some(
       (turn, index) =>
         turn.speaker !== (index % 2 === 0 ? 'examiner' : 'learner') ||
-        (index > 0 && turn.at < turns[index - 1]!.at),
+        (index > 0 && Date.parse(turn.at) < Date.parse(turns[index - 1]!.at)),
     )
   )
     throw new Error('Invalid reference turn order');

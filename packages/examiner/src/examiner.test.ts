@@ -55,3 +55,27 @@ describe('complete oral with an injected deterministic LLM', () => {
     },
   );
 });
+
+it('compares timestamps by instant, including fractional seconds', async () => {
+  const content = await loadContent();
+  const client = createExaminerMock();
+  const initial = await prepareOral(
+    {
+      challenge: content.challenges[0]!,
+      rubric: content.rubrics[0]!,
+      submission: 'a + b',
+      at: '2026-01-01T10:00:00Z',
+    },
+    client,
+  );
+  const next = await answerOral(
+    initial,
+    'addition',
+    '2026-01-01T10:00:00.100Z',
+    client,
+  );
+  expect(next.turns).toHaveLength(3);
+  await expect(
+    answerOral(next, '3', '2026-01-01T10:00:00.099Z', client),
+  ).rejects.toThrow('precedes');
+});

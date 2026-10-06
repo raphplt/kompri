@@ -39,7 +39,13 @@ export default [
         {
           patterns: [
             {
-              group: ['@kompri/web', '@kompri/api', '**/apps/**'],
+              group: [
+                '@kompri/web',
+                '@kompri/web/**',
+                '@kompri/api',
+                '@kompri/api/**',
+                '**/apps/**',
+              ],
               message: 'Packages cannot depend on applications.',
             },
           ],
@@ -57,7 +63,9 @@ export default [
             {
               group: [
                 '@kompri/web',
+                '@kompri/web/**',
                 '@kompri/api',
+                '@kompri/api/**',
                 '**/apps/**',
                 '@kompri/db',
                 '**/db/**',
@@ -85,7 +93,9 @@ export default [
             {
               group: [
                 '@kompri/web',
+                '@kompri/web/**',
                 '@kompri/api',
+                '@kompri/api/**',
                 '**/apps/**',
                 '@kompri/db',
                 '**/db/**',
