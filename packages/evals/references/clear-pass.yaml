@@ -1,0 +1,46 @@
+{
+  'id': 'clear-pass',
+  'challengeId': 'add-without-ai',
+  'submission': 'const add = (a, b) => a + b;',
+  'humanReview': 'pending',
+  'transcript':
+    [
+      {
+        'speaker': 'examiner',
+        'text': "Explique le r\u00e9sultat de add(1, 2).",
+        'at': '2026-01-01T10:00:00Z',
+      },
+      {
+        'speaker': 'learner',
+        'text': 'Une addition de deux nombres.',
+        'at': '2026-01-01T10:01:00Z',
+      },
+      {
+        'speaker': 'examiner',
+        'text': "Donne un cas de v\u00e9rification.",
+        'at': '2026-01-01T10:01:00Z',
+      },
+      {
+        'speaker': 'learner',
+        'text': 'add(1, 2) doit donner 3.',
+        'at': '2026-01-01T10:02:00Z',
+      },
+    ],
+  'expectedHumanGrade':
+    {
+      'criteria':
+        [
+          {
+            'criterionId': 'explanation',
+            'score': 2,
+            'justification': "R\u00e9f\u00e9rence illustrative \u00e0 faire confirmer par un \u00e9valuateur humain.",
+          },
+          {
+            'criterionId': 'modification',
+            'score': 2,
+            'justification': "R\u00e9f\u00e9rence illustrative \u00e0 faire confirmer par un \u00e9valuateur humain.",
+          },
+        ],
+      'verdict': 'PASSED',
+    },
+}

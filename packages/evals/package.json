@@ -1,0 +1,22 @@
+{
+  "name": "@kompri/evals",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --outDir dist",
+    "evaluate": "tsx src/cli.ts",
+    "evaluate:live": "tsx src/cli.ts --live"
+  },
+  "dependencies": {
+    "zod": "4.6.5",
+    "yaml": "2.9.1",
+    "@kompri/shared": "workspace:*",
+    "@kompri/content": "workspace:*",
+    "@kompri/examiner": "workspace:*",
+    "@kompri/llm": "workspace:*"
+  }
+}

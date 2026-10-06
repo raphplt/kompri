@@ -13,8 +13,8 @@
     "LLM_CONTENT_GENERATION_MODEL",
     "LLM_BASE_URL",
     "LLM_API_KEY",
-    "LLM_INPUT_USD_PER_MILLION",
-    "LLM_OUTPUT_USD_PER_MILLION"
+    "LLM_*",
+    "CI"
   ],
   "tasks": {
     "build": {

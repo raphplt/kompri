@@ -223,6 +223,48 @@ importers:
         specifier: 4.6.5
         version: 4.6.5
 
+  packages/evals:
+    dependencies:
+      '@kompri/content':
+        specifier: workspace:*
+        version: link:../content
+      '@kompri/examiner':
+        specifier: workspace:*
+        version: link:../examiner
+      '@kompri/llm':
+        specifier: workspace:*
+        version: link:../llm
+      '@kompri/shared':
+        specifier: workspace:*
+        version: link:../shared
+      yaml:
+        specifier: 2.9.1
+        version: 2.9.1
+      zod:
+        specifier: 4.6.5
+        version: 4.6.5
+
+  packages/examiner:
+    dependencies:
+      '@kompri/content':
+        specifier: workspace:*
+        version: link:../content
+      '@kompri/llm':
+        specifier: workspace:*
+        version: link:../llm
+      zod:
+        specifier: 4.6.5
+        version: 4.6.5
+
+  packages/llm:
+    dependencies:
+      '@kompri/shared':
+        specifier: workspace:*
+        version: link:../shared
+      zod:
+        specifier: 4.6.5
+        version: 4.6.5
+
   packages/shared:
     dependencies:
       dotenv:
