@@ -12,6 +12,7 @@
     "verbatimModuleSyntax": true,
     "forceConsistentCasingInFileNames": true,
     "allowImportingTsExtensions": true,
-    "rewriteRelativeImportExtensions": true
+    "rewriteRelativeImportExtensions": true,
+    "types": ["node"]
   }
 }

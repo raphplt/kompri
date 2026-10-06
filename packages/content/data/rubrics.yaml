@@ -1,0 +1,9 @@
+- id: fundamentals
+  passRatio: 0.75
+  criteria:
+    - id: explanation
+      description: Explique le comportement du code et ses limites avec ses propres mots.
+      maxScore: 2
+    - id: modification
+      description: Propose une modification cohérente et un cas de vérification.
+      maxScore: 2

@@ -1,0 +1,12 @@
+- id: variables
+  title: Variables et valeurs
+  description: Nœud de démonstration des fondamentaux.
+  prerequisites: []
+- id: functions
+  title: Fonctions
+  description: Nœud de démonstration des fonctions.
+  prerequisites: [variables]
+- id: http
+  title: Requêtes HTTP
+  description: Nœud de démonstration du web.
+  prerequisites: [functions]

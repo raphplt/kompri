@@ -7,7 +7,7 @@
     "node": ">=24.21.0 <25"
   },
   "scripts": {
-    "prepare": "husky",
+    "prepare": "node scripts/setup.mjs && husky",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "typecheck": "turbo run typecheck",

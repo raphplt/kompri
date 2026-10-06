@@ -1,0 +1,24 @@
+- id: add-without-ai
+  skillId: variables
+  family: SANS_IA
+  title: Addition minimale
+  instructions: 'Exemple technique : écrire add(a, b), puis expliquer son résultat.'
+  rubricId: fundamentals
+- id: add-with-ai
+  skillId: functions
+  family: AVEC_IA
+  title: Fonction assistée
+  instructions: 'Exemple technique : produire une fonction avec une IA, puis la défendre.'
+  rubricId: fundamentals
+- id: repair-generated-code
+  skillId: functions
+  family: CONTRE_IA
+  title: Correction d'une fonction
+  instructions: 'Exemple technique : trouver et corriger une soustraction dans add(a, b).'
+  rubricId: fundamentals
+- id: evolve-http
+  skillId: http
+  family: APRES_IA
+  title: Évolution d'une réponse HTTP
+  instructions: 'Exemple technique : modifier une réponse JSON existante sans régénérer le projet.'
+  rubricId: fundamentals

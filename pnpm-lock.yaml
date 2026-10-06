@@ -211,6 +211,18 @@ importers:
 
   packages/config: {}
 
+  packages/content:
+    dependencies:
+      '@kompri/shared':
+        specifier: workspace:*
+        version: link:../shared
+      yaml:
+        specifier: 2.9.1
+        version: 2.9.1
+      zod:
+        specifier: 4.6.5
+        version: 4.6.5
+
   packages/shared:
     dependencies:
       dotenv:
@@ -2611,8 +2623,7 @@ snapshots:
 
   y18n@5.0.8: {}
 
-  yaml@2.9.1:
-    optional: true
+  yaml@2.9.1: {}
 
   yargs-parser@22.0.0: {}
 
