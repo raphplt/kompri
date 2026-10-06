@@ -4,3 +4,4 @@ dist
 .next
 .turbo
 packages/db/src/generated
+**/next-env.d.ts

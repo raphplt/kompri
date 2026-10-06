@@ -15,6 +15,4 @@ export const skillSchema = z.object({
 });
 export const skillsResponseSchema = z.array(skillSchema);
 export type Skill = z.infer<typeof skillSchema>;
-export const skillsQuerySchema = z
-  .object({ locale: z.enum(['fr', 'en']).default('fr') })
-  .strict();
+export const skillsQuerySchema = z.object({}).strict();
