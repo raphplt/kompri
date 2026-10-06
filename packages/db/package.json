@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc --outDir dist",
     "generate": "prisma generate",
-    "migrate": "prisma migrate deploy",
+    "migrate": "tsx src/wait-for-database.ts && prisma migrate deploy",
     "seed": "tsx src/seed.ts",
     "postinstall": "prisma generate"
   },

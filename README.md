@@ -34,7 +34,8 @@ Le démarrage refuse une configuration manquante ou invalide.
 
 La page rend les trois compétences depuis l’API et PostgreSQL. Le contenu est illustratif.
 Les tests d’intégration nécessitent la base migrée et seedée. Pour attendre explicitement
-sa disponibilité : `docker compose up -d --wait`. Arrêter les services avec Ctrl+C
+sa disponibilité : `docker compose up -d --wait`. `db:migrate` attend aussi la
+base jusqu’à 30 secondes avant de lancer Prisma. Arrêter les services avec Ctrl+C
 et `docker compose stop` ; les données locales persistent dans le volume Docker.
 
 ## Commandes

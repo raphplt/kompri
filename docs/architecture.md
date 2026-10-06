@@ -132,7 +132,8 @@ rendent les changements auditables. Le contenu pédagogique est édité dans Git
 le contenu dans `.env` si nécessaire ; ce fichier est ignoré par Git. Les variables du
 processus priment. Les schémas Zod vérifient au démarrage la base, le port, l’URL API et
 les fournisseurs/modèles/tarifs nécessaires. Une erreur liste les champs, pas leurs valeurs.
-Prisma peut générer son client sans connexion ; les migrations exigent une URL valide.
+Prisma peut générer son client sans connexion ; les migrations exigent une URL valide et attendent la connexion jusqu’à 30 secondes,
+car Compose peut rendre la main pendant l’initialisation de PostgreSQL.
 
 En local, PostgreSQL tourne dans Docker avec un volume nommé `postgres_data`, accessible
 sur la boucle locale au port 54329. Les apps écoutent sur la boucle locale également.
