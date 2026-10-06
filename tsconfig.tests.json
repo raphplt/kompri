@@ -1,0 +1,15 @@
+{
+  "extends": "./packages/config/tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  },
+  "include": [
+    "vitest.config.ts",
+    "packages/**/*.test.ts",
+    "apps/**/*.test.ts",
+    "packages/*/prisma.config.ts"
+  ],
+  "exclude": ["**/node_modules/**", "**/dist/**"]
+}

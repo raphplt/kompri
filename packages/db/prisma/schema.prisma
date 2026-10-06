@@ -1,0 +1,156 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ChallengeFamily {
+  SANS_IA
+  AVEC_IA
+  CONTRE_IA
+  APRES_IA
+}
+
+enum OralMode {
+  CHAT
+  VOICE
+}
+
+enum Speaker {
+  EXAMINER
+  LEARNER
+}
+
+enum Verdict {
+  PASSED
+  FAILED
+}
+
+model User {
+  id          String        @id @default(uuid())
+  email       String        @unique
+  createdAt   DateTime      @default(now()) @db.Timestamptz(3)
+  attempts    Attempt[]
+  sessions    OralSession[]
+  validations Validation[]
+  oralUsage   OralUsage[]
+}
+
+model Skill {
+  id                 String              @id
+  title              String
+  description        String
+  rncpBlockReference String?
+  prerequisites      SkillPrerequisite[] @relation("SkillDependencies")
+  requiredBy         SkillPrerequisite[] @relation("RequiredSkill")
+  challenges         Challenge[]
+  validations        Validation[]
+}
+
+model SkillPrerequisite {
+  skillId        String
+  prerequisiteId String
+  skill          Skill  @relation("SkillDependencies", fields: [skillId], references: [id], onDelete: Cascade)
+  prerequisite   Skill  @relation("RequiredSkill", fields: [prerequisiteId], references: [id], onDelete: Restrict)
+
+  @@id([skillId, prerequisiteId])
+  @@index([prerequisiteId])
+}
+
+model Challenge {
+  id             String          @id
+  skillId        String
+  family         ChallengeFamily
+  title          String
+  instructions   String
+  rubricId       String
+  rubricSnapshot Json
+  contentVersion String
+  skill          Skill           @relation(fields: [skillId], references: [id], onDelete: Restrict)
+  attempts       Attempt[]
+
+  @@index([skillId])
+}
+
+model Attempt {
+  id                String        @id @default(uuid())
+  userId            String
+  challengeId       String
+  submittedWork     String
+  challengeSnapshot Json
+  createdAt         DateTime      @default(now()) @db.Timestamptz(3)
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge         Challenge     @relation(fields: [challengeId], references: [id], onDelete: Restrict)
+  sessions          OralSession[]
+
+  @@unique([id, userId])
+  @@index([userId, createdAt])
+  @@index([challengeId])
+}
+
+model OralSession {
+  id             String      @id @default(uuid())
+  userId         String
+  attemptId      String
+  mode           OralMode    @default(CHAT)
+  model          String
+  provider       String
+  rubricSnapshot Json
+  startedAt      DateTime    @default(now()) @db.Timestamptz(3)
+  endedAt        DateTime?   @db.Timestamptz(3)
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attempt        Attempt     @relation(fields: [attemptId, userId], references: [id, userId], onDelete: Cascade)
+  turns          OralTurn[]
+  validation     Validation?
+  usage          OralUsage?
+
+  @@unique([id, userId])
+  @@index([userId, startedAt])
+  @@index([attemptId, userId])
+}
+
+model OralTurn {
+  id        String      @id @default(uuid())
+  sessionId String
+  sequence  Int
+  speaker   Speaker
+  text      String
+  model     String?
+  createdAt DateTime    @default(now()) @db.Timestamptz(3)
+  session   OralSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, sequence])
+}
+
+model Validation {
+  id            String      @id @default(uuid())
+  userId        String
+  skillId       String
+  oralSessionId String      @unique
+  verdict       Verdict
+  criteria      Json
+  validatedAt   DateTime    @db.Timestamptz(3)
+  expiresAt     DateTime    @db.Timestamptz(3)
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill         Skill       @relation(fields: [skillId], references: [id], onDelete: Restrict)
+  session       OralSession @relation(fields: [oralSessionId, userId], references: [id, userId], onDelete: Cascade)
+
+  @@unique([oralSessionId, userId])
+  @@index([userId, skillId, expiresAt])
+}
+
+model OralUsage {
+  id         String      @id @default(uuid())
+  userId     String
+  sessionId  String      @unique
+  consumedAt DateTime    @default(now()) @db.Timestamptz(3)
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session    OralSession @relation(fields: [sessionId, userId], references: [id, userId], onDelete: Cascade)
+
+  @@unique([sessionId, userId])
+  @@index([userId, consumedAt])
+}

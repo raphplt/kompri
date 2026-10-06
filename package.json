@@ -10,7 +10,7 @@
     "prepare": "node scripts/setup.mjs && husky",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
-    "typecheck": "turbo run typecheck",
+    "typecheck": "turbo run typecheck && tsc --noEmit -p tsconfig.tests.json",
     "test": "vitest run",
     "build": "turbo run build",
     "dev": "turbo run dev",

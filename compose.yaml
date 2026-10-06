@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:18.6-alpine
+    environment:
+      POSTGRES_USER: kompri
+      POSTGRES_PASSWORD: kompri_local
+      POSTGRES_DB: kompri
+    ports:
+      - '127.0.0.1:54329:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U kompri -d kompri']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+volumes:
+  postgres_data:

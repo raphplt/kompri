@@ -1,0 +1,27 @@
+{
+  "name": "@kompri/db",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --outDir dist",
+    "generate": "prisma generate",
+    "migrate": "prisma migrate deploy",
+    "seed": "tsx src/seed.ts",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "7.10.0",
+    "@prisma/adapter-pg": "7.10.0",
+    "pg": "8.23.1",
+    "@kompri/shared": "workspace:*",
+    "@kompri/content": "workspace:*"
+  },
+  "devDependencies": {
+    "prisma": "7.10.0",
+    "@types/pg": "8.23.1"
+  }
+}
