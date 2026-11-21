@@ -1,8 +1,5 @@
-import {
-  apiEnvSchema,
-  loadEnvironment,
-  parseEnvironment,
-} from '@kompri/shared/env';
+import { apiEnvSchema, parseEnvironment } from '@kompri/shared/env';
+import { loadEnvironment } from '@kompri/shared/load-env';
 import { createApi, createExaminerFromEnvironment } from './app.ts';
 
 loadEnvironment();

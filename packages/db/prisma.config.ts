@@ -1,9 +1,6 @@
 import { defineConfig } from 'prisma/config';
-import {
-  loadEnvironment,
-  parseEnvironment,
-  databaseEnvSchema,
-} from '@kompri/shared/env';
+import { parseEnvironment, databaseEnvSchema } from '@kompri/shared/env';
+import { loadEnvironment } from '@kompri/shared/load-env';
 loadEnvironment();
 // Generation runs before the root prepare hook on a fresh clone.
 // Only migration commands require a database URL at configuration time.

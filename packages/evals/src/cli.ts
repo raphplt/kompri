@@ -1,7 +1,7 @@
 import { readFile, readdir } from 'node:fs/promises';
 import { parse } from 'yaml';
 import { loadContent } from '@kompri/content';
-import { loadEnvironment } from '@kompri/shared/env';
+import { loadEnvironment } from '@kompri/shared/load-env';
 import { createRegistry } from '@kompri/llm';
 import { examinerMockResponder } from '@kompri/examiner/testing';
 import { evaluate, referenceSchema } from './index.ts';

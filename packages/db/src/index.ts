@@ -1,10 +1,7 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from './generated/client.ts';
-import {
-  databaseEnvSchema,
-  loadEnvironment,
-  parseEnvironment,
-} from '@kompri/shared/env';
+import { databaseEnvSchema, parseEnvironment } from '@kompri/shared/env';
+import { loadEnvironment } from '@kompri/shared/load-env';
 export { PrismaClient };
 export function createDatabase() {
   loadEnvironment();

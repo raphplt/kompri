@@ -1,0 +1,61 @@
+# Production stack. Secrets come from .env.production (never committed),
+# see docs/deploiement.md. Put a TLS reverse proxy in front of the web port.
+name: kompri
+services:
+  postgres:
+    image: postgres:18.6-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kompri
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: kompri
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U kompri -d kompri']
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  migrate:
+    build: { context: ., target: api }
+    image: kompri-api
+    env_file: .env.production
+    environment:
+      DATABASE_URL: postgresql://kompri:${POSTGRES_PASSWORD}@postgres:5432/kompri?schema=public
+    working_dir: /app/packages/db
+    command:
+      [
+        'sh',
+        '-c',
+        'node --import tsx src/wait-for-database.ts && node_modules/.bin/prisma migrate deploy && node --import tsx src/seed.ts',
+      ]
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: 'no'
+
+  api:
+    image: kompri-api
+    restart: unless-stopped
+    env_file: .env.production
+    environment:
+      DATABASE_URL: postgresql://kompri:${POSTGRES_PASSWORD}@postgres:5432/kompri?schema=public
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    # Not published: only the web container talks to the API.
+    expose: ['3001']
+
+  web:
+    build: { context: ., target: web }
+    image: kompri-web
+    restart: unless-stopped
+    env_file: .env.production
+    environment:
+      API_URL: http://api:3001
+    depends_on:
+      api: { condition: service_healthy }
+    ports:
+      - '127.0.0.1:${WEB_PORT:-3000}:3000'
+
+volumes:
+  postgres_data:

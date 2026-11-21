@@ -1,8 +1,4 @@
-import { config } from 'dotenv';
 import { z } from 'zod';
-export function loadEnvironment() {
-  config({ path: new URL('../../../.env', import.meta.url), quiet: true });
-}
 export function parseEnvironment<T>(schema: z.ZodType<T>, input: unknown): T {
   const result = schema.safeParse(input);
   if (!result.success) {

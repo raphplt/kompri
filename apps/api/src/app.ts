@@ -67,6 +67,40 @@ class HealthController implements OnApplicationShutdown {
 @Module({})
 class AppModule {}
 
+interface HttpExchange {
+  method: string;
+  path: string;
+  route?: { path?: string };
+}
+
+/**
+ * One JSON line per request: method, route pattern, status and duration.
+ * Never the query string, body, headers or user identity.
+ */
+function requestLog(
+  request: HttpExchange,
+  response: {
+    statusCode: number;
+    on(event: 'finish', listener: () => void): void;
+  },
+  next: () => void,
+) {
+  const start = performance.now();
+  response.on('finish', () => {
+    console.info(
+      JSON.stringify({
+        level: 'info',
+        msg: 'request',
+        method: request.method,
+        route: request.route?.path ?? 'unmatched',
+        status: response.statusCode,
+        durationMs: Math.round(performance.now() - start),
+      }),
+    );
+  });
+  next();
+}
+
 export function createExaminerFromEnvironment(
   env: Record<string, string | undefined>,
 ): Examiner {
@@ -119,6 +153,7 @@ export async function createApi(
   // Submissions reach 100 000 characters; UTF-8 needs room beyond Express defaults.
   app.useBodyParser('json', { limit: '512kb' });
   app.useGlobalFilters(new ErrorFilter());
+  if (process.env.NODE_ENV !== 'test') app.use(requestLog);
   app.enableShutdownHooks();
   const document = SwaggerModule.createDocument(
     app,

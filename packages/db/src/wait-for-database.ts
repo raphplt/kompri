@@ -1,10 +1,7 @@
 import { setTimeout as delay } from 'node:timers/promises';
 import { Client } from 'pg';
-import {
-  databaseEnvSchema,
-  loadEnvironment,
-  parseEnvironment,
-} from '@kompri/shared/env';
+import { databaseEnvSchema, parseEnvironment } from '@kompri/shared/env';
+import { loadEnvironment } from '@kompri/shared/load-env';
 
 loadEnvironment();
 const { DATABASE_URL } = parseEnvironment(databaseEnvSchema, process.env);
