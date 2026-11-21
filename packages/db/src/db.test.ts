@@ -13,7 +13,7 @@ it('counts a period once per oral and cascades deletion of all personal rows', a
     const attempt = await db.attempt.create({
       data: {
         userId: user.id,
-        challengeId: 'add-without-ai',
+        challengeId: 'js-basics-sans-ia',
         submittedWork: 'private code',
         challengeSnapshot: {},
       },
@@ -38,7 +38,7 @@ it('counts a period once per oral and cascades deletion of all personal rows', a
     await db.validation.create({
       data: {
         userId: user.id,
-        skillId: 'variables',
+        skillId: 'js-basics',
         oralSessionId: session.id,
         verdict: 'PASSED',
         criteria: [],

@@ -1,46 +1,36 @@
-{
-  'id': 'clear-fail',
-  'challengeId': 'add-without-ai',
-  'submission': 'const add = (a, b) => a - b;',
-  'humanReview': 'pending',
-  'transcript':
-    [
-      {
-        'speaker': 'examiner',
-        'text': "Explique le r\u00e9sultat de add(1, 2).",
-        'at': '2026-01-01T10:00:00Z',
-      },
-      {
-        'speaker': 'learner',
-        'text': 'Je ne sais pas.',
-        'at': '2026-01-01T10:01:00Z',
-      },
-      {
-        'speaker': 'examiner',
-        'text': "Donne un cas de v\u00e9rification.",
-        'at': '2026-01-01T10:01:00Z',
-      },
-      {
-        'speaker': 'learner',
-        'text': 'Je ne peux pas proposer de test.',
-        'at': '2026-01-01T10:02:00Z',
-      },
-    ],
-  'expectedHumanGrade':
-    {
-      'criteria':
-        [
-          {
-            'criterionId': 'explanation',
-            'score': 0,
-            'justification': "R\u00e9f\u00e9rence illustrative \u00e0 faire confirmer par un \u00e9valuateur humain.",
-          },
-          {
-            'criterionId': 'modification',
-            'score': 0,
-            'justification': "R\u00e9f\u00e9rence illustrative \u00e0 faire confirmer par un \u00e9valuateur humain.",
-          },
-        ],
-      'verdict': 'FAILED',
-    },
-}
+id: clear-fail
+challengeId: js-basics-sans-ia
+humanReview: pending
+submission: |
+  let total = 1.3 * 3 + 1.15 * 4;
+  let remise = total * 0.05;
+  console.log('Total : ' + (total - remise));
+  console.log('Rendu : ' + ('20' - total));
+transcript:
+  - speaker: examiner
+    text: 'Ton script applique la remise même sans carte fidélité. Comment calcules-tu la remise selon loyaltyCard ?'
+    at: '2026-01-01T10:00:00Z'
+  - speaker: learner
+    text: 'Je ne sais pas, l’IA l’a fait.'
+    at: '2026-01-01T10:01:00Z'
+  - speaker: examiner
+    text: "Pourquoi '20' - total fonctionne-t-il alors que '20' + total ne fonctionnerait pas ?"
+    at: '2026-01-01T10:01:00Z'
+  - speaker: learner
+    text: 'C’est pareil.'
+    at: '2026-01-01T10:02:00Z'
+expectedHumanGrade:
+  criteria:
+    - criterionId: types-conversions
+      score: 0
+      justification: 'Référence illustrative à faire confirmer par un évaluateur humain.'
+    - criterionId: operators
+      score: 0
+      justification: 'Référence illustrative à faire confirmer par un évaluateur humain.'
+    - criterionId: numbers-precision
+      score: 0
+      justification: 'Référence illustrative à faire confirmer par un évaluateur humain.'
+    - criterionId: variables
+      score: 0
+      justification: 'Référence illustrative à faire confirmer par un évaluateur humain.'
+  verdict: FAILED

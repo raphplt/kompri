@@ -1,18 +1,15 @@
 import 'reflect-metadata';
-import type { SchemaObject } from '@nestjs/swagger';
 import {
-  BadRequestException,
   Controller,
   Get,
   Inject,
   Module,
-  Query,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import type { OnApplicationShutdown } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import {
-  ApiBadRequestResponse,
   ApiOkResponse,
   ApiServiceUnavailableResponse,
   DocumentBuilder,
@@ -20,10 +17,24 @@ import {
 } from '@nestjs/swagger';
 import { createDatabase } from '@kompri/db';
 import type { PrismaClient } from '@kompri/db';
-import { skillsQuerySchema, skillsResponseSchema, z } from '@kompri/shared';
-const DATABASE = Symbol('DATABASE');
+import { createRegistry } from '@kompri/llm';
+import { examinerMockResponder } from '@kompri/examiner/testing';
+import { AuthController, AuthGuard, AuthService } from './auth.ts';
+import { ContentController } from './content.ts';
+import {
+  CLOCK,
+  DATABASE,
+  defaultSettings,
+  EXAMINER,
+  SETTINGS,
+} from './context.ts';
+import type { Clock, Examiner, Settings } from './context.ts';
+import { ErrorFilter } from './errors.ts';
+import { LearningController, LearningService } from './learning.ts';
+import { ProgressController } from './progress.ts';
+
 @Controller()
-class ApiController implements OnApplicationShutdown {
+class HealthController implements OnApplicationShutdown {
   constructor(@Inject(DATABASE) private readonly db: PrismaClient) {}
   @Get('health')
   @ApiOkResponse({
@@ -48,58 +59,74 @@ class ApiController implements OnApplicationShutdown {
       });
     }
   }
-  @Get('skills')
-  @ApiOkResponse({
-    schema: z.toJSONSchema(skillsResponseSchema, {
-      target: 'openapi-3.0',
-      io: 'output',
-    }) as SchemaObject,
-  })
-  @ApiBadRequestResponse({ description: 'Unexpected query parameters' })
-  async skills(@Query() query: unknown) {
-    const result = skillsQuerySchema.safeParse(query);
-    if (!result.success)
-      throw new BadRequestException('Invalid query parameters');
-    const skills = await this.db.skill.findMany({
-      include: { prerequisites: true },
-      orderBy: { id: 'asc' },
-    });
-    return skillsResponseSchema.parse(
-      skills.map((skill) => ({
-        id: skill.id,
-        title: skill.title,
-        description: skill.description,
-        prerequisites: skill.prerequisites
-          .map((edge) => edge.prerequisiteId)
-          .sort(),
-        ...(skill.rncpBlockReference
-          ? { rncpBlockReference: skill.rncpBlockReference }
-          : {}),
-      })),
-    );
-  }
   async onApplicationShutdown() {
     await this.db.$disconnect();
   }
 }
+
 @Module({})
 class AppModule {}
-export async function createApi(db = createDatabase()) {
-  const app = await NestFactory.create(
+
+export function createExaminerFromEnvironment(
+  env: Record<string, string | undefined>,
+): Examiner {
+  return {
+    provider: env.LLM_EXAMINER_PROVIDER ?? 'mock',
+    client: createRegistry(env, undefined, examinerMockResponder).forUsage(
+      'examiner',
+    ),
+  };
+}
+
+export async function createApi(
+  options: {
+    db?: PrismaClient;
+    examiner?: Examiner;
+    settings?: Partial<Settings>;
+    clock?: Clock;
+  } = {},
+) {
+  const db = options.db ?? createDatabase();
+  const app = await NestFactory.create<NestExpressApplication>(
     {
       module: AppModule,
-      controllers: [ApiController],
-      providers: [{ provide: DATABASE, useValue: db }],
+      controllers: [
+        HealthController,
+        ContentController,
+        AuthController,
+        LearningController,
+        ProgressController,
+      ],
+      providers: [
+        { provide: DATABASE, useValue: db },
+        {
+          provide: SETTINGS,
+          useValue: { ...defaultSettings, ...options.settings },
+        },
+        {
+          provide: EXAMINER,
+          useValue:
+            options.examiner ?? createExaminerFromEnvironment(process.env),
+        },
+        { provide: CLOCK, useValue: options.clock ?? (() => new Date()) },
+        AuthService,
+        AuthGuard,
+        LearningService,
+      ],
     },
-    { logger: ['error', 'warn'] },
+    { logger: ['error', 'warn'], bodyParser: false },
   );
+  // Submissions reach 100 000 characters; UTF-8 needs room beyond Express defaults.
+  app.useBodyParser('json', { limit: '512kb' });
+  app.useGlobalFilters(new ErrorFilter());
   app.enableShutdownHooks();
   const document = SwaggerModule.createDocument(
     app,
     new DocumentBuilder()
       .setTitle('Kompri API')
-      .setDescription('API REST des fondations Kompri')
-      .setVersion('0.1.0')
+      .setDescription('API REST de Kompri')
+      .setVersion('0.2.0')
+      .addBearerAuth()
       .build(),
   );
   SwaggerModule.setup('docs', app, document, {

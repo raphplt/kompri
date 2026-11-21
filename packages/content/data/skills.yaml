@@ -1,12 +1,339 @@
-- id: variables
-  title: Variables et valeurs
-  description: Nœud de démonstration des fondamentaux.
+# Arbre du parcours « développement web full-stack élémentaire ».
+# Une compétence `published` exige des leçons et un défi de chaque famille.
+
+- id: web-fundamentals
+  domain: foundations
+  status: draft
+  title: Fonctionnement du web
+  description: Ce qui se passe entre la saisie d’une adresse et l’affichage d’une page.
+  estimatedHours: 4
   prerequisites: []
-- id: functions
-  title: Fonctions
-  description: Nœud de démonstration des fonctions.
-  prerequisites: [variables]
-- id: http
-  title: Requêtes HTTP
-  description: Nœud de démonstration du web.
-  prerequisites: [functions]
+  objectives:
+    - Distinguer internet, le web, un client, un serveur et un navigateur.
+    - Décomposer une URL et expliquer le rôle du DNS, d’une adresse IP et d’un port.
+    - Décrire un échange HTTP simple et le rôle de HTTPS.
+    - Expliquer comment le navigateur construit une page à partir de HTML, CSS et JavaScript.
+    - Utiliser les outils de développement du navigateur pour observer le réseau.
+
+- id: command-line
+  domain: foundations
+  status: draft
+  title: Terminal et ligne de commande
+  description: Naviguer, manipuler des fichiers et lancer des programmes au clavier.
+  estimatedHours: 4
+  prerequisites: []
+  objectives:
+    - Comprendre ce que sont un terminal, un shell et un processus.
+    - Naviguer dans l’arborescence avec des chemins relatifs et absolus.
+    - Créer, copier, déplacer, supprimer et lire des fichiers en sécurité.
+    - Utiliser arguments, options, redirections, tubes et variables d’environnement.
+    - Installer Node.js et lancer un script, interpréter un code de sortie et une erreur.
+
+- id: git-basics
+  domain: foundations
+  status: draft
+  title: Versionner avec Git
+  description: Garder l’historique de son travail, collaborer et revenir en arrière.
+  estimatedHours: 6
+  prerequisites: [command-line]
+  objectives:
+    - Expliquer le modèle de Git — répertoire de travail, index, commits, historique.
+    - Créer un dépôt, faire des commits atomiques avec des messages utiles.
+    - Inspecter l’historique et les différences, annuler une modification sans perte.
+    - Créer, fusionner des branches et résoudre un conflit simple.
+    - Travailler avec un dépôt distant — clone, push, pull, fetch et pull request.
+
+- id: html-semantics
+  domain: frontend
+  status: draft
+  title: HTML sémantique
+  description: Structurer une page avec les bons éléments pour les humains et les machines.
+  estimatedHours: 5
+  prerequisites: [web-fundamentals]
+  objectives:
+    - Écrire un document HTML valide avec son en-tête et son encodage.
+    - Choisir les éléments de texte, de liste, de lien et d’image adaptés au sens.
+    - Structurer une page avec header, nav, main, article, section, aside et footer.
+    - Construire des tableaux de données correctement balisés.
+    - Valider son HTML et comprendre l’impact de la sémantique sur l’accessibilité et le référencement.
+
+- id: html-forms-accessibility
+  domain: frontend
+  status: draft
+  title: Formulaires et accessibilité
+  description: Recueillir des données de façon utilisable par tous.
+  estimatedHours: 5
+  prerequisites: [html-semantics]
+  objectives:
+    - Construire un formulaire avec les bons types de champs, labels et regroupements.
+    - Utiliser la validation native et comprendre pourquoi le serveur doit revalider.
+    - Expliquer la différence entre GET et POST pour l’envoi d’un formulaire.
+    - Appliquer les bases de l’accessibilité — alternatives textuelles, contraste, clavier, ARIA avec parcimonie.
+    - Tester une page au clavier et avec un outil d’audit d’accessibilité.
+
+- id: css-fundamentals
+  domain: frontend
+  status: draft
+  title: 'CSS : cascade, sélecteurs et boîtes'
+  description: Comprendre comment le navigateur décide de l’apparence de chaque élément.
+  estimatedHours: 6
+  prerequisites: [html-semantics]
+  objectives:
+    - Lier une feuille de style et écrire des règles avec les sélecteurs courants.
+    - Expliquer la cascade, la spécificité et l’héritage pour prédire le style appliqué.
+    - Maîtriser le modèle de boîte — contenu, padding, bordure, marge, box-sizing.
+    - Utiliser les unités, les couleurs, la typographie et les variables CSS.
+    - Déboguer un style avec l’inspecteur du navigateur.
+
+- id: css-layout-responsive
+  domain: frontend
+  status: draft
+  title: Mise en page responsive
+  description: Disposer les éléments avec flexbox et grid, sur tous les écrans.
+  estimatedHours: 6
+  prerequisites: [css-fundamentals]
+  objectives:
+    - Comprendre le flux normal, display et le positionnement.
+    - Mettre en page sur un axe avec flexbox.
+    - Mettre en page en deux dimensions avec grid.
+    - Concevoir mobile d’abord avec les media queries et des unités relatives.
+    - Rendre les images et la typographie adaptatives.
+
+- id: js-basics
+  domain: javascript
+  status: draft
+  title: 'JavaScript : valeurs, types et variables'
+  description: Les briques de base pour manipuler des données en JavaScript.
+  estimatedHours: 5
+  prerequisites: []
+  objectives:
+    - Exécuter du JavaScript dans le navigateur et avec Node.js.
+    - Déclarer des variables avec const et let et expliquer leur portée de bloc.
+    - Connaître les types primitifs, typeof, et les pièges de conversion.
+    - Utiliser opérateurs arithmétiques, de comparaison stricte et logiques.
+    - Manipuler les chaînes de caractères et les gabarits de chaînes.
+
+- id: js-control-flow
+  domain: javascript
+  status: draft
+  title: Conditions et boucles
+  description: Faire prendre des décisions et répéter des actions à un programme.
+  estimatedHours: 4
+  prerequisites: [js-basics]
+  objectives:
+    - Écrire des conditions avec if, else, l’opérateur ternaire et switch.
+    - Comprendre les valeurs truthy et falsy et les opérateurs ?? et ?..
+    - Répéter avec for, while, for…of et sortir d’une boucle avec break et continue.
+    - Tracer l’exécution d’un algorithme simple à la main.
+    - Gérer une erreur avec throw, try, catch et finally.
+
+- id: js-functions
+  domain: javascript
+  status: draft
+  title: Fonctions et portée
+  description: Découper un programme en fonctions réutilisables et compréhensibles.
+  estimatedHours: 5
+  prerequisites: [js-control-flow]
+  objectives:
+    - Déclarer des fonctions, des expressions de fonction et des fonctions fléchées.
+    - Utiliser paramètres, valeurs par défaut, paramètres du reste et valeur de retour.
+    - Expliquer la portée lexicale et les fermetures (closures).
+    - Passer des fonctions en argument et écrire des fonctions d’ordre supérieur.
+    - Écrire des fonctions pures et nommer clairement ses fonctions.
+
+- id: js-data
+  domain: javascript
+  status: draft
+  title: Tableaux, objets et JSON
+  description: Organiser et transformer des collections de données.
+  estimatedHours: 6
+  prerequisites: [js-functions]
+  objectives:
+    - Créer, lire et modifier des tableaux et des objets.
+    - Transformer des données avec map, filter, reduce, find, some et sort.
+    - Utiliser la déstructuration, la décomposition et les copies superficielles.
+    - Distinguer valeurs et références, mutation et immutabilité.
+    - Sérialiser et désérialiser avec JSON et connaître ses limites.
+
+- id: js-dom-events
+  domain: javascript
+  status: draft
+  title: DOM et événements
+  description: Rendre une page interactive en JavaScript.
+  estimatedHours: 6
+  prerequisites: [js-data, html-forms-accessibility]
+  objectives:
+    - Expliquer ce qu’est le DOM et charger un script avec type module ou defer.
+    - Sélectionner, créer, modifier et supprimer des éléments.
+    - Écouter des événements, utiliser l’objet événement et la délégation.
+    - Gérer un formulaire en JavaScript sans casser l’accessibilité.
+    - Insérer du contenu en sécurité avec textContent plutôt qu’innerHTML.
+
+- id: js-async
+  domain: javascript
+  status: draft
+  title: Asynchrone, promesses et fetch
+  description: Attendre un résultat sans bloquer le programme.
+  estimatedHours: 6
+  prerequisites: [js-data, web-fundamentals]
+  objectives:
+    - Expliquer la boucle d’événements, la pile d’appels et les files de tâches.
+    - Créer et consommer des promesses, enchaîner et combiner avec Promise.all.
+    - Écrire du code asynchrone lisible avec async et await, gérer les erreurs.
+    - Appeler une API HTTP avec fetch, lire le statut et le corps JSON.
+    - Gérer chargement, erreur et annulation dans une interface.
+
+- id: http-in-depth
+  domain: backend
+  status: draft
+  title: HTTP en détail
+  description: Le protocole qui relie clients et serveurs, vu de près.
+  estimatedHours: 5
+  prerequisites: [web-fundamentals]
+  objectives:
+    - Lire une requête et une réponse HTTP brutes.
+    - Choisir la méthode et le code de statut adaptés, connaître sûreté et idempotence.
+    - Utiliser les en-têtes courants — Content-Type, Accept, Authorization, Cache-Control.
+    - Expliquer les cookies, l’origine et le principe de CORS.
+    - Tester une API avec curl et les outils du navigateur.
+
+- id: node-runtime
+  domain: backend
+  status: draft
+  title: Node.js, modules et npm
+  description: Exécuter JavaScript hors du navigateur et gérer ses dépendances.
+  estimatedHours: 5
+  prerequisites: [js-data, command-line]
+  objectives:
+    - Expliquer ce qu’est Node.js et en quoi il diffère du navigateur.
+    - Organiser son code en modules ES avec import et export.
+    - Initialiser un projet, gérer dépendances et scripts avec npm et package.json.
+    - Lire et écrire des fichiers avec node:fs/promises, gérer les chemins.
+    - Lire la configuration depuis les variables d’environnement sans exposer de secret.
+
+- id: express-server
+  domain: backend
+  status: draft
+  title: Serveur HTTP avec Express
+  description: Recevoir des requêtes et renvoyer des réponses avec Express 5.
+  estimatedHours: 6
+  prerequisites: [node-runtime, http-in-depth, js-async]
+  objectives:
+    - Créer un serveur Express, définir des routes et des paramètres de route.
+    - Lire paramètres de requête, en-têtes et corps JSON.
+    - Comprendre la chaîne de middlewares et en écrire un.
+    - Renvoyer des réponses avec le bon statut et gérer les erreurs de façon centralisée.
+    - Servir des fichiers statiques et structurer un petit projet.
+
+- id: rest-api-design
+  domain: backend
+  status: draft
+  title: Concevoir une API REST
+  description: Exposer des ressources de façon prévisible, validée et documentée.
+  estimatedHours: 6
+  prerequisites: [express-server]
+  objectives:
+    - Modéliser des ressources et des URL selon les conventions REST.
+    - Implémenter un CRUD complet avec les bons codes de statut.
+    - Valider les entrées et renvoyer des erreurs cohérentes et utiles.
+    - Paginer, filtrer et trier une collection.
+    - Documenter une API et la tester avec des requêtes reproductibles.
+
+- id: sql-queries
+  domain: data
+  status: draft
+  title: 'SQL : interroger des données'
+  description: Lire et modifier des données dans PostgreSQL.
+  estimatedHours: 5
+  prerequisites: [command-line]
+  objectives:
+    - Expliquer tables, lignes, colonnes, types et clé primaire.
+    - Se connecter à PostgreSQL avec psql et créer une table.
+    - Écrire des requêtes SELECT avec WHERE, ORDER BY, LIMIT et OFFSET.
+    - Insérer, mettre à jour et supprimer des lignes sans accident.
+    - Agréger avec COUNT, SUM, AVG, GROUP BY et HAVING, et gérer NULL.
+
+- id: sql-modeling
+  domain: data
+  status: draft
+  title: Modélisation relationnelle et jointures
+  description: Concevoir un schéma cohérent et croiser les tables.
+  estimatedHours: 6
+  prerequisites: [sql-queries]
+  objectives:
+    - Identifier entités, attributs et relations un-à-plusieurs et plusieurs-à-plusieurs.
+    - Créer des clés étrangères et des contraintes NOT NULL, UNIQUE et CHECK.
+    - Normaliser un schéma pour éviter redondances et anomalies.
+    - Écrire des jointures internes et externes et des sous-requêtes simples.
+    - Utiliser transactions et index à bon escient.
+
+- id: database-from-node
+  domain: data
+  status: draft
+  title: Base de données depuis Node.js
+  description: Brancher une API Express sur PostgreSQL de façon sûre.
+  estimatedHours: 6
+  prerequisites: [sql-modeling, express-server]
+  objectives:
+    - Se connecter à PostgreSQL avec le client pg et un pool de connexions.
+    - Écrire uniquement des requêtes paramétrées et expliquer l’injection SQL.
+    - Organiser l’accès aux données dans une couche dédiée.
+    - Gérer les transactions et les erreurs de contraintes côté application.
+    - Faire évoluer le schéma avec des migrations versionnées.
+
+- id: testing-basics
+  domain: quality
+  status: draft
+  title: Tester son code
+  description: Vérifier automatiquement que le code fait ce qu’on attend.
+  estimatedHours: 5
+  prerequisites: [js-functions, node-runtime]
+  objectives:
+    - Expliquer à quoi servent les tests et distinguer tests unitaires et d’intégration.
+    - Écrire des tests avec node:test et node:assert.
+    - Choisir des cas de test — nominal, limites, erreurs.
+    - Tester du code asynchrone et une route HTTP.
+    - Utiliser les tests pour corriger un bug sans régression.
+
+- id: web-security
+  domain: quality
+  status: draft
+  title: Sécurité web essentielle
+  description: Reconnaître et corriger les failles les plus courantes.
+  estimatedHours: 6
+  prerequisites: [database-from-node, js-dom-events]
+  objectives:
+    - Raisonner en modèle de menace — entrées non fiables, surface d’attaque.
+    - Prévenir l’injection SQL et le cross-site scripting (XSS).
+    - Comprendre CSRF, les attributs de cookies et la politique de même origine.
+    - Gérer les secrets, les dépendances vulnérables et les en-têtes de sécurité.
+    - Utiliser le Top 10 de l’OWASP comme grille de lecture.
+
+- id: authentication
+  domain: quality
+  status: draft
+  title: Authentification et sessions
+  description: Identifier les utilisateurs et protéger leurs données.
+  estimatedHours: 6
+  prerequisites: [web-security, rest-api-design]
+  objectives:
+    - Distinguer authentification et autorisation.
+    - Stocker des mots de passe avec un hachage adapté (scrypt, Argon2, bcrypt).
+    - Implémenter des sessions par cookie sécurisées et la déconnexion.
+    - Contrôler l’accès aux ressources selon leur propriétaire.
+    - Comparer sessions et jetons (JWT) et connaître leurs pièges.
+
+- id: fullstack-app
+  domain: quality
+  status: draft
+  title: Application full-stack complète
+  description: Assembler interface, API, base de données et tests en un projet cohérent.
+  estimatedHours: 10
+  prerequisites:
+    [authentication, js-async, css-layout-responsive, testing-basics]
+  objectives:
+    - Concevoir l’architecture d’une petite application — interface, API, base.
+    - Relier une interface JavaScript à une API avec gestion des états.
+    - Organiser le projet, la configuration et les scripts.
+    - Tester les parcours essentiels de bout en bout.
+    - Préparer une mise en production — variables d’environnement, journaux, sécurité.

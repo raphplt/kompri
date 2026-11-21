@@ -211,9 +211,15 @@ importers:
 
   apps/api:
     dependencies:
+      '@kompri/content':
+        specifier: workspace:*
+        version: link:../../packages/content
       '@kompri/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@kompri/examiner':
+        specifier: workspace:*
+        version: link:../../packages/examiner
       '@kompri/llm':
         specifier: workspace:*
         version: link:../../packages/llm

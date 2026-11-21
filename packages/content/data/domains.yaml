@@ -1,0 +1,18 @@
+- id: foundations
+  title: Fondations
+  description: Comprendre le web et maîtriser les outils du développeur.
+- id: frontend
+  title: Interface web
+  description: Structurer, rendre accessibles et mettre en forme des pages web.
+- id: javascript
+  title: JavaScript
+  description: Programmer avec JavaScript, du langage au navigateur.
+- id: backend
+  title: Serveur et API
+  description: Construire un serveur HTTP et concevoir une API avec Node.js.
+- id: data
+  title: Données
+  description: Modéliser, interroger et exploiter une base PostgreSQL.
+- id: quality
+  title: Qualité et sécurité
+  description: Tester, sécuriser et assembler une application complète.

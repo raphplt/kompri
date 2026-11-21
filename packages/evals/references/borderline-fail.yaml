@@ -1,0 +1,37 @@
+id: borderline-fail
+challengeId: js-basics-sans-ia
+humanReview: pending
+submission: |
+  const total = 1.3 * 3 + 1.15 * 4;
+  const discount = loyaltyCard ? total * 0.05 : 0;
+  const toPay = total - discount;
+  console.log(`Total : ${toPay.toFixed(2)} €`);
+  console.log(`Rendu : ${(Number('20') - toPay).toFixed(2)} €`);
+transcript:
+  - speaker: examiner
+    text: 'Explique ta ligne `const discount = loyaltyCard ? total * 0.05 : 0`. Respecte-t-elle la consigne ?'
+    at: '2026-01-01T10:00:00Z'
+  - speaker: learner
+    text: 'C’est un ternaire, si la carte est vraie on prend cinq pour cent du total sinon zéro.'
+    at: '2026-01-01T10:01:30Z'
+  - speaker: examiner
+    text: "Pourquoi convertis-tu '20' avec Number, et que ferait une saisie invalide ?"
+    at: '2026-01-01T10:01:30Z'
+  - speaker: learner
+    text: 'Pour avoir un nombre, sinon le calcul serait faux. Je ne sais pas trop pour la saisie invalide.'
+    at: '2026-01-01T10:03:00Z'
+expectedHumanGrade:
+  criteria:
+    - criterionId: types-conversions
+      score: 2
+      justification: 'Référence illustrative à faire confirmer par un évaluateur humain — conversion justifiée sans cas limites.'
+    - criterionId: operators
+      score: 2
+      justification: 'Référence illustrative à faire confirmer par un évaluateur humain — ternaire expliqué, consigne sans if à discuter.'
+    - criterionId: numbers-precision
+      score: 1
+      justification: 'Référence illustrative à faire confirmer par un évaluateur humain — arrondi utilisé sans explication.'
+    - criterionId: variables
+      score: 1
+      justification: 'Référence illustrative à faire confirmer par un évaluateur humain.'
+  verdict: FAILED

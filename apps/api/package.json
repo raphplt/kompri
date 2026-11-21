@@ -18,6 +18,8 @@
     "tsx": "4.23.15",
     "@kompri/db": "workspace:*",
     "@kompri/shared": "workspace:*",
-    "@kompri/llm": "workspace:*"
+    "@kompri/llm": "workspace:*",
+    "@kompri/examiner": "workspace:*",
+    "@kompri/content": "workspace:*"
   }
 }

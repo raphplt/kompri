@@ -3,11 +3,13 @@ import { loadContent } from '@kompri/content';
 import { createExaminerMock } from '@kompri/examiner/testing';
 import { evaluate } from './index.ts';
 it('measures a grading disagreement instead of hiding it in a total score', async () => {
+  const content = await loadContent();
+  const rubric = content.rubrics.find((r) => r.id === 'js-basics-sans-ia')!;
   const result = await evaluate(
     [
       {
         id: 'disagreement',
-        challengeId: 'add-without-ai',
+        challengeId: 'js-basics-sans-ia',
         submission: 'a + b',
         humanReview: 'pending',
         transcript: [
@@ -17,27 +19,20 @@ it('measures a grading disagreement instead of hiding it in a total score', asyn
           { speaker: 'learner', text: '3', at: '2026-01-01T00:00:03Z' },
         ],
         expectedHumanGrade: {
-          criteria: [
-            {
-              criterionId: 'explanation',
-              score: 0,
-              justification: 'Reference',
-            },
-            {
-              criterionId: 'modification',
-              score: 0,
-              justification: 'Reference',
-            },
-          ],
-          verdict: 'FAILED',
+          criteria: rubric.criteria.map((criterion) => ({
+            criterionId: criterion.id,
+            score: criterion.maxScore,
+            justification: 'Reference',
+          })),
+          verdict: 'PASSED',
         },
       },
     ],
-    await loadContent(),
+    content,
     createExaminerMock(),
     3,
   );
-  expect(result.meanAbsoluteError).toBe(2);
+  expect(result.meanAbsoluteError).toBe(2.5);
   expect(result.cases[0]?.verdictAgreement).toBe(0);
   expect(result.stable).toBe(true);
 });

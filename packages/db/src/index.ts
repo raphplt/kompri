@@ -38,3 +38,4 @@ export async function countConsumedOrals(
     where: { userId, consumedAt: { gte: from, lt: until } },
   });
 }
+export { syncContent } from './sync-content.ts';

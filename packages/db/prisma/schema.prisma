@@ -30,21 +30,67 @@ enum Verdict {
   FAILED
 }
 
+enum SkillStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum OralStatus {
+  ACTIVE
+  GRADING_FAILED
+  COMPLETED
+}
+
 model User {
-  id          String        @id @default(uuid())
-  email       String        @unique
-  createdAt   DateTime      @default(now()) @db.Timestamptz(3)
-  attempts    Attempt[]
-  sessions    OralSession[]
-  validations Validation[]
-  oralUsage   OralUsage[]
+  id               String        @id @default(uuid())
+  email            String        @unique
+  displayName      String?
+  passwordHash     String?
+  failedLoginCount Int           @default(0)
+  lockedUntil      DateTime?     @db.Timestamptz(3)
+  createdAt        DateTime      @default(now()) @db.Timestamptz(3)
+  authSessions     AuthSession[]
+  attempts         Attempt[]
+  sessions         OralSession[]
+  validations      Validation[]
+  oralUsage        OralUsage[]
+}
+
+model AuthSession {
+  id         String   @id @default(uuid())
+  userId     String
+  tokenHash  String   @unique
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+  lastSeenAt DateTime @default(now()) @db.Timestamptz(3)
+  expiresAt  DateTime @db.Timestamptz(3)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Domain {
+  id          String    @id
+  title       String
+  description String
+  position    Int
+  archivedAt  DateTime? @db.Timestamptz(3)
+  skills      Skill[]
 }
 
 model Skill {
   id                 String              @id
+  domainId           String?
+  status             SkillStatus         @default(DRAFT)
   title              String
   description        String
+  estimatedHours     Int                 @default(1)
+  objectives         Json                @default("[]")
+  position           Int                 @default(0)
+  archivedAt         DateTime?           @db.Timestamptz(3)
   rncpBlockReference String?
+  domain             Domain?             @relation(fields: [domainId], references: [id], onDelete: Restrict)
+  lessons            Lesson[]
   prerequisites      SkillPrerequisite[] @relation("SkillDependencies")
   requiredBy         SkillPrerequisite[] @relation("RequiredSkill")
   challenges         Challenge[]
@@ -61,17 +107,40 @@ model SkillPrerequisite {
   @@index([prerequisiteId])
 }
 
+model Lesson {
+  id              String    @id
+  skillId         String
+  slug            String
+  position        Int
+  title           String
+  summary         String
+  durationMinutes Int
+  sources         Json      @default("[]")
+  body            String
+  contentVersion  String
+  archivedAt      DateTime? @db.Timestamptz(3)
+  skill           Skill     @relation(fields: [skillId], references: [id], onDelete: Restrict)
+
+  @@unique([skillId, slug])
+}
+
 model Challenge {
-  id             String          @id
-  skillId        String
-  family         ChallengeFamily
-  title          String
-  instructions   String
-  rubricId       String
-  rubricSnapshot Json
-  contentVersion String
-  skill          Skill           @relation(fields: [skillId], references: [id], onDelete: Restrict)
-  attempts       Attempt[]
+  id               String          @id
+  skillId          String
+  family           ChallengeFamily
+  title            String
+  summary          String?
+  estimatedMinutes Int?
+  instructions     String
+  deliverable      String?
+  examinerNotes    String?
+  position         Int             @default(0)
+  archivedAt       DateTime?       @db.Timestamptz(3)
+  rubricId         String
+  rubricSnapshot   Json
+  contentVersion   String
+  skill            Skill           @relation(fields: [skillId], references: [id], onDelete: Restrict)
+  attempts         Attempt[]
 
   @@index([skillId])
 }
@@ -93,22 +162,30 @@ model Attempt {
 }
 
 model OralSession {
-  id             String      @id @default(uuid())
-  userId         String
-  attemptId      String
-  mode           OralMode    @default(CHAT)
-  model          String
-  provider       String
-  rubricSnapshot Json
-  startedAt      DateTime    @default(now()) @db.Timestamptz(3)
-  endedAt        DateTime?   @db.Timestamptz(3)
-  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  attempt        Attempt     @relation(fields: [attemptId, userId], references: [id, userId], onDelete: Cascade)
-  turns          OralTurn[]
-  validation     Validation?
-  usage          OralUsage?
+  id               String      @id @default(uuid())
+  userId           String
+  attemptId        String
+  mode             OralMode    @default(CHAT)
+  model            String
+  provider         String
+  rubricSnapshot   Json
+  status           OralStatus  @default(ACTIVE)
+  plan             Json?
+  questionDeadline DateTime?   @db.Timestamptz(3)
+  verdict          Verdict?
+  grade            Json?
+  gradedAt         DateTime?   @db.Timestamptz(3)
+  gradingAttempts  Int         @default(0)
+  startedAt        DateTime    @default(now()) @db.Timestamptz(3)
+  endedAt          DateTime?   @db.Timestamptz(3)
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attempt          Attempt     @relation(fields: [attemptId, userId], references: [id, userId], onDelete: Cascade)
+  turns            OralTurn[]
+  validation       Validation?
+  usage            OralUsage?
 
   @@unique([id, userId])
+  @@unique([attemptId])
   @@index([userId, startedAt])
   @@index([attemptId, userId])
 }

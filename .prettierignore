@@ -5,3 +5,4 @@ dist
 .turbo
 packages/db/src/generated
 **/next-env.d.ts
+packages/content/data/**/*.md

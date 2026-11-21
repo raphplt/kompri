@@ -1,11 +1,11 @@
 import { skillsResponseSchema } from '@kompri/shared';
-import type { Skill } from '@kompri/shared';
+import type { SkillSummary } from '@kompri/shared';
 import { parseEnvironment, webEnvSchema } from '@kompri/shared/env';
 import { fr } from '../messages/fr';
 export const dynamic = 'force-dynamic';
 export default async function Home() {
   const env = parseEnvironment(webEnvSchema, process.env);
-  let skills: Skill[] | null = null;
+  let skills: SkillSummary[] | null = null;
   try {
     const response = await fetch(`${env.API_URL}/skills`, {
       cache: 'no-store',

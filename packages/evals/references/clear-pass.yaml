@@ -1,46 +1,54 @@
-{
-  'id': 'clear-pass',
-  'challengeId': 'add-without-ai',
-  'submission': 'const add = (a, b) => a + b;',
-  'humanReview': 'pending',
-  'transcript':
-    [
-      {
-        'speaker': 'examiner',
-        'text': "Explique le r\u00e9sultat de add(1, 2).",
-        'at': '2026-01-01T10:00:00Z',
-      },
-      {
-        'speaker': 'learner',
-        'text': 'Une addition de deux nombres.',
-        'at': '2026-01-01T10:01:00Z',
-      },
-      {
-        'speaker': 'examiner',
-        'text': "Donne un cas de v\u00e9rification.",
-        'at': '2026-01-01T10:01:00Z',
-      },
-      {
-        'speaker': 'learner',
-        'text': 'add(1, 2) doit donner 3.',
-        'at': '2026-01-01T10:02:00Z',
-      },
-    ],
-  'expectedHumanGrade':
-    {
-      'criteria':
-        [
-          {
-            'criterionId': 'explanation',
-            'score': 2,
-            'justification': "R\u00e9f\u00e9rence illustrative \u00e0 faire confirmer par un \u00e9valuateur humain.",
-          },
-          {
-            'criterionId': 'modification',
-            'score': 2,
-            'justification': "R\u00e9f\u00e9rence illustrative \u00e0 faire confirmer par un \u00e9valuateur humain.",
-          },
-        ],
-      'verdict': 'PASSED',
-    },
-}
+id: clear-pass
+challengeId: js-basics-sans-ia
+humanReview: pending
+submission: |
+  const shopName = 'Boulangerie du Port';
+  const breadPrice = 1.3;
+  const breadQuantity = 3;
+  const croissantPrice = 1.15;
+  const croissantQuantity = 4;
+  const loyaltyCard = true;
+  const paidAmount = '20';
+
+  const breadTotal = breadPrice * breadQuantity;
+  const croissantTotal = croissantPrice * croissantQuantity;
+  const total = breadTotal + croissantTotal;
+  const discount = total * 0.05 * Number(loyaltyCard);
+  const toPay = total - discount;
+  const change = Number(paidAmount) - toPay;
+
+  console.log(`${shopName}
+  Pains x${breadQuantity} : ${breadTotal.toFixed(2)} €
+  Croissants x${croissantQuantity} : ${croissantTotal.toFixed(2)} €
+  Remise fidélité : ${discount.toFixed(2)} €
+  Total : ${toPay.toFixed(2)} €
+  Rendu : ${change.toFixed(2)} €
+  Paiement suffisant : ${Number(paidAmount) >= toPay}`);
+transcript:
+  - speaker: examiner
+    text: 'Explique comment ta ligne `const discount = total * 0.05 * Number(loyaltyCard)` calcule la remise sans utiliser de if.'
+    at: '2026-01-01T10:00:00Z'
+  - speaker: learner
+    text: 'Number(true) vaut 1 et Number(false) vaut 0. Si la carte est présente, je multiplie le total par 0.05 puis par 1, donc la remise vaut cinq pour cent ; sinon je multiplie par 0 et la remise vaut zéro. J’ai préféré la conversion explicite pour que le lecteur voie que le booléen devient un nombre.'
+    at: '2026-01-01T10:02:00Z'
+  - speaker: examiner
+    text: "Que se passerait-il si paidAmount valait '20 €', et pourquoi affiches-tu les montants avec toFixed seulement à la fin ?"
+    at: '2026-01-01T10:02:00Z'
+  - speaker: learner
+    text: "Number('20 €') donne NaN, donc la monnaie et la comparaison deviendraient NaN puis false ; il faudrait vérifier avec Number.isNaN avant de continuer. J’arrondis à la fin parce que les nombres à virgule sont stockés en binaire, 1.3 fois 3 donne 3.9000000000000004, et toFixed renvoie une chaîne : je ne veux pas cumuler les arrondis ni calculer avec du texte."
+    at: '2026-01-01T10:05:00Z'
+expectedHumanGrade:
+  criteria:
+    - criterionId: types-conversions
+      score: 3
+      justification: 'Référence illustrative à faire confirmer par un évaluateur humain — conversion de true en 1, NaN et toFixed expliqués.'
+    - criterionId: operators
+      score: 3
+      justification: 'Référence illustrative à faire confirmer par un évaluateur humain — remise sans if justifiée.'
+    - criterionId: numbers-precision
+      score: 2
+      justification: 'Référence illustrative à faire confirmer par un évaluateur humain — virgule flottante expliquée avec un exemple.'
+    - criterionId: variables
+      score: 2
+      justification: 'Référence illustrative à faire confirmer par un évaluateur humain.'
+  verdict: PASSED
