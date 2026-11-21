@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { toStrictJsonSchema } from './schema.ts';
 import type {
   Adapter,
   CallMetric,
@@ -62,7 +62,7 @@ export function createClient(options: {
       run(
         request,
         (text) => schema.parse(JSON.parse(text)),
-        z.toJSONSchema(schema),
+        toStrictJsonSchema(schema),
       ),
     async *stream(request) {
       const start = performance.now();

@@ -20,8 +20,24 @@ const tokens = (usage: z.infer<typeof usageSchema>): TokenUsage => ({
   inputTokens: usage.prompt_tokens,
   outputTokens: usage.completion_tokens,
 });
-export function createMistralAdapter(
-  config: { baseUrl: string; apiKey: string; model: string },
+export interface OpenAiCompatibleConfig {
+  baseUrl: string;
+  /** Optional for local servers such as Ollama. */
+  apiKey?: string;
+  model: string;
+  timeoutMs?: number;
+  /** OpenAI and Gemini only report streamed usage when it is requested. */
+  streamUsage?: boolean;
+  /** Omitted when undefined: some reasoning models only accept their default. */
+  temperature?: number;
+}
+
+/**
+ * Chat Completions protocol, served by Mistral, OpenAI, Gemini (compatibility
+ * endpoint), Ollama, vLLM and LM Studio among others.
+ */
+export function createOpenAiCompatibleAdapter(
+  config: OpenAiCompatibleConfig,
   transport: typeof fetch = fetch,
 ): Adapter {
   const send = async (
@@ -33,16 +49,23 @@ export function createMistralAdapter(
       `${config.baseUrl.replace(/\/$/, '')}/chat/completions`,
       {
         method: 'POST',
-        signal: AbortSignal.timeout(30_000),
+        signal: AbortSignal.timeout(config.timeoutMs ?? 60_000),
         headers: {
-          Authorization: `Bearer ${config.apiKey}`,
+          ...(config.apiKey
+            ? { Authorization: `Bearer ${config.apiKey}` }
+            : {}),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           model: config.model,
           messages: request.messages,
-          temperature: 0,
+          ...(config.temperature === undefined
+            ? {}
+            : { temperature: config.temperature }),
           stream,
+          ...(stream && config.streamUsage
+            ? { stream_options: { include_usage: true } }
+            : {}),
           ...(jsonSchema
             ? {
                 response_format: {
@@ -116,3 +139,6 @@ export function createMistralAdapter(
     },
   };
 }
+
+/** Kept for configurations written before the provider choice was opened. */
+export const createMistralAdapter = createOpenAiCompatibleAdapter;

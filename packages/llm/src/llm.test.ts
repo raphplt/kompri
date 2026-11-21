@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
 import { createClient, createMockAdapter, createRegistry } from './index.ts';
 import type { CallMetric } from './index.ts';
-import { createMistralAdapter } from './mistral.ts';
+import { createMistralAdapter } from './openai-compatible.ts';
 const request = {
   messages: [{ role: 'user' as const, content: 'private submission' }],
 };

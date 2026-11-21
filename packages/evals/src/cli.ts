@@ -15,9 +15,12 @@ const env = live
       LLM_TUTOR_PROVIDER: 'mock',
       LLM_CONTENT_GENERATION_PROVIDER: 'mock',
     };
-if (live && env.LLM_EXAMINER_PROVIDER !== 'mistral')
+if (
+  live &&
+  (!env.LLM_EXAMINER_PROVIDER || env.LLM_EXAMINER_PROVIDER === 'mock')
+)
   throw new Error(
-    'Live evals require an explicit LLM_EXAMINER_PROVIDER=mistral configuration',
+    'Live evals require an explicit non-mock LLM_EXAMINER_PROVIDER configuration',
   );
 const client = createRegistry(env, undefined, examinerMockResponder).forUsage(
   'examiner',
