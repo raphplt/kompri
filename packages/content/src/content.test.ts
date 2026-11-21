@@ -28,12 +28,27 @@ describe('versioned content', () => {
             .map((c) => c.family),
         ).size,
       ).toBe(4);
-    const draft = content.skills.find((s) => s.status === 'draft');
-    if (draft) {
-      draft.status = 'published';
-      draft.prerequisites = [];
-      expect(contentSchema.safeParse(content).success).toBe(false);
-    }
+    const skill = content.skills.find((s) => s.prerequisites.length === 0)!;
+    const publish = (overrides: Partial<typeof content>) =>
+      contentSchema.safeParse({
+        ...content,
+        skills: content.skills.map((s) =>
+          s.id === skill.id ? { ...s, status: 'published' } : s,
+        ),
+        ...overrides,
+      }).success;
+    expect(
+      publish({
+        lessons: content.lessons.filter((l) => l.skillId !== skill.id),
+      }),
+    ).toBe(false);
+    expect(
+      publish({
+        challenges: content.challenges.filter(
+          (c) => c.skillId !== skill.id || c.family !== 'CONTRE_IA',
+        ),
+      }),
+    ).toBe(false);
   });
 
   it.each(['missing', 'cycle', 'rubric', 'duplicate', 'domain'] as const)(

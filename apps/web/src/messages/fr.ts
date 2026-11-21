@@ -1,10 +1,270 @@
 export const fr = {
   title: 'Kompri',
-  description: 'Apprendre avec l’IA, prouver sans elle.',
-  tree: 'Arbre de compétences',
-  prerequisites: 'Prérequis',
-  none: 'Aucun',
-  unavailable:
-    'L’arbre est momentanément indisponible. Vérifiez que l’API et la base sont démarrées, puis rechargez la page.',
-  demonstration: 'Contenu de démonstration — fondations du projet.',
+  tagline: 'Apprends avec l’IA, prouve sans elle.',
+  description:
+    'Kompri est une plateforme d’apprentissage du développement web où l’IA est autorisée pour apprendre et interdite pour prouver : chaque compétence se valide à l’oral.',
+  nav: {
+    path: 'Parcours',
+    dashboard: 'Tableau de bord',
+    account: 'Mon compte',
+    login: 'Se connecter',
+    register: 'Créer un compte',
+    logout: 'Se déconnecter',
+    skip: 'Aller au contenu',
+  },
+  footer: {
+    legal: 'Mentions légales',
+    privacy: 'Confidentialité',
+    about: 'Comment ça marche',
+    note: 'Contenus pédagogiques rédigés avec assistance et en attente de relecture humaine.',
+  },
+  home: {
+    heroTitle: 'Apprends avec l’IA.\nProuve sans elle.',
+    heroText:
+      'Des cours complets de développement web, des défis concrets, et un oral face à un examinateur qui vérifie que tu as vraiment compris.',
+    start: 'Commencer gratuitement',
+    explore: 'Explorer le parcours',
+    continue: 'Reprendre mon parcours',
+    stepsTitle: 'Comment ça marche',
+    steps: [
+      {
+        title: 'Apprendre',
+        text: 'Des leçons détaillées, des exemples exécutables et des exercices corrigés. Utilise l’IA pour te faire expliquer ce qui bloque.',
+      },
+      {
+        title: 'Pratiquer',
+        text: 'Quatre familles de défis : sans IA, avec l’IA, contre l’IA et après l’IA. Comme dans un vrai métier.',
+      },
+      {
+        title: 'Défendre à l’oral',
+        text: 'Un oral chronométré, sans aide : l’examinateur te questionne sur ton propre travail et te fait modifier ou déboguer.',
+      },
+      {
+        title: 'Entretenir',
+        text: 'Une compétence validée expire. Tu la renouvelles pour garder une preuve à jour de ce que tu sais faire.',
+      },
+    ],
+    treeTitle: 'Le parcours développement web full-stack',
+    treeText:
+      'Six domaines, des fondations du web jusqu’à une application complète. Chaque compétence débloque les suivantes.',
+  },
+  tree: {
+    unavailable:
+      'Le parcours est momentanément indisponible. Réessaie dans un instant.',
+    prerequisites: 'Prérequis',
+    none: 'Aucun',
+    hours: (hours: number) => `${hours} h`,
+    lessons: (count: number) => `${count} leçon${count > 1 ? 's' : ''}`,
+    upcoming: 'Bientôt disponible',
+  },
+  states: {
+    validated: 'Validée',
+    expired: 'À renouveler',
+    available: 'Disponible',
+    locked: 'Verrouillée',
+    upcoming: 'À venir',
+  },
+  stateHelp: {
+    validated: 'Compétence validée à l’oral, en cours de validité.',
+    expired: 'Ta validation a expiré : repasse un oral pour la renouveler.',
+    available: 'Tous les prérequis sont validés : tu peux passer l’oral.',
+    locked: 'Valide d’abord les compétences prérequises pour passer l’oral.',
+    upcoming: 'Le contenu de cette compétence est en préparation.',
+  },
+  families: {
+    SANS_IA: {
+      label: 'Sans IA',
+      text: 'Un exercice court sur les fondamentaux, à réaliser seul.',
+    },
+    AVEC_IA: {
+      label: 'Avec l’IA',
+      text: 'Un mini-projet réalisé avec l’IA, que tu dois comprendre et défendre.',
+    },
+    CONTRE_IA: {
+      label: 'Contre l’IA',
+      text: 'Du code généré qui contient des failles : trouve-les et corrige-les.',
+    },
+    APRES_IA: {
+      label: 'Après l’IA',
+      text: 'Un projet existant à faire évoluer ou à dépanner sans tout régénérer.',
+    },
+  },
+  skill: {
+    objectives: 'Ce que tu sauras faire',
+    lessons: 'Leçons',
+    challenges: 'Défis',
+    challengesIntro:
+      'Réalise un défi, soumets ton travail, puis défends-le à l’oral pour valider la compétence.',
+    minutes: (minutes: number) => `${minutes} min`,
+    startLesson: 'Commencer le cours',
+    noLessons: 'Les leçons de cette compétence sont en préparation.',
+    noChallenges: 'Les défis de cette compétence sont en préparation.',
+    validUntil: (date: string) => `Valide jusqu’au ${date}`,
+    expiredOn: (date: string) => `Expirée le ${date}`,
+    domain: 'Domaine',
+  },
+  lesson: {
+    sources: 'Pour aller plus loin',
+    previous: 'Leçon précédente',
+    next: 'Leçon suivante',
+    backToSkill: 'Retour à la compétence',
+    toChallenges: 'Passer aux défis',
+    contents: 'Leçons de la compétence',
+    solution: 'Solution',
+    note: 'À noter',
+    tip: 'Astuce',
+    warning: 'Attention',
+  },
+  challenge: {
+    instructions: 'Consigne',
+    deliverable: 'À soumettre',
+    rubric: 'Grille d’évaluation de l’oral',
+    rubricIntro: (percent: number) =>
+      `L’oral est réussi à partir de ${percent} % des points. Seule la compréhension démontrée à l’oral compte.`,
+    criterion: 'Critère',
+    points: (count: number) => `${count} pt${count > 1 ? 's' : ''}`,
+    submitTitle: 'Soumettre mon travail',
+    submitHelp:
+      'Colle ton code et tes explications. Ton travail est enregistré dans ton compte, puis tu pourras passer l’oral quand tu te sens prêt.',
+    workLabel: 'Ton travail',
+    submit: 'Enregistrer mon travail',
+    loginToSubmit: 'Connecte-toi pour soumettre un travail et passer l’oral.',
+    upcoming: 'Ce défi n’est pas encore ouvert aux soumissions.',
+    attempts: 'Mes tentatives',
+    attemptOn: (date: string) => `Travail du ${date}`,
+    startOral: 'Passer l’oral',
+    viewOral: 'Voir l’oral',
+    resumeOral: 'Reprendre l’oral',
+    oralWarningTitle: 'Avant de commencer l’oral',
+    oralWarning: (questions: number, minutes: number) =>
+      `${questions} questions, ${minutes} minutes par réponse, sans aide ni copier-coller. Une réponse non envoyée à temps compte comme absente. L’oral consomme une session de ton quota.`,
+    lockedHint:
+      'Valide d’abord les compétences prérequises pour passer cet oral.',
+    estimated: (minutes: number) => `Environ ${minutes} min`,
+  },
+  oral: {
+    title: 'Oral',
+    question: (index: number, total: number) =>
+      `Question ${index} sur ${total}`,
+    timeLeft: 'Temps restant',
+    answerLabel: 'Ta réponse',
+    answerHelp:
+      'Réponds avec tes mots. Le collage est désactivé : l’oral vérifie ta compréhension, pas ta capacité à copier.',
+    send: 'Envoyer ma réponse',
+    sending: 'L’examinateur lit ta réponse…',
+    pasteBlocked: 'Le collage est désactivé pendant l’oral.',
+    abandon: 'Abandonner l’oral',
+    abandonConfirm:
+      'Abandonner l’oral ? Les questions restantes compteront comme sans réponse.',
+    examiner: 'Examinateur',
+    you: 'Toi',
+    timeUp: 'Temps écoulé : ta réponse en cours est envoyée.',
+    leaveWarning: 'Un oral est en cours. Quitter la page ne l’arrête pas.',
+    resultTitle: 'Résultat de l’oral',
+    passed: 'Compétence validée',
+    failed: 'Pas encore validée',
+    score: (score: number, max: number) => `${score} / ${max} points`,
+    threshold: (percent: number) => `seuil de réussite : ${percent} %`,
+    feedback: 'Retour de l’examinateur',
+    criteria: 'Détail par critère',
+    validUntil: (date: string) => `Validation valable jusqu’au ${date}.`,
+    gradingFailed:
+      'L’examinateur n’a pas pu terminer la notation. Ton oral est enregistré : relance la notation.',
+    retryGrading: 'Relancer la notation',
+    backToChallenge: 'Retour au défi',
+    backToSkill: 'Retour à la compétence',
+    tryAgain:
+      'Pour retenter, revois les notions signalées puis soumets une nouvelle version de ton travail.',
+    transcript: 'Transcription',
+    error: 'Une erreur est survenue. Réessaie dans un instant.',
+  },
+  dashboard: {
+    title: 'Tableau de bord',
+    hello: (name: string) => `Bonjour ${name}`,
+    activeOral: 'Tu as un oral en cours.',
+    resume: 'Reprendre',
+    quota: (used: number, limit: number, hours: number) =>
+      `${used} oral${used > 1 ? 's' : ''} sur ${limit} utilisés sur les ${hours} dernières heures.`,
+    validated: 'Compétences validées',
+    toRenew: 'À renouveler',
+    expiringSoon: 'Expire bientôt',
+    available: 'Prochaines étapes',
+    recentOrals: 'Derniers oraux',
+    noOrals:
+      'Aucun oral pour l’instant. Choisis une compétence disponible pour commencer.',
+    progress: (done: number, total: number) =>
+      `${done} compétence${done > 1 ? 's' : ''} validée${done > 1 ? 's' : ''} sur ${total}`,
+    empty: 'Rien ici pour le moment.',
+    oralStatus: {
+      active: 'En cours',
+      grading_failed: 'Notation à relancer',
+      completed: 'Terminé',
+    },
+    verdict: { PASSED: 'Réussi', FAILED: 'Non validé' },
+  },
+  auth: {
+    loginTitle: 'Se connecter',
+    registerTitle: 'Créer un compte',
+    email: 'Adresse e-mail',
+    password: 'Mot de passe',
+    passwordHelp:
+      'Au moins 12 caractères. Une phrase de passe facile à retenir est idéale.',
+    displayName: 'Prénom ou pseudonyme',
+    loginSubmit: 'Se connecter',
+    registerSubmit: 'Créer mon compte',
+    noAccount: 'Pas encore de compte ?',
+    hasAccount: 'Déjà un compte ?',
+    consent:
+      'En créant un compte, tu acceptes que tes travaux et oraux soient traités pour t’évaluer, comme décrit dans la politique de confidentialité.',
+    errors: {
+      invalid_credentials: 'Adresse e-mail ou mot de passe incorrect.',
+      account_locked:
+        'Trop de tentatives échouées. Réessaie dans quelques minutes.',
+      email_taken: 'Un compte existe déjà avec cette adresse.',
+      invalid_input: 'Vérifie les champs du formulaire.',
+      password_short: 'Le mot de passe doit contenir au moins 12 caractères.',
+      generic: 'Une erreur est survenue. Réessaie dans un instant.',
+    },
+  },
+  account: {
+    title: 'Mon compte',
+    profile: 'Profil',
+    memberSince: (date: string) => `Membre depuis le ${date}`,
+    exportTitle: 'Exporter mes données',
+    exportText:
+      'Télécharge l’ensemble de tes données : profil, travaux soumis, transcriptions d’oraux et validations, au format JSON.',
+    exportButton: 'Télécharger mes données',
+    deleteTitle: 'Supprimer mon compte',
+    deleteText:
+      'La suppression est immédiate et définitive : travaux, oraux, validations et sessions sont effacés.',
+    deleteConfirm: 'Confirme avec ton mot de passe',
+    deleteButton: 'Supprimer définitivement mon compte',
+  },
+  errors: {
+    oral_in_progress:
+      'Un autre oral est déjà en cours : termine-le ou abandonne-le d’abord.',
+    quota_exceeded:
+      'Tu as atteint ton quota d’oraux pour la période. Reviens un peu plus tard.',
+    prerequisites_missing: 'Valide d’abord toutes les compétences prérequises.',
+    oral_exists:
+      'Cette tentative a déjà son oral. Soumets une nouvelle version pour retenter.',
+    examiner_unavailable:
+      'L’examinateur est momentanément indisponible. Réessaie dans un instant.',
+    skill_unavailable: 'Cette compétence n’est pas encore ouverte.',
+    oral_closed: 'Cet oral est terminé.',
+    answer_conflict: 'Cette question a déjà reçu une réponse.',
+    examiner_changed:
+      'L’examinateur a changé pendant l’oral. Contacte le support.',
+    session_expired: 'Ta session a expiré : reconnecte-toi.',
+    not_found: 'Élément introuvable.',
+    invalid_input: 'Le contenu envoyé est invalide.',
+    generic: 'Une erreur est survenue. Réessaie dans un instant.',
+  },
+  notFound: {
+    title: 'Page introuvable',
+    text: 'Cette page n’existe pas ou plus.',
+    back: 'Retour à l’accueil',
+  },
 };
+
+export type Messages = typeof fr;

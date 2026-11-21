@@ -1,49 +1,84 @@
-import { skillsResponseSchema } from '@kompri/shared';
-import type { SkillSummary } from '@kompri/shared';
-import { parseEnvironment, webEnvSchema } from '@kompri/shared/env';
+import type { ProgressResponse, TreeResponse } from '@kompri/shared';
+import { SkillTree } from '../components/skill-tree';
+import { Alert, ButtonLink } from '../components/ui';
+import { getProgress, getTree } from '../lib/data';
+import { getCurrentUser } from '../lib/session';
 import { fr } from '../messages/fr';
+
 export const dynamic = 'force-dynamic';
-export default async function Home() {
-  const env = parseEnvironment(webEnvSchema, process.env);
-  let skills: SkillSummary[] | null = null;
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const query = await searchParams;
+  let tree: TreeResponse | null = null;
+  let progress: ProgressResponse | null = null;
+  let signedIn = false;
   try {
-    const response = await fetch(`${env.API_URL}/skills`, {
-      cache: 'no-store',
-      signal: AbortSignal.timeout(5000),
-    });
-    if (response.ok) skills = skillsResponseSchema.parse(await response.json());
+    tree = await getTree();
+    signedIn = !!(await getCurrentUser());
+    progress = await getProgress();
   } catch {
-    /* A French fallback keeps the page readable during local startup. */
+    /* Rendered below as an unavailability message. */
   }
   return (
-    <main className="mx-auto max-w-3xl p-8">
-      <h1 className="text-3xl font-semibold">{fr.title}</h1>
-      <p className="mt-2 text-slate-600">{fr.description}</p>
-      <h2 className="mt-10 text-xl font-semibold">{fr.tree}</h2>
-      {skills ? (
-        <ul className="mt-4 space-y-4">
-          {skills.map((skill) => (
-            <li key={skill.id} className="rounded border border-slate-200 p-4">
-              <h3 className="font-semibold">{skill.title}</h3>
-              <p>{skill.description}</p>
-              <p className="mt-2 text-sm text-slate-600">
-                {fr.prerequisites}
-                {': '}
-                {skill.prerequisites.length
-                  ? skill.prerequisites
-                      .map((id) => skills.find((s) => s.id === id)?.title ?? id)
-                      .join(', ')
-                  : fr.none}
-              </p>
+    <>
+      {query.compte === 'supprime' && (
+        <div className="mb-8">
+          <Alert tone="success">
+            Ton compte et toutes tes données ont été supprimés.
+          </Alert>
+        </div>
+      )}
+      <section className="grid items-center gap-10 py-6 lg:grid-cols-[1.2fr_1fr]">
+        <div>
+          <p className="mb-3 inline-flex rounded-full bg-accent-soft px-3 py-1 text-sm font-semibold text-accent">
+            Développement web full-stack
+          </p>
+          <h1 className="text-4xl font-extrabold tracking-tight whitespace-pre-line sm:text-5xl">
+            {fr.home.heroTitle}
+          </h1>
+          <p className="mt-5 max-w-xl text-lg text-muted">{fr.home.heroText}</p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            {signedIn ? (
+              <ButtonLink href="/tableau-de-bord">
+                {fr.home.continue}
+              </ButtonLink>
+            ) : (
+              <ButtonLink href="/inscription">{fr.home.start}</ButtonLink>
+            )}
+            <ButtonLink href="#parcours" variant="secondary">
+              {fr.home.explore}
+            </ButtonLink>
+          </div>
+        </div>
+        <ol className="grid gap-3 sm:grid-cols-2">
+          {fr.home.steps.map((step, index) => (
+            <li
+              key={step.title}
+              className="rounded-xl border border-line bg-raised p-4 shadow-sm"
+            >
+              <p className="text-sm font-bold text-accent">Étape {index + 1}</p>
+              <h2 className="mt-1 font-bold">{step.title}</h2>
+              <p className="mt-1 text-sm text-muted">{step.text}</p>
             </li>
           ))}
-        </ul>
-      ) : (
-        <p role="alert" className="mt-4">
-          {fr.unavailable}
-        </p>
-      )}
-      <p className="mt-8 text-sm text-slate-500">{fr.demonstration}</p>
-    </main>
+        </ol>
+      </section>
+
+      <section id="parcours" className="mt-16 scroll-mt-24">
+        <h2 className="text-3xl font-extrabold tracking-tight">
+          {fr.home.treeTitle}
+        </h2>
+        <p className="mt-2 mb-10 max-w-3xl text-muted">{fr.home.treeText}</p>
+        {tree ? (
+          <SkillTree tree={tree} progress={progress} />
+        ) : (
+          <Alert>{fr.tree.unavailable}</Alert>
+        )}
+      </section>
+    </>
   );
 }
