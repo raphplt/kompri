@@ -50,6 +50,7 @@ model User {
   lockedUntil      DateTime?     @db.Timestamptz(3)
   createdAt        DateTime      @default(now()) @db.Timestamptz(3)
   authSessions     AuthSession[]
+  tutorUsage       TutorUsage[]
   attempts         Attempt[]
   sessions         OralSession[]
   validations      Validation[]
@@ -229,5 +230,15 @@ model OralUsage {
   session    OralSession @relation(fields: [sessionId, userId], references: [id, userId], onDelete: Cascade)
 
   @@unique([sessionId, userId])
+  @@index([userId, consumedAt])
+}
+
+/// One row per tutor answer, for quotas only: no message content is stored.
+model TutorUsage {
+  id         String   @id @default(uuid())
+  userId     String
+  consumedAt DateTime @default(now()) @db.Timestamptz(3)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId, consumedAt])
 }

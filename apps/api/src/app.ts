@@ -27,11 +27,14 @@ import {
   defaultSettings,
   EXAMINER,
   SETTINGS,
+  TUTOR,
 } from './context.ts';
 import type { Clock, Examiner, Settings } from './context.ts';
 import { ErrorFilter } from './errors.ts';
 import { LearningController, LearningService } from './learning.ts';
 import { ProgressController } from './progress.ts';
+import { TutorController, TutorService } from './tutor.ts';
+import type { LlmClient, MockResponder } from '@kompri/llm';
 
 @Controller()
 class HealthController implements OnApplicationShutdown {
@@ -101,14 +104,23 @@ function requestLog(
   next();
 }
 
-export function createExaminerFromEnvironment(
+/** Deterministic answers for local development without any model. */
+export const developmentResponder: MockResponder = (request) => {
+  if (request.operation !== 'tutor') return examinerMockResponder(request);
+  const question = request.messages.at(-1)?.content ?? '';
+  return `Je suis le tuteur de démonstration : aucun modèle n’est configuré, je ne peux donc pas répondre vraiment à « ${question.slice(0, 120)} ». Configure un fournisseur pour l’usage tutor (voir .env.example).`;
+};
+
+export function createLlmFromEnvironment(
   env: Record<string, string | undefined>,
-): Examiner {
+) {
+  const registry = createRegistry(env, undefined, developmentResponder);
   return {
-    provider: env.LLM_EXAMINER_PROVIDER ?? 'mock',
-    client: createRegistry(env, undefined, examinerMockResponder).forUsage(
-      'examiner',
-    ),
+    examiner: {
+      provider: registry.providerFor('examiner'),
+      client: registry.forUsage('examiner'),
+    } satisfies Examiner,
+    tutor: registry.forUsage('tutor'),
   };
 }
 
@@ -116,11 +128,16 @@ export async function createApi(
   options: {
     db?: PrismaClient;
     examiner?: Examiner;
+    tutor?: LlmClient;
     settings?: Partial<Settings>;
     clock?: Clock;
   } = {},
 ) {
   const db = options.db ?? createDatabase();
+  const llm =
+    options.examiner && options.tutor
+      ? null
+      : createLlmFromEnvironment(process.env);
   const app = await NestFactory.create<NestExpressApplication>(
     {
       module: AppModule,
@@ -130,6 +147,7 @@ export async function createApi(
         AuthController,
         LearningController,
         ProgressController,
+        TutorController,
       ],
       providers: [
         { provide: DATABASE, useValue: db },
@@ -139,13 +157,14 @@ export async function createApi(
         },
         {
           provide: EXAMINER,
-          useValue:
-            options.examiner ?? createExaminerFromEnvironment(process.env),
+          useValue: options.examiner ?? llm!.examiner,
         },
+        { provide: TUTOR, useValue: options.tutor ?? llm!.tutor },
         { provide: CLOCK, useValue: options.clock ?? (() => new Date()) },
         AuthService,
         AuthGuard,
         LearningService,
+        TutorService,
       ],
     },
     { logger: ['error', 'warn'], bodyParser: false },

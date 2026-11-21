@@ -5,6 +5,7 @@ export const DATABASE = Symbol('DATABASE');
 export const SETTINGS = Symbol('SETTINGS');
 export const EXAMINER = Symbol('EXAMINER');
 export const CLOCK = Symbol('CLOCK');
+export const TUTOR = Symbol('TUTOR');
 
 export type Settings = Pick<
   ApiEnv,
@@ -14,6 +15,8 @@ export type Settings = Pick<
   | 'ORAL_WINDOW_HOURS'
   | 'VALIDATION_DAYS'
   | 'SESSION_DAYS'
+  | 'TUTOR_LIMIT_PER_WINDOW'
+  | 'TUTOR_WINDOW_HOURS'
 >;
 export const defaultSettings: Settings = {
   ORAL_QUESTION_COUNT: 3,
@@ -22,6 +25,8 @@ export const defaultSettings: Settings = {
   ORAL_WINDOW_HOURS: 24,
   VALIDATION_DAYS: 180,
   SESSION_DAYS: 30,
+  TUTOR_LIMIT_PER_WINDOW: 60,
+  TUTOR_WINDOW_HOURS: 24,
 };
 
 export interface Examiner {

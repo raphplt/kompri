@@ -4,9 +4,11 @@ import { notFound } from 'next/navigation';
 import { cache } from 'react';
 import { lessonDetailSchema } from '@kompri/shared';
 import { Markdown } from '../../../../components/markdown';
+import { TutorPanel } from '../../../../components/tutor-panel';
 import { Breadcrumbs, ButtonLink } from '../../../../components/ui';
 import { api, ApiRequestError } from '../../../../lib/api';
 import { getSkill } from '../../../../lib/data';
+import { getCurrentUser } from '../../../../lib/session';
 import { fr } from '../../../../messages/fr';
 
 export const dynamic = 'force-dynamic';
@@ -39,9 +41,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LessonPage({ params }: Props) {
   const { skillId, lessonSlug } = await params;
-  const [lesson, skill] = await Promise.all([
+  const [lesson, skill, user] = await Promise.all([
     getLesson(skillId, lessonSlug),
     getSkill(skillId),
+    getCurrentUser().catch(() => null),
   ]);
   if (!lesson || !skill) notFound();
   return (
@@ -149,6 +152,11 @@ export default async function LessonPage({ params }: Props) {
           )}
         </nav>
       </article>
+      <TutorPanel
+        skillId={skill.id}
+        lessonSlug={lesson.slug}
+        signedIn={!!user}
+      />
     </div>
   );
 }

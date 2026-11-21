@@ -39,7 +39,7 @@ summary: Cibler précisément les éléments à mettre en forme.
 durationMinutes: 30
 sources:
   - title: MDN — Sélecteurs CSS
-    url: https://developer.mozilla.org/fr/docs/Web/CSS/CSS_selectors
+    url: https://developer.mozilla.org/fr/docs/Web/CSS/Guides/Selectors
 ---
 ```
 

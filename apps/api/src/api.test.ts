@@ -9,7 +9,8 @@ import {
   z,
 } from '@kompri/shared';
 import { createExaminerMock } from '@kompri/examiner/testing';
-import { createApi } from './app.ts';
+import { createApi, developmentResponder } from './app.ts';
+import { createClient, createMockAdapter } from '@kompri/llm';
 import { skillStates } from './progress.ts';
 
 const db = createDatabase();
@@ -40,7 +41,9 @@ async function call(
   const text = await response.text();
   return {
     status: response.status,
-    body: text ? (JSON.parse(text) as unknown) : null,
+    body: response.headers.get('content-type')?.includes('json')
+      ? (JSON.parse(text) as unknown)
+      : null,
     text,
   };
 }
@@ -73,7 +76,19 @@ beforeAll(async () => {
   app = await createApi({
     db: createDatabase(),
     examiner: { provider: 'mock', client: createExaminerMock() },
-    settings: { ORAL_LIMIT_PER_WINDOW: 2, ORAL_ANSWER_SECONDS: 60 },
+    tutor: createClient({
+      adapter: createMockAdapter(developmentResponder),
+      usage: 'tutor',
+      model: 'mock-v1',
+      inputRate: 0,
+      outputRate: 0,
+      log: () => {},
+    }),
+    settings: {
+      ORAL_LIMIT_PER_WINDOW: 2,
+      ORAL_ANSWER_SECONDS: 60,
+      TUTOR_LIMIT_PER_WINDOW: 2,
+    },
     clock: () => now,
   });
   await app.listen(0, '127.0.0.1');
@@ -390,6 +405,68 @@ describe('oral', () => {
     expect(
       (await call('/orals/not-a-uuid', { token: user.token })).status,
     ).toBe(400);
+  });
+});
+
+describe('tutor', () => {
+  it('streams answers within a quota, refuses during an oral and stores no content', async () => {
+    const user = await register();
+    const body = {
+      skillId: 'js-basics',
+      messages: [
+        { role: 'user', content: 'Pourquoi typeof null vaut object ?' },
+      ],
+    };
+    expect((await call('/tutor/messages', { body })).status).toBe(401);
+    const answer = await call('/tutor/messages', { token: user.token, body });
+    expect(answer.status).toBe(200);
+    expect(answer.text).toContain('tuteur de démonstration');
+    expect(
+      (
+        await call('/tutor/messages', {
+          token: user.token,
+          body: { ...body, messages: [{ role: 'assistant', content: 'x' }] },
+        })
+      ).status,
+    ).toBe(400);
+    const attempt = z.object({ id: z.string() }).parse(
+      (
+        await call('/attempts', {
+          token: user.token,
+          body: { challengeId, work: 'work' },
+        })
+      ).body,
+    );
+    const oral = oralViewSchema.parse(
+      (
+        await call(`/attempts/${attempt.id}/oral`, {
+          method: 'POST',
+          token: user.token,
+        })
+      ).body,
+    );
+    const refused = await call('/tutor/messages', { token: user.token, body });
+    expect(refused.status).toBe(403);
+    expect(refused.body).toMatchObject({ code: 'tutor_during_oral' });
+    expect(
+      (await call('/tutor/quota', { token: user.token })).body,
+    ).toMatchObject({ available: false, reason: 'oral_in_progress' });
+    await call(`/orals/${oral.id}/abandon`, {
+      method: 'POST',
+      token: user.token,
+    });
+    expect(
+      (await call('/tutor/messages', { token: user.token, body })).status,
+    ).toBe(200);
+    const exhausted = await call('/tutor/messages', {
+      token: user.token,
+      body,
+    });
+    expect(exhausted.status).toBe(429);
+    expect(exhausted.body).toMatchObject({ code: 'tutor_quota_exceeded' });
+    expect(await db.tutorUsage.count({ where: { userId: user.id } })).toBe(2);
+    const exported = await call('/me/export', { token: user.token });
+    expect(exported.text).not.toContain('typeof null');
   });
 });
 

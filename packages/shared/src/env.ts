@@ -29,6 +29,8 @@ export const apiEnvSchema = databaseEnvSchema.extend({
   ORAL_WINDOW_HOURS: positiveInteger(24, 24 * 31),
   VALIDATION_DAYS: positiveInteger(180, 3650),
   SESSION_DAYS: positiveInteger(30, 365),
+  TUTOR_LIMIT_PER_WINDOW: positiveInteger(60, 10_000),
+  TUTOR_WINDOW_HOURS: positiveInteger(24, 24 * 31),
 });
 export type ApiEnv = z.infer<typeof apiEnvSchema>;
 export const webEnvSchema = z.object({

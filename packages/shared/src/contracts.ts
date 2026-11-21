@@ -236,3 +236,35 @@ export const apiErrorSchema = z.object({
   message: z.string(),
 });
 export type ApiError = z.infer<typeof apiErrorSchema>;
+
+// Tutor: allowed while learning, refused during an oral.
+export const tutorRequestSchema = z
+  .object({
+    skillId: contentIdSchema,
+    lessonSlug: z
+      .string()
+      .regex(/^[a-z0-9][a-z0-9-]*$/)
+      .optional(),
+    messages: z
+      .array(
+        z.object({
+          role: z.enum(['user', 'assistant']),
+          content: z.string().trim().min(1).max(4_000),
+        }),
+      )
+      .min(1)
+      .max(20)
+      .refine((messages) => messages.at(-1)?.role === 'user', {
+        message: 'The last message must come from the learner',
+      }),
+  })
+  .strict();
+export type TutorRequest = z.infer<typeof tutorRequestSchema>;
+export const tutorQuotaSchema = z.object({
+  used: z.number().int(),
+  limit: z.number().int(),
+  windowHours: z.number().int(),
+  available: z.boolean(),
+  reason: z.enum(['oral_in_progress', 'quota_exceeded']).nullable(),
+});
+export type TutorQuota = z.infer<typeof tutorQuotaSchema>;

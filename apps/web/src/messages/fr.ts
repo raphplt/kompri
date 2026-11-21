@@ -260,6 +260,32 @@ export const fr = {
     invalid_input: 'Le contenu envoyé est invalide.',
     generic: 'Une erreur est survenue. Réessaie dans un instant.',
   },
+  tutor: {
+    open: 'Poser une question au tuteur IA',
+    title: 'Tuteur IA',
+    intro:
+      'Pose tes questions sur cette leçon. Le tuteur explique, donne des indices et des exemples. Il peut se tromper : vérifie ce qu’il dit.',
+    placeholder: 'Ta question…',
+    send: 'Envoyer',
+    close: 'Fermer le tuteur',
+    thinking: 'Le tuteur réfléchit…',
+    you: 'Toi',
+    tutor: 'Tuteur',
+    quota: (used: number, limit: number) =>
+      `${used} / ${limit} réponses utilisées aujourd’hui`,
+    loginRequired: 'Connecte-toi pour utiliser le tuteur.',
+    privacy:
+      'La conversation n’est pas enregistrée : elle disparaît quand tu quittes la page.',
+    errors: {
+      tutor_during_oral:
+        'Le tuteur est désactivé pendant un oral : l’IA est autorisée pour apprendre, pas pour prouver.',
+      tutor_quota_exceeded:
+        'Tu as utilisé toutes tes réponses du tuteur pour cette période.',
+      unauthenticated: 'Connecte-toi pour utiliser le tuteur.',
+      generic: 'Le tuteur est momentanément indisponible.',
+    },
+    reset: 'Nouvelle conversation',
+  },
   notFound: {
     title: 'Page introuvable',
     text: 'Cette page n’existe pas ou plus.',
