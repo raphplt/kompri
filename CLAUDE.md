@@ -2,10 +2,13 @@
 
 ## Périmètre
 
-Fondations de Kompri. Code, variables et commits en anglais ; documentation et interface
-en français. Textes UI dans `apps/web/src/messages`, composants serveur par défaut.
-Ne pas implémenter auth, paiement, vocal, gamification, espace écoles, mapping RNCP
-ou déploiement sans nouvelle demande. Les interfaces vocales sont seulement des réservations.
+Kompri vise un produit fini (voir `docs/roadmap.md`). Code, variables et commits en anglais ;
+documentation, cours et interface en français. Textes UI dans `apps/web/src/messages`,
+composants serveur par défaut. Authentification et préparation au déploiement sont dans le
+périmètre. Paiement, vocal, gamification, espace écoles et mapping RNCP restent exclus sans
+nouvelle demande ; les interfaces vocales sont seulement des réservations.
+Suivre `docs/roadmap.md` et consigner décisions et avancées dans `docs/journal.md`.
+Les cours suivent `docs/content-guide.md` : complets, exacts, sourcés sans excès.
 
 ## Travail et vérification
 
