@@ -1,0 +1,366 @@
+- id: rest-api-design-sans-ia
+  family: SANS_IA
+  title: L’API du club de randonnée
+  summary: Concevoir puis implémenter seul une petite API REST en mémoire, avec validation écrite à la
+    main, filtre et tri.
+  estimatedMinutes: 75
+  instructions: "Le club de randonnée de ta ville veut publier ses itinéraires. Travaille **sans IA**,\n\
+    avec Express 5 et des données en mémoire.\n\nUne randonnée a la forme suivante (l’identifiant est\
+    \ attribué par le serveur) :\n\n```json\n{ \"id\": 1, \"name\": \"Boucle des Trois Fontaines\", \"\
+    region\": \"Vosges\", \"distanceKm\": 12.5, \"difficulty\": \"moyenne\" }\n```\n\nDonnées de départ,\
+    \ à recopier :\n\n```js\nconst hikes = new Map();\nlet nextId = 1;\nfor (const data of [\n  { name:\
+    \ 'Boucle des Trois Fontaines', region: 'Vosges', distanceKm: 12.5, difficulty: 'moyenne' },\n  {\
+    \ name: 'Sentier du Moulin', region: 'Bretagne', distanceKm: 6, difficulty: 'facile' },\n  { name:\
+    \ 'Crête des Lacs', region: 'Pyrénées', distanceKm: 18, difficulty: 'difficile' },\n  { name: 'Chemin\
+    \ des Vignes', region: 'Bourgogne', distanceKm: 9, difficulty: 'facile' },\n]) {\n  hikes.set(nextId,\
+    \ { id: nextId, ...data });\n  nextId += 1;\n}\n```\n\nPartie 1 — conception (avant de coder). Rédige\
+    \ le tableau des points d’entrée de la\nressource : lister, lire, créer, modifier partiellement, supprimer.\
+    \ Pour chaque ligne :\nméthode, URL, statut de succès, erreurs possibles.\n\nPartie 2 — implémentation\
+    \ :\n\n1. Les cinq opérations de ton tableau, sous `/api/hikes`.\n2. Une fonction `validateHike(input,\
+    \ { partial })`, **écrite à la main** (pas de\n   bibliothèque), qui renvoie `{ value, errors }` :\n\
+    \   - `name` : texte non vide (espaces retirés), 100 caractères au plus ;\n   - `region` : texte non\
+    \ vide, 60 caractères au plus ;\n   - `distanceKm` : nombre strictement positif, 100 au plus (décimales\
+    \ permises) ;\n   - `difficulty` : `facile`, `moyenne` ou `difficile` ;\n   - tout autre champ est\
+    \ refusé.\n3. Les données invalides reçoivent une réponse qui liste **toutes** les erreurs. Choisis\n\
+    \   400 ou 422 et justifie ce choix.\n4. La création répond 201 avec l’en-tête `Location`.\n5. `GET\
+    \ /api/hikes` accepte `difficulty=facile|moyenne|difficile` (filtre) et\n   `sort=distanceKm` ou `sort=-distanceKm`\
+    \ (tri) ; toute autre valeur de ces deux\n   paramètres répond 400.\n6. Toutes les erreurs (404, 400,\
+    \ 422, JSON mal formé) ont le même format JSON.\n"
+  deliverable: 'Colle ton tableau de conception, le code complet (un ou plusieurs fichiers), puis la
+
+    sortie de ces commandes, serveur fraîchement démarré :
+
+
+    ```bash
+
+    curl -s ''http://localhost:3000/api/hikes?difficulty=facile&sort=-distanceKm''
+
+    curl -s -i --json ''{"name":"Tour du Plateau","region":"Jura","distanceKm":14,"difficulty":"moyenne"}''
+    http://localhost:3000/api/hikes
+
+    curl -s --json ''{"name":" ","distanceKm":"14","difficulty":"extrême","duration":3}'' http://localhost:3000/api/hikes
+
+    curl -s -X PATCH --json ''{"difficulty":"difficile"}'' http://localhost:3000/api/hikes/2
+
+    curl -s -i -X DELETE http://localhost:3000/api/hikes/2
+
+    curl -s -i http://localhost:3000/api/hikes/2
+
+    curl -s ''http://localhost:3000/api/hikes?sort=name''
+
+    ```
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: resource-design
+      description: Modélise la ressource, ses URL et l’association méthodes/opérations selon les conventions
+        REST.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: URL avec verbes, méthodes incohérentes ou GET qui modifie des données.
+      - score: 1
+        description: Tableau globalement correct mais statuts ou méthodes mal justifiés.
+      - score: 2
+        description: Tableau correct (méthodes, URL, statuts, erreurs) et justifié oralement.
+      - score: 3
+        description: Distingue norme et convention, et discute sûreté et idempotence de chaque méthode.
+    - id: crud-status
+      description: Implémente les opérations avec les bons statuts et l’en-tête Location.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Opérations manquantes ou statuts incorrects (200 partout).
+      - score: 1
+        description: Opérations présentes mais 201, 204 ou 404 mal utilisés.
+      - score: 2
+        description: 200, 201 avec Location, 204 et 404 justes et expliqués.
+      - score: 3
+        description: Explique aussi pourquoi l’identifiant n’est jamais réutilisé et pourquoi le corps
+          n’est pas enregistré tel quel.
+    - id: validation-errors
+      description: Valide les entrées à la main et renvoie des erreurs cohérentes et utiles.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Validation absente ou qui accepte des types incorrects.
+      - score: 1
+        description: Validation partielle, première erreur seulement, ou formats d’erreur différents.
+      - score: 2
+        description: Toutes les erreurs listées, liste blanche des champs, format unique, choix 400/422
+          justifié.
+      - score: 3
+        description: Gère aussi le mode partiel et les paramètres de requête invalides, et discute les
+          conversions.
+    - id: query-handling
+      description: Filtre et trie la collection de façon sûre à partir de la query string.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Filtre ou tri absent, ou valeurs non contrôlées.
+      - score: 1
+        description: Filtre et tri fonctionnels mais tri sur place ou valeurs non validées.
+      - score: 2
+        description: Liste blanche des valeurs, tri sur une copie, réponse 400 pour une valeur inconnue.
+- id: rest-api-design-avec-ia
+  family: AVEC_IA
+  title: Le catalogue de la ludothèque
+  summary: Construire avec une IA une API REST complète, validée, paginée, documentée et testée, puis
+    en défendre chaque choix.
+  estimatedMinutes: 180
+  instructions: "Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras justifier chaque choix\n\
+    de conception, prédire la réponse de l’API à des requêtes inédites et modifier toi-même\nun comportement.\n\
+    \nLa ludothèque de ton quartier veut une API pour son catalogue de jeux de société,\nstocké en mémoire\
+    \ (la base de données viendra plus tard). Un jeu :\n\n```json\n{ \"id\": 1, \"name\": \"La Forêt des\
+    \ Lucioles\", \"minPlayers\": 2, \"maxPlayers\": 5, \"durationMinutes\": 60, \"available\": true }\n\
+    ```\n\nExigences :\n\n1. CRUD complet sur `/api/games` : liste, lecture, création, remplacement (`PUT`),\n\
+    \   modification partielle (`PATCH`), suppression. Statuts justes, `Location` à la\n   création.\n\
+    2. Validation **écrite à la main** dans une fonction pure `validateGame(input, options)`\n   (pas\
+    \ de Zod ni d’autre bibliothèque : tu dois pouvoir expliquer chaque ligne) :\n   types exacts, bornes\
+    \ raisonnables que tu choisis et documentes, liste blanche des\n   champs, et la règle croisée `minPlayers\
+    \ ≤ maxPlayers` (y compris en `PATCH`, où un\n   seul des deux champs peut être envoyé).\n3. Le nom\
+    \ est unique sans tenir compte de la casse ni des espaces autour : 409 sinon.\n4. Erreurs au format\
+    \ Problem Details (RFC 9457), type `application/problem+json`,\n   avec un tableau d’erreurs par champ\
+    \ pour la validation.\n5. `GET /api/games` : pagination (`page`, `limit` avec défaut et plafond),\
+    \ filtres\n   `available` et `players` (les jeux jouables à ce nombre de joueurs), tri sur\n   `name`\
+    \ et `durationMinutes` dans les deux sens, ordre stable ; paramètres invalides\n   en 400. Réponse\
+    \ avec métadonnées de pagination.\n6. Structure : `src/app.js` (fonction `createApp`), `src/server.js`,\
+    \ un module de\n   stockage avec une fonction de réinitialisation, les validations dans\n   `src/validation/`.\n\
+    7. Documentation : un `openapi.json` (OpenAPI 3.1) qui décrit au moins `GET` et\n   `POST /api/games`\
+    \ et `GET /api/games/{id}`, et un court `README.md` avec les\n   conventions choisies.\n8. Tests reproductibles\
+    \ : un script `api-test.sh` (curl, code de sortie non nul en\n   cas d’échec) et un script `check-api.js`\
+    \ qui démarre l’application sur le port 0\n   avec des données connues et vérifie au moins huit comportements\
+    \ avec `fetch` et\n   `node:assert/strict`.\n"
+  deliverable: 'Colle le contenu de tes fichiers `src/`, `openapi.json`, `README.md`, `api-test.sh` et
+
+    `check-api.js`, puis la sortie de `node check-api.js` et de `./api-test.sh` sur un
+
+    serveur fraîchement démarré. Termine par une dizaine de lignes : ce que l’IA a
+
+    proposé, ce que tu as refusé ou corrigé, et tes choix de conventions (400 ou 422,
+
+    forme de la pagination, champs inconnus).
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: design-justification
+      description: Justifie les choix de conception (ressources, statuts, conventions d’erreur et de pagination).
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne sait pas justifier les statuts ou la forme des réponses de son API.
+      - score: 1
+        description: Justifications récitées ou incohérentes entre routes.
+      - score: 2
+        description: Justifie 201, 204, 400, 404, 409 et 422 et distingue norme et convention.
+      - score: 3
+        description: Discute les alternatives écartées (400 seul, en-têtes de pagination, champs inconnus
+          tolérés) et leurs conséquences.
+    - id: validation-quality
+      description: Explique et maîtrise sa fonction de validation, y compris la règle croisée et le mode
+        partiel.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne sait pas expliquer sa validation ou celle-ci laisse passer des types incorrects.
+      - score: 1
+        description: Validation correcte pour POST mais fausse en PATCH (règle croisée ou champs partiels).
+      - score: 2
+        description: Validation correcte dans tous les cas, erreurs complètes au format Problem Details.
+      - score: 3
+        description: Prédit sans hésiter la réponse à des corps inédits proposés à l’oral.
+    - id: collection-queries
+      description: Implémente et explique pagination, filtres et tri.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Pagination ou filtres absents ou faux.
+      - score: 1
+        description: Fonctionnels mais ordre des opérations, plafond ou stabilité non maîtrisés.
+      - score: 2
+        description: Filtre, tri stable et découpe dans le bon ordre, paramètres validés, métadonnées
+          justes.
+    - id: docs-tests
+      description: Documente l’API et la vérifie avec des tests reproductibles.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Documentation ou tests absents.
+      - score: 1
+        description: Présents mais incohérents avec le code ou non reproductibles.
+      - score: 2
+        description: OpenAPI et README cohérents avec le code, scripts reproductibles avec code de sortie.
+      - score: 3
+        description: Explique la dépendance à l’état de api-test.sh et ajoute un test pendant l’oral.
+- id: rest-api-design-contre-ia
+  family: CONTRE_IA
+  title: L’API de films trop vite générée
+  summary: Auditer une API CRUD générée par un assistant et corriger ses erreurs de conception REST, de
+    validation et de pagination.
+  estimatedMinutes: 75
+  instructions: "Un assistant a généré cette API pour le ciné-club. Elle démarre, et la plupart des\n\
+    requêtes renvoient une réponse. Ton rôle : l’auditer avant sa mise en service.\nRègles attendues :\n\
+    \n- `GET /api/movies` : pagination `page` (à partir de 1) et `limit` (10 par défaut,\n  50 au plus),\
+    \ filtre `genre`, tri `sort=title|year` ; réponse\n  `{ page, limit, total, data }` où `total` est\
+    \ le nombre de films correspondant au\n  filtre ;\n- `GET /api/movies/:id` : le film ou 404 ;\n- `POST\
+    \ /api/movies` : `title` (texte non vide) et `year` (entier), `genre` facultatif\n  (texte) ; un film\
+    \ est unique par titre (sans tenir compte de la casse) et année ;\n- `PUT /api/movies/:id` : remplacement\
+    \ complet ;\n- `DELETE /api/movies/:id` ;\n- statuts conformes aux conventions REST, erreurs dans\
+    \ un format JSON unique.\n\n```js\nimport express from 'express';\n\nconst app = express();\napp.use(express.json());\n\
+    \nlet movies = [\n  { id: 1, title: 'Le Fabuleux Destin d’Amélie Poulain', year: 2001, genre: 'comedie'\
+    \ },\n  { id: 2, title: 'La Haine', year: 1995, genre: 'drame' },\n  { id: 3, title: 'Intouchables',\
+    \ year: 2011, genre: 'comedie' },\n];\n\n// GET /api/movies?genre=comedie&sort=year&page=1&limit=10\n\
+    app.get('/api/movies', (req, res) => {\n  const page = parseInt(req.query.page) || 1;\n  const limit\
+    \ = parseInt(req.query.limit) || 10;\n  const { genre, sort } = req.query;\n\n  let results = movies;\n\
+    \  if (sort) {\n    results = results.sort((a, b) => (a[sort] > b[sort] ? 1 : -1));\n  }\n  results\
+    \ = results.slice(page * limit, page * limit + limit);\n  if (genre) {\n    results = results.filter((movie)\
+    \ => movie.genre === genre);\n  }\n  res.json({ page, limit, total: results.length, data: results\
+    \ });\n});\n\napp.get('/api/movies/:id', (req, res) => {\n  const movie = movies.find((m) => m.id\
+    \ === Number(req.params.id));\n  if (!movie) {\n    return res.status(404).send('Not found');\n  }\n\
+    \  res.json(movie);\n});\n\napp.post('/api/movies', (req, res) => {\n  const { title, year } = req.body;\n\
+    \  if (!title || !year || isNaN(year)) {\n    return res.status(400).json({ message: 'Titre et année\
+    \ obligatoires' });\n  }\n  const exists = movies.some((m) => m.title === title && m.year === year);\n\
+    \  if (exists) {\n    return res.status(400).json({ message: 'Ce film existe déjà' });\n  }\n  const\
+    \ movie = { id: movies.length + 1, ...req.body };\n  movies.push(movie);\n  res.json(movie);\n});\n\
+    \napp.put('/api/movies/:id', (req, res) => {\n  const movie = movies.find((m) => m.id === Number(req.params.id));\n\
+    \  if (!movie) {\n    return res.status(404).json({ error: 'Film introuvable' });\n  }\n  Object.assign(movie,\
+    \ req.body);\n  res.json(movie);\n});\n\napp.delete('/api/movies/:id', (req, res) => {\n  movies =\
+    \ movies.filter((m) => m.id !== Number(req.params.id));\n  res.json({ message: 'Film supprimé' });\n\
+    });\n\napp.listen(3000, () => console.log('API des films sur http://localhost:3000'));\n```\n\nTravail\
+    \ demandé :\n\n1. Teste l’API avec curl (pense à `?page=1`, au filtre, au tri, aux doublons, à\n \
+    \  l’enchaînement suppression puis création, aux champs inattendus).\n2. Liste chaque défaut : lignes\
+    \ concernées, requête qui le révèle, réponse observée,\n   réponse attendue, gravité.\n3. Propose\
+    \ une version corrigée. Tu peux la découper en fichiers.\n4. Pour trois défauts de ton choix, écris\
+    \ la vérification (curl ou `fetch`) qui\n   aurait empêché sa mise en service.\n"
+  deliverable: 'Colle ta liste de défauts, la version corrigée complète, puis les trois vérifications
+
+    et leur sortie sur la version corrigée.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: defects-found
+      description: Identifie les défauts réels, y compris ceux qui n’apparaissent qu’après une autre correction
+        ou une séquence de requêtes.
+      maxScore: 3
+    - id: rest-reasoning
+      description: Explique chaque défaut au regard des conventions REST et de la sémantique HTTP.
+      maxScore: 3
+    - id: fix-verification
+      description: Corrige de façon juste et vérifie les corrections par des requêtes reproductibles.
+      maxScore: 3
+- id: rest-api-design-apres-ia
+  family: APRES_IA
+  title: L’API de recettes à faire évoluer
+  summary: Corriger et faire évoluer une API REST existante sans casser ses clients, en modifiant le moins
+    de code possible.
+  estimatedMinutes: 90
+  instructions: "Cette API de recettes, produite avec une IA, est déjà utilisée par une application\n\
+    mobile. Tu dois la faire évoluer **en modifiant le moins de lignes possible**, et\n**sans casser le\
+    \ contrat** existant : en particulier, l’application mobile lit la\nréponse de `GET /api/recipes`\
+    \ comme un **tableau** JSON.\n\n`package.json` :\n\n```json\n{\n  \"name\": \"recettes-api\",\n  \"\
+    version\": \"1.0.0\",\n  \"type\": \"module\",\n  \"scripts\": {\n    \"start\": \"node src/server.js\"\
+    \n  },\n  \"dependencies\": {\n    \"express\": \"^5.3.0\"\n  }\n}\n```\n\n`src/server.js` :\n\n```js\n\
+    import { createApp } from './app.js';\n\nconst port = Number(process.env.PORT) || 3000;\n\ncreateApp().listen(port,\
+    \ (error) => {\n  if (error) {\n    console.error(error.message);\n    process.exitCode = 1;\n   \
+    \ return;\n  }\n  console.log(`API des recettes sur http://localhost:${port}/api/recipes`);\n});\n\
+    ```\n\n`src/app.js` :\n\n```js\nimport express from 'express';\nimport { recipesRouter } from './routes/recipes.js';\n\
+    \nexport function createApp() {\n  const app = express();\n  app.use(express.json());\n  app.use('/api/recipes',\
+    \ recipesRouter);\n\n  app.use((req, res) => {\n    res.status(404).json({ error: 'Route introuvable'\
+    \ });\n  });\n\n  app.use((err, req, res, next) => {\n    if (err.type === 'entity.parse.failed')\
+    \ {\n      res.status(400).json({ error: 'JSON invalide' });\n      return;\n    }\n    console.error(err);\n\
+    \    res.status(500).json({ error: 'Erreur interne' });\n  });\n\n  return app;\n}\n```\n\n`src/store/recipes-store.js`\
+    \ :\n\n```js\nconst recipes = new Map();\nlet nextId = 1;\n\nconst names = [\n  'Ratatouille', 'Quiche\
+    \ lorraine', 'Soupe de potiron', 'Gratin dauphinois',\n  'Taboulé', 'Crêpes', 'Pot-au-feu', 'Salade\
+    \ niçoise',\n  'Tarte aux pommes', 'Blanquette de veau', 'Lentilles aux carottes', 'Clafoutis',\n\
+    ];\nfor (const [index, name] of names.entries()) {\n  const id = nextId;\n  nextId += 1;\n  recipes.set(id,\
+    \ { id, name, servings: 4, minutes: 30 + index * 5, vegetarian: index % 2 === 0 });\n}\n\nexport function\
+    \ listRecipes() {\n  return [...recipes.values()];\n}\n\nexport function getRecipe(id) {\n  return\
+    \ recipes.get(id);\n}\n\nexport function saveRecipe(data, id = nextId) {\n  if (id === nextId) {\n\
+    \    nextId += 1;\n  }\n  const recipe = { id, ...data };\n  recipes.set(id, recipe);\n  return recipe;\n\
+    }\n\nexport function deleteRecipe(id) {\n  return recipes.delete(id);\n}\n```\n\n`src/validation/recipe.js`\
+    \ :\n\n```js\n// Renvoie un message d'erreur, ou null si la recette est valide.\nexport function checkRecipe(input)\
+    \ {\n  if (typeof input.name !== 'string' || input.name.trim() === '') {\n    return 'name est obligatoire';\n\
+    \  }\n  if (!Number.isInteger(input.servings) || input.servings < 1 || input.servings > 20) {\n  \
+    \  return 'servings doit être un entier entre 1 et 20';\n  }\n  if (!Number.isInteger(input.minutes)\
+    \ || input.minutes < 1 || input.minutes > 600) {\n    return 'minutes doit être un entier entre 1\
+    \ et 600';\n  }\n  if (typeof input.vegetarian !== 'boolean') {\n    return 'vegetarian doit être\
+    \ un booléen';\n  }\n  return null;\n}\n```\n\n`src/routes/recipes.js` :\n\n```js\nimport { Router\
+    \ } from 'express';\nimport { deleteRecipe, getRecipe, listRecipes, saveRecipe } from '../store/recipes-store.js';\n\
+    import { checkRecipe } from '../validation/recipe.js';\n\nexport const recipesRouter = Router();\n\
+    \nfunction pick(body) {\n  const { name, servings, minutes, vegetarian } = body;\n  return { name:\
+    \ name.trim(), servings, minutes, vegetarian };\n}\n\n// GET /api/recipes?page=1&limit=10&vegetarian=true\n\
+    recipesRouter.get('/', (req, res) => {\n  const page = Number(req.query.page ?? 1);\n  const limit\
+    \ = req.query.limit ?? 10;\n  let recipes = listRecipes();\n  if (req.query.vegetarian !== undefined)\
+    \ {\n    recipes = recipes.filter((recipe) => String(recipe.vegetarian) === req.query.vegetarian);\n\
+    \  }\n  const start = (page - 1) * limit;\n  res.json(recipes.slice(start, start + limit));\n});\n\
+    \nrecipesRouter.get('/:id', (req, res) => {\n  const recipe = getRecipe(Number(req.params.id));\n\
+    \  if (!recipe) {\n    res.status(404).json({ error: 'Recette introuvable' });\n    return;\n  }\n\
+    \  res.json(recipe);\n});\n\nrecipesRouter.post('/', (req, res) => {\n  const message = checkRecipe(req.body\
+    \ ?? {});\n  if (message) {\n    res.status(422).json({ error: message });\n    return;\n  }\n  const\
+    \ recipe = saveRecipe(pick(req.body));\n  res.status(201).location(`/api/recipes/${recipe.id}`).json(recipe);\n\
+    });\n\nrecipesRouter.put('/:id', (req, res) => {\n  const id = Number(req.params.id);\n  if (!getRecipe(id))\
+    \ {\n    res.status(404).json({ error: 'Recette introuvable' });\n    return;\n  }\n  const message\
+    \ = checkRecipe(req.body ?? {});\n  if (message) {\n    res.status(422).json({ error: message });\n\
+    \    return;\n  }\n  res.json(saveRecipe(pick(req.body), id));\n});\n\nrecipesRouter.delete('/:id',\
+    \ (req, res) => {\n  if (!deleteRecipe(Number(req.params.id))) {\n    res.status(404).json({ error:\
+    \ 'Recette introuvable' });\n    return;\n  }\n  res.sendStatus(204);\n});\n```\n\n`api-test.sh` (vérifications\
+    \ existantes, à lancer sur un serveur fraîchement démarré) :\n\n```bash\n#!/usr/bin/env bash\n# Vérifications\
+    \ de base, serveur fraîchement démarré. Usage : ./api-test.sh [url]\nBASE_URL=\"${1:-http://localhost:3000/api}\"\
+    \nfailures=0\n\ncheck() {\n  if [ \"$2\" = \"$3\" ]; then\n    echo \"OK    $1\"\n  else\n    echo\
+    \ \"ÉCHEC $1 : attendu $2, obtenu $3\"\n    failures=$((failures + 1))\n  fi\n}\n\ncode() {\n  curl\
+    \ -s -o /dev/null -w '%{http_code}' \"$@\"\n}\n\ncheck \"liste\" 200 \"$(code \"$BASE_URL/recipes\"\
+    )\"\ncheck \"recette existante\" 200 \"$(code \"$BASE_URL/recipes/1\")\"\ncheck \"recette absente\"\
+    \ 404 \"$(code \"$BASE_URL/recipes/999\")\"\ncheck \"création\" 201 \"$(code --json '{\"name\":\"\
+    Velouté\",\"servings\":2,\"minutes\":20,\"vegetarian\":true}' \"$BASE_URL/recipes\")\"\ncheck \"création\
+    \ invalide\" 422 \"$(code --json '{\"name\":\"\"}' \"$BASE_URL/recipes\")\"\ncheck \"suppression\"\
+    \ 204 \"$(code -X DELETE \"$BASE_URL/recipes/2\")\"\n\necho \"$failures échec(s)\"\n[ \"$failures\"\
+    \ -eq 0 ]\n```\n\nDemandes de l’équipe :\n\n1. **Bug** : `GET /api/recipes?limit=5&page=2` renvoie\
+    \ 7 recettes au lieu de 5.\n   Trouve la cause exacte et corrige-la.\n2. Les paramètres `page` et\
+    \ `limit` doivent être validés (`limit` entre 1 et 50) ; une\n   valeur invalide répond 400. Aujourd’hui,\
+    \ `?limit=abc` renvoie une liste vide.\n3. L’application mobile veut connaître le nombre total de\
+    \ recettes correspondant à la\n   requête, **sans que la forme du corps change**. Propose et implémente\
+    \ une solution.\n4. Les erreurs de validation doivent lister **tous** les champs invalides (la\n \
+    \  validation actuelle s’arrête au premier), sous la forme\n   `{ \"error\": \"Données invalides\"\
+    , \"details\": [{ \"field\": \"…\", \"message\": \"…\" }] }`.\n   Les autres erreurs gardent leur\
+    \ format `{ \"error\": \"…\" }`.\n5. Ajoute `PATCH /api/recipes/:id` (modification partielle).\n6.\
+    \ Deux recettes ne peuvent pas avoir le même nom (sans tenir compte de la casse ni des\n   espaces\
+    \ autour) : 409, pour `POST`, `PUT` et `PATCH`.\n7. Ajoute à `api-test.sh` au moins quatre vérifications\
+    \ couvrant tes changements.\n"
+  deliverable: 'Colle uniquement les fichiers modifiés, en entier, avec pour chacun la liste des lignes
+
+    modifiées et la raison. Ajoute la sortie de `./api-test.sh` sur un serveur fraîchement
+
+    démarré, et celle de :
+
+
+    ```bash
+
+    curl -s -i ''http://localhost:3000/api/recipes?limit=5&page=2''
+
+    curl -s ''http://localhost:3000/api/recipes?limit=500''
+
+    curl -s --json ''{"name":"","servings":0}'' http://localhost:3000/api/recipes
+
+    curl -s -X PATCH --json ''{"name":"crêpes "}'' http://localhost:3000/api/recipes/1
+
+    ```
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: bug-diagnosis
+      description: Explique la cause exacte du bug de pagination à partir des types de la query string.
+      maxScore: 3
+    - id: contract-preservation
+      description: Fait évoluer l’API sans casser le contrat des clients existants.
+      maxScore: 3
+    - id: evolution-quality
+      description: Implémente PATCH, l’unicité et la validation complète de façon ciblée et vérifiée.
+      maxScore: 3

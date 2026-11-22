@@ -1,0 +1,291 @@
+- id: sql-queries-sans-ia
+  family: SANS_IA
+  title: Le planning des ateliers
+  summary: Créer une table typée, puis répondre à dix questions avec SELECT, des agrégats, un UPDATE et
+    un DELETE maîtrisés.
+  estimatedMinutes: 60
+  instructions: "Une maison de quartier organise des ateliers payants. Tu travailles **sans aide** dans\
+    \ une\nbase PostgreSQL d’entraînement, avec `psql`.\n\n### 1. Créer la table\n\nÉcris l’instruction\
+    \ `CREATE TABLE workshops` correspondant à cette description :\n\n- `id` : identifiant entier généré\
+    \ automatiquement par PostgreSQL, clé primaire ;\n- `title` : titre de l’atelier, obligatoire ;\n\
+    - `category` : catégorie, obligatoire ;\n- `instructor` : nom de l’animateur ou de l’animatrice, **facultatif**\
+    \ (pas encore connu\n  pour certains ateliers) ;\n- `starts_on` : date de l’atelier (sans heure),\
+    \ obligatoire ;\n- `seats` : nombre de places, entier obligatoire ;\n- `registered` : nombre d’inscrits,\
+    \ entier obligatoire ;\n- `price` : prix par personne en euros, avec centimes, au plus 999,99 €, obligatoire.\n\
+    \nPuis exécute exactement cette insertion, qui doit réussir avec ta table :\n\n```sql\nINSERT INTO\
+    \ workshops (title, category, instructor, starts_on, seats, registered, price) VALUES\n  ('Pain au\
+    \ levain', 'cuisine', 'Lucie Bonnet', '2025-03-08', 8, 8, 45.00),\n  ('Initiation à la poterie', 'artisanat',\
+    \ 'Marc Dupuis', '2025-03-15', 6, 4, 60.00),\n  ('Cuisine végétale', 'cuisine', NULL, '2025-03-22',\
+    \ 10, 3, 40.00),\n  ('Réparer son vélo', 'bricolage', 'Yanis Cherif', '2025-03-29', 12, 12, 25.00),\n\
+    \  ('Aquarelle du dimanche', 'artisanat', 'Marc Dupuis', '2025-04-05', 8, 5, 35.00),\n  ('Desserts\
+    \ de saison', 'cuisine', 'Lucie Bonnet', '2025-04-12', 10, 9, 50.00),\n  ('Menuiserie facile', 'bricolage',\
+    \ NULL, '2025-04-19', 6, 0, 70.00),\n  ('Couture zéro déchet', 'artisanat', 'Awa Diallo', '2025-04-26',\
+    \ 8, 6, 30.00),\n  ('Pâtes fraîches maison', 'cuisine', 'Lucie Bonnet', '2025-05-03', 10, 10, 45.00),\n\
+    \  ('Électricité de base', 'bricolage', 'Yanis Cherif', '2025-05-10', 8, 2, 55.00);\n```\n\n### 2.\
+    \ Répondre aux questions\n\nÉcris une requête par question, **dans l’ordre**, et note le résultat\
+    \ affiché par `psql`.\n\n1. Les ateliers de cuisine à 45 € ou moins : titre, date et prix, du plus\
+    \ proche au plus\n   lointain.\n2. Les ateliers dont le titre se termine par « saison » ou par « maison\
+    \ », par ordre\n   alphabétique de titre.\n3. Les ateliers dont l’animateur n’est pas encore connu\
+    \ : titre et catégorie.\n4. Le planning est affiché par date, quatre ateliers par page. Écris la requête\
+    \ de la\n   **page 2** (identifiant, titre, date), avec un tri qui ne laisse aucune égalité.\n5. Les\
+    \ ateliers d’avril 2025 qui ont encore des places libres : titre et nombre de places\n   libres (colonne\
+    \ nommée `free_seats`), du plus grand nombre de places libres au plus petit.\n6. Pour chaque catégorie\
+    \ : nombre d’ateliers, total des inscrits et prix moyen arrondi au\n   centime.\n7. Les animateurs\
+    \ connus qui animent au moins deux ateliers, avec leur nombre d’ateliers.\n8. Le chiffre d’affaires\
+    \ total attendu (inscrits multipliés par le prix, pour tous les\n   ateliers).\n9. Awa Diallo animera\
+    \ « Cuisine végétale » : fais la modification en ne touchant qu’une\n   seule ligne, et affiche la\
+    \ ligne modifiée.\n10. L’atelier qui n’a aucun inscrit est supprimé : vérifie d’abord quelle ligne\
+    \ sera\n    supprimée, supprime-la en affichant ce qui a été supprimé, puis compte les ateliers\n\
+    \    restants.\n\nContraintes : pas d’aide extérieure, pas de `SELECT *` dans les réponses aux questions,\n\
+    `GENERATED ALWAYS AS IDENTITY` plutôt que `serial`.\n"
+  deliverable: 'Colle ton `CREATE TABLE`, puis pour chaque question la requête et la sortie exacte de
+    `psql`.
+
+    Termine par deux ou trois phrases expliquant comment tu t’es assuré que les questions 9 et 10
+
+    ne modifiaient pas plus de lignes que prévu.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: table-design
+      description: Choisit et justifie les types, la clé primaire et les colonnes obligatoires.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Table qui ne permet pas l’insertion, ou incapable d’expliquer ses choix.
+      - score: 1
+        description: Table fonctionnelle mais types discutables (flottant pour le prix) ou NOT NULL mal
+          placés.
+      - score: 2
+        description: Types adaptés, identité comme clé primaire, seule la colonne instructor facultative,
+          avec justification.
+      - score: 3
+        description: Justifie aussi les limites (numeric(5, 2) et 999,99), et explique la différence entre
+          identité et serial.
+    - id: reading-queries
+      description: Écrit et explique des lectures correctes avec WHERE, LIKE, IS NULL, ORDER BY et la
+        pagination.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Plusieurs résultats faux, ou utilise = NULL sans voir le problème.
+      - score: 1
+        description: Résultats en partie justes ; pagination ou motif LIKE erronés.
+      - score: 2
+        description: Questions 1 à 5 justes, explique OFFSET (page - 1) × taille et le tri total.
+      - score: 3
+        description: Explique aussi les pièges évités (alias dans WHERE, BETWEEN inclusif, ordre non garanti
+          sans tri).
+    - id: aggregation
+      description: Utilise correctement les agrégats, GROUP BY et HAVING, et raisonne sur NULL.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne sait pas regrouper ou confond WHERE et HAVING.
+      - score: 1
+        description: Regroupements corrects mais explication confuse de HAVING ou du groupe NULL.
+      - score: 2
+        description: Questions 6 à 8 justes, distingue filtre des lignes et filtre des groupes.
+      - score: 3
+        description: Prévoit l’effet du groupe NULL et la différence entre count(*) et count(colonne).
+    - id: safe-writes
+      description: Modifie et supprime des lignes de façon contrôlée et vérifiable.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: UPDATE ou DELETE qui touchent plusieurs lignes, ou sans vérification.
+      - score: 1
+        description: Écritures correctes mais sans vérification préalable ni lecture du compte.
+      - score: 2
+        description: SELECT préalable, filtre sur la clé primaire, RETURNING et compte vérifié.
+      - score: 3
+        description: Explique aussi le filet BEGIN/ROLLBACK et pourquoi un filtre sur le titre ou la catégorie
+          est risqué.
+- id: sql-queries-avec-ia
+  family: AVEC_IA
+  title: Le carnet de dépenses
+  summary: Concevoir avec une IA une table de dépenses et un script de rapports, puis en défendre chaque
+    type et chaque requête.
+  estimatedMinutes: 120
+  instructions: "Tu peux utiliser une IA autant que tu le souhaites. À l’oral, tu devras expliquer chaque\n\
+    ligne **sans aide**, prévoir le résultat d’une requête modifiée et en écrire une nouvelle.\n\nObjectif\
+    \ : un fichier `expenses.sql` rejouable qui crée et remplit une table de dépenses\npersonnelles, puis\
+    \ un fichier `reports.sql` qui produit des rapports.\n\nExigences pour `expenses.sql` :\n\n1. Il commence\
+    \ par `DROP TABLE IF EXISTS expenses;` et s’exécute sans erreur avec\n   `psql -f expenses.sql` autant\
+    \ de fois qu’on veut.\n2. La table `expenses` contient au moins : un identifiant généré\n   (`GENERATED\
+    \ ALWAYS AS IDENTITY`), un libellé obligatoire, une catégorie facultative, un\n   montant en euros\
+    \ exact, la date de la dépense, le moyen de paiement et un indicateur\n   « remboursable ».\n3. Au\
+    \ moins 15 lignes sur au moins deux mois différents et quatre catégories, dont au\n   moins deux dépenses\
+    \ sans catégorie. Les données sont inventées.\n\nExigences pour `reports.sql`, une requête commentée\
+    \ par rapport :\n\n1. Les 5 dépenses les plus élevées (libellé, date, montant), avec un départage\
+    \ explicite en\n   cas d’égalité.\n2. Les dépenses d’un mois donné (dates incluses), triées par date.\n\
+    3. Pour chaque catégorie : nombre de dépenses, total et moyenne arrondie au centime ; les\n   dépenses\
+    \ sans catégorie apparaissent sous le libellé « à classer ».\n4. Les catégories dont le total dépasse\
+    \ un seuil de ton choix.\n5. Une recherche de libellé insensible à la casse.\n6. La deuxième page\
+    \ de la liste complète des dépenses, 5 par page, de la plus récente à la\n   plus ancienne.\n7. Le\
+    \ total remboursable restant, qui doit afficher `0` et non une case vide si aucune\n   dépense ne\
+    \ correspond.\n\nAjoute enfin une modification et une suppression ciblées (corriger le montant d’une\n\
+    dépense, supprimer un doublon), écrites selon la méthode vue en cours.\n"
+  deliverable: 'Colle `expenses.sql`, `reports.sql` et la sortie de `psql` pour chaque rapport. Ajoute
+    un
+
+    court paragraphe : ce que l’IA t’a proposé que tu as modifié ou refusé, et pourquoi
+
+    (types, gestion de NULL, tri…).
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: code-ownership
+      description: Explique chaque partie de ses scripts sans aide et justifie les choix retenus face
+        à l’IA.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne sait pas expliquer des lignes importantes de ses propres scripts.
+      - score: 1
+        description: Explique le rôle général des requêtes mais pas le détail des clauses.
+      - score: 2
+        description: Explique précisément chaque clause et chaque type.
+      - score: 3
+        description: Explique aussi ce qu’il a corrigé ou refusé dans la proposition de l’IA et pourquoi.
+    - id: types-null
+      description: Justifie les types et raisonne correctement sur NULL dans les filtres et les agrégats.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Montant en flottant non justifié, ou ne sait pas ce que vaut un agrégat avec NULL.
+      - score: 1
+        description: Types corrects mais raisonnement sur NULL hésitant.
+      - score: 2
+        description: Justifie numeric, date et boolean, explique coalesce et le groupe NULL.
+      - score: 3
+        description: Anticipe les cas limites (sum sur zéro ligne, NOT IN avec NULL, count(colonne)).
+    - id: live-query
+      description: Écrit ou modifie une requête pendant l’oral et prévoit son résultat.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne parvient pas à écrire la requête demandée.
+      - score: 1
+        description: Requête partiellement correcte ou résultat non anticipé.
+      - score: 2
+        description: Requête correcte, résultat prévu avant exécution.
+      - score: 3
+        description: Requête correcte, vérifiée sur un cas limite qu’il propose lui-même.
+- id: sql-queries-contre-ia
+  family: CONTRE_IA
+  title: Le catalogue de l’épicerie
+  summary: Trouver et corriger les défauts silencieux d’un script SQL généré pour une épicerie en ligne.
+  estimatedMinutes: 60
+  instructions: "Un assistant a généré ce script pour le catalogue d’une épicerie en ligne. Il s’exécute\
+    \ sans\naucune erreur, et pourtant l’équipe se plaint de résultats étranges.\n\nRègles métier : les\
+    \ prix sont en euros avec centimes ; un produit peut ne pas avoir encore\nde catégorie ; la note client\
+    \ va de 1 à 5 et vaut `NULL` si aucun client n’a noté le\nproduit ; le catalogue s’affiche par ordre\
+    \ alphabétique de nom, 5 produits par page.\n\n```sql\nDROP TABLE IF EXISTS products;\nCREATE TABLE\
+    \ products (\n  id serial PRIMARY KEY,\n  name text NOT NULL,\n  category text,\n  price real NOT\
+    \ NULL,\n  stock integer NOT NULL,\n  organic boolean NOT NULL,\n  rating integer,\n  updated_at timestamp\
+    \ NOT NULL\n);\n\nINSERT INTO products (name, category, price, stock, organic, rating, updated_at)\
+    \ VALUES\n  ('Lentilles vertes 500 g', 'épicerie', 2.35, 40, true, 4, '2024-10-02 09:15'),\n  ('Café\
+    \ moulu 250 g', 'boissons', 4.90, 25, false, 5, '2024-10-05 11:00'),\n  ('Jus de pomme 1 L', 'boissons',\
+    \ 3.10, 0, true, NULL, '2024-10-12 16:40'),\n  ('Riz basmati 1 kg', 'épicerie', 3.45, 18, false, 3,\
+    \ '2024-10-20 08:05'),\n  ('Thé vert 100 g', 'boissons', 5.60, 12, false, 4, '2024-10-31 14:30'),\n\
+    \  ('Huile d''olive 75 cl', 'épicerie', 9.80, 9, false, 5, '2024-10-31 18:20'),\n  ('Chocolat noir\
+    \ 100 g', NULL, 2.20, 30, true, NULL, '2024-11-03 10:00'),\n  ('Pois chiches 400 g', 'épicerie', 1.75,\
+    \ 55, true, 2, '2024-11-04 09:00'),\n  ('Sirop de menthe 70 cl', 'boissons', 3.95, 7, false, NULL,\
+    \ '2024-11-06 15:45'),\n  ('Farine T65 1 kg', 'épicerie', 1.60, 0, false, 4, '2024-11-08 12:10'),\n\
+    \  ('Miel de fleurs 250 g', NULL, 6.90, 14, true, 5, '2024-11-09 17:30'),\n  ('Eau gazeuse 1 L', 'boissons',\
+    \ 0.95, 60, false, 3, '2024-11-12 08:45');\n\n-- 1. Produits bio de l'épicerie et des boissons\nSELECT\
+    \ name, category, price FROM products\nWHERE category = 'épicerie' OR category = 'boissons' AND organic\
+    \ = true;\n\n-- 2. Produits sans catégorie, à classer\nSELECT name FROM products WHERE category =\
+    \ NULL;\n\n-- 3. Deuxième page du catalogue, 5 produits par page\nSELECT name, price FROM products\
+    \ LIMIT 5 OFFSET 10;\n\n-- 4. Produits modifiés en octobre 2024\nSELECT name, updated_at FROM products\n\
+    WHERE updated_at BETWEEN '2024-10-01' AND '2024-10-31';\n\n-- 5. Note moyenne par catégorie\nSELECT\
+    \ category, sum(rating) / count(*) AS average_rating\nFROM products\nGROUP BY category;\n\n-- 6. Valeur\
+    \ du stock\nSELECT sum(price * stock) AS stock_value FROM products;\n\n-- 7. Promotion de 20 % sur\
+    \ les produits bio\nUPDATE products SET price = price * 0.8;\n```\n\nTravail demandé :\n\n1. Exécute\
+    \ le script dans une base d’entraînement et compare chaque résultat à ce que les\n   règles métier\
+    \ et les commentaires annoncent.\n2. Liste chaque défaut : numéro de requête ou ligne, symptôme observé,\
+    \ cause précise,\n   gravité.\n3. Fournis un script corrigé complet et sa sortie.\n4. Pour chaque\
+    \ défaut, indique une donnée ou une situation qui le révèle.\n"
+  deliverable: 'Colle ta liste de défauts (emplacement, symptôme, cause, gravité), puis le script corrigé
+
+    complet et la sortie de `psql` pour chaque requête corrigée.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: defects-found
+      description: Identifie les défauts réels, y compris ceux qui ne produisent aucune erreur.
+      maxScore: 3
+    - id: root-cause
+      description: Explique la cause technique de chaque défaut, pas seulement le symptôme.
+      maxScore: 3
+    - id: fix-quality
+      description: Propose des corrections justes, vérifiées sur les données fournies.
+      maxScore: 3
+- id: sql-queries-apres-ia
+  family: APRES_IA
+  title: Les rapports du club de randonnée
+  summary: Dépanner et faire évoluer des requêtes de rapport existantes, puis faire une modification sensible
+    sans accident.
+  estimatedMinutes: 60
+  instructions: "Un club de randonnée utilise depuis des mois une table `hikes` et trois requêtes de\n\
+    rapport. Tu dois corriger et faire évoluer ces requêtes **en les modifiant le moins\npossible**, puis\
+    \ effectuer une opération de maintenance.\n\nScript de la base (à exécuter dans une base d’entraînement)\
+    \ :\n\n```sql\nDROP TABLE IF EXISTS hikes;\nCREATE TABLE hikes (\n  id integer GENERATED ALWAYS AS\
+    \ IDENTITY PRIMARY KEY,\n  name text NOT NULL,\n  hike_date date NOT NULL,\n  leader text NOT NULL,\n\
+    \  difficulty text,       -- 'facile', 'moyenne', 'difficile' ou NULL si pas encore évaluée\n  distance_km\
+    \ numeric(4, 1) NOT NULL,\n  elevation_gain integer, -- dénivelé positif en mètres, NULL si inconnu\n\
+    \  status text NOT NULL    -- 'prévue', 'annulée' ou 'terminée'\n);\n\nINSERT INTO hikes (name, hike_date,\
+    \ leader, difficulty, distance_km, elevation_gain, status) VALUES\n  ('Crêtes du Vercors', '2026-09-12',\
+    \ 'Inès Morel', 'difficile', 18.5, 1100, 'terminée'),\n  ('Lac de Paladru', '2026-09-26', 'Hugo Lambert',\
+    \ 'facile', 9.0, 120, 'terminée'),\n  ('Gorges de la Bourne', '2026-10-10', 'Inès Morel', 'moyenne',\
+    \ 12.5, NULL, 'terminée'),\n  ('Dent de Crolles', '2026-10-24', 'Karim Saidi', 'difficile', 14.0,\
+    \ 950, 'terminée'),\n  ('Balcons de Belledonne', '2026-11-07', 'Hugo Lambert', 'moyenne', 13.0, 650,\
+    \ 'terminée'),\n  ('Forêt de Chambaran', '2027-01-16', 'Karim Saidi', 'facile', 8.5, 90, 'prévue'),\n\
+    \  ('Plateau des Petites Roches', '2027-01-30', 'Inès Morel', NULL, 11.0, NULL, 'prévue'),\n  ('Chartreuse\
+    \ en raquettes', '2027-02-06', 'Inès Morel', 'moyenne', 10.0, 500, 'prévue'),\n  ('Bastille par les\
+    \ forts', '2027-02-13', 'Hugo Lambert', 'facile', 7.5, 300, 'prévue'),\n  ('Col de Porte', '2027-02-20',\
+    \ 'Inès Morel', 'difficile', 15.5, NULL, 'prévue'),\n  ('Vallée du Grésivaudan', '2027-02-27', 'Karim\
+    \ Saidi', NULL, 16.0, 200, 'prévue'),\n  ('Mont Rachais', '2027-03-06', 'Inès Morel', 'moyenne', 9.5,\
+    \ 700, 'prévue'),\n  ('Cascade de l''Oursière', '2027-03-13', 'Hugo Lambert', 'facile', 6.0, 250,\
+    \ 'prévue');\n```\n\nRapports existants (`reports.sql`) :\n\n```sql\n-- R1. Randonnées prévues accessibles\
+    \ (liste publiée sur le site)\nSELECT name, hike_date, difficulty, distance_km\nFROM hikes\nWHERE\
+    \ status = 'prévue' AND difficulty <> 'difficile'\nORDER BY hike_date;\n\n-- R2. Dénivelé moyen par\
+    \ difficulté (rapport mensuel)\nSELECT difficulty, round(avg(coalesce(elevation_gain, 0))) AS avg_elevation\n\
+    FROM hikes\nGROUP BY difficulty\nORDER BY difficulty;\n\n-- R3. Kilomètres encadrés par accompagnateur\n\
+    SELECT leader, sum(distance_km) AS total_km\nFROM hikes\nWHERE status = 'terminée'\nGROUP BY leader\n\
+    ORDER BY total_km DESC;\n```\n\nDemandes de l’équipe, à traiter dans l’ordre :\n\n1. **Bug R1** :\
+    \ les randonnées dont la difficulté n’est pas encore évaluée n’apparaissent\n   pas sur le site. Elles\
+    \ doivent apparaître, avec la mention « à évaluer » à la place de la\n   difficulté. Corrige et explique\
+    \ la cause.\n2. **Bug R2** : les accompagnateurs trouvent les dénivelés moyens « beaucoup trop bas\
+    \ ».\n   Trouve la cause, corrige, et ajoute une colonne indiquant sur combien de randonnées la\n\
+    \   moyenne est calculée.\n3. **Évolution R1** : la liste doit être paginée par 4. Donne les requêtes\
+    \ des pages 1 et 2.\n4. **Évolution R3** : ne garder que les accompagnateurs ayant encadré au moins\
+    \ deux\n   randonnées terminées, et afficher aussi ce nombre.\n5. **Maintenance** : Inès Morel est\
+    \ indisponible tout le mois de février 2027. Ses\n   randonnées **prévues** de février doivent passer\
+    \ au statut `annulée`. Effectue\n   l’opération de façon sûre et montre précisément ce qui a été modifié.\n"
+  deliverable: 'Pour chaque demande : la requête modifiée ou ajoutée, la sortie de `psql`, et une ou deux
+
+    phrases sur ce que tu as changé et pourquoi. Pour la demande 5, colle toute la séquence
+
+    d’instructions exécutée et chaque sortie.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: bug-diagnosis
+      description: Explique la cause des deux bugs à partir du comportement de NULL et les corrige proprement.
+      maxScore: 3
+    - id: evolutions
+      description: Fait évoluer les requêtes (pagination, HAVING) de façon ciblée et correcte.
+      maxScore: 3
+    - id: safe-maintenance
+      description: Mène la modification de données de façon sûre et vérifiable.
+      maxScore: 3

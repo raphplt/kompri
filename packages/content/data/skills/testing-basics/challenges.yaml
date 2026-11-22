@@ -1,0 +1,320 @@
+- id: testing-basics-sans-ia
+  family: SANS_IA
+  title: Le tarif du cinéma
+  summary: Écrire, à partir d’une règle métier, une suite de tests qui trouve les erreurs d’une fonction
+    de tarification.
+  estimatedMinutes: 55
+  instructions: "Un cinéma de quartier calcule le prix des places avec la fonction ci-dessous, livrée\n\
+    sans tests. Tu travailles seul, sans IA. Ton rôle : écrire une suite de tests à partir\nde la **règle**,\
+    \ découvrir si la fonction la respecte, puis la corriger.\n\nRègle tarifaire (prix en centimes) :\n\
+    \n- moins de 4 ans : gratuit (0) ;\n- de 4 à 11 ans : 600 ;\n- de 12 à 25 ans inclus : 800 ;\n- de\
+    \ 26 à 64 ans : 1200, ou 800 sur présentation d’une carte étudiant ;\n- 65 ans et plus : 900 (la carte\
+    \ étudiant ne change rien à ce tarif) ;\n- l’âge doit être un entier de 0 à 120 ; sinon, la fonction\
+    \ lève une `RangeError`.\n\n`src/ticket-price.js` :\n\n```js\n// ticket-price.js — prix d'une place\
+    \ de cinéma, en centimes\nexport function ticketPrice(age, isStudent = false) {\n  if (!Number.isInteger(age)\
+    \ || age < 0 || age > 120) {\n    throw new RangeError(`Âge invalide : ${age}`);\n  }\n  if (age <\
+    \ 4) {\n    return 0;\n  }\n  if (age < 12) {\n    return 600;\n  }\n  if (age < 25 || isStudent)\
+    \ {\n    return 800;\n  }\n  if (age > 65) {\n    return 900;\n  }\n  return 1200;\n}\n```\n\nLe `package.json`\
+    \ du projet contient `\"type\": \"module\"` et le script\n`\"test\": \"node --test\"`.\n\nTravail\
+    \ demandé :\n\n1. Avant d’écrire du code, liste les classes d’équivalence et les valeurs limites que\n\
+    \   tu vas tester, en partant de la règle.\n2. Écris `test/ticket-price.test.js` avec `node:test`\
+    \ et `node:assert/strict` : cas\n   nominaux, valeurs limites, combinaisons avec la carte étudiant\
+    \ et entrées invalides.\n   Utilise des tests en tableau pour éviter les répétitions ; chaque nom\
+    \ de test doit\n   dire ce qu’il vérifie.\n3. Lance la suite **sur la fonction telle quelle** et copie\
+    \ le résumé.\n4. Corrige la fonction en modifiant le moins de lignes possible, relance toute la\n\
+    \   suite et copie le résumé.\n"
+  deliverable: 'Colle ta liste de classes et de limites, ton fichier de test complet, la sortie de
+
+    `npm test` avant correction (au moins la liste des tests et le résumé), la fonction
+
+    corrigée et la sortie après correction. Ajoute deux ou trois phrases : quels tests ont
+
+    révélé des erreurs, et pourquoi des tests sur les seuls cas nominaux ne les auraient pas
+
+    vues.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: test-cases
+      description: Choisit les cas à partir de la règle (nominal, limites, erreurs, combinaisons) et sait
+        les justifier.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne teste que quelques cas nominaux.
+      - score: 1
+        description: Teste quelques limites sans méthode, ou reprend les seuils du code.
+      - score: 2
+        description: Couvre chaque frontière de part et d’autre et les entrées invalides, en expliquant
+          la méthode.
+      - score: 3
+        description: Pense aussi aux combinaisons (senior avec carte) et explique pourquoi elles sont
+          nécessaires.
+    - id: node-test-usage
+      description: Utilise correctement node:test, assert/strict et les tests en tableau.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Tests qui ne s’exécutent pas, ou sans assertion.
+      - score: 1
+        description: Tests fonctionnels mais répétitifs, noms vagues ou assert non strict.
+      - score: 2
+        description: Tests en tableau lisibles, assertions adaptées, throws avec fonction et type d’erreur.
+      - score: 3
+        description: Explique le rapport de node --test et sait isoler un test avec un motif de nom.
+    - id: bug-fixing
+      description: Corrige les défauts révélés de façon minimale et vérifie l’absence de régression.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Ne corrige pas, ou modifie les tests pour qu’ils passent.
+      - score: 1
+        description: Corrige une partie des défauts, ou sans relancer toute la suite.
+      - score: 2
+        description: Corrige les trois défauts avec des changements ciblés et montre la suite complète
+          au vert.
+    - id: explanation
+      description: Explique à l’oral pourquoi les tests nominaux ne suffisaient pas.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Ne sait pas expliquer ce qui distingue ses tests utiles.
+      - score: 1
+        description: Cite les limites sans relier chaque défaut au test qui l’a révélé.
+      - score: 2
+        description: Relie chaque défaut à son test et à sa cause (opérateur de comparaison, ordre des
+          conditions).
+- id: testing-basics-avec-ia
+  family: AVEC_IA
+  title: Les tests de l’API des tâches
+  summary: Écrire avec une IA les tests unitaires et d’intégration d’une petite API HTTP, et défendre
+    chaque test.
+  estimatedMinutes: 100
+  instructions: "Une petite API de gestion de tâches, écrite avec le module `node:http`, n’a aucun test.\n\
+    Tu peux utiliser une IA autant que tu veux pour les écrire ; à l’oral, tu devras\nexpliquer chaque\
+    \ test, dire ce qu’il protège et en écrire un nouveau en direct.\n\nSpécification de l’API :\n\n-\
+    \ `GET /tasks` renvoie 200 et la liste des tâches ;\n- `GET /tasks/:id` renvoie 200 et la tâche, ou\
+    \ 404 si elle n’existe pas ;\n- `POST /tasks` avec un corps JSON `{ \"title\": \"…\" }` crée une tâche\n\
+    \  `{ id, title, done: false }` et renvoie 201. Le titre est obligatoire, les espaces\n  autour sont\
+    \ retirés, il compte de 1 à 100 caractères après retrait des espaces ; sinon\n  400 avec `{ \"error\"\
+    : \"…\" }`. Un corps qui n’est pas du JSON valide renvoie aussi 400 ;\n- toute autre route renvoie\
+    \ 404.\n\n`package.json` :\n\n```json\n{\n  \"name\": \"taches-api\",\n  \"private\": true,\n  \"\
+    type\": \"module\",\n  \"scripts\": {\n    \"start\": \"node src/server.js\"\n  }\n}\n```\n\n`src/validate-task.js`\
+    \ :\n\n```js\n// validate-task.js — renvoie un message d'erreur, ou null si la tâche est valide\n\
+    export function validateTask(body) {\n  if (typeof body !== 'object' || body === null) {\n    return\
+    \ 'Le corps doit être un objet JSON';\n  }\n  if (typeof body.title !== 'string' || body.title.length\
+    \ === 0) {\n    return 'Le titre est obligatoire';\n  }\n  if (body.title.length > 100) {\n    return\
+    \ 'Le titre ne doit pas dépasser 100 caractères';\n  }\n  return null;\n}\n```\n\n`src/app.js` :\n\
+    \n```js\n// app.js — API de gestion de tâches, en mémoire\nimport http from 'node:http';\nimport {\
+    \ validateTask } from './validate-task.js';\n\nfunction sendJson(response, status, data) {\n  response.writeHead(status,\
+    \ { 'Content-Type': 'application/json; charset=utf-8' });\n  response.end(JSON.stringify(data));\n\
+    }\n\nasync function readBody(request) {\n  let body = '';\n  for await (const chunk of request) {\n\
+    \    body += chunk;\n  }\n  return body;\n}\n\nexport function createApp({ tasks = [] } = {}) {\n\
+    \  let nextId = tasks.length + 1;\n\n  return http.createServer(async (request, response) => {\n \
+    \   try {\n      const url = new URL(request.url, 'http://localhost');\n\n      if (request.method\
+    \ === 'GET' && url.pathname === '/tasks') {\n        sendJson(response, 200, tasks);\n        return;\n\
+    \      }\n\n      if (request.method === 'POST' && url.pathname === '/tasks') {\n        const body\
+    \ = JSON.parse(await readBody(request));\n        const error = validateTask(body);\n        if (error)\
+    \ {\n          sendJson(response, 400, { error });\n          return;\n        }\n        const task\
+    \ = { id: nextId, title: body.title.trim(), done: false };\n        nextId += 1;\n        tasks.push(task);\n\
+    \        sendJson(response, 201, task);\n        return;\n      }\n\n      const match = /^\\/tasks\\\
+    /(\\d+)$/.exec(url.pathname);\n      if (request.method === 'GET' && match) {\n        const task\
+    \ = tasks.find((item) => item.id === Number(match[1]));\n        if (task) {\n          sendJson(response,\
+    \ 200, task);\n        } else {\n          sendJson(response, 404, { error: 'Tâche introuvable' });\n\
+    \        }\n        return;\n      }\n\n      sendJson(response, 404, { error: 'Ressource introuvable'\
+    \ });\n    } catch {\n      sendJson(response, 500, { error: 'Erreur interne' });\n    }\n  });\n\
+    }\n```\n\n`src/server.js` :\n\n```js\n// server.js — démarre l'API\nimport { createApp } from './app.js';\n\
+    \nconst port = Number(process.env.PORT ?? 3000);\ncreateApp().listen(port, () => {\n  console.log(`API\
+    \ des tâches sur http://localhost:${port}`);\n});\n```\n\nTravail demandé :\n\n1. Des tests **unitaires**\
+    \ de `validateTask`.\n2. Des tests **d’intégration** de chaque route, sur un vrai serveur démarré\
+    \ par les\n   tests, qui vérifient statut, en-tête `Content-Type` et corps. Les tests doivent être\n\
+    \   indépendants les uns des autres et pouvoir s’exécuter dans n’importe quel ordre.\n3. Des scripts\
+    \ npm `test`, `test:watch` et `test:coverage`.\n4. Si tes tests révèlent des écarts entre le code\
+    \ et la spécification, garde les tests\n   qui le prouvent, puis corrige le code.\n"
+  deliverable: 'Colle tes fichiers de test, le `package.json` modifié, la sortie de `npm test` avant et
+
+    après tes corrections éventuelles, les corrections apportées au code, et le rapport de
+
+    couverture final. Termine par quelques lignes : ce que l’IA a bien fait, ce que tu as dû
+
+    corriger dans ses tests, et comment tu t’es assuré que chaque test peut échouer.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: test-ownership
+      description: Explique chaque test, ce qu’il protège et comment il a été vu en échec.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne sait pas expliquer des tests importants de sa propre suite.
+      - score: 1
+        description: Explique ce que font les tests mais pas ce qu’ils protègent.
+      - score: 2
+        description: Relie chaque test à une règle de la spécification et sait montrer qu’il peut échouer.
+      - score: 3
+        description: Explique aussi les tests proposés par l’IA qu’il a écartés ou corrigés, avec la raison.
+    - id: http-integration
+      description: Teste les routes sur un vrai serveur de façon fiable et isolée.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Port fixe, serveur non fermé ou tests dépendants de l’ordre.
+      - score: 1
+        description: Tests qui fonctionnent mais isolation ou attente de l’écoute non maîtrisées.
+      - score: 2
+        description: Port 0, attente de listening, fermeture, données neuves par test, statut et corps
+          vérifiés.
+      - score: 3
+        description: Explique le piège du tableau partagé et distingue clairement tests unitaires et d’intégration.
+    - id: spec-gaps
+      description: Trouve les écarts avec la spécification grâce aux tests et les corrige.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Aucun écart trouvé, ou tests qui valident le comportement fautif.
+      - score: 1
+        description: Trouve un écart sur deux.
+      - score: 2
+        description: Trouve les deux écarts (espaces seuls, JSON invalide), les prouve par un test et
+          les corrige.
+    - id: live-test
+      description: Écrit un nouveau test correct pendant l’oral.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Ne parvient pas à écrire le test demandé.
+      - score: 1
+        description: Test écrit mais incomplet (statut seul, await oublié).
+      - score: 2
+        description: Test correct, isolé, qui vérifie statut et corps, et qu’il sait faire échouer.
+- id: testing-basics-contre-ia
+  family: CONTRE_IA
+  title: La suite de tests trop verte
+  summary: Démontrer qu’une suite de tests générée, entièrement verte, ne protège rien, puis la réécrire
+    pour révéler les vrais bugs.
+  estimatedMinutes: 60
+  instructions: "Une petite boutique gère son stock avec le module ci-dessous. Un assistant a généré la\n\
+    suite de tests : sept tests, tous verts. L’équipe pense donc que le module est fiable.\nTon travail\
+    \ : évaluer cette suite, puis la remplacer par une suite qui protège vraiment.\n\n`package.json` :\
+    \ `\"type\": \"module\"` et `\"test\": \"node --test\"`.\n\n`src/inventory.js` :\n\n```js\n// inventory.js\
+    \ — gestion du stock d'une petite boutique\nimport { readFile } from 'node:fs/promises';\n\nexport\
+    \ function parseStockLine(line) {\n  const [sku, quantity] = line.split(';');\n  return { sku: sku.trim(),\
+    \ quantity: quantity.trim() };\n}\n\nexport function addStock(inventory, sku, quantity) {\n  if (quantity\
+    \ <= 0) {\n    throw new RangeError('Quantité invalide');\n  }\n  inventory[sku] = (inventory[sku]\
+    \ ?? 0) + quantity;\n  return inventory;\n}\n\nexport function removeStock(inventory, sku, quantity)\
+    \ {\n  const current = inventory[sku] ?? 0;\n  if (quantity > current) {\n    throw new Error(`Stock\
+    \ insuffisant pour ${sku}`);\n  }\n  return { ...inventory, [sku]: current - quantity };\n}\n\nexport\
+    \ function stockValue(inventory, prices) {\n  return Object.entries(inventory).reduce((sum, [sku,\
+    \ quantity]) => sum + quantity * prices[sku], 0);\n}\n\nexport async function loadInventory(file)\
+    \ {\n  try {\n    return JSON.parse(await readFile(file, 'utf8'));\n  } catch {\n    return {};\n\
+    \  }\n}\n```\n\n`test/inventory.test.js`, généré :\n\n```js\nimport { describe, it } from 'node:test';\n\
+    import assert from 'node:assert';\nimport {\n  addStock,\n  loadInventory,\n  parseStockLine,\n  removeStock,\n\
+    \  stockValue,\n} from '../src/inventory.js';\n\ndescribe('inventory', () => {\n  const inventory\
+    \ = { A1: 5 };\n\n  it('lit une ligne du fichier fournisseur', () => {\n    const line = parseStockLine('A1\
+    \ ; 12');\n    assert.equal(line.sku, 'A1');\n    assert.equal(line.quantity, 12);\n  });\n\n  it('ajoute\
+    \ du stock', () => {\n    const result = addStock(inventory, 'A1', 3);\n    assert.equal(result.A1,\
+    \ 8);\n  });\n\n  it('retire du stock', () => {\n    const result = removeStock(inventory, 'A1', 2);\n\
+    \    assert.equal(result.A1, 6);\n  });\n\n  it('refuse une quantité négative', () => {\n    try {\n\
+    \      addStock(inventory, 'A1', -1);\n    } catch (error) {\n      assert.equal(error.message, 'Quantité\
+    \ invalide');\n    }\n  });\n\n  it('refuse de retirer plus que le stock disponible', () => {\n  \
+    \  try {\n      removeStock(inventory, 'A1', 100);\n    } catch (error) {\n      assert.ok(error);\n\
+    \    }\n  });\n\n  it('calcule la valeur du stock', () => {\n    const value = stockValue({ A1: 3,\
+    \ B2: 1 }, { A1: 1.1, B2: 2.2 });\n    assert.equal(value, 3 * 1.1 + 1 * 2.2);\n  });\n\n  it('charge\
+    \ un inventaire depuis un fichier', async () => {\n    const data = await loadInventory('inventaire-test.json');\n\
+    \    assert.ok(data);\n  });\n});\n```\n\nRègles métier : une quantité est un entier strictement positif\
+    \ ; un ajout ou un retrait\nne modifie jamais l’inventaire reçu (il renvoie un nouvel inventaire)\
+    \ ; on ne peut pas\nretirer plus que le stock ; un produit sans prix connu est une erreur ; un fichier\n\
+    d’inventaire absent signifie « inventaire vide », mais un fichier illisible ou corrompu\nest une erreur.\n\
+    \nTravail demandé :\n\n1. Pour chaque test généré, dis s’il protège réellement quelque chose ; sinon,\
+    \ explique\n   précisément pourquoi il passerait même si le code était faux.\n2. Écris une nouvelle\
+    \ suite, sans modifier le module, et montre quels tests échouent.\n3. Corrige le module pour que ta\
+    \ suite passe, puis relance tout.\n"
+  deliverable: 'Colle ton analyse test par test, ta nouvelle suite de tests, la sortie de `npm test`
+
+    sur le module d’origine, le module corrigé, et la sortie finale.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: test-critique
+      description: Explique précisément pourquoi chaque test généré ne protège pas, ou peu.
+      maxScore: 3
+    - id: new-suite
+      description: Écrit une suite qui exprime les règles et révèle les défauts du module.
+      maxScore: 3
+    - id: fixes
+      description: Corrige le module sans affaiblir les tests et vérifie toute la suite.
+      maxScore: 2
+- id: testing-basics-apres-ia
+  family: APRES_IA
+  title: La fidélité qui casse le premier janvier
+  summary: Stabiliser une suite de tests qui dépend de la date du jour, corriger un bug de 29 février
+    et ajouter une règle, sans régression.
+  estimatedMinutes: 70
+  instructions: "La librairie calcule les points de fidélité de ses clients. Le module et ses tests\n\
+    existent ; tu dois les faire évoluer **sans les réécrire** : toute la suite actuelle doit\ncontinuer\
+    \ à passer, sauf un test dont tu justifierais la modification.\n\n`package.json` : `\"type\": \"module\"\
+    `, `\"private\": true`, `\"test\": \"node --test\"`.\n\n`src/loyalty.js` :\n\n```js\n// loyalty.js\
+    \ — points de fidélité de la librairie\nexport const POINTS_PER_EURO = 1;\n\nexport function isBirthday(birthDate,\
+    \ now) {\n  const [, month, day] = birthDate.split('-').map(Number);\n  return now.getMonth() + 1\
+    \ === month && now.getDate() === day;\n}\n\nexport function purchasePoints(amountCents, customer,\
+    \ now = new Date()) {\n  if (!Number.isInteger(amountCents) || amountCents < 0) {\n    throw new RangeError(`Montant\
+    \ invalide : ${amountCents}`);\n  }\n  let points = Math.floor(amountCents / 100) * POINTS_PER_EURO;\n\
+    \  if (isBirthday(customer.birthDate, now)) {\n    points *= 2;\n  }\n  return points;\n}\n\nexport\
+    \ function rewardFor(points) {\n  if (points >= 500) {\n    return 'bon de 15 €';\n  }\n  if (points\
+    \ >= 200) {\n    return 'bon de 5 €';\n  }\n  return null;\n}\n```\n\n`test/loyalty.test.js` :\n\n\
+    ```js\nimport { describe, it } from 'node:test';\nimport assert from 'node:assert/strict';\nimport\
+    \ { isBirthday, purchasePoints, rewardFor } from '../src/loyalty.js';\n\nfunction todayAsBirthDate()\
+    \ {\n  const today = new Date();\n  const month = String(today.getMonth() + 1).padStart(2, '0');\n\
+    \  const day = String(today.getDate()).padStart(2, '0');\n  return `1990-${month}-${day}`;\n}\n\n\
+    describe('purchasePoints', () => {\n  it('donne un point par euro entier', () => {\n    assert.equal(purchasePoints(4250,\
+    \ { birthDate: '1990-01-01' }), 42);\n  });\n\n  it('double les points le jour de l’anniversaire',\
+    \ () => {\n    assert.equal(purchasePoints(4250, { birthDate: todayAsBirthDate() }), 84);\n  });\n\
+    \n  it('ne donne aucun point sous 1 €', () => {\n    assert.equal(purchasePoints(99, { birthDate:\
+    \ '1990-06-15' }), 0);\n  });\n\n  it('refuse un montant négatif', () => {\n    assert.throws(() =>\
+    \ purchasePoints(-100, { birthDate: '1990-06-15' }), RangeError);\n  });\n});\n\ndescribe('isBirthday',\
+    \ () => {\n  it('reconnaît le jour et le mois', () => {\n    assert.equal(isBirthday('1985-03-14',\
+    \ new Date(2026, 2, 14)), true);\n  });\n\n  it('ignore l’année', () => {\n    assert.equal(isBirthday('1985-03-14',\
+    \ new Date(2031, 2, 14)), true);\n  });\n});\n\ndescribe('rewardFor', () => {\n  const cases = [\n\
+    \    { points: 0, expected: null },\n    { points: 199, expected: null },\n    { points: 200, expected:\
+    \ 'bon de 5 €' },\n    { points: 499, expected: 'bon de 5 €' },\n    { points: 500, expected: 'bon\
+    \ de 15 €' },\n  ];\n  for (const { points, expected } of cases) {\n    it(`${points} points -> ${expected}`,\
+    \ () => {\n      assert.equal(rewardFor(points), expected);\n    });\n  }\n});\n```\n\nDemandes de\
+    \ l’équipe :\n\n1. **Test instable.** « L’intégration continue a échoué le 1er janvier, puis est\n\
+    \   repassée le 2 sans aucun changement de code. » Trouve le test en cause, explique le\n   mécanisme\
+    \ et rends la suite indépendante de la date du jour. Interdit : `skip`,\n   supprimer le test.\n2.\
+    \ **Bug.** « Une cliente née le 29 février 2000 n’a jamais son bonus les années non\n   bissextiles.\
+    \ » Règle décidée : les années non bissextiles, son anniversaire est le\n   28 février. Écris d’abord\
+    \ le test qui reproduit le bug, vois-le échouer, puis corrige.\n3. **Nouvelle règle.** Un achat d’au\
+    \ moins 100 € donne 50 points de bonus. Ce bonus\n   s’ajoute **après** le doublement d’anniversaire\
+    \ (il n’est pas doublé). Écris les\n   tests d’abord, en couvrant les limites et la combinaison avec\
+    \ l’anniversaire.\n4. Lance la suite complète et la couverture de code.\n"
+  deliverable: 'Colle le fichier de test et le module modifiés, la liste de tes changements avec la
+
+    raison de chacun, la sortie d’exécution montrant le test du 29 février en échec avant
+
+    correction, puis la sortie finale de `npm test` et de
+
+    `node --test --experimental-test-coverage`.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: flaky-diagnosis
+      description: Explique pourquoi le test échoue seulement le 1er janvier et le rend reproductible.
+      maxScore: 3
+    - id: regression-method
+      description: Applique la méthode test d’abord pour le bug du 29 février.
+      maxScore: 3
+    - id: new-rule
+      description: Ajoute la nouvelle règle par les tests, limites et combinaison comprises.
+      maxScore: 2
+    - id: minimal-change
+      description: Fait évoluer le module et les tests de façon ciblée, sans régression.
+      maxScore: 2

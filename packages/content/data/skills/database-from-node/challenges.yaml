@@ -1,0 +1,356 @@
+- id: database-from-node-sans-ia
+  family: SANS_IA
+  title: Les missions de bénévolat
+  summary: Brancher une petite API Express sur PostgreSQL avec un pool, des requêtes paramétrées, une
+    transaction et des erreurs de contraintes traduites.
+  estimatedMinutes: 60
+  instructions: "Une association met en relation des bénévoles et des missions. Tu travailles **sans aide**,\n\
+    avec Node.js 24, Express 5, le client `pg` et une base PostgreSQL d’entraînement.\n\nCrée une base,\
+    \ exécute ce schéma avec `psql -f`, et place l’URL de connexion dans un fichier\n`.env` (variable\
+    \ `DATABASE_URL`) ignoré par Git :\n\n```sql\nDROP TABLE IF EXISTS assignments, volunteers, missions;\n\
+    \nCREATE TABLE missions (\n  id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n  title text NOT\
+    \ NULL,\n  city text NOT NULL,\n  happens_on date NOT NULL,\n  max_volunteers integer NOT NULL CHECK\
+    \ (max_volunteers > 0)\n);\n\nCREATE TABLE volunteers (\n  id integer GENERATED ALWAYS AS IDENTITY\
+    \ PRIMARY KEY,\n  name text NOT NULL,\n  email text NOT NULL UNIQUE\n);\n\nCREATE TABLE assignments\
+    \ (\n  mission_id integer NOT NULL REFERENCES missions (id) ON DELETE CASCADE,\n  volunteer_id integer\
+    \ NOT NULL REFERENCES volunteers (id) ON DELETE CASCADE,\n  PRIMARY KEY (mission_id, volunteer_id)\n\
+    );\n\nINSERT INTO missions (title, city, happens_on, max_volunteers) VALUES\n  ('Collecte alimentaire',\
+    \ 'Lyon', '2025-04-05', 3),\n  ('Nettoyage des berges', 'Lyon', '2025-04-12', 2),\n  ('Aide aux devoirs',\
+    \ 'Villeurbanne', '2025-04-09', 4),\n  ('Atelier vélo', 'Lyon', '2025-04-19', 2);\n\nINSERT INTO volunteers\
+    \ (name, email) VALUES\n  ('Amina Sow', 'amina@example.com'),\n  ('Léo Fontaine', 'leo@example.com'),\n\
+    \  ('Sarah Klein', 'sarah@example.com'),\n  ('Victor Hugues', 'victor@example.com');\n\nINSERT INTO\
+    \ assignments (mission_id, volunteer_id) VALUES\n  (1, 1), (2, 1), (2, 2), (3, 3);\n```\n\nTravail\
+    \ demandé, dans un projet en modules ES :\n\n1. `src/db.js` : un pool unique configuré par `DATABASE_URL`\
+    \ (erreur claire au démarrage si\n   la variable manque), un écouteur `error` sur le pool, et les\
+    \ dates renvoyées au format\n   `AAAA-MM-JJ`.\n2. Un module d’accès aux données avec deux fonctions\
+    \ :\n   - `findMissions({ city })` : les missions (toutes, ou d’une ville), triées par date puis\n\
+    \     identifiant, avec pour chacune `id`, `title`, `city`, `happensOn` et `remainingPlaces`\n   \
+    \  (places restantes, en nombre JavaScript) ;\n   - `assignVolunteer(missionId, volunteerId)` : inscrit\
+    \ un bénévole à une mission, dans une\n     transaction, en refusant l’inscription si la mission est\
+    \ complète. Deux inscriptions\n     simultanées ne doivent jamais dépasser la capacité.\n3. `src/app.js`\
+    \ avec Express 5 :\n   - `GET /missions` et `GET /missions?city=Lyon` ;\n   - `POST /missions/:id/assignments`\
+    \ avec un corps `{ \"volunteerId\": 2 }`, qui répond `201`\n     en cas de succès, `400` si un identifiant\
+    \ est invalide, `404` si la mission ou le\n     bénévole n’existe pas, `409` si la mission est complète\
+    \ ou si le bénévole y est déjà\n     inscrit ;\n   - un gestionnaire d’erreurs centralisé qui ne renvoie\
+    \ jamais de détail technique.\n4. Teste avec `curl` : la liste de Lyon, une recherche par ville contenant\
+    \ une apostrophe\n   (`?city=Lyon%27%20OR%201%3D1%20--`), une inscription réussie, la même inscription\
+    \ une\n   seconde fois, une inscription à la mission 2, une mission inexistante, un bénévole\n   inexistant.\n"
+  deliverable: 'Colle `src/db.js`, ton module d’accès aux données, `src/app.js`, puis chaque commande
+    `curl`
+
+    avec sa réponse et son code de statut. Ajoute trois ou quatre phrases : pourquoi ta recherche
+
+    par ville est protégée de l’injection, et comment ta transaction empêche de dépasser la
+
+    capacité d’une mission.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: connection
+      description: Configure et explique le pool, DATABASE_URL et la conversion des types.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: URL de connexion dans le code ou pool recréé à chaque requête.
+      - score: 1
+        description: Pool correct mais configuration ou conversions mal expliquées.
+      - score: 2
+        description: Pool unique, DATABASE_URL vérifiée, explique pourquoi count arrive en chaîne et le
+          réglage des dates.
+      - score: 3
+        description: Explique aussi le rôle de l’écouteur error et la fermeture du pool.
+    - id: injection
+      description: Utilise exclusivement des requêtes paramétrées et explique l’injection SQL.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Valeur extérieure collée dans le SQL.
+      - score: 1
+        description: Requêtes paramétrées sans pouvoir expliquer pourquoi elles protègent.
+      - score: 2
+        description: Explique la séparation du texte SQL et des valeurs, avec l’exemple de l’apostrophe.
+      - score: 3
+        description: Explique aussi les limites (identifiants, liste blanche) et pourquoi la validation
+          ne suffit pas.
+    - id: transaction
+      description: Écrit une transaction correcte et résistante aux accès concurrents.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Pas de transaction, ou pool.query pour BEGIN/COMMIT.
+      - score: 1
+        description: Transaction sur un client mais release ou ROLLBACK manquant sur un chemin.
+      - score: 2
+        description: Schéma complet (try/catch/finally) et verrou FOR UPDATE justifié.
+      - score: 3
+        description: Explique précisément le scénario de concurrence évité et ce qui se passerait sans
+          verrou.
+    - id: errors
+      description: Traduit les erreurs de contraintes en réponses HTTP adaptées sans fuite d’information.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Tout finit en 500, ou le message PostgreSQL est renvoyé au client.
+      - score: 1
+        description: Codes HTTP partiellement corrects.
+      - score: 2
+        description: 400, 404 et 409 corrects, détection par error.code.
+      - score: 3
+        description: Justifie chaque statut et distingue erreur métier, contrainte et erreur inattendue.
+- id: database-from-node-avec-ia
+  family: AVEC_IA
+  title: Le journal de lecture partagé
+  summary: Construire avec une IA une API Express et PostgreSQL complète, avec migrations, couche d’accès
+    aux données et transactions, puis la défendre ligne par ligne.
+  estimatedMinutes: 180
+  instructions: "Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras expliquer chaque fichier\n\
+    **sans aide**, ajouter une fonctionnalité en direct et réagir à un bug introduit par\nl’examinateur.\n\
+    \nObjectif : une API qui permet à un club de lecture de suivre les lectures de ses membres.\n\n> Des\
+    \ lecteurs (nom, e-mail unique) lisent des livres (titre, auteur, nombre de pages). Un\n> lecteur\
+    \ ouvre une lecture d’un livre, note sa progression (page atteinte, jamais au-delà du\n> nombre de\
+    \ pages ni en arrière) et la termine. Un lecteur ne peut avoir qu’une seule lecture\n> en cours d’un\
+    \ même livre. Quand une lecture est terminée, il peut laisser un avis (note de\n> 1 à 5, commentaire\
+    \ facultatif), une seule fois par lecture.\n\nExigences techniques :\n\n1. Node.js 24 en modules ES,\
+    \ Express 5, client `pg`, configuration par `DATABASE_URL`\n   chargée avec `--env-file`, aucun secret\
+    \ dans le code ni dans Git.\n2. Un dossier `migrations/` d’au moins trois fichiers numérotés et un\
+    \ script\n   `scripts/migrate.js` qui les applique une fois chacun, dans une transaction, avec une\n\
+    \   table de suivi. Au moins une migration doit **faire évoluer** une table créée par une\n   migration\
+    \ précédente.\n3. Une couche d’accès aux données (repositories) : aucune requête SQL dans les routes,\
+    \ toutes\n   les valeurs en paramètres, conversion des lignes en objets `camelCase`.\n4. Au moins\
+    \ une opération dans une transaction avec un client du pool (par exemple « mettre\n   à jour la progression\
+    \ et terminer la lecture si la dernière page est atteinte »), avec un\n   verrou là où une vérification\
+    \ précède une écriture.\n5. Un gestionnaire d’erreurs centralisé qui traduit au moins `23505`, `23503`\
+    \ et `23514` en\n   réponses `400`, `404` ou `409` adaptées, sans divulguer de détail technique.\n\
+    6. Une route de liste avec tri choisi par le client (`?sort=title` ou `?sort=pages`), protégé\n  \
+    \ par une liste blanche, et pagination.\n"
+  deliverable: 'Colle l’arborescence du projet, le contenu des migrations, de `scripts/migrate.js`, de
+
+    `src/db.js`, des repositories et de `src/app.js`, puis une session de test avec `curl`
+
+    (au moins huit requêtes, dont des cas d’erreur) avec les réponses obtenues. Termine par une
+
+    liste de ce que l’IA a proposé que tu as corrigé ou refusé, et pourquoi.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: code-ownership
+      description: Explique chaque fichier et chaque choix sans aide, y compris ce qui a été corrigé chez
+        l’IA.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne sait pas expliquer des parties importantes de son code.
+      - score: 1
+        description: Explique l’architecture générale mais pas le détail des requêtes et transactions.
+      - score: 2
+        description: Explique précisément chaque couche, chaque requête et chaque transaction.
+      - score: 3
+        description: Explique aussi les alternatives écartées et les corrections apportées aux propositions
+          de l’IA.
+    - id: data-safety
+      description: Garantit sécurité et intégrité des données (paramètres, contraintes, transactions,
+        verrous).
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Injection possible ou transactions incorrectes.
+      - score: 1
+        description: Requêtes sûres mais transactions ou contraintes incomplètes.
+      - score: 2
+        description: Paramètres partout, liste blanche, transactions correctes, contraintes justifiées.
+      - score: 3
+        description: Identifie les règles impossibles en contrainte et explique leur protection contre
+          la concurrence.
+    - id: migrations
+      description: Fait évoluer le schéma par migrations versionnées et en explique les règles.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Schéma créé à la main ou script qui recrée les tables.
+      - score: 1
+        description: Migrations présentes mais script fragile (pas de transaction, pas de suivi).
+      - score: 2
+        description: Script correct, migrations ordonnées dont une évolution, règles expliquées.
+      - score: 3
+        description: Ajoute une migration en direct et explique les précautions sur des données existantes.
+    - id: live-change
+      description: Diagnostique et corrige en direct un bug ou une modification demandée.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne parvient pas à diagnostiquer ni à modifier.
+      - score: 1
+        description: Corrige par tâtonnement sans expliquer la cause.
+      - score: 2
+        description: Trouve la cause et corrige proprement.
+      - score: 3
+        description: Corrige, vérifie avec curl et explique comment éviter la régression.
+- id: database-from-node-contre-ia
+  family: CONTRE_IA
+  title: L’API de prêt générée en un clic
+  summary: Auditer un serveur Express et PostgreSQL généré par une IA et corriger ses failles d’injection,
+    de transaction, de configuration et de gestion d’erreurs.
+  estimatedMinutes: 75
+  instructions: "Un assistant a généré ce serveur pour la médiathèque, en un seul fichier. Il « marche\
+    \ » :\nchaque route répond quand on la teste une fois à la main. Avant de le mettre en ligne, l’équipe\n\
+    te demande un audit.\n\nIl utilise la base `mediatheque` de la compétence précédente (schéma et données\
+    \ de\n`mediatheque.sql`). Pour l’exécuter, adapte la chaîne de connexion à ta machine, installe\n\
+    `express@5` et `pg` dans un projet en modules ES, puis lance `node server.js`.\n\n```js\nimport express\
+    \ from 'express';\nimport pg from 'pg';\n\nconst pool = new pg.Pool({\n  connectionString: 'postgresql://postgres:devpassword@localhost:5432/mediatheque',\n\
+    });\n\nconst app = express();\napp.use(express.json());\n\n// Recherche de livres par titre, avec\
+    \ tri optionnel\napp.get('/books', async (req, res) => {\n  const search = req.query.search ?? '';\n\
+    \  const sort = req.query.sort ?? 'title';\n  const { rows } = await pool.query(\n    `SELECT id,\
+    \ title, price FROM books WHERE title ILIKE '%${search}%' ORDER BY ${sort}`,\n  );\n  res.json(rows);\n\
+    });\n\n// Fiche d'un adhérent avec ses emprunts en cours\napp.get('/members/:id', async (req, res)\
+    \ => {\n  const { rows } = await pool.query('SELECT id, name, email FROM members WHERE id = $1', [req.params.id]);\n\
+    \  const loans = await pool.query(\n    'SELECT book_id, loaned_on, due_on FROM loans WHERE member_id\
+    \ = $1 AND returned_on IS NULL',\n    [req.params.id],\n  );\n  res.json({ ...rows[0], loans: loans.rows\
+    \ });\n});\n\n// Enregistrer un emprunt (3 emprunts en cours au maximum)\napp.post('/loans', async\
+    \ (req, res) => {\n  const { bookId, memberId, loanedOn, dueOn } = req.body;\n  try {\n    await pool.query('BEGIN');\n\
+    \    const ongoing = await pool.query(\n      'SELECT count(*) AS n FROM loans WHERE member_id = $1\
+    \ AND returned_on IS NULL',\n      [memberId],\n    );\n    if (ongoing.rows[0].n >= 3) {\n      return\
+    \ res.status(409).json({ error: 'Trop d’emprunts en cours' });\n    }\n    const result = await pool.query(\n\
+    \      'INSERT INTO loans (book_id, member_id, loaned_on, due_on) VALUES ($1, $2, $3, $4) RETURNING\
+    \ *',\n      [bookId, memberId, loanedOn, dueOn],\n    );\n    await pool.query('COMMIT');\n    res.status(201).json(result.rows[0]);\n\
+    \  } catch (error) {\n    await pool.query('ROLLBACK');\n    res.status(500).json({ error: error.message,\
+    \ detail: error.detail });\n  }\n});\n\n// Inscription d'un adhérent\napp.post('/members', async (req,\
+    \ res) => {\n  const { name, email } = req.body;\n  try {\n    const { rows } = await pool.query(\n\
+    \      'INSERT INTO members (name, email) VALUES ($1, $2) RETURNING *',\n      [name, email],\n  \
+    \  );\n    res.status(201).json(rows[0]);\n  } catch (error) {\n    res.status(500).json({ error:\
+    \ error.message, detail: error.detail });\n  }\n});\n\napp.listen(3000, () => console.log('API démarrée\
+    \ sur le port 3000'));\n```\n\nTravail demandé :\n\n1. Liste chaque défaut : emplacement, scénario\
+    \ qui le révèle (requête `curl` ou séquence de\n   requêtes), conséquence, gravité. Pense aussi aux\
+    \ défauts qui n’apparaissent qu’avec\n   plusieurs requêtes successives ou simultanées.\n2. Démontre\
+    \ au moins deux défauts avec des requêtes réelles et leurs réponses.\n3. Propose une version corrigée,\
+    \ découpée en fichiers (`db.js`, repositories, `app.js`), et\n   montre que tes scénarios ne reproduisent\
+    \ plus les défauts.\n"
+  deliverable: 'Colle ta liste de défauts (emplacement, scénario, conséquence, gravité), tes démonstrations
+
+    avec les réponses obtenues, puis ton code corrigé et les mêmes scénarios rejoués.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: defects-found
+      description: Identifie les défauts réels, y compris ceux qui n’apparaissent qu’avec plusieurs requêtes.
+      maxScore: 3
+    - id: demonstration
+      description: Démontre les défauts par des scénarios reproductibles et en explique la cause.
+      maxScore: 3
+    - id: fix-quality
+      description: Propose une correction structurée et vérifiée.
+      maxScore: 3
+- id: database-from-node-apres-ia
+  family: APRES_IA
+  title: L’API qui finit par ne plus répondre
+  summary: Dépanner une API Express et PostgreSQL existante, puis lui ajouter une fonctionnalité avec
+    une migration, sans tout réécrire.
+  estimatedMinutes: 90
+  instructions: "L’API de la médiathèque a été écrite il y a quelques mois avec l’aide d’une IA. Elle\
+    \ tourne,\nmais les utilisateurs signalent trois problèmes, et l’équipe veut une nouvelle\nfonctionnalité.\
+    \ Tu dois intervenir **en modifiant le moins possible** : pas de réécriture\ncomplète, pas de nouvelle\
+    \ dépendance.\n\nLe projet :\n\n`package.json`\n\n```json\n{\n  \"name\": \"library-api\",\n  \"version\"\
+    : \"1.0.0\",\n  \"type\": \"module\",\n  \"scripts\": {\n    \"start\": \"node --env-file=.env src/server.js\"\
+    ,\n    \"db:migrate\": \"node --env-file=.env scripts/migrate.js\"\n  },\n  \"dependencies\": {\n\
+    \    \"express\": \"^5.1.0\",\n    \"pg\": \"^8.16.0\"\n  }\n}\n```\n\n`src/db.js`\n\n```js\nimport\
+    \ pg from 'pg';\n\nif (!process.env.DATABASE_URL) {\n  throw new Error('DATABASE_URL manquante');\n\
+    }\n\nexport const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL, max: 5 });\npool.on('error',\
+    \ (error) => console.error('Erreur du pool :', error.message));\n```\n\n`src/repositories/books-repository.js`\n\
+    \n```js\nimport { pool } from '../db.js';\n\nfunction toBook(row) {\n  return { id: row.id, title:\
+    \ row.title, isbn: row.isbn, price: row.price };\n}\n\nexport async function search(term) {\n  const\
+    \ { rows } = await pool.query(\n    \"SELECT id, title, isbn, price FROM books WHERE title ILIKE '%$1%'\
+    \ ORDER BY title, id\",\n    [term],\n  );\n  return rows.map(toBook);\n}\n\nexport async function\
+    \ findById(id) {\n  const { rows } = await pool.query('SELECT id, title, isbn, price FROM books WHERE\
+    \ id = $1', [id]);\n  return rows.length === 0 ? null : toBook(rows[0]);\n}\n```\n\n`src/repositories/loans-repository.js`\n\
+    \n```js\nimport { pool } from '../db.js';\n\nexport async function findByMember(memberId) {\n  const\
+    \ { rows } = await pool.query(\n    `SELECT l.id, b.title, l.loaned_on, l.due_on, l.returned_on\n\
+    \     FROM loans AS l\n     JOIN books AS b ON b.id = l.book_id\n     WHERE l.member_id = $1\n   \
+    \  ORDER BY l.loaned_on, l.id`,\n    [memberId],\n  );\n  return rows.map((row) => ({\n    id: row.id,\n\
+    \    title: row.title,\n    loanedOn: row.loaned_on,\n    dueOn: row.due_on,\n    returnedOn: row.returned_on,\n\
+    \  }));\n}\n\nexport async function create({ bookId, memberId, loanedOn, dueOn }) {\n  const client\
+    \ = await pool.connect();\n  await client.query('BEGIN');\n  try {\n    const out = await client.query(\n\
+    \      'SELECT 1 FROM loans WHERE book_id = $1 AND returned_on IS NULL FOR UPDATE',\n      [bookId],\n\
+    \    );\n    if (out.rowCount > 0) {\n      throw Object.assign(new Error('Livre déjà emprunté'),\
+    \ { status: 409 });\n    }\n    const { rows } = await client.query(\n      `INSERT INTO loans (book_id,\
+    \ member_id, loaned_on, due_on)\n       VALUES ($1, $2, $3, $4)\n       RETURNING id`,\n      [bookId,\
+    \ memberId, loanedOn, dueOn],\n    );\n    await client.query('COMMIT');\n    client.release();\n\
+    \    return rows[0].id;\n  } catch (error) {\n    await client.query('ROLLBACK');\n    throw error;\n\
+    \  }\n}\n```\n\n`src/app.js`\n\n```js\nimport express from 'express';\nimport * as booksRepository\
+    \ from './repositories/books-repository.js';\nimport * as loansRepository from './repositories/loans-repository.js';\n\
+    \nexport const app = express();\napp.use(express.json());\n\nfunction parseId(value) {\n  const id\
+    \ = Number(value);\n  return Number.isInteger(id) && id > 0 ? id : null;\n}\n\napp.get('/books', async\
+    \ (req, res) => {\n  const term = typeof req.query.search === 'string' ? req.query.search : '';\n\
+    \  res.json(await booksRepository.search(term));\n});\n\napp.get('/books/:id', async (req, res) =>\
+    \ {\n  const id = parseId(req.params.id);\n  if (id === null) return res.status(400).json({ error:\
+    \ 'Identifiant invalide' });\n  const book = await booksRepository.findById(id);\n  if (book === null)\
+    \ return res.status(404).json({ error: 'Livre introuvable' });\n  res.json(book);\n});\n\napp.get('/members/:id/loans',\
+    \ async (req, res) => {\n  const id = parseId(req.params.id);\n  if (id === null) return res.status(400).json({\
+    \ error: 'Identifiant invalide' });\n  res.json(await loansRepository.findByMember(id));\n});\n\n\
+    app.post('/loans', async (req, res) => {\n  const { bookId, memberId, loanedOn, dueOn } = req.body\
+    \ ?? {};\n  if (parseId(bookId) === null || parseId(memberId) === null) {\n    return res.status(400).json({\
+    \ error: 'bookId et memberId sont obligatoires' });\n  }\n  const id = await loansRepository.create({\
+    \ bookId, memberId, loanedOn, dueOn });\n  res.status(201).json({ id });\n});\n\napp.use((error, req,\
+    \ res, next) => {\n  if (error.status) return res.status(error.status).json({ error: error.message\
+    \ });\n  console.error(error.message);\n  res.status(500).json({ error: 'Erreur interne du serveur'\
+    \ });\n});\n```\n\n`src/server.js`\n\n```js\nimport { app } from './app.js';\n\nconst port = Number(process.env.PORT\
+    \ ?? 3000);\napp.listen(port, () => console.log(`API disponible sur http://localhost:${port}`));\n\
+    ```\n\n`scripts/migrate.js`\n\n```js\nimport { readdir, readFile } from 'node:fs/promises';\nimport\
+    \ { pool } from '../src/db.js';\n\nconst MIGRATIONS_DIR = new URL('../migrations/', import.meta.url);\n\
+    \nawait pool.query(\n  'CREATE TABLE IF NOT EXISTS schema_migrations (version text PRIMARY KEY, applied_at\
+    \ timestamptz NOT NULL DEFAULT now())',\n);\nconst files = (await readdir(MIGRATIONS_DIR)).filter((name)\
+    \ => name.endsWith('.sql')).sort();\nconst { rows } = await pool.query('SELECT version FROM schema_migrations');\n\
+    const applied = new Set(rows.map((row) => row.version));\n\nfor (const name of files.filter((file)\
+    \ => !applied.has(file))) {\n  const sql = await readFile(new URL(name, MIGRATIONS_DIR), 'utf8');\n\
+    \  const client = await pool.connect();\n  try {\n    await client.query('BEGIN');\n    await client.query(sql);\n\
+    \    await client.query('INSERT INTO schema_migrations (version) VALUES ($1)', [name]);\n    await\
+    \ client.query('COMMIT');\n    console.log(`Appliquée : ${name}`);\n  } catch (error) {\n    await\
+    \ client.query('ROLLBACK');\n    console.error(`Échec de ${name} : ${error.message}`);\n    process.exitCode\
+    \ = 1;\n    break;\n  } finally {\n    client.release();\n  }\n}\nawait pool.end();\n```\n\nLes migrations\
+    \ `001_create_catalog.sql`, `002_create_members_and_loans.sql` et\n`003_index_loans_foreign_keys.sql`\
+    \ sont celles de la leçon sur les migrations (schéma de la\nmédiathèque, sans données). Pour reproduire\
+    \ l’environnement : crée une base vide, mets son URL\ndans `.env`, lance `npm install` puis `npm run\
+    \ db:migrate`, et charge ces données de\ndéveloppement avec `psql -f seed.sql` :\n\n```sql\nINSERT\
+    \ INTO genres (name) VALUES ('roman'), ('informatique');\nINSERT INTO authors (name) VALUES ('Claire\
+    \ Martin'), ('Hugo Bernard');\nINSERT INTO books (title, isbn, genre_id, published_year, price) VALUES\n\
+    \  ('Le Jardin des algorithmes', '978-2-0000-0001-1', 2, 2019, 29.90),\n  ('Nuit sur le port', '978-2-0000-0002-2',\
+    \ 1, 2021, 18.50),\n  ('Le Dernier Phare', '978-2-0000-0005-5', 1, 2016, 9.90);\nINSERT INTO book_authors\
+    \ (book_id, author_id) VALUES (1, 1), (2, 2), (3, 2);\nINSERT INTO members (name, email, joined_on)\
+    \ VALUES\n  ('Alice Durand', 'alice@example.com', '2023-09-01'),\n  ('Bilal Mansour', 'bilal@example.com',\
+    \ '2023-11-15');\nINSERT INTO loans (book_id, member_id, loaned_on, due_on, returned_on) VALUES\n\
+    \  (1, 1, '2024-09-02', '2024-09-23', '2024-09-20'),\n  (2, 2, '2024-10-01', '2024-10-22', NULL);\n\
+    ```\n\nProblèmes signalés :\n\n1. « La recherche `GET /books?search=phare` renvoie toujours une erreur\
+    \ 500. »\n2. « Sur l’historique d’un adhérent (`GET /members/1/loans`), les dates sont décalées d’un\n\
+    \   jour et contiennent une heure. »\n3. « Après quelques tentatives d’emprunt d’un livre déjà emprunté,\
+    \ l’API ne répond plus du\n   tout et il faut la redémarrer. » (Essaie six fois de suite\n   `POST\
+    \ /loans` avec `{\"bookId\":2,\"memberId\":1,\"loanedOn\":\"2024-11-21\",\"dueOn\":\"2024-12-12\"\
+    }`.)\n\nNouvelle fonctionnalité :\n\n4. Les adhérents peuvent noter un livre de 1 à 5, une seule fois\
+    \ par livre :\n   `POST /books/:id/ratings` avec `{ \"memberId\": 1, \"score\": 4 }`. Réponses : `201`,\
+    \ `400`\n   pour une note invalide, `404` pour un livre ou un adhérent inconnu, `409` si l’adhérent\
+    \ a\n   déjà noté ce livre. `GET /books/:id` doit désormais renvoyer aussi `averageRating`\n   (moyenne\
+    \ arrondie à une décimale, `null` sans note) et `ratingsCount`.\n"
+  deliverable: 'Pour chaque problème : la cause, le diff ou les lignes modifiées, et la preuve que c’est
+
+    corrigé (requêtes `curl` et réponses). Pour la fonctionnalité : la migration ajoutée, le code
+
+    modifié et une session de test couvrant chaque statut. Indique ce que tu as volontairement
+
+    laissé tel quel, et pourquoi.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: diagnosis
+      description: Trouve et explique la cause des trois problèmes signalés.
+      maxScore: 3
+    - id: minimal-fix
+      description: Corrige de façon ciblée et vérifiée, sans réécriture.
+      maxScore: 3
+    - id: feature
+      description: Ajoute la fonctionnalité avec une migration et une gestion d’erreurs correcte.
+      maxScore: 3

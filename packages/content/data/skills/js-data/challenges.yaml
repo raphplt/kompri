@@ -1,0 +1,287 @@
+- id: js-data-sans-ia
+  family: SANS_IA
+  title: Le carnet de notes
+  summary: Calculer moyennes et classement d’une classe avec map, filter, reduce et toSorted, sans jamais
+    modifier les données d’origine.
+  estimatedMinutes: 50
+  instructions: "Une enseignante tient le carnet de notes de sa classe dans un tableau d’objets. Elle\n\
+    veut quelques fonctions utilitaires, mais elle a une exigence : **les données\nd’origine ne doivent\
+    \ jamais être modifiées**, car d’autres parties de son programme\nles utilisent.\n\nCrée un fichier\
+    \ `grades.js` et recopie ces données en haut du fichier :\n\n```js\nconst students = [\n  { id: 's1',\
+    \ name: 'Zoé', grades: [14, 16, 12] },\n  { id: 's2', name: 'Adam', grades: [9, 11, 8] },\n  { id:\
+    \ 's3', name: 'Lina', grades: [] },\n  { id: 's4', name: 'Éric', grades: [18, 15, 17] },\n];\n```\n\
+    \nÉcris les fonctions suivantes :\n\n1. `average(grades)` renvoie la moyenne d’un tableau de notes,\
+    \ ou `null` si le tableau\n   est vide.\n2. `withAverages(students)` renvoie un **nouveau** tableau\
+    \ où chaque élève possède en\n   plus une propriété `average`.\n3. `ranking(students)` renvoie les\
+    \ noms des élèves par moyenne décroissante ; les\n   élèves sans note sont placés à la fin.\n4. `addGrade(students,\
+    \ id, grade)` renvoie un **nouveau** tableau où l’élève d’`id`\n   donné a une note de plus.\n5. `exportJson(students)`\
+    \ renvoie un texte JSON indenté de 2 espaces, et\n   `importJson(text)` reconstruit le tableau à partir\
+    \ de ce texte.\n\nPuis, en bas du fichier, appelle chaque fonction, affiche les résultats avec\n`console.log`\
+    \ et **prouve par l’affichage** que `students` n’a pas changé.\n\nContraintes :\n\n- aucune boucle\
+    \ `for` ni `while` : utilise les méthodes de tableaux ;\n- aucune mutation des arguments reçus (pas\
+    \ de `push`, `sort`, `splice` ni\n  d’affectation de propriété sur un objet reçu) ;\n- `const` partout\
+    \ où c’est possible.\n\nExécute avec `node grades.js`.\n"
+  deliverable: 'Colle le contenu complet de `grades.js`, puis la sortie exacte de `node grades.js`.
+
+    Ajoute un court paragraphe : quelle ligne de ton code aurait modifié `students` si tu
+
+    avais écrit `sort` au lieu de `toSorted`, et pourquoi `{ ...student }` suffit ou ne
+
+    suffit pas dans `addGrade`.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: array-methods
+      description: Choisit et explique la méthode adaptée à chaque traitement (map, filter, reduce, toSorted).
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne sait pas expliquer ce que renvoient les méthodes utilisées.
+      - score: 1
+        description: Méthodes globalement correctes mais confond ce que renvoient map et forEach, ou ne
+          sait pas tracer reduce.
+      - score: 2
+        description: Explique chaque méthode, la valeur renvoyée et trace un reduce à la main.
+      - score: 3
+        description: Justifie aussi ses choix face aux alternatives (boucle, find, every) et traite les
+          cas vides.
+    - id: immutability
+      description: Garantit et démontre que les données d’origine ne sont pas modifiées.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Mute les données (sort, push) sans s’en rendre compte.
+      - score: 1
+        description: Évite les mutations évidentes mais partage un tableau imbriqué sans le savoir.
+      - score: 2
+        description: Aucune mutation, et explique la copie superficielle dans addGrade.
+      - score: 3
+        description: Démontre la non-mutation par l’affichage et distingue clairement référence partagée
+          et copie.
+    - id: sorting
+      description: Écrit et explique un comparateur correct, y compris pour les élèves sans note.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Tri par défaut ou comparateur faux.
+      - score: 1
+        description: Comparateur numérique correct, cas null non traité ou non expliqué.
+      - score: 2
+        description: Explique le signe du résultat, le traitement de null et la différence sort / toSorted.
+    - id: json
+      description: Sérialise et relit les données en connaissant les limites de JSON.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Ne sait pas ce que produisent JSON.stringify et JSON.parse.
+      - score: 1
+        description: Aller-retour correct mais ne connaît pas les pertes possibles.
+      - score: 2
+        description: Cite et explique les pertes (dates, undefined, Map, Set) et comment les éviter.
+- id: js-data-avec-ia
+  family: AVEC_IA
+  title: Le rapport de ventes
+  summary: Construire avec une IA un script qui lit des commandes en JSON, écarte les données invalides
+    et calcule des statistiques, puis le défendre.
+  estimatedMinutes: 120
+  instructions: "Tu peux utiliser une IA autant que tu le souhaites. À l’oral, tu devras expliquer\nchaque\
+    \ ligne sans aide, prédire l’effet d’une modification et corriger toi-même un\ncomportement.\n\nUne\
+    \ petite boutique exporte ses commandes en JSON. Écris un script `report.js` qui\nproduit un rapport\
+    \ de ventes. Recopie ce texte JSON dans une constante en haut du\nfichier :\n\n```js\nconst ordersJson\
+    \ = `[\n  { \"id\": \"C-101\", \"customer\": \"ines@example.com\", \"date\": \"2026-02-02\",\n   \
+    \ \"items\": [\n      { \"product\": \"Carnet A5\", \"category\": \"papeterie\", \"unitPrice\": 4.5,\
+    \ \"quantity\": 3 },\n      { \"product\": \"Stylo bille\", \"category\": \"papeterie\", \"unitPrice\"\
+    : 1.2, \"quantity\": 10 }\n    ] },\n  { \"id\": \"C-102\", \"customer\": \"hugo@example.com\", \"\
+    date\": \"2026-02-03\",\n    \"items\": [\n      { \"product\": \"Sac à dos\", \"category\": \"bagagerie\"\
+    , \"unitPrice\": 39.9, \"quantity\": 1 }\n    ] },\n  { \"id\": \"C-103\", \"customer\": \"ines@example.com\"\
+    , \"date\": \"2026-02-05\",\n    \"items\": [\n      { \"product\": \"Stylo bille\", \"category\"\
+    : \"papeterie\", \"unitPrice\": 1.2, \"quantity\": 5 },\n      { \"product\": \"Trousse\", \"category\"\
+    : \"bagagerie\", \"unitPrice\": 8, \"quantity\": 2 }\n    ] },\n  { \"id\": \"C-104\", \"customer\"\
+    : \"lea@example.com\", \"date\": \"2026-02-06\",\n    \"items\": [\n      { \"product\": \"Carnet\
+    \ A5\", \"category\": \"papeterie\", \"unitPrice\": 4.5, \"quantity\": \"2\" }\n    ] },\n  { \"id\"\
+    : \"C-105\", \"customer\": \"noah@example.com\", \"date\": \"2026-02-08\",\n    \"items\": [] },\n\
+    \  { \"id\": \"C-106\", \"customer\": \"lea@example.com\", \"date\": \"2026-02-09\",\n    \"items\"\
+    : [\n      { \"product\": \"Agenda 2026\", \"category\": \"papeterie\", \"unitPrice\": 12.5, \"quantity\"\
+    : 1 },\n      { \"product\": \"Trousse\", \"category\": \"bagagerie\", \"unitPrice\": 8, \"quantity\"\
+    : -1 }\n    ] },\n  { \"id\": \"C-107\", \"customer\": \"sam@example.com\", \"date\": \"2026-02-10\"\
+    ,\n    \"items\": [\n      { \"product\": \"Stylo bille\", \"category\": \"papeterie\", \"unitPrice\"\
+    : 1.2, \"quantity\": 20 },\n      { \"product\": \"Agenda 2026\", \"category\": \"papeterie\", \"\
+    unitPrice\": 12.5, \"quantity\": 2 }\n    ] }\n]`;\n```\n\nExigences :\n\n1. Le texte est lu avec\
+    \ `JSON.parse` protégé par `try…catch` : si le JSON est\n   invalide, le script affiche un message\
+    \ clair et se termine avec\n   `process.exitCode = 1`.\n2. Une ligne de commande est valide si `product`\
+    \ et `category` sont des chaînes,\n   `unitPrice` un nombre positif ou nul et `quantity` un **entier\
+    \ strictement\n   positif** (de type nombre). Une commande est valide si elle a au moins une ligne\n\
+    \   et que toutes ses lignes sont valides ; sinon elle est **entièrement** écartée.\n3. Le rapport\
+    \ est un objet avec : `generatedAt` (date ISO), `validOrders`,\n   `rejectedOrders` (liste des `id`\
+    \ écartés), `revenue` (chiffre d’affaires total),\n   `revenueByCategory` (objet catégorie → montant),\
+    \ `topProducts` (les 3 produits les\n   plus vendus en quantité, sous forme `{ product, quantity }`,\
+    \ à égalité par ordre\n   alphabétique), `uniqueCustomers` (nombre de clients distincts) et `averageBasket`\n\
+    \   (montant moyen d’une commande valide). Toutes ces statistiques portent\n   uniquement sur les\
+    \ commandes valides.\n4. Le calcul est découpé en petites fonctions pures qui ne modifient jamais\
+    \ les données\n   reçues. La date de génération est passée en paramètre à la fonction qui construit\n\
+    \   le rapport.\n5. Le rapport est affiché avec `JSON.stringify(report, null, 2)`. Les montants sont\n\
+    \   arrondis au centime **au moment de construire le rapport**, pas pendant les calculs.\n\nConseil\
+    \ : demande à l’IA de t’expliquer chaque `reduce` qu’elle propose, puis\nretrace-le à la main sur\
+    \ deux commandes. Vérifie toi-même les valeurs attendues avec\nune calculatrice.\n"
+  deliverable: 'Colle le code complet de `report.js`, la sortie de `node report.js`, puis quelques
+
+    lignes sur ce que l’IA t’a apporté, ce que tu as dû corriger et comment tu as vérifié
+
+    les montants.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: code-ownership
+      description: Explique chaque partie de son code, y compris les reduce, sans aide.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne sait pas expliquer des parties importantes de son propre code.
+      - score: 1
+        description: Explique le déroulé général mais pas le fonctionnement des reduce ou du tri.
+      - score: 2
+        description: Trace un reduce à la main et explique chaque transformation.
+      - score: 3
+        description: Explique aussi les choix écartés et ce qu’il a corrigé dans la proposition de l’IA.
+    - id: data-validation
+      description: Raisonne correctement sur les données invalides et les cas limites.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne sait pas pourquoi certaines commandes sont écartées.
+      - score: 1
+        description: Écarte les commandes mais accepte la quantité en chaîne ou la commande vide.
+      - score: 2
+        description: Écarte exactement les trois commandes invalides et justifie chaque règle.
+      - score: 3
+        description: Explique aussi la coercition de "2", le comportement de every sur un tableau vide
+          et la protection de JSON.parse.
+    - id: data-structures
+      description: Choisit des structures adaptées (objet, Map, Set) et maîtrise leur sérialisation.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Ne sait pas pourquoi une structure a été choisie.
+      - score: 1
+        description: Structures correctes mais ignore que Map et Set deviennent {} en JSON.
+      - score: 2
+        description: Justifie objet, Map et Set et les convertit correctement pour JSON.
+    - id: modification
+      description: Réalise ou décrit correctement une modification demandée pendant l’oral.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne parvient pas à modifier le comportement.
+      - score: 1
+        description: Modification partielle ou qui casse un résultat existant.
+      - score: 2
+        description: Modification correcte vérifiée sur les données fournies.
+      - score: 3
+        description: Modification correcte, vérifiée, sans mutation et avec un cas limite traité.
+- id: js-data-contre-ia
+  family: CONTRE_IA
+  title: Le catalogue qui se dérègle
+  summary: Trouver et corriger les erreurs de tri, de mutation, de reduce et de JSON dans des utilitaires
+    générés.
+  estimatedMinutes: 60
+  instructions: "Un assistant a généré ce module d’utilitaires pour le catalogue d’une boutique de\ndécoration.\
+    \ Il est utilisé par la page d’accueil (qui affiche le catalogue dans\nl’ordre d’origine), par la\
+    \ page produit (dont l’identifiant est lu dans l’adresse,\npar exemple `/produits/3`) et par un export\
+    \ nocturne.\n\nRègles métier :\n\n- `sortByPrice` renvoie les produits par prix croissant **sans changer\
+    \ l’ordre du\n  catalogue** utilisé ailleurs ;\n- `findProduct` reçoit l’identifiant tel qu’il est\
+    \ lu dans l’adresse ;\n- `totalStock` renvoie le nombre total d’articles en stock, 0 pour un catalogue\
+    \ vide ;\n- `applyDiscount` renvoie une version remisée du produit pour un aperçu, sans\n  toucher\
+    \ au produit du catalogue ;\n- `exportCatalog` produit un JSON contenant la liste des étiquettes distinctes.\n\
+    \n```js\n// catalog.js — utilitaires du catalogue\n\nexport function sortByPrice(products) {\n  return\
+    \ products.sort((a, b) => a.price > b.price);\n}\n\nexport function findProduct(products, id) {\n\
+    \  return products.find((product) => product.id === id);\n}\n\nexport function totalStock(products)\
+    \ {\n  return products.reduce((sum, product) => sum + product.stock);\n}\n\nexport function applyDiscount(product,\
+    \ rate) {\n  const discounted = { ...product };\n  discounted.pricing.current = Math.round(product.pricing.base\
+    \ * (1 - rate) * 100) / 100;\n  return discounted;\n}\n\nexport function tagsOf(products) {\n  const\
+    \ tags = [];\n  for (const product of products) {\n    tags.push(...product.tags);\n  }\n  return\
+    \ new Set(tags);\n}\n\nexport function exportCatalog(products) {\n  return JSON.stringify({\n    exportedAt:\
+    \ new Date(),\n    count: products.length,\n    tags: tagsOf(products),\n    products,\n  });\n}\n\
+    ```\n\nDonnées de test :\n\n```js\nconst products = [\n  { id: 1, name: 'Lampe', price: 39, stock:\
+    \ 4, tags: ['maison'], pricing: { base: 39, current: 39 } },\n  { id: 2, name: 'Tapis', price: 89,\
+    \ stock: 0, tags: ['maison', 'déco'], pricing: { base: 89, current: 89 } },\n  { id: 3, name: 'Vase',\
+    \ price: 25, stock: 12, tags: ['déco'], pricing: { base: 25, current: 25 } },\n];\n```\n\nTravail\
+    \ demandé :\n\n1. Écris un script `check.js` qui importe le module (`import { … } from './catalog.js';`)\n\
+    \   et appelle chaque fonction avec les données de test. Décris ce qui se passe\n   réellement.\n\
+    2. Liste chaque défaut : la fonction, le comportement observé ou possible, la cause\n   précise et\
+    \ sa gravité.\n3. Propose une version corrigée de `catalog.js` qui respecte les règles métier.\n4.\
+    \ Pour chaque correction, montre un affichage qui prouve qu’elle fonctionne.\n"
+  deliverable: 'Colle ta liste de défauts (fonction, symptôme, cause, gravité), le `catalog.js` corrigé,
+
+    ton `check.js` et sa sortie.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: defects-found
+      description: Identifie les défauts réels, y compris ceux masqués par un autre défaut.
+      maxScore: 3
+    - id: root-cause
+      description: Explique la cause technique de chaque défaut, pas seulement le symptôme.
+      maxScore: 3
+    - id: fix-quality
+      description: Propose des corrections justes, minimales et prouvées par l’exécution.
+      maxScore: 3
+- id: js-data-apres-ia
+  family: APRES_IA
+  title: Les tâches de l’équipe
+  summary: Dépanner et faire évoluer un module de gestion de tâches sans le réécrire.
+  estimatedMinutes: 75
+  instructions: "Ce module gère la liste de tâches d’une petite équipe. Il est utilisé depuis plusieurs\n\
+    mois. Tu dois corriger deux bugs signalés et ajouter deux fonctionnalités **en\nmodifiant le moins\
+    \ de lignes possible**, sans régénérer le module.\n\n```js\n// tasks.js — gestion des tâches de l’équipe\n\
+    \nexport function createTask(tasks, title, dueDate) {\n  const task = {\n    id: tasks.length + 1,\n\
+    \    title: title.trim(),\n    dueDate: new Date(dueDate),\n    done: false,\n    tags: [],\n  };\n\
+    \  tasks.push(task);\n  return task;\n}\n\nexport function completeTask(tasks, id) {\n  const task\
+    \ = tasks.find((item) => item.id === id);\n  if (task) {\n    task.done = true;\n  }\n  return task;\n\
+    }\n\nexport function addTag(tasks, id, tag) {\n  const task = tasks.find((item) => item.id === id);\n\
+    \  if (task && !task.tags.includes(tag)) {\n    task.tags.push(tag);\n  }\n  return task;\n}\n\nexport\
+    \ function byDueDate(tasks) {\n  return tasks.sort((a, b) => a.dueDate - b.dueDate);\n}\n\nexport\
+    \ function formatTask(task) {\n  const status = task.done ? 'x' : ' ';\n  const due = task.dueDate.toLocaleDateString('fr-FR');\n\
+    \  return `[${status}] #${task.id} ${task.title} (échéance : ${due})`;\n}\n\nexport function save(tasks)\
+    \ {\n  return JSON.stringify(tasks);\n}\n\nexport function load(text) {\n  return JSON.parse(text);\n\
+    }\n```\n\nScript de démonstration utilisé par l’équipe (`demo.js`) :\n\n```js\nimport { createTask,\
+    \ completeTask, addTag, byDueDate, formatTask, save, load } from './tasks.js';\n\nconst tasks = [];\n\
+    createTask(tasks, 'Préparer la démo', '2026-03-12T09:00');\ncreateTask(tasks, '  Relire la spec ',\
+    \ '2026-03-05T09:00');\ncreateTask(tasks, 'Corriger le bug 42', '2026-03-09T09:00');\ncompleteTask(tasks,\
+    \ 2);\naddTag(tasks, 1, 'client');\n\nconsole.log('Par échéance :');\nfor (const task of byDueDate(tasks))\
+    \ console.log(formatTask(task));\nconsole.log('Par création :');\nfor (const task of tasks) console.log(formatTask(task));\n\
+    \nconst reloaded = load(save(tasks));\nfor (const task of reloaded) console.log(formatTask(task));\n\
+    ```\n\nDemandes de l’équipe :\n\n1. **Bug** : « Depuis qu’on affiche aussi la liste par échéance,\
+    \ la liste par création\n   est dans le désordre. » Corrige et explique la cause.\n2. **Bug** : «\
+    \ Après un enregistrement puis un rechargement, l’affichage plante, et\n   sur une liste rechargée\
+    \ le tri par échéance ne trie plus rien. » Corrige et\n   explique les deux symptômes.\n3. Ajoute\
+    \ `removeTask(tasks, id)` qui renvoie un **nouveau** tableau sans la tâche,\n   sans modifier celui\
+    \ reçu. Vérifie que créer une tâche après une suppression\n   fonctionne toujours correctement.\n\
+    4. Ajoute `stats(tasks, now)` qui renvoie `{ total, done, late }`, où `late` compte les\n   tâches\
+    \ non terminées dont l’échéance est passée par rapport à la date `now` reçue.\n"
+  deliverable: 'Colle le module modifié, ton script de démonstration complété et sa sortie, puis la
+
+    liste des lignes modifiées ou ajoutées avec la raison de chaque changement.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: bug-diagnosis
+      description: Explique la cause des deux bugs à partir de la mutation par sort et des limites de
+        JSON.
+      maxScore: 3
+    - id: hidden-defect
+      description: Teste la suppression puis la création et repère l’identifiant en double.
+      maxScore: 2
+    - id: features
+      description: Implémente removeTask et stats sans mutation, de façon testable.
+      maxScore: 3
+    - id: minimal-change
+      description: Fait évoluer le module de façon ciblée et sait distinguer bug et choix de conception.
+      maxScore: 2

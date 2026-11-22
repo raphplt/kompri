@@ -1,0 +1,352 @@
+- id: css-layout-responsive-sans-ia
+  family: SANS_IA
+  title: La page de la Fête des jardins
+  summary: Mettre en page une page d’événement mobile d’abord avec flexbox, grid, le positionnement et
+    une typographie fluide.
+  estimatedMinutes: 60
+  instructions: "Tu mets en page la page d’un événement. Travaille sans aide : ni IA, ni recherche\nen\
+    \ ligne. L’inspecteur du navigateur et son mode responsive sont autorisés.\n\nVoici `index.html`,\
+    \ que tu ne dois **pas** modifier. Les images peuvent être\nremplacées par n’importe quels fichiers\
+    \ de mêmes noms pour tes essais.\n\n```html\n<!doctype html>\n<html lang=\"fr\">\n  <head>\n    <meta\
+    \ charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"\
+    >\n    <title>Fête des jardins</title>\n    <link rel=\"stylesheet\" href=\"event.css\">\n  </head>\n\
+    \  <body>\n    <header class=\"site-header\">\n      <a class=\"brand\" href=\"index.html\">Fête des\
+    \ jardins</a>\n      <nav>\n        <ul class=\"nav-list\">\n          <li><a href=\"#programme\"\
+    >Programme</a></li>\n          <li><a href=\"#infos\">Infos pratiques</a></li>\n          <li><a href=\"\
+    inscription.html\">S’inscrire</a></li>\n        </ul>\n      </nav>\n    </header>\n    <div class=\"\
+    layout\">\n      <main class=\"content\">\n        <h1>Fête des jardins</h1>\n        <section id=\"\
+    programme\">\n          <h2>Ateliers</h2>\n          <ul class=\"workshops\">\n            <li class=\"\
+    workshop\">\n              <img src=\"semis.jpg\" width=\"800\" height=\"600\" alt=\"Mains qui sèment\
+    \ des graines\">\n              <h3>Semis de printemps</h3>\n              <p>10 h – 11 h</p>\n  \
+    \          </li>\n            <li class=\"workshop\">\n              <span class=\"badge\">Complet</span>\n\
+    \              <img src=\"compost.jpg\" width=\"1200\" height=\"800\" alt=\"Bac à compost en bois\"\
+    >\n              <h3>Réussir son compost</h3>\n              <p>11 h – 12 h</p>\n            </li>\n\
+    \            <li class=\"workshop\">\n              <img src=\"greffe.jpg\" width=\"600\" height=\"\
+    800\" alt=\"Greffe d’un jeune pommier\">\n              <h3>Initiation à la greffe</h3>\n        \
+    \      <p>14 h – 15 h 30</p>\n            </li>\n            <li class=\"workshop\">\n           \
+    \   <img src=\"abeilles.jpg\" width=\"800\" height=\"600\" alt=\"Abeilles sur une fleur de lavande\"\
+    >\n              <h3>Accueillir les pollinisateurs</h3>\n              <p>16 h – 17 h</p>\n      \
+    \      </li>\n          </ul>\n        </section>\n      </main>\n      <aside id=\"infos\" class=\"\
+    infos\">\n        <h2>Infos pratiques</h2>\n        <p>Samedi 6 juin, de 10 h à 18 h, au parc des\
+    \ Glycines. Entrée libre.</p>\n      </aside>\n    </div>\n    <footer class=\"site-footer\">\n  \
+    \    <p>Organisé par l’association Les Jardins partagés.</p>\n    </footer>\n  </body>\n</html>\n\
+    ```\n\n## Partie 1 — La feuille `event.css`\n\nÉcris la feuille **mobile d’abord**, avec au plus deux\
+    \ media queries en `rem` :\n\n1. L’en-tête reste collé en haut de la fenêtre pendant le défilement,\
+    \ sans masquer\n   le début du contenu au chargement. Le nom de l’événement est à gauche, la\n   navigation\
+    \ à droite ; les liens sont côte à côte et passent à la ligne si la\n   place manque.\n2. Les ateliers\
+    \ forment une grille qui crée **autant de colonnes que possible**,\n   chacune d’au moins 14rem, **sans\
+    \ media query**, avec 1rem d’écart.\n3. Toutes les photos d’ateliers occupent la largeur de leur carte,\
+    \ au format 4/3,\n   recadrées sans déformation, sans espace parasite en dessous.\n4. Le badge « Complet\
+    \ » est placé dans le coin supérieur droit de **sa** carte.\n5. À partir de 48rem, le contenu principal\
+    \ et l’encadré « Infos pratiques » sont côte\n   à côte (encadré de 18rem à droite) ; l’ensemble ne\
+    \ dépasse pas 72rem de large et\n   se centre.\n6. Le titre `h1` a une taille fluide comprise entre\
+    \ 2rem et 3rem, qui garde une part\n   en `rem`.\n7. Aucune barre de défilement horizontale à 320\
+    \ px de large.\n\n## Partie 2 — Raisonner sans exécuter\n\nRéponds d’abord par écrit, puis vérifie\
+    \ dans le navigateur. Si ta prédiction était\nfausse, garde-la et explique ton erreur.\n\na. La liste\
+    \ des ateliers mesure exactement 700 px de large (police par défaut de\n   16 px). Combien de colonnes\
+    \ y a-t-il, et quelle est leur largeur ? Et à 704 px ?\nb. Si on retirait la règle qui permet au badge\
+    \ de se placer dans sa carte, où\n   apparaîtrait-il ? Pourquoi ?\nc. Pourquoi `display: flex` sur\
+    \ l’élément `nav` ne mettrait-il pas les liens côte à\n   côte ?\n"
+  deliverable: 'Colle le contenu complet de `event.css`, puis tes réponses aux questions a, b et c
+
+    (prédiction, vérification, explication de l’écart éventuel). Indique les largeurs de
+
+    fenêtre auxquelles tu as testé ta page.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: flexbox
+      description: Utilise flexbox sur le bon conteneur et explique axes, alignement et passage à la ligne.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Flexbox absent, mal placé, ou incapacité à expliquer ce qu’il fait.
+      - score: 1
+        description: En-tête fonctionnel mais explication confuse des axes ou du rôle des enfants directs.
+      - score: 2
+        description: Explique enfants directs, axe principal, justify-content, align-items et flex-wrap.
+      - score: 3
+        description: Compare aussi plusieurs solutions (space-between ou marge auto) et anticipe le comportement
+          sur petit écran.
+    - id: grid
+      description: Construit et calcule une grille adaptative et une mise en page en deux colonnes.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Grille absente ou incapacité à prédire le nombre de colonnes.
+      - score: 1
+        description: Grille fonctionnelle mais calcul des colonnes faux (gap oublié).
+      - score: 2
+        description: Calcule correctement 2 colonnes à 700 px et 3 à 704 px, explique auto-fit, minmax
+          et fr.
+      - score: 3
+        description: Explique aussi auto-fill, minmax(0, 1fr) et le passage à une colonne dans la zone
+          principale étroite.
+    - id: positioning
+      description: Maîtrise le positionnement relatif, absolu et collant et leurs conséquences sur le
+        flux.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Badge mal placé ou ne sait pas expliquer le bloc de référence.
+      - score: 1
+        description: Badge correct mais explication approximative, ou en-tête fixe qui masque le contenu.
+      - score: 2
+        description: Explique ancêtre positionné, bloc conteneur initial et différence entre sticky et
+          fixed.
+    - id: responsive
+      description: Applique mobile d’abord, des unités relatives, des images adaptatives et une typographie
+        fluide accessible.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Largeurs fixes, défilement horizontal ou images déformées.
+      - score: 1
+        description: Page utilisable mais media queries en bureau d’abord ou en px, ou titre en vw seul.
+      - score: 2
+        description: Mobile d’abord en rem, images recadrées sans déformation, clamp avec une part en
+          rem.
+      - score: 3
+        description: Justifie aussi height auto avec les attributs, la limite de vw face au zoom et ses
+          largeurs de test.
+- id: css-layout-responsive-avec-ia
+  family: AVEC_IA
+  title: La vitrine d’un atelier de céramique
+  summary: Construire avec une IA une page d’accueil responsive complète, puis justifier chaque choix
+    de mise en page et le tester méthodiquement.
+  estimatedMinutes: 120
+  instructions: "Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras expliquer chaque\nrègle\
+    \ sans aide, prévoir l’effet d’une modification de largeur et corriger\ntoi-même une mise en page.\n\
+    \nUn atelier de céramique veut une page d’accueil. Tu écris le HTML et le CSS. Contenu\nattendu :\n\
+    \n- un en-tête avec le nom de l’atelier et une navigation de quatre liens ;\n- une bannière avec une\
+    \ grande photo, un titre et un lien « Réserver un cours » ;\n- une section « Nos créations » avec\
+    \ au moins six pièces (photo, nom, prix) ;\n- une section « Les cours » avec trois formules présentées\
+    \ côte à côte sur grand\n  écran, dont la formule centrale mise en avant par un badge « Le plus choisi\
+    \ » ;\n- un pied de page en trois blocs (adresse, horaires, réseaux).\n\nExigences techniques :\n\n\
+    1. Mobile d’abord, avec **au plus trois** points de rupture, en `rem`, choisis\n   selon le contenu.\
+    \ Pour chacun, explique dans un commentaire CSS ce qui casserait\n   sans lui.\n2. Flexbox **et**\
+    \ grid sont utilisés, chacun là où il est le plus adapté. Aucune\n   largeur fixe en pixels pour la\
+    \ mise en page (les bordures et petits détails sont\n   acceptés).\n3. La photo de la bannière utilise\
+    \ `srcset` et `sizes` (trois fichiers de largeurs\n   différentes, noms au choix) ; les photos des\
+    \ créations ont toutes le même format,\n   recadrées sans déformation, avec leurs attributs `width`\
+    \ et `height`.\n4. Le titre de la bannière a une taille fluide avec `clamp()` qui garde une part en\n\
+    \   `rem`.\n5. Les trois formules ont la même hauteur et leur bouton aligné en bas, quelle que\n \
+    \  soit la longueur des textes.\n6. La page est utilisable à 320 px de large sans défilement horizontal\
+    \ et reste\n   lisible avec un zoom à 200 %. L’ordre visuel suit l’ordre du HTML.\n7. Les propriétés\
+    \ personnalisées regroupent couleurs et espacements.\n\nConseil : demande à l’IA pourquoi elle choisit\
+    \ flexbox ou grid à chaque endroit,\npuis vérifie ses affirmations en redimensionnant la fenêtre dans\
+    \ le mode\nresponsive de l’inspecteur.\n"
+  deliverable: "Colle :\n- le HTML et le CSS complets ;\n- un tableau de tests : largeurs essayées (au\
+    \ moins 320, 768, 1024 et 1440 px), zoom\n  à 200 %, et pour chacun ce que tu as observé et éventuellement\
+    \ corrigé ;\n- pour chaque utilisation de flexbox et de grid, une phrase qui justifie le choix ;\n\
+    - le fichier d’image que le navigateur choisit pour la bannière à 360 px de large\n  avec une densité\
+    \ de 2, et comment tu l’as vérifié (par exemple `currentSrc` dans\n  la console) ;\n- en quelques\
+    \ lignes : ce que l’IA t’a apporté, et ce que tu as dû corriger.\n"
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: code-ownership
+      description: Explique chaque règle de mise en page sans aide, y compris celles proposées par l’IA.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne sait pas expliquer des règles importantes de sa propre page.
+      - score: 1
+        description: Explique le rôle global des règles mais pas le calcul des tailles ou des colonnes.
+      - score: 2
+        description: Explique précisément chaque conteneur flex ou grid, les tailles produites et les
+          points de rupture.
+      - score: 3
+        description: Explique aussi les propositions de l’IA qu’il a rejetées ou corrigées, avec la raison.
+    - id: layout-choices
+      description: Justifie le choix entre flexbox et grid et prédit le résultat d’une modification.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Choix arbitraires, incapacité à prédire un changement.
+      - score: 1
+        description: Justifications génériques sans lien avec le contenu.
+      - score: 2
+        description: Justifie chaque choix (un axe ou deux, tailles venues du contenu ou du conteneur)
+          et prédit correctement.
+      - score: 3
+        description: Réalise une modification demandée en direct et anticipe ses effets sur toutes les
+          largeurs.
+    - id: responsive-testing
+      description: Teste méthodiquement la page sur plusieurs largeurs et au zoom, et corrige les problèmes
+        trouvés.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Aucun test documenté, ou défilement horizontal non détecté.
+      - score: 1
+        description: Tests partiels, sans correction ou sans le zoom à 200 %.
+      - score: 2
+        description: Tests complets, problèmes corrigés et expliqués.
+      - score: 3
+        description: Explique aussi la vérification de l’image choisie par srcset et les limites de la
+          simulation.
+    - id: accessibility
+      description: Préserve l’accessibilité de la mise en page (ordre, zoom, textes alternatifs, typographie).
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Ordre visuel incohérent avec le HTML, texte en vw seul ou zoom cassé.
+      - score: 1
+        description: Accessibilité respectée en partie, sans justification.
+      - score: 2
+        description: Ordre logique, typographie qui suit le zoom, alternatives textuelles pertinentes,
+          justifiés à l’oral.
+- id: css-layout-responsive-contre-ia
+  family: CONTRE_IA
+  title: La boutique qui déborde
+  summary: Trouver et corriger les défauts de mise en page et de responsive d’une page produit générée.
+  estimatedMinutes: 60
+  instructions: "Une ressourcerie a fait générer la page de sa boutique en ligne par un assistant.\nSur\
+    \ ordinateur, « ça passe à peu près » ; sur téléphone, les clients se plaignent.\nVoici les deux fichiers.\n\
+    \n`index.html` :\n\n```html\n<!doctype html>\n<html lang=\"fr\">\n  <head>\n    <meta charset=\"utf-8\"\
+    >\n    <title>La Ressourcerie — Boutique</title>\n    <link rel=\"stylesheet\" href=\"shop.css\">\n\
+    \  </head>\n  <body>\n    <header class=\"site-header\">\n      <a class=\"brand\" href=\"index.html\"\
+    >La Ressourcerie</a>\n      <nav class=\"site-nav\">\n        <ul>\n          <li><a href=\"meubles.html\"\
+    >Meubles</a></li>\n          <li><a href=\"vaisselle.html\">Vaisselle</a></li>\n          <li><a href=\"\
+    livres.html\">Livres</a></li>\n        </ul>\n      </nav>\n    </header>\n    <main class=\"container\"\
+    >\n      <h1>Objets de seconde main</h1>\n      <ul class=\"products\">\n        <li class=\"product\"\
+    >\n          <span class=\"badge\">Nouveau</span>\n          <img src=\"chaise.jpg\" width=\"1200\"\
+    \ height=\"800\" alt=\"Chaise en bois peinte en vert\">\n          <div class=\"product-info\">\n\
+    \            <div class=\"product-details\">\n              <h2 class=\"product-name\">Chaise bistrot</h2>\n\
+    \              <p class=\"product-ref\">Réf. MEUBLE_CHAISE_BISTROT_BOIS_PEINT_2026_000147</p>\n  \
+    \          </div>\n            <p class=\"product-price\">25 €</p>\n          </div>\n        </li>\n\
+    \        <li class=\"product\">\n          <img src=\"bols.jpg\" width=\"600\" height=\"600\" alt=\"\
+    Six bols en grès bleu\">\n          <div class=\"product-info\">\n            <div class=\"product-details\"\
+    >\n              <h2 class=\"product-name\">Lot de six bols</h2>\n              <p class=\"product-ref\"\
+    >Réf. VAISSELLE_BOL_GRES_BLEU_LOT6_2026_000212</p>\n            </div>\n            <p class=\"product-price\"\
+    >12 €</p>\n          </div>\n        </li>\n        <li class=\"product\">\n          <span class=\"\
+    badge\">Nouveau</span>\n          <img src=\"lampe.jpg\" width=\"800\" height=\"1200\" alt=\"Lampe\
+    \ de bureau articulée en métal noir\">\n          <div class=\"product-info\">\n            <div class=\"\
+    product-details\">\n              <h2 class=\"product-name\">Lampe d’architecte</h2>\n           \
+    \   <p class=\"product-ref\">Réf. LUMINAIRE_LAMPE_BUREAU_ARTICULEE_2026_000098</p>\n            </div>\n\
+    \            <p class=\"product-price\">18 €</p>\n          </div>\n        </li>\n      </ul>\n \
+    \   </main>\n  </body>\n</html>\n```\n\n`shop.css` :\n\n```css\n/* Boutique en ligne, feuille proposée\
+    \ par un assistant */\n*,\n*::before,\n*::after {\n  box-sizing: border-box;\n}\n\nbody {\n  margin:\
+    \ 0;\n  font-family: system-ui, sans-serif;\n  line-height: 1.5;\n}\n\n.site-header {\n  position:\
+    \ fixed;\n  top: 0;\n  left: 0;\n  right: 0;\n  z-index: 10;\n  display: flex;\n  justify-content:\
+    \ space-between;\n  align-items: center;\n  padding: 1rem;\n  background-color: white;\n  border-bottom:\
+    \ 1px solid #d1d5db;\n}\n\n.site-nav {\n  display: flex;\n  gap: 1rem;\n}\n\n.site-nav ul {\n  list-style:\
+    \ none;\n  margin: 0;\n  padding: 0;\n}\n\n.container {\n  width: 1200px;\n  margin: 0 auto;\n  padding:\
+    \ 1rem;\n}\n\nh1 {\n  font-size: 5vw;\n  line-height: 1.2;\n}\n\n@media (min-width: 48rem) {\n  .products\
+    \ {\n    grid-template-columns: repeat(3, 1fr);\n  }\n}\n\n.products {\n  display: grid;\n  grid-template-columns:\
+    \ 1fr;\n  gap: 1.5rem;\n  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n\n.product {\n  display:\
+    \ flex;\n  flex-direction: column;\n  border: 1px solid #d1d5db;\n}\n\n.product img {\n  max-width:\
+    \ 100%;\n}\n\n.badge {\n  position: absolute;\n  top: 0.5rem;\n  right: 0.5rem;\n  padding: 0.125rem\
+    \ 0.5rem;\n  background-color: darkred;\n  color: white;\n}\n\n.product-info {\n  display: flex;\n\
+    \  justify-content: space-between;\n  gap: 1rem;\n  padding: 1rem;\n}\n\n.product-details {\n  flex:\
+    \ 1;\n}\n\n.product-name {\n  margin: 0;\n  font-size: 1.25rem;\n}\n\n.product-ref {\n  margin: 0;\n\
+    \  color: #4b5563;\n  font-size: 0.875rem;\n}\n\n.product-price {\n  margin: 0;\n  font-weight: bold;\n\
+    }\n```\n\nCe que voulait la ressourcerie : une page mobile d’abord, une colonne de produits sur\n\
+    téléphone et trois à partir de 48rem, un en-tête toujours accessible qui ne cache\nrien, une navigation\
+    \ en ligne, des photos non déformées, un badge « Nouveau » dans le\ncoin de chaque produit concerné,\
+    \ aucun défilement horizontal, un titre lisible et\nqui suit le zoom.\n\nTravail demandé :\n\n1. Teste\
+    \ la page dans le mode responsive de l’inspecteur (au moins à 375 px et à\n   1280 px) et décris ce\
+    \ qui s’affiche réellement.\n2. Liste chaque défaut : l’endroit (HTML ou CSS), le symptôme, la cause\
+    \ précise\n   (le mécanisme de mise en page en jeu) et sa gravité. Certains défauts\n   n’apparaissent\
+    \ qu’après en avoir corrigé d’autres : refais un tour de tests\n   après chaque correction.\n3. Propose\
+    \ les fichiers corrigés, en modifiant le moins de lignes possible.\n4. Pour chaque correction, indique\
+    \ comment tu l’as vérifiée.\n"
+  deliverable: 'Colle ta liste de défauts (endroit, symptôme, cause, gravité), puis les fichiers
+
+    corrigés complets, puis tes vérifications avec les largeurs testées.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: defects-found
+      description: Identifie les défauts réels, y compris ceux qui n’apparaissent qu’à certaines largeurs
+        ou après d’autres corrections.
+      maxScore: 4
+    - id: root-cause
+      description: Explique chaque défaut par le mécanisme de mise en page en jeu.
+      maxScore: 3
+    - id: fix-quality
+      description: Propose des corrections minimales, justes et vérifiées à plusieurs largeurs.
+      maxScore: 3
+- id: css-layout-responsive-apres-ia
+  family: APRES_IA
+  title: La Cantine du Canal sur mobile
+  summary: Rendre responsive un site de restaurant conçu pour ordinateur, sans le réécrire, en dépannant
+    un en-tête collant cassé.
+  estimatedMinutes: 75
+  instructions: "Le site de La Cantine du Canal a été généré il y a un an pour un écran d’ordinateur.\n\
+    Le restaurant veut qu’il fonctionne sur téléphone. Tu dois le faire évoluer **en\nmodifiant le moins\
+    \ de lignes possible**, sans régénérer la feuille. Tu peux modifier\nle HTML seulement pour la demande\
+    \ 5.\n\n`index.html` :\n\n```html\n<!doctype html>\n<html lang=\"fr\">\n  <head>\n    <meta charset=\"\
+    utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <title>La\
+    \ Cantine du Canal</title>\n    <link rel=\"stylesheet\" href=\"styles.css\">\n  </head>\n  <body>\n\
+    \    <div class=\"page\">\n      <header class=\"site-header\">\n        <a class=\"brand\" href=\"\
+    index.html\">La Cantine du Canal</a>\n        <nav>\n          <ul class=\"nav-list\">\n         \
+    \   <li><a href=\"#menu\">Menu</a></li>\n            <li><a href=\"#infos\">Infos pratiques</a></li>\n\
+    \            <li><a href=\"reservation.html\">Réserver</a></li>\n          </ul>\n        </nav>\n\
+    \      </header>\n      <section class=\"hero\">\n        <img class=\"hero-img\" src=\"salle-1600.jpg\"\
+    \ width=\"1600\" height=\"900\" alt=\"La salle du restaurant au bord du canal\">\n        <h1 class=\"\
+    hero-title\">Cuisine du marché, au bord de l’eau</h1>\n      </section>\n      <main class=\"container\"\
+    >\n        <section id=\"menu\">\n          <h2>Le menu de la semaine</h2>\n          <ul class=\"\
+    dishes\">\n            <li class=\"dish\">\n              <h3>Velouté de châtaignes</h3>\n       \
+    \       <p>Crème fouettée au lard fumé.</p>\n              <p class=\"dish-price\">8 €</p>\n     \
+    \       </li>\n            <li class=\"dish\">\n              <h3>Brandade de cabillaud</h3>\n   \
+    \           <p>Salade de pousses, huile d’olive.</p>\n              <p class=\"dish-price\">17 €</p>\n\
+    \            </li>\n            <li class=\"dish\">\n              <h3>Risotto aux cèpes</h3>\n  \
+    \            <p>Parmesan affiné 24 mois.</p>\n              <p class=\"dish-price\">16 €</p>\n   \
+    \         </li>\n            <li class=\"dish\">\n              <h3>Tarte fine aux pommes</h3>\n \
+    \             <p>Glace à la vanille de Madagascar.</p>\n              <p class=\"dish-price\">7 €</p>\n\
+    \            </li>\n          </ul>\n        </section>\n        <section id=\"infos\">\n        \
+    \  <h2>Infos pratiques</h2>\n          <p>Du mardi au samedi, de 12 h à 14 h 30. Réservation conseillée\
+    \ le vendredi.</p>\n        </section>\n      </main>\n    </div>\n  </body>\n</html>\n```\n\n`styles.css`\
+    \ :\n\n```css\n*,\n*::before,\n*::after {\n  box-sizing: border-box;\n}\n\nbody {\n  margin: 0;\n\
+    \  font-family: Georgia, serif;\n  line-height: 1.5;\n  color: #1c1917;\n}\n\n/* Évite la barre de\
+    \ défilement horizontale */\n.page {\n  overflow: hidden;\n}\n\n.site-header {\n  position: sticky;\n\
+    \  top: 0;\n  z-index: 10;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n\
+    \  padding: 16px 32px;\n  background-color: white;\n}\n\n.nav-list {\n  display: flex;\n  gap: 32px;\n\
+    \  list-style: none;\n  margin: 0;\n  padding: 0;\n}\n\n.hero {\n  position: relative;\n}\n\n.hero-img\
+    \ {\n  display: block;\n  width: 100%;\n  height: auto;\n}\n\n.hero-title {\n  position: absolute;\n\
+    \  left: 32px;\n  bottom: 32px;\n  margin: 0;\n  font-size: 56px;\n  line-height: 1.1;\n  color: white;\n\
+    \  text-shadow: 0 2px 8px rgb(0 0 0 / 60%);\n}\n\n.container {\n  width: 960px;\n  margin: 0 auto;\n\
+    \  padding: 32px 0;\n}\n\n.dishes {\n  display: flex;\n  gap: 24px;\n  list-style: none;\n  margin:\
+    \ 0;\n  padding: 0;\n}\n\n.dish {\n  width: 25%;\n  padding: 16px;\n  border: 1px solid #d6d3d1;\n\
+    }\n\n.dish-price {\n  font-weight: bold;\n}\n```\n\nDemandes du restaurant :\n\n1. **Bug** : sur téléphone,\
+    \ le menu et les infos pratiques sont **coupés à droite**,\n   et on ne peut pas faire défiler pour\
+    \ les lire. Trouve la cause et corrige-la.\n2. **Bug** : l’en-tête devait rester visible pendant le\
+    \ défilement, mais il part avec\n   la page, sur téléphone comme sur ordinateur. Explique pourquoi\
+    \ et corrige-le.\n3. **Évolution** : les plats s’affichent sur une colonne sur téléphone, deux colonnes\n\
+    \   à partir de 40rem, quatre à partir de 64rem. Mobile d’abord.\n4. **Évolution** : sur téléphone,\
+    \ le nom du restaurant et les liens ne doivent jamais\n   déborder : les éléments passent à la ligne\
+    \ si nécessaire, avec des espacements\n   réduits.\n5. **Évolution** : le titre de la bannière doit\
+    \ être lisible sur téléphone (taille\n   fluide de 1,75rem à 3,5rem, jamais collé aux bords) et la\
+    \ photo doit être servie\n   en trois tailles : `salle-640.jpg`, `salle-1024.jpg` et `salle-1600.jpg`.\
+    \ Elle\n   occupe toujours toute la largeur de la fenêtre.\n"
+  deliverable: 'Colle la feuille modifiée complète et la balise `img` de la bannière modifiée, puis
+
+    la liste des lignes modifiées ou ajoutées avec, pour chacune, la demande concernée
+
+    et la raison. Indique les largeurs auxquelles tu as testé (au moins 375 et 1280 px)
+
+    et ce que tu as observé avant et après.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: bug-diagnosis
+      description: Explique les deux bugs et leur cause commune, et les corrige sans masquer le problème.
+      maxScore: 3
+    - id: responsive-evolution
+      description: Rend la page mobile d’abord avec des points de rupture en rem et des mises en page
+        flexibles.
+      maxScore: 3
+    - id: media-typography
+      description: Rend la bannière adaptative (srcset, sizes, titre fluide) et l’explique.
+      maxScore: 2
+    - id: minimal-change
+      description: Fait évoluer le code existant de façon ciblée et vérifiée.
+      maxScore: 2

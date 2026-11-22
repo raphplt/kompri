@@ -1,0 +1,308 @@
+- id: authentication-sans-ia
+  family: SANS_IA
+  title: Le coffre à mots de passe
+  summary: Écrire seul un module de hachage scrypt et une fonction de connexion sûre, puis les tester
+    avec node:test.
+  estimatedMinutes: 60
+  instructions: "Tu travailles seul, sans IA, avec Node.js 24 et les modules intégrés `node:crypto`,\n\
+    `node:util`, `node:test` et `node:assert`. Aucune dépendance npm.\n\n1. **`password.js`** exporte\
+    \ deux fonctions asynchrones :\n   - `hashPassword(password)` : hache avec scrypt, un sel aléatoire\
+    \ de 16 octets par appel,\n     les paramètres minimaux recommandés par l’OWASP (N=2^17, r=8, p=1),\
+    \ et renvoie une\n     chaîne qui contient l’algorithme, les paramètres, le sel et l’empreinte ;\n\
+    \   - `verifyPassword(password, stored)` : renvoie `true` ou `false` en recalculant\n     l’empreinte\
+    \ avec les paramètres lus dans `stored`, et compare en temps constant.\n   Le calcul ne doit pas bloquer\
+    \ la boucle d’événements.\n2. **`login.js`** exporte `authenticate(findUserByEmail, email, password)`\
+    \ :\n   - `findUserByEmail` est une fonction asynchrone fournie par l’appelant, qui renvoie\n    \
+    \ `{ id, email, passwordHash }` ou `null` (cela permet de tester sans base) ;\n   - l’e-mail est normalisé\
+    \ (espaces retirés, minuscules) ;\n   - la fonction renvoie `{ id, email }` si les identifiants sont\
+    \ corrects, sinon `null` ;\n   - la durée de la fonction ne doit pas révéler si le compte existe.\n\
+    3. **`password.test.js`** contient au moins cinq tests :\n   - deux hachages du même mot de passe\
+    \ sont différents ;\n   - le bon mot de passe est accepté, un mot de passe différent d’un seul caractère\
+    \ est\n     refusé ;\n   - le format stocké contient bien les paramètres attendus ;\n   - `authenticate`\
+    \ renvoie `null` pour un compte inconnu **et** pour un mauvais mot de\n     passe, et l’utilisateur\
+    \ pour de bons identifiants saisis avec des majuscules ;\n   - la fonction de recherche est bien appelée\
+    \ avec l’e-mail normalisé.\n\nLance les tests avec `node --test` et garde la sortie.\n"
+  deliverable: 'Colle `password.js`, `login.js`, `password.test.js` et la sortie de `node --test`. Ajoute
+
+    un court paragraphe (cinq à huit lignes) qui explique, avec tes mots, le rôle du sel, de
+
+    `maxmem` et de `timingSafeEqual`, et ce que fait ta fonction quand le compte n’existe pas.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: hashing
+      description: Hache correctement avec scrypt et explique chaque paramètre et le sel.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Hachage rapide, sel constant ou absent, ou ne sait pas expliquer.
+      - score: 1
+        description: Scrypt avec sel aléatoire mais paramètres non stockés ou non expliqués.
+      - score: 2
+        description: Format complet, maxmem justifié, rôle du sel et du coût expliqués.
+      - score: 3
+        description: Explique aussi l’évolution des paramètres, Argon2id et la limite de bcrypt.
+    - id: verification
+      description: Vérifie en temps constant et sans révéler l’existence du compte.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Comparaison === ou messages et durées différents selon le cas.
+      - score: 1
+        description: timingSafeEqual utilisé mais compte inconnu traité plus vite.
+      - score: 2
+        description: Empreinte factice, résultat identique, explique l’énumération de comptes.
+      - score: 3
+        description: Explique aussi pourquoi la longueur des tampons doit être égale et comment il l’a
+          garanti.
+    - id: tests
+      description: Écrit des tests pertinents qui échoueraient si une protection disparaissait.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Tests absents ou qui ne vérifient rien de significatif.
+      - score: 1
+        description: Cas nominaux testés, cas d’échec ou normalisation absents.
+      - score: 2
+        description: Cas nominaux et d’échec couverts, injection de la recherche utilisée intelligemment.
+- id: authentication-avec-ia
+  family: AVEC_IA
+  title: Le carnet d’adresses partagé en famille
+  summary: Construire avec une IA une API multi-utilisateur avec sessions et contrôle d’accès, puis en
+    défendre chaque choix.
+  estimatedMinutes: 150
+  instructions: "Tu peux utiliser une IA autant que tu veux. À l’oral, tu expliqueras chaque ligne sans\n\
+    aide, tu justifieras tes choix de sécurité et tu modifieras le code en direct.\n\nObjectif : une API\
+    \ Express 5 + PostgreSQL de carnet d’adresses personnel.\n\n1. **Comptes** : `POST /api/auth/register`,\
+    \ `POST /api/auth/login`,\n   `POST /api/auth/logout`, `GET /api/auth/me`. Mots de passe hachés avec\
+    \ scrypt (ou\n   Argon2id si tu sais justifier ton choix et ses paramètres), politique de longueur\n\
+    \   conforme à la leçon, e-mail normalisé.\n2. **Sessions** stockées dans PostgreSQL (empreinte du\
+    \ jeton, utilisateur, expiration de\n   sept jours), cookie `HttpOnly`, `SameSite=Lax`, `Secure` en\
+    \ production, régénération à\n   la connexion, suppression à la déconnexion. Pas de bibliothèque de\
+    \ session.\n3. **Limitation** des échecs de connexion, avec 429 et `Retry-After`.\n4. **Contacts**\
+    \ : `GET/POST /api/contacts`, `GET/PATCH/DELETE /api/contacts/:id`. Un\n   contact a un nom (obligatoire),\
+    \ un e-mail et un téléphone facultatifs. Chaque\n   utilisateur ne voit et ne modifie **que** ses\
+    \ contacts.\n5. **Tests** `node:test` sur une base de test : au moins un parcours complet\n   (inscription,\
+    \ création, lecture, déconnexion, 401 ensuite), et des tests à **deux\n   utilisateurs** pour la lecture,\
+    \ la modification et la suppression.\n6. Migrations SQL versionnées (`001_…sql`, `002_…sql` si besoin).\n"
+  deliverable: 'Colle les migrations, les fichiers sources (application, mots de passe, sessions,
+
+    middlewares, limiteur), les tests et la sortie de `node --test`. Termine par une liste de
+
+    ce que l’IA a proposé et que tu as refusé ou corrigé, avec la raison.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: ownership
+      description: Explique et maîtrise chaque partie du code, y compris celles écrites par l’IA.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne sait pas expliquer des parties importantes de son code.
+      - score: 1
+        description: Explique le fonctionnement général mais pas les décisions de sécurité.
+      - score: 2
+        description: Explique chaque middleware, requête et décision de sécurité.
+      - score: 3
+        description: Explique aussi les propositions de l’IA écartées et pourquoi.
+    - id: sessions
+      description: Justifie la conception des sessions et des cookies.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Jeton prévisible, pas d’expiration ou déconnexion seulement côté navigateur.
+      - score: 1
+        description: Sessions fonctionnelles mais attributs de cookie ou régénération mal expliqués.
+      - score: 2
+        description: Explique entropie, empreinte en base, expiration serveur, régénération et attributs.
+      - score: 3
+        description: Compare avec un JWT et explique ce que changerait le passage à plusieurs serveurs.
+    - id: access-control
+      description: Garantit et prouve l’isolation des données entre utilisateurs.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Au moins une route permet d’atteindre les données d’un autre utilisateur.
+      - score: 1
+        description: Isolation correcte mais non testée ou non expliquée.
+      - score: 2
+        description: Isolation sur toutes les routes, prouvée par des tests à deux utilisateurs.
+      - score: 3
+        description: Prévoit correctement quel test échoue si un filtre est retiré pendant l’oral.
+    - id: modification
+      description: Réalise une modification demandée à l’oral sans affaiblir la sécurité.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Échoue ou introduit une faille.
+      - score: 1
+        description: Modification fonctionnelle mais non testée.
+      - score: 2
+        description: Modification correcte, sûre, accompagnée d’un test.
+- id: authentication-contre-ia
+  family: CONTRE_IA
+  title: L’espace client des factures
+  summary: Auditer une authentification générée par une IA, démontrer ses failles et la corriger.
+  estimatedMinutes: 90
+  instructions: "Une petite entreprise a fait générer par un assistant l’espace client de son application\
+    \ de\nfacturation. Chaque client doit voir ses factures ; un administrateur voit tout. Avant la\n\
+    mise en ligne, on te demande un audit de l’authentification et des contrôles d’accès.\n\nSchéma :\n\
+    \n```sql\nCREATE TABLE users (\n  id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n  email text\
+    \ NOT NULL UNIQUE,\n  display_name text NOT NULL,\n  password_hash text NOT NULL,\n  role text NOT\
+    \ NULL DEFAULT 'customer' CHECK (role IN ('customer', 'admin'))\n);\n\nCREATE TABLE invoices (\n \
+    \ id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n  owner_id integer NOT NULL REFERENCES users\
+    \ (id) ON DELETE CASCADE,\n  label text NOT NULL,\n  amount_cents integer NOT NULL CHECK (amount_cents\
+    \ >= 0)\n);\n```\n\n`server.js` :\n\n```js\nimport express from 'express';\nimport pg from 'pg';\n\
+    import crypto from 'node:crypto';\n\nconst app = express();\nconst pool = new pg.Pool({ connectionString:\
+    \ process.env.DATABASE_URL });\nconst sessions = new Map();\n\napp.use(express.json());\n\nfunction\
+    \ hashPassword(password) {\n  return crypto.scryptSync(password, 'invoices-app', 64).toString('hex');\n\
+    }\n\nfunction getCookie(req, name) {\n  const match = (req.headers.cookie || '').match(new RegExp(`${name}=([^;]+)`));\n\
+    \  return match ? match[1] : null;\n}\n\nfunction auth(req, res, next) {\n  const sid = getCookie(req,\
+    \ 'session');\n  const session = sid && sessions.get(sid);\n  if (!session) return res.status(401).json({\
+    \ error: 'Non connecté' });\n  req.user = session.user;\n  next();\n}\n\napp.post('/api/register',\
+    \ async (req, res) => {\n  const { email, password, displayName } = req.body;\n  if (!email || !password\
+    \ || password.length < 8) {\n    return res.status(400).json({ error: 'Email et mot de passe (8 caractères\
+    \ min.) requis' });\n  }\n  const result = await pool.query(\n    'INSERT INTO users (email, display_name,\
+    \ password_hash) VALUES ($1, $2, $3) RETURNING id, email, display_name, role',\n    [email, displayName\
+    \ || email, hashPassword(password)],\n  );\n  res.status(201).json(result.rows[0]);\n});\n\napp.post('/api/login',\
+    \ async (req, res) => {\n  const { email, password } = req.body;\n  const result = await pool.query('SELECT\
+    \ * FROM users WHERE email = $1', [email]);\n  const user = result.rows[0];\n  if (!user) {\n    return\
+    \ res.status(404).json({ error: 'Aucun compte avec cet email' });\n  }\n  if (user.password_hash !==\
+    \ hashPassword(password)) {\n    return res.status(401).json({ error: 'Mot de passe incorrect' });\n\
+    \  }\n  const sid = Buffer.from(`${user.id}:${Date.now()}`).toString('base64');\n  sessions.set(sid,\
+    \ { user });\n  res.cookie('session', sid);\n  res.json({ id: user.id, email: user.email, role: user.role\
+    \ });\n});\n\napp.post('/api/logout', (req, res) => {\n  res.clearCookie('session');\n  res.status(204).end();\n\
+    });\n\napp.get('/api/me', auth, (req, res) => {\n  res.json(req.user);\n});\n\napp.patch('/api/me',\
+    \ auth, async (req, res) => {\n  const fields = Object.keys(req.body);\n  if (fields.length === 0)\
+    \ return res.status(400).json({ error: 'Rien à modifier' });\n  const assignments = fields.map((field,\
+    \ i) => `${field} = $${i + 1}`).join(', ');\n  const values = fields.map((field) => req.body[field]);\n\
+    \  const result = await pool.query(\n    `UPDATE users SET ${assignments} WHERE id = $${fields.length\
+    \ + 1} RETURNING id, email, display_name, role`,\n    [...values, req.user.id],\n  );\n  res.json(result.rows[0]);\n\
+    });\n\napp.get('/api/invoices', auth, async (req, res) => {\n  const result = await pool.query('SELECT\
+    \ * FROM invoices WHERE owner_id = $1 ORDER BY id', [\n    req.user.id,\n  ]);\n  res.json(result.rows);\n\
+    });\n\napp.get('/api/invoices/:id', auth, async (req, res) => {\n  const result = await pool.query('SELECT\
+    \ * FROM invoices WHERE id = $1', [req.params.id]);\n  if (!result.rows[0]) return res.status(404).json({\
+    \ error: 'Facture introuvable' });\n  res.json(result.rows[0]);\n});\n\napp.get('/api/admin/invoices',\
+    \ auth, async (req, res) => {\n  if (req.user.role !== 'admin') return res.status(403).json({ error:\
+    \ 'Réservé aux administrateurs' });\n  const result = await pool.query('SELECT * FROM invoices ORDER\
+    \ BY id');\n  res.json(result.rows);\n});\n\napp.listen(3000, () => console.log('API factures sur\
+    \ http://localhost:3000'));\n```\n\nTravail demandé :\n\n1. Liste chaque défaut : ligne, scénario\
+    \ d’attaque concret, conséquence, catégorie du Top\n   10 OWASP 2021, gravité.\n2. Démontre au moins\
+    \ trois défauts sur une base de test (commandes `curl` et sorties). Un\n   client ordinaire qui devient\
+    \ administrateur compte comme une démonstration majeure.\n3. Réécris le code pour corriger tous les\
+    \ défauts, en t’appuyant sur ce que tu as appris\n   (scrypt correct, sessions en base, cookie sûr,\
+    \ contrôle d’accès).\n4. Écris au moins trois tests `node:test` qui échouaient sur le code d’origine\
+    \ et passent\n   sur le tien.\n"
+  deliverable: 'Colle ton tableau de défauts, les démonstrations (commandes et sorties), le code corrigé
+
+    complet (et la migration si tu modifies le schéma), les tests et la sortie de
+
+    `node --test`.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: defects-found
+      description: Identifie les failles d’authentification et d’autorisation, y compris les plus discrètes.
+      maxScore: 4
+    - id: demonstration
+      description: Démontre les failles de façon reproductible et explique leur mécanisme.
+      maxScore: 3
+    - id: fixes
+      description: Corrige avec les techniques enseignées et sans régression.
+      maxScore: 3
+    - id: regression-tests
+      description: Écrit des tests qui prouvent les corrections.
+      maxScore: 2
+- id: authentication-apres-ia
+  family: APRES_IA
+  title: Les sessions qui s’évaporent
+  summary: Dépanner et faire évoluer une API de tâches dont les sessions sont perdues à chaque redémarrage.
+  estimatedMinutes: 120
+  instructions: "Cette API de tâches personnelles fonctionne et ses utilisateurs l’apprécient. Elle a\
+    \ été\nécrite avec une IA. Tu dois la faire évoluer **sans la réécrire** : garde la structure,\nles\
+    \ routes et le module de mots de passe.\n\n`migrations/001_init.sql` :\n\n```sql\nCREATE TABLE users\
+    \ (\n  id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n  email text NOT NULL UNIQUE,\n  password_hash\
+    \ text NOT NULL\n);\n\nCREATE TABLE tasks (\n  id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n\
+    \  owner_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,\n  title text NOT NULL,\n  done\
+    \ boolean NOT NULL DEFAULT false\n);\n```\n\n`src/password.js` est le module scrypt de la leçon (`hashPassword`\
+    \ et `verifyPassword`,\nN=2^17, r=8, p=1, sel aléatoire, `timingSafeEqual`) ; il est correct et ne\
+    \ doit pas être\nmodifié.\n\n`src/app.js` :\n\n```js\nimport express from 'express';\nimport { randomBytes\
+    \ } from 'node:crypto';\nimport { hashPassword, verifyPassword } from './password.js';\n\nconst sessions\
+    \ = new Map(); // jeton -> identifiant d’utilisateur\n\nfunction readCookie(req, name) {\n  for (const\
+    \ part of (req.headers.cookie ?? '').split(';')) {\n    const [key, ...rest] = part.trim().split('=');\n\
+    \    if (key === name) return rest.join('=');\n  }\n  return null;\n}\n\nexport function createApp({\
+    \ pool, secureCookies = false }) {\n  const app = express();\n  app.disable('x-powered-by');\n  app.use(express.json({\
+    \ limit: '10kb' }));\n\n  app.use(async (req, res, next) => {\n    req.sessionToken = readCookie(req,\
+    \ 'sid');\n    const userId = req.sessionToken ? sessions.get(req.sessionToken) : undefined;\n   \
+    \ req.user = null;\n    if (userId) {\n      const result = await pool.query('SELECT id, email FROM\
+    \ users WHERE id = $1', [userId]);\n      req.user = result.rows[0] ?? null;\n    }\n    next();\n\
+    \  });\n\n  function requireAuth(req, res, next) {\n    if (!req.user) return res.status(401).json({\
+    \ error: 'Authentification requise' });\n    next();\n  }\n\n  function openSession(res, userId) {\n\
+    \    const token = randomBytes(32).toString('base64url');\n    sessions.set(token, userId);\n    res.cookie('sid',\
+    \ token, { httpOnly: true, secure: secureCookies, sameSite: 'lax', path: '/' });\n  }\n\n  app.post('/api/auth/register',\
+    \ async (req, res) => {\n    const email = String(req.body?.email ?? '').trim().toLowerCase();\n \
+    \   const password = String(req.body?.password ?? '');\n    if (!/^[^\\s@]+@[^\\s@]+$/.test(email)\
+    \ || password.length < 15 || password.length > 128) {\n      return res.status(400).json({ error:\
+    \ 'E-mail valide et mot de passe de 15 à 128 caractères requis' });\n    }\n    try {\n      const\
+    \ result = await pool.query(\n        'INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING\
+    \ id, email',\n        [email, await hashPassword(password)],\n      );\n      openSession(res, result.rows[0].id);\n\
+    \      res.status(201).json({ user: result.rows[0] });\n    } catch (error) {\n      if (error.code\
+    \ === '23505') return res.status(409).json({ error: 'Adresse déjà utilisée' });\n      throw error;\n\
+    \    }\n  });\n\n  app.post('/api/auth/login', async (req, res) => {\n    const email = String(req.body?.email\
+    \ ?? '').trim().toLowerCase();\n    const password = String(req.body?.password ?? '');\n    const\
+    \ result = await pool.query('SELECT id, email, password_hash FROM users WHERE email = $1', [email]);\n\
+    \    const user = result.rows[0];\n    if (!user || !(await verifyPassword(password, user.password_hash)))\
+    \ {\n      return res.status(401).json({ error: 'E-mail ou mot de passe incorrect' });\n    }\n  \
+    \  if (req.sessionToken) sessions.delete(req.sessionToken);\n    openSession(res, user.id);\n    res.json({\
+    \ user: { id: user.id, email: user.email } });\n  });\n\n  app.post('/api/auth/logout', (req, res)\
+    \ => {\n    if (req.sessionToken) sessions.delete(req.sessionToken);\n    res.clearCookie('sid', {\
+    \ httpOnly: true, secure: secureCookies, sameSite: 'lax', path: '/' });\n    res.status(204).end();\n\
+    \  });\n\n  app.get('/api/tasks', requireAuth, async (req, res) => {\n    const result = await pool.query(\n\
+    \      'SELECT id, title, done FROM tasks WHERE owner_id = $1 ORDER BY id',\n      [req.user.id],\n\
+    \    );\n    res.json(result.rows);\n  });\n\n  app.post('/api/tasks', requireAuth, async (req, res)\
+    \ => {\n    const title = String(req.body?.title ?? '').trim();\n    if (title.length < 1 || title.length\
+    \ > 200) {\n      return res.status(400).json({ error: 'Titre de 1 à 200 caractères' });\n    }\n\
+    \    const result = await pool.query(\n      'INSERT INTO tasks (owner_id, title) VALUES ($1, $2)\
+    \ RETURNING id, title, done',\n      [req.user.id, title],\n    );\n    res.status(201).json(result.rows[0]);\n\
+    \  });\n\n  app.use((error, req, res, next) => {\n    console.error(error);\n    res.status(500).json({\
+    \ error: 'Erreur interne' });\n  });\n\n  return app;\n}\n```\n\n`src/server.js` crée un `pg.Pool`\
+    \ à partir de `DATABASE_URL`, appelle `createApp` et\nécoute sur `PORT`.\n\nDemandes :\n\n1. **Bug\
+    \ signalé** : « après chaque mise à jour du serveur, tout le monde est déconnecté,\n   et quand on\
+    \ a deux serveurs, on est déconnecté une fois sur deux ». Explique la cause,\n   puis stocke les sessions\
+    \ dans PostgreSQL avec une **nouvelle** migration\n   (`002_sessions.sql`). On ne stocke pas le jeton\
+    \ en clair.\n2. **Expiration** : une session expire sept jours après sa création, côté serveur comme\n\
+    \   dans le cookie. Ajoute une fonction qui supprime les sessions expirées.\n3. **Changement de mot\
+    \ de passe** : `POST /api/account/password` avec\n   `{ \"currentPassword\": \"…\", \"newPassword\"\
+    : \"…\" }`. Le mot de passe actuel est exigé, le\n   nouveau suit la même politique qu’à l’inscription,\
+    \ **toutes les autres sessions** de\n   l’utilisateur sont fermées et la session courante est régénérée.\n\
+    4. **Tests** `node:test` sur une base de test : une session survit à la recréation de\n   l’application\
+    \ (simule le redémarrage en appelant deux fois `createApp`) ; après un\n   changement de mot de passe,\
+    \ l’autre session reçoit 401 et l’ancien mot de passe est\n   refusé.\n"
+  deliverable: 'Colle la migration `002_sessions.sql`, les fichiers modifiés ou créés en entier, les tests
+
+    et la sortie de `node --test`, puis la liste des changements avec, pour chacun, le bug ou
+
+    la menace qu’il traite.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: diagnosis
+      description: Explique la cause du bug à partir du modèle mémoire d’un processus Node.js.
+      maxScore: 2
+    - id: session-store
+      description: Met en place un stockage de sessions sûr, expirant et versionné par migration.
+      maxScore: 3
+    - id: password-change
+      description: Implémente un changement de mot de passe qui invalide les autres sessions.
+      maxScore: 3
+    - id: tests
+      description: Prouve les évolutions par des tests ciblés.
+      maxScore: 2

@@ -101,7 +101,7 @@
 
 - id: js-basics
   domain: javascript
-  status: draft
+  status: published
   title: 'JavaScript : valeurs, types et variables'
   description: Les briques de base pour manipuler des données en JavaScript.
   estimatedHours: 5
@@ -115,7 +115,7 @@
 
 - id: js-control-flow
   domain: javascript
-  status: draft
+  status: published
   title: Conditions et boucles
   description: Faire prendre des décisions et répéter des actions à un programme.
   estimatedHours: 4
@@ -129,7 +129,7 @@
 
 - id: js-functions
   domain: javascript
-  status: draft
+  status: published
   title: Fonctions et portée
   description: Découper un programme en fonctions réutilisables et compréhensibles.
   estimatedHours: 5

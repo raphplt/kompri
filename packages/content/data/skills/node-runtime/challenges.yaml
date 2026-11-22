@@ -1,0 +1,291 @@
+- id: node-runtime-sans-ia
+  family: SANS_IA
+  title: Le catalogue de la médiathèque
+  summary: Écrire un petit outil en ligne de commande en modules ES qui enregistre ses données dans un
+    fichier JSON.
+  estimatedMinutes: 60
+  instructions: "La médiathèque du quartier veut un outil en ligne de commande pour tenir son\ncatalogue.\
+    \ Tu le réalises seul, sans IA, avec Node.js 24 et sans aucune dépendance npm.\n\nStructure attendue\
+    \ :\n\n```text\nmediatheque/\n  package.json\n  src/\n    catalog.js   fonctions de calcul, sans accès\
+    \ aux fichiers\n    storage.js   lecture et écriture du catalogue\n    main.js      point d'entrée\
+    \ : lit les arguments, affiche, gère les erreurs\n```\n\nExigences :\n\n1. `package.json` : modules\
+    \ ES, projet privé, et un script `start` qui lance\n   `src/main.js` en chargeant un fichier `.env`\
+    \ **s’il existe**.\n2. Commandes, passées après `npm start --` :\n   - `ajouter TITRE AUTEUR` ajoute\
+    \ un document ; titre et auteur sont obligatoires ;\n   - `lister` affiche les documents numérotés,\
+    \ ou `Catalogue vide.` ;\n   - `chercher MOT` affiche les documents dont le titre ou l’auteur contient\
+    \ le mot,\n     sans tenir compte des majuscules.\n3. Le catalogue est enregistré en JSON lisible\
+    \ (indenté). Par défaut, il est rangé dans\n   `data/catalog.json` **à la racine du projet**, quel\
+    \ que soit le dossier depuis\n   lequel on lance le programme. Si la variable d’environnement `CATALOG_FILE`\
+    \ est\n   définie, c’est ce fichier qui est utilisé.\n4. Au premier lancement, l’absence du fichier\
+    \ n’est pas une erreur. En revanche, un\n   fichier JSON corrompu ne doit **jamais** être écrasé silencieusement.\n\
+    5. Toute erreur (commande inconnue, argument manquant, fichier illisible) affiche un\n   message clair\
+    \ sur la sortie d’erreur et termine avec le code 1.\n6. `catalog.js` exporte des fonctions nommées\
+    \ ; aucun module n’utilise `require`.\n"
+  deliverable: 'Colle les quatre fichiers, puis la sortie de ces commandes, dans l’ordre, en partant
+
+    d’un catalogue inexistant : `npm start -- lister`,
+
+    `npm start -- ajouter "Le Petit Prince" "Antoine de Saint-Exupéry"`,
+
+    `npm start -- ajouter "La Peste" "Albert Camus"`, `npm start -- chercher camus`,
+
+    `npm start -- ajouter "Sans auteur"` suivie de `echo $?`, et `node ../src/main.js lister`
+
+    lancée depuis un sous-dossier du projet. Termine par trois phrases : comment ton
+
+    programme trouve le fichier par défaut, ce qui se passe avec un JSON corrompu, et ce qui
+
+    changerait si tu oubliais un `await` devant l’écriture.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: modules
+      description: Organise le code en modules ES et explique imports, exports et résolution.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Code dans un seul fichier, ou require, ou imports qui ne fonctionnent pas.
+      - score: 1
+        description: Modules fonctionnels mais ne sait pas expliquer type module ou l’extension obligatoire.
+      - score: 2
+        description: Explique exports nommés, spécificateurs relatifs et préfixe node:.
+      - score: 3
+        description: Justifie le découpage (fonctions pures séparées des entrées-sorties) et l’évaluation
+          unique d’un module.
+    - id: files-paths
+      description: Lit et écrit les fichiers de façon fiable et construit des chemins indépendants du
+        dossier courant.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Chemins relatifs au dossier courant sans le savoir, ou await oublié.
+      - score: 1
+        description: Fonctionne depuis la racine mais ne sait pas expliquer cwd et import.meta.dirname.
+      - score: 2
+        description: Explique cwd et import.meta.dirname, l’encodage et la création du dossier.
+      - score: 3
+        description: Gère précisément les erreurs par code (ENOENT) et explique le risque d’écrasement
+          d’un fichier corrompu.
+    - id: config-errors
+      description: Lit la configuration depuis l’environnement et signale les erreurs proprement.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Pas de CATALOG_FILE, ou erreurs affichées avec un code de sortie 0.
+      - score: 1
+        description: Variable lue et erreurs signalées, mais justification confuse.
+      - score: 2
+        description: Explique le rôle de --env-file-if-exists, de la sortie d’erreur et du code de sortie.
+    - id: npm-scripts
+      description: Explique package.json et les scripts npm utilisés.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Ne sait pas ce que fait npm start ni le rôle de --.
+      - score: 1
+        description: Utilise les scripts sans pouvoir expliquer type, private ou le passage d’arguments.
+      - score: 2
+        description: Explique chaque champ et pourquoi npm start fonctionne depuis un sous-dossier.
+- id: node-runtime-avec-ia
+  family: AVEC_IA
+  title: Le rapport de dépenses
+  summary: Construire avec une IA un outil qui transforme un fichier CSV de dépenses en rapport, puis
+    en défendre chaque choix.
+  estimatedMinutes: 100
+  instructions: "Une association tient ses dépenses dans un fichier CSV exporté d’un tableur. Tu peux\n\
+    utiliser une IA autant que tu veux ; à l’oral, tu devras expliquer chaque ligne,\njustifier chaque\
+    \ dépendance et modifier ton outil en direct.\n\nFichier d’exemple `depenses.csv` (séparateur point-virgule,\
+    \ montants à virgule) :\n\n```text\ndate;categorie;libelle;montant\n2026-03-02;fournitures;Ramettes\
+    \ de papier;24,90\n2026-03-05;transport;Location camionnette;89,00\n2026-03-05;fournitures;Feutres;7,35\n\
+    2026-03-12;alimentation;Goûter des bénévoles;42,10\n2026-03-20;transport;Essence;35,60\n```\n\nObjectif\
+    \ : un projet Node.js 24 en modules ES, lancé avec\n`npm run rapport -- depenses.csv`, qui :\n\n1.\
+    \ lit le fichier CSV indiqué en argument (chemin relatif au dossier courant) ;\n2. calcule le total\
+    \ général et le total par catégorie, au centime près ;\n3. affiche un résumé lisible dans le terminal\
+    \ et écrit un fichier `rapport.json`\n   dans le dossier indiqué par la variable d’environnement `REPORT_DIR`,\
+    \ ou par défaut\n   dans un dossier `rapports` à la racine du projet ;\n4. refuse proprement un fichier\
+    \ absent, une ligne mal formée (en indiquant son numéro)\n   ou un montant invalide, avec un code\
+    \ de sortie 1 ;\n5. lit sa configuration via un fichier `.env` facultatif, et fournit un\n   `.env.example`\
+    \ ;\n6. utilise au plus **une** dépendance npm, que tu dois justifier (ou aucune, en\n   expliquant\
+    \ pourquoi).\n\nContraintes : `package.json` avec des scripts clairs, `package-lock.json` présent\
+    \ si\nune dépendance est installée, fichiers `.gitignore` adaptés, code découpé en au moins\ndeux\
+    \ modules.\n\nConseil : demande à l’IA de t’expliquer comment les nombres à virgule sont représentés\n\
+    en JavaScript et vérifie le total sur l’exemple à la main.\n"
+  deliverable: 'Colle `package.json`, `.gitignore`, `.env.example`, tous les fichiers de code, la
+
+    sortie de `npm run rapport -- depenses.csv` et le contenu de `rapport.json`. Ajoute la
+
+    sortie d’un essai avec une ligne invalide de ton choix, puis quelques lignes sur ce que
+
+    l’IA t’a apporté, ce que tu as corrigé et la raison de ton choix de dépendance.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: code-ownership
+      description: Explique chaque partie de son code sans aide, y compris ce qui vient de l’IA.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne sait pas expliquer des parties importantes de son propre code.
+      - score: 1
+        description: Explique le déroulé global mais pas la lecture du fichier ou la conversion des montants.
+      - score: 2
+        description: Explique précisément chaque module, chaque import et la gestion des erreurs.
+      - score: 3
+        description: Explique aussi les propositions de l’IA qu’il a écartées ou corrigées, avec la raison.
+    - id: data-robustness
+      description: Traite correctement les montants, les lignes invalides et les fins de ligne.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Totaux faux ou NaN sur l’exemple.
+      - score: 1
+        description: Totaux justes mais lignes invalides acceptées silencieusement.
+      - score: 2
+        description: Lignes invalides refusées avec leur numéro, montants convertis et validés.
+      - score: 3
+        description: Explique aussi la virgule flottante, la ligne vide finale et les fins de ligne Windows.
+    - id: npm-dependencies
+      description: Justifie ses dépendances et explique package.json, le verrouillage et les scripts.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Ne sait pas pourquoi une dépendance est présente ni ce que fait package-lock.json.
+      - score: 1
+        description: Explique les scripts mais pas les intervalles de version ou npm ci.
+      - score: 2
+        description: Justifie le choix de dépendance, lit son intervalle et explique verrouillage et npm
+          ci.
+    - id: modification
+      description: Réalise ou décrit correctement une modification demandée pendant l’oral.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne parvient pas à modifier l’outil.
+      - score: 1
+        description: Modification partielle ou qui casse un cas existant.
+      - score: 2
+        description: Modification correcte avec un exemple de vérification.
+      - score: 3
+        description: Modification correcte, vérifiée sur plusieurs cas dont un cas d’erreur.
+- id: node-runtime-contre-ia
+  family: CONTRE_IA
+  title: Le carnet de lecture qui perd des données
+  summary: Auditer un petit outil Node.js généré, qui fonctionne en apparence mais expose un secret, écrit
+    n’importe où et perd des données.
+  estimatedMinutes: 55
+  instructions: "Un assistant a généré ce petit outil en ligne de commande : chaque utilisateur tient\n\
+    un carnet des livres qu’il a lus. On l’utilise ainsi :\n`node src/cli.js add alice \"Le Petit Prince\"\
+    ` puis `node src/cli.js list alice`.\nL’auteur affirme qu’il est « prêt pour la production ». Plus\
+    \ tard, il sera branché\nderrière un serveur web où le nom d’utilisateur viendra d’une requête.\n\n\
+    `package.json` :\n\n```json\n{\n  \"name\": \"carnet-lecture\",\n  \"version\": \"1.0.0\",\n  \"type\"\
+    : \"module\",\n  \"scripts\": {\n    \"start\": \"node src/cli.js\"\n  },\n  \"dependencies\": {\n\
+    \    \"dotenv\": \"^16.4.5\",\n    \"nodemon\": \"^3.1.0\"\n  }\n}\n```\n\n`src/config.js` :\n\n```js\n\
+    import 'dotenv/config';\n\nexport const config = {\n  dataDir: process.env.DATA_DIR || './data',\n\
+    \  maxBooks: process.env.MAX_BOOKS || 100,\n  adminToken: process.env.ADMIN_TOKEN || 'changeme',\n\
+    \  debug: Boolean(process.env.DEBUG),\n};\n\nif (config.debug) {\n  console.log('Configuration chargée\
+    \ :', config);\n}\n```\n\n`src/storage.js` :\n\n```js\nimport { readFile, writeFile, mkdir } from\
+    \ 'node:fs/promises';\nimport path from 'node:path';\nimport { config } from './config.js';\n\nfunction\
+    \ userFile(user) {\n  return path.join(config.dataDir, `${user}.json`);\n}\n\nexport async function\
+    \ loadBooks(user) {\n  try {\n    const content = await readFile(userFile(user), 'utf8');\n    return\
+    \ JSON.parse(content);\n  } catch {\n    return [];\n  }\n}\n\nexport async function saveBooks(user,\
+    \ books) {\n  await mkdir(config.dataDir, { recursive: true });\n  writeFile(userFile(user), JSON.stringify(books,\
+    \ null, 2));\n}\n```\n\n`src/cli.js` :\n\n```js\nimport { loadBooks, saveBooks } from './storage';\n\
+    import { config } from './config.js';\n\nconst [command, user, title] = process.argv.slice(2);\n\n\
+    if (command === 'add') {\n  const books = await loadBooks(user);\n  if (books.length >= config.maxBooks)\
+    \ {\n    console.error(`Limite de ${config.maxBooks} livres atteinte.`);\n    process.exit(1);\n \
+    \ }\n  books.push({ title, addedAt: new Date().toISOString() });\n  await saveBooks(user, books);\n\
+    \  console.log(`« ${title} » ajouté au carnet de ${user}.`);\n} else if (command === 'list') {\n \
+    \ const books = await loadBooks(user);\n  books.forEach((book, index) => console.log(`${index + 1}.\
+    \ ${book.title}`));\n} else {\n  console.log('Usage : node src/cli.js add|list UTILISATEUR [TITRE]');\n\
+    }\n```\n\nLe fichier `.env` de l’équipe contient `ADMIN_TOKEN=…` et `DEBUG=false`.\n\nTravail demandé\
+    \ :\n\n1. Installe et exécute le projet. Décris ce qui se passe et corrige ce qui empêche\n   le démarrage.\n\
+    2. Liste chaque défaut : fichier et ligne, scénario qui le déclenche (donne la\n   commande ou le\
+    \ contenu de fichier qui le révèle), conséquence, gravité.\n3. Propose une version corrigée des fichiers,\
+    \ sans dépendance inutile.\n4. Pour trois défauts de ton choix, montre la commande qui le révélait\
+    \ avant\n   correction et la sortie après correction.\n"
+  deliverable: 'Colle ta liste de défauts (fichier, ligne, scénario, conséquence, gravité), les
+
+    fichiers corrigés complets, et les sorties avant et après pour trois défauts.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: defects-found
+      description: Identifie les défauts réels, y compris ceux qui ne se voient pas lors d’un essai normal.
+      maxScore: 3
+    - id: root-cause
+      description: Explique la cause technique de chaque défaut avec les notions du cours.
+      maxScore: 3
+    - id: fix-quality
+      description: Propose des corrections justes, vérifiées et sans dépendance inutile.
+      maxScore: 3
+- id: node-runtime-apres-ia
+  family: APRES_IA
+  title: L’export des inscriptions à moderniser
+  summary: Faire évoluer un script Node.js existant vers les modules ES et la configuration par l’environnement,
+    et corriger ses bugs sans le réécrire.
+  estimatedMinutes: 75
+  instructions: "L’association utilise depuis longtemps ce script pour exporter ses inscriptions. Il a\n\
+    été écrit à l’époque avec un assistant et « marche ». Tu dois le faire évoluer\n**en gardant sa structure**\
+    \ : pas de réécriture complète, pas de nouvelle dépendance.\n\n`package.json` :\n\n```json\n{\n  \"\
+    name\": \"export-inscriptions\",\n  \"version\": \"1.2.0\",\n  \"description\": \"Exporte les inscriptions\
+    \ aux événements de l'association\",\n  \"main\": \"export.js\",\n  \"scripts\": {\n    \"export\"\
+    : \"node export.js\"\n  },\n  \"license\": \"ISC\"\n}\n```\n\n`data/inscriptions.csv` (le fichier\
+    \ se termine par un retour à la ligne) :\n\n```text\nnom;email;age;evenement\nAlice Martin;alice@example.com;34;atelier-velo\n\
+    Bruno Petit;bruno@example.com;9;sortie-marche\nChloé Durand;chloe@example.com;45;atelier-velo\nDavid\
+    \ Leroy;david@example.com;12;assemblee\nEmma Roux;emma@example.com;28;sortie-marche\n```\n\n`export.js`\
+    \ :\n\n```js\n// Exporte les inscriptions du fichier CSV en JSON, triées par âge,\n// et affiche le\
+    \ nombre d'inscrits par événement.\nconst fs = require('fs');\nconst path = require('path');\n\nconst\
+    \ INPUT_FILE = path.join(__dirname, 'data', 'inscriptions.csv');\nconst OUTPUT_DIR = '/var/exports/association';\n\
+    \nfunction parseLine(line) {\n  const [name, email, age, event] = line.split(';');\n  return { name,\
+    \ email, age, event };\n}\n\nfs.readFile(INPUT_FILE, 'utf8', function (err, content) {\n  if (err)\
+    \ {\n    console.log('Impossible de lire le fichier des inscriptions');\n    return;\n  }\n\n  const\
+    \ lines = content.split('\\n').slice(1); // on saute l'en-tête\n  const registrations = lines.map(parseLine);\n\
+    \n  const countByEvent = {};\n  registrations.forEach(function (registration) {\n    countByEvent[registration.event]\
+    \ = (countByEvent[registration.event] || 0) + 1;\n  });\n\n  const sorted = registrations.sort(function\
+    \ (a, b) {\n    return a.age > b.age ? 1 : -1;\n  });\n\n  fs.mkdir(OUTPUT_DIR, { recursive: true\
+    \ }, function () {\n    const outputFile = path.join(OUTPUT_DIR, 'inscriptions.json');\n    fs.writeFile(outputFile,\
+    \ JSON.stringify(sorted, null, 2), function () {\n      console.log('Export terminé : ' + registrations.length\
+    \ + ' inscriptions');\n      console.log(countByEvent);\n    });\n  });\n});\n```\n\nDemandes de l’équipe\
+    \ :\n\n1. **Bugs signalés.** « L’export annonce 6 inscriptions alors qu’il y en a 5, et un\n   événement\
+    \ `undefined` apparaît. » « Bruno, 9 ans, est classé après Chloé, 45 ans. »\n   « Sur l’ordinateur\
+    \ de la trésorière, le script affiche \"Export terminé\" mais aucun\n   fichier n’est créé. » Explique\
+    \ la cause de chacun et corrige-les.\n2. **Modernisation.** Passe le projet en modules ES et remplace\
+    \ les callbacks par\n   `node:fs/promises` avec `await`, en conservant la structure et les noms existants.\n\
+    3. **Configuration.** Le dossier de sortie vient de la variable d’environnement\n   `EXPORT_DIR` ;\
+    \ à défaut, un dossier `exports` à côté du script. Le script npm charge\n   un `.env` s’il existe.\
+    \ Fournis un `.env.example`.\n4. **Évolution.** `npm run export -- atelier-velo` n’exporte que les\
+    \ inscriptions de cet\n   événement ; sans argument, tout est exporté.\n5. Ajoute ce qui manque à\
+    \ `package.json` pour une application qui ne doit pas être\n   publiée sur le registre npm.\n"
+  deliverable: 'Colle le `package.json` et le `export.js` modifiés, le `.env.example`, puis la sortie
+    de
+
+    `npm run export`, de `npm run export -- atelier-velo` et d’un essai avec un
+
+    `EXPORT_DIR` où tu n’as pas le droit d’écrire (par exemple `/root/exports` sous Linux ou
+
+    macOS), suivi de `echo $?`. Termine par la liste des lignes modifiées avec la raison de
+
+    chacune.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: bug-diagnosis
+      description: Explique la cause de chaque bug signalé et la corrige proprement.
+      maxScore: 3
+    - id: migration
+      description: Migre vers les modules ES et les promesses en conservant le comportement et la structure.
+      maxScore: 3
+    - id: configuration
+      description: Rend le dossier de sortie configurable et documente la configuration.
+      maxScore: 2
+    - id: minimal-change
+      description: Fait évoluer le code existant de façon ciblée et vérifiée.
+      maxScore: 2

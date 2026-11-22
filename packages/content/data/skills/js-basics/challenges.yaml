@@ -5,18 +5,19 @@
     de chaînes.
   estimatedMinutes: 40
   instructions: "Une boulangerie veut afficher un ticket de caisse dans le terminal. Écris un script\n\
-    `receipt.js`, sans fonction ni boucle, que tu exécutes avec `node receipt.js`.\n\nDonnées de départ,\
-    \ à recopier telles quelles en haut du fichier :\n\n```js\nconst shopName = 'Boulangerie du Port';\n\
-    const breadPrice = 1.3; // prix unitaire en euros, TTC\nconst breadQuantity = 3;\nconst croissantPrice\
-    \ = 1.15;\nconst croissantQuantity = 4;\nconst loyaltyCard = true; // la carte fidélité donne 5 %\
-    \ de remise\nconst paidAmount = '20'; // montant tendu par le client, saisi en texte\n```\n\nTravail\
-    \ demandé :\n\n1. Calcule le sous-total de chaque ligne et le total avant remise.\n2. Calcule la remise\
-    \ fidélité (5 % du total si `loyaltyCard` vaut `true`, sinon 0)\n   et le total à payer. Utilise uniquement\
-    \ des opérateurs, pas de `if`.\n3. Convertis explicitement `paidAmount` en nombre et calcule la monnaie\
-    \ à rendre.\n4. Affiche un ticket lisible avec des gabarits de chaînes. Tous les montants\n   apparaissent\
-    \ avec exactement deux décimales.\n5. Ajoute en dernière ligne `Paiement suffisant : true` ou `false`,\
-    \ calculé par une\n   comparaison stricte.\n\nContraintes : `const` par défaut, `let` seulement si\
-    \ une valeur change vraiment,\naucune comparaison avec `==`.\n"
+    `receipt.js`, sans déclarer de fonction ni écrire de boucle, que tu exécutes avec\n`node receipt.js`.\n\
+    \nDonnées de départ, à recopier telles quelles en haut du fichier :\n\n```js\nconst shopName = 'Boulangerie\
+    \ du Port';\nconst breadPrice = 1.3; // prix unitaire en euros, TTC\nconst breadQuantity = 3;\nconst\
+    \ croissantPrice = 1.15;\nconst croissantQuantity = 4;\nconst loyaltyCard = true; // la carte fidélité\
+    \ donne 5 % de remise\nconst paidAmount = '20'; // montant tendu par le client, saisi en texte\n```\n\
+    \nTravail demandé :\n\n1. Calcule le sous-total de chaque ligne et le total avant remise.\n2. Calcule\
+    \ la remise fidélité (5 % du total si `loyaltyCard` vaut `true`, sinon 0)\n   et le total à payer.\
+    \ Utilise uniquement des opérateurs, pas de `if`.\n3. Convertis explicitement `paidAmount` en nombre\
+    \ et calcule la monnaie à rendre.\n4. Affiche un ticket lisible avec des gabarits de chaînes. Tous\
+    \ les montants\n   apparaissent avec exactement deux décimales.\n5. Ajoute en dernière ligne `Paiement\
+    \ suffisant : true` ou `false`, calculé par une\n   comparaison entre deux nombres : le montant tendu\
+    \ converti et le total à payer.\n\nContraintes : `const` par défaut, `let` seulement si une valeur\
+    \ change vraiment,\naucune comparaison avec `==`.\n"
   deliverable: 'Colle le contenu complet de `receipt.js`, puis la sortie exacte affichée par
 
     `node receipt.js`. Ajoute deux ou trois phrases expliquant comment tu as obtenu la
@@ -49,7 +50,8 @@
       - score: 1
         description: Calculs corrects mais explication confuse de la remise sans if.
       - score: 2
-        description: Explique clairement le calcul de la remise et la comparaison stricte.
+        description: Explique clairement le calcul de la remise et la comparaison du paiement, sans conversion
+          implicite.
       - score: 3
         description: Propose une variante correcte et discute ses avantages (lisibilité, robustesse).
     - id: numbers-precision
@@ -89,8 +91,8 @@
     \ clair en\n   français et se termine avec `process.exitCode = 1`.\n3. Les conversions utilisent les\
     \ formules exactes : °F = °C × 9/5 + 32 et\n   K = °C + 273,15. Les résultats sont arrondis à deux\
     \ décimales au plus pour\n   l’affichage.\n4. Une température inférieure au zéro absolu (−273,15 °C)\
-    \ est refusée avec un\n   message explicite.\n5. Pas de fonction, pas de bibliothèque : variables,\
-    \ opérateurs, conditions simples\n   et gabarits de chaînes suffisent.\n\nConseil : demande à l’IA\
+    \ est refusée avec un\n   message explicite.\n5. Pas de fonction déclarée, pas de bibliothèque : variables,\
+    \ opérateurs,\n   conditions simples et gabarits de chaînes suffisent.\n\nConseil : demande à l’IA\
     \ de t’expliquer chaque différence entre `Number()`,\n`parseFloat()` et le `+` unaire, puis vérifie\
     \ par toi-même dans le terminal.\n"
   deliverable: 'Colle le code complet de `convert.js`, la sortie de ces quatre commandes :
