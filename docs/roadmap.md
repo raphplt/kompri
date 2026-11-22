@@ -77,6 +77,13 @@ Application :
 - ✅ Configuration de production, en-têtes de sécurité, journaux structurés
 - ✅ Pages légales (à compléter par l’éditeur), documentation d’exploitation
 
+## Jalon 7 — Confort d’apprentissage et qualité
+
+- ✅ Suivi des leçons lues et reprise de la lecture depuis le tableau de bord
+- ✅ Recherche plein texte dans les cours (accents et terminaisons ignorés, extraits surlignés)
+- ✅ Tests de bout en bout Playwright en CI, du compte à l’oral validé
+- ✅ Audit d’accessibilité WCAG 2.1 A/AA automatisé (axe), thèmes clair et sombre
+
 ## Hors périmètre sans nouvelle demande
 
 Paiement et abonnements, vocal, gamification (séries, classements, duels), espace écoles,

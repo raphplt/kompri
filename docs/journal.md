@@ -3,6 +3,18 @@
 Entrées les plus récentes en haut. Chaque entrée résume ce qui a été livré, les décisions
 prises sans attendre de validation et la suite prévue.
 
+## 22 novembre 2026 (fin de soirée) — Recherche, reprise et accessibilité
+
+- Le tableau de bord propose la prochaine leçon à lire : suite de la compétence lue en dernier,
+  sinon première compétence disponible.
+- Recherche dans les cours (`/recherche`) : recherche plein texte PostgreSQL en français, sans
+  tenir compte des accents (`unaccent`), titre > résumé > corps, extraits surlignés. Décision :
+  vecteur stocké avec index GIN, mis à jour par le seed (4 ms par requête contre ~550 ms en
+  calcul à la volée). Un PostgreSQL géré doit proposer `unaccent` (noté dans le guide).
+- Audit d’accessibilité axe (WCAG 2.1 A/AA) dans les tests de bout en bout : 18 pages en thème
+  clair, dont l’oral et son résultat, 5 en thème sombre. Un défaut corrigé : liens des
+  conditions et de la confidentialité distingués par la seule couleur à l’inscription.
+
 ## 22 novembre 2026 (soir) — Finitions et tests de bout en bout
 
 - `main` avancé sur la branche de travail (avance rapide) pour que le porteur du projet puisse
