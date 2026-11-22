@@ -77,6 +77,49 @@ export function skillStates(
   });
 }
 
+interface ReadableLesson {
+  id: string;
+  skillId: string;
+  slug: string;
+  title: string;
+}
+
+/**
+ * The lesson to read next: the first unread lesson of the skill read most
+ * recently, otherwise of the first skill (in tree order) that is available or
+ * expired. `lessons` must be in tree order, then lesson order.
+ */
+export function nextLesson(
+  lessons: ReadableLesson[],
+  read: { lessonId: string; completedAt: Date }[],
+  states: { skillId: string; state: SkillState }[],
+): Omit<ReadableLesson, 'id'> | null {
+  const done = new Set(read.map((r) => r.lessonId));
+  const firstUnread = (skillId: string) =>
+    lessons.find((l) => l.skillId === skillId && !done.has(l.id));
+  const latest = read.reduce<(typeof read)[number] | undefined>(
+    (best, r) => (!best || r.completedAt > best.completedAt ? r : best),
+    undefined,
+  );
+  const latestSkill = lessons.find((l) => l.id === latest?.lessonId)?.skillId;
+  const candidates = [
+    ...(latestSkill ? [latestSkill] : []),
+    ...states
+      .filter((s) => s.state === 'available' || s.state === 'expired')
+      .map((s) => s.skillId),
+  ];
+  for (const skillId of candidates) {
+    const lesson = firstUnread(skillId);
+    if (lesson)
+      return {
+        skillId: lesson.skillId,
+        slug: lesson.slug,
+        title: lesson.title,
+      };
+  }
+  return null;
+}
+
 @ApiTags('progress')
 @ApiBearerAuth()
 @UseGuards(AuthGuard)
@@ -130,52 +173,62 @@ export class ProgressController {
   @Get('me/progress')
   async progress(@CurrentUser() user: AuthenticatedUser) {
     const now = this.now();
-    const [skills, validations, used, sessions, read] = await Promise.all([
-      this.db.skill.findMany({
-        where: { archivedAt: null },
-        orderBy: { position: 'asc' },
-        select: { id: true, status: true, prerequisites: true },
-      }),
-      this.db.validation.findMany({
-        where: { userId: user.id, verdict: 'PASSED' },
-        select: { skillId: true, validatedAt: true, expiresAt: true },
-      }),
-      this.db.oralUsage.count({
-        where: {
-          userId: user.id,
-          consumedAt: {
-            gte: new Date(
-              now.getTime() - hours(this.settings.ORAL_WINDOW_HOURS),
-            ),
+    const [skills, validations, used, sessions, read, lessons] =
+      await Promise.all([
+        this.db.skill.findMany({
+          where: { archivedAt: null },
+          orderBy: { position: 'asc' },
+          select: { id: true, status: true, prerequisites: true },
+        }),
+        this.db.validation.findMany({
+          where: { userId: user.id, verdict: 'PASSED' },
+          select: { skillId: true, validatedAt: true, expiresAt: true },
+        }),
+        this.db.oralUsage.count({
+          where: {
+            userId: user.id,
+            consumedAt: {
+              gte: new Date(
+                now.getTime() - hours(this.settings.ORAL_WINDOW_HOURS),
+              ),
+            },
           },
-        },
-      }),
-      this.db.oralSession.findMany({
-        where: { userId: user.id },
-        orderBy: { startedAt: 'desc' },
-        take: 20,
-        include: { attempt: { select: { challengeSnapshot: true } } },
-      }),
-      this.db.lessonProgress.findMany({
-        where: { userId: user.id, lesson: { archivedAt: null } },
-        select: { lessonId: true },
-      }),
-    ]);
+        }),
+        this.db.oralSession.findMany({
+          where: { userId: user.id },
+          orderBy: { startedAt: 'desc' },
+          take: 20,
+          include: { attempt: { select: { challengeSnapshot: true } } },
+        }),
+        this.db.lessonProgress.findMany({
+          where: { userId: user.id, lesson: { archivedAt: null } },
+          select: { lessonId: true, completedAt: true },
+        }),
+        this.db.lesson.findMany({
+          where: {
+            archivedAt: null,
+            skill: { archivedAt: null, status: 'PUBLISHED' },
+          },
+          orderBy: [{ skill: { position: 'asc' } }, { position: 'asc' }],
+          select: { id: true, skillId: true, slug: true, title: true },
+        }),
+      ]);
     const statuses = {
       ACTIVE: 'active',
       GRADING_FAILED: 'grading_failed',
       COMPLETED: 'completed',
     } as const;
+    const states = skillStates(
+      skills.map((skill) => ({
+        id: skill.id,
+        status: skill.status,
+        prerequisites: skill.prerequisites.map((p) => p.prerequisiteId),
+      })),
+      validations,
+      now,
+    );
     return progressResponseSchema.parse({
-      skills: skillStates(
-        skills.map((skill) => ({
-          id: skill.id,
-          status: skill.status,
-          prerequisites: skill.prerequisites.map((p) => p.prerequisiteId),
-        })),
-        validations,
-        now,
-      ),
+      skills: states,
       quota: {
         used,
         limit: this.settings.ORAL_LIMIT_PER_WINDOW,
@@ -183,6 +236,7 @@ export class ProgressController {
       },
       activeOralId: sessions.find((s) => s.status === 'ACTIVE')?.id ?? null,
       completedLessons: read.map((r) => r.lessonId).sort(),
+      nextLesson: nextLesson(lessons, read, states),
       recentOrals: sessions.map((session) => {
         const challenge = challengeSchema.parse(
           session.attempt.challengeSnapshot,

@@ -195,6 +195,8 @@ export const fr = {
     hello: (name: string) => `Bonjour ${name}`,
     activeOral: 'Tu as un oral en cours.',
     resume: 'Reprendre',
+    nextLesson: 'Reprendre la lecture',
+    readLesson: 'Lire la leçon',
     quota: (used: number, limit: number, hours: number) =>
       `${used} oral${used > 1 ? 's' : ''} sur ${limit} utilisés sur les ${hours} dernières heures.`,
     validated: 'Compétences validées',

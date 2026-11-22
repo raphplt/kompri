@@ -14,7 +14,7 @@ import { createApi, developmentResponder } from './app.ts';
 import type { Mail } from './mailer.ts';
 import { runDailyTasks } from './daily.ts';
 import { createClient, createMockAdapter } from '@kompri/llm';
-import { skillStates } from './progress.ts';
+import { nextLesson, skillStates } from './progress.ts';
 
 const db = createDatabase();
 let now = new Date('2030-01-01T10:00:00Z');
@@ -813,6 +813,16 @@ describe('lesson progress', () => {
       (await call('/me/progress', { token: user.token })).body,
     );
     expect(progress.completedLessons).toEqual([lesson.id]);
+    const second = await db.lesson.findFirstOrThrow({
+      where: { skillId: 'js-basics', archivedAt: null },
+      orderBy: { position: 'asc' },
+      skip: 1,
+    });
+    expect(progress.nextLesson).toEqual({
+      skillId: 'js-basics',
+      slug: second.slug,
+      title: second.title,
+    });
     expect((await call('/me/export', { token: user.token })).text).toContain(
       lesson.id,
     );
@@ -823,7 +833,59 @@ describe('lesson progress', () => {
       (await call('/me/progress', { token: user.token })).body,
     );
     expect(progress.completedLessons).toEqual([]);
+    const entry = await db.lesson.findFirstOrThrow({
+      where: {
+        archivedAt: null,
+        skill: {
+          status: 'PUBLISHED',
+          archivedAt: null,
+          prerequisites: { none: {} },
+        },
+      },
+      orderBy: [{ skill: { position: 'asc' } }, { position: 'asc' }],
+    });
+    expect(progress.nextLesson).toMatchObject({
+      skillId: entry.skillId,
+      slug: entry.slug,
+    });
   });
+});
+
+it('suggests the next lesson from the latest reading, then the tree', () => {
+  const lesson = (skillId: string, slug: string) => ({
+    id: `${skillId}/${slug}`,
+    skillId,
+    slug,
+    title: slug,
+  });
+  const lessons = [lesson('a', 'a1'), lesson('a', 'a2'), lesson('b', 'b1')];
+  const at = (day: number) => new Date(Date.UTC(2030, 0, day));
+  const states = [
+    { skillId: 'a', state: 'validated' as const },
+    { skillId: 'b', state: 'available' as const },
+  ];
+  expect(nextLesson(lessons, [], states)?.slug).toBe('b1');
+  expect(
+    nextLesson(lessons, [{ lessonId: 'a/a1', completedAt: at(1) }], states)
+      ?.slug,
+  ).toBe('a2');
+  expect(
+    nextLesson(
+      lessons,
+      [
+        { lessonId: 'a/a1', completedAt: at(1) },
+        { lessonId: 'a/a2', completedAt: at(2) },
+      ],
+      states,
+    )?.slug,
+  ).toBe('b1');
+  expect(
+    nextLesson(
+      lessons,
+      lessons.map((l, i) => ({ lessonId: l.id, completedAt: at(i + 1) })),
+      states,
+    ),
+  ).toBeNull();
 });
 
 describe('placement', () => {

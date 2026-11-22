@@ -14,10 +14,16 @@ test('a learner signs up, reads, passes an oral and can contest it', async ({
   await page.getByLabel('Mot de passe').fill('une phrase de passe longue');
   await page.getByRole('button', { name: 'Créer mon compte' }).click();
   await expect(page).toHaveURL(/tableau-de-bord/);
+  await expect(page.getByText('Reprendre la lecture')).toBeVisible();
 
   await page.goto('/competences/js-basics/executer-javascript');
   await page.getByRole('button', { name: 'Marquer comme lue' }).click();
   await expect(page.getByRole('button', { name: /Leçon lue/ })).toBeVisible();
+
+  await page.goto('/tableau-de-bord');
+  await page.getByRole('link', { name: 'Lire la leçon' }).click();
+  await expect(page).toHaveURL(/\/competences\/js-basics\/[a-z0-9-]+$/);
+  await expect(page).not.toHaveURL(/executer-javascript$/);
 
   await page.goto('/defis/js-basics-sans-ia');
   await page

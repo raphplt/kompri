@@ -96,6 +96,25 @@ export default async function Dashboard() {
         </div>
       )}
 
+      {progress.nextLesson && (
+        <Card className="mt-6 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-sm font-semibold text-faint">
+              {fr.dashboard.nextLesson}
+            </h2>
+            <p className="mt-1 font-bold">{progress.nextLesson.title}</p>
+            <p className="text-sm text-muted">
+              {skills.get(progress.nextLesson.skillId)?.title}
+            </p>
+          </div>
+          <ButtonLink
+            href={`/competences/${progress.nextLesson.skillId}/${progress.nextLesson.slug}`}
+          >
+            {fr.dashboard.readLesson}
+          </ButtonLink>
+        </Card>
+      )}
+
       <div className="mt-10 grid gap-6 lg:grid-cols-3">
         <Card>
           <h2 className="mb-3 font-bold">{fr.dashboard.available}</h2>

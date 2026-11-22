@@ -243,6 +243,10 @@ export const progressResponseSchema = z.object({
   activeOralId: z.string().nullable(),
   /** Lessons marked as read, as `skillId/slug`. */
   completedLessons: z.array(z.string()),
+  /** Where to pick up reading, or null when nothing is left to read. */
+  nextLesson: z
+    .object({ skillId: z.string(), slug: z.string(), title: z.string() })
+    .nullable(),
   recentOrals: z.array(
     z.object({
       id: z.string(),
