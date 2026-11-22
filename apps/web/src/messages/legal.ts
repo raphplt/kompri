@@ -41,7 +41,8 @@ droits. Elle décrit le fonctionnement réel de l’application.
 | Travaux soumis aux défis | Préparer et conduire l’oral | Exécution du service |
 | Transcriptions d’oraux, notes et retours | Évaluer et suivre ta progression | Exécution du service |
 | Validations et dates d’expiration | Afficher tes compétences validées | Exécution du service |
-| Nombre d’oraux passés | Appliquer les quotas d’utilisation | Intérêt légitime |
+| Nombre d’oraux passés et de réponses du tuteur | Appliquer les quotas d’utilisation | Intérêt légitime |
+| Demandes de réinitialisation du mot de passe | Envoyer un lien à usage unique, valable une heure | Exécution du service |
 
 Kompri ne collecte ni données de navigation publicitaires, ni traceurs tiers.
 
@@ -53,6 +54,7 @@ adresse e-mail et ton identifiant ne sont jamais transmis. Évite de mettre des 
 personnelles dans tes travaux.
 
 - Fournisseur de modèle utilisé : **[à compléter : nom, pays d’hébergement, garanties]**
+- Service d’envoi des e-mails : **[à compléter]**
 
 Les journaux techniques des appels au modèle ne contiennent que l’usage, le modèle, la durée,
 le nombre de jetons, le coût estimé et le statut : jamais le contenu des échanges.
@@ -68,6 +70,7 @@ l’adresse de contact.
 
 - Compte et données associées : jusqu’à la suppression du compte.
 - Sessions de connexion : 30 jours au plus.
+- Liens de réinitialisation : une heure, utilisables une seule fois.
 - Comptes inactifs : **[durée à définir avant mise en ligne]**.
 
 ## Cookies

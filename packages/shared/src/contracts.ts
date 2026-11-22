@@ -268,3 +268,13 @@ export const tutorQuotaSchema = z.object({
   reason: z.enum(['oral_in_progress', 'quota_exceeded']).nullable(),
 });
 export type TutorQuota = z.infer<typeof tutorQuotaSchema>;
+
+export const forgotPasswordRequestSchema = z
+  .object({ email: emailSchema })
+  .strict();
+export const resetPasswordRequestSchema = z
+  .object({
+    token: z.string().regex(/^[\w-]{20,200}$/),
+    password: passwordSchema,
+  })
+  .strict();

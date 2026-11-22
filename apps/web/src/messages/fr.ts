@@ -218,6 +218,17 @@ export const fr = {
     loginSubmit: 'Se connecter',
     registerSubmit: 'Créer mon compte',
     noAccount: 'Pas encore de compte ?',
+    forgot: 'Mot de passe oublié ?',
+    forgotTitle: 'Mot de passe oublié',
+    forgotText:
+      'Indique l’adresse de ton compte : tu recevras un lien valable une heure pour choisir un nouveau mot de passe.',
+    forgotSubmit: 'Recevoir le lien',
+    forgotSent:
+      'Si un compte existe avec cette adresse, un e-mail vient de lui être envoyé. Pense à regarder dans les indésirables.',
+    resetTitle: 'Nouveau mot de passe',
+    resetSubmit: 'Enregistrer le nouveau mot de passe',
+    resetDone: 'Ton mot de passe a été changé : connecte-toi avec le nouveau.',
+    newPassword: 'Nouveau mot de passe',
     hasAccount: 'Déjà un compte ?',
     consent:
       'En créant un compte, tu acceptes que tes travaux et oraux soient traités pour t’évaluer, comme décrit dans la politique de confidentialité.',
@@ -228,6 +239,8 @@ export const fr = {
       email_taken: 'Un compte existe déjà avec cette adresse.',
       invalid_input: 'Vérifie les champs du formulaire.',
       password_short: 'Le mot de passe doit contenir au moins 12 caractères.',
+      reset_link_invalid:
+        'Ce lien est invalide, expiré ou déjà utilisé. Demande un nouveau lien.',
       generic: 'Une erreur est survenue. Réessaie dans un instant.',
     },
   },

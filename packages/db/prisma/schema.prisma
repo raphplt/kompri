@@ -42,15 +42,16 @@ enum OralStatus {
 }
 
 model User {
-  id               String        @id @default(uuid())
-  email            String        @unique
+  id               String          @id @default(uuid())
+  email            String          @unique
   displayName      String?
   passwordHash     String?
-  failedLoginCount Int           @default(0)
-  lockedUntil      DateTime?     @db.Timestamptz(3)
-  createdAt        DateTime      @default(now()) @db.Timestamptz(3)
+  failedLoginCount Int             @default(0)
+  lockedUntil      DateTime?       @db.Timestamptz(3)
+  createdAt        DateTime        @default(now()) @db.Timestamptz(3)
   authSessions     AuthSession[]
   tutorUsage       TutorUsage[]
+  passwordResets   PasswordReset[]
   attempts         Attempt[]
   sessions         OralSession[]
   validations      Validation[]
@@ -241,4 +242,17 @@ model TutorUsage {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, consumedAt])
+}
+
+/// Single-use password reset link; only a SHA-256 hash of the token is stored.
+model PasswordReset {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  expiresAt DateTime  @db.Timestamptz(3)
+  usedAt    DateTime? @db.Timestamptz(3)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
 }

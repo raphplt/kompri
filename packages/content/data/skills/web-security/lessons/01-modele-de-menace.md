@@ -157,15 +157,15 @@ Lance `node shop.js`, puis, dans un second terminal, joue l’attaquant :
 
 ```bash
 curl -s -X POST http://localhost:3000/api/v1/orders -H 'Content-Type: application/json' \
-  -d '{"productId":"teapot","quantity":2,"priceCents":1}'
+  -d '{"productId":"teapot","quantity":2,"priceCents":1}'; echo
 curl -s -X POST http://localhost:3000/api/v1/orders -H 'Content-Type: application/json' \
-  -d '{"productId":"teapot","quantity":-3,"priceCents":3900}'
+  -d '{"productId":"teapot","quantity":-3,"priceCents":3900}'; echo
 curl -s -X POST http://localhost:3000/api/v2/orders -H 'Content-Type: application/json' \
-  -d '{"productId":"teapot","quantity":2,"priceCents":1}'
+  -d '{"productId":"teapot","quantity":2,"priceCents":1}'; echo
 curl -s -X POST http://localhost:3000/api/v2/orders -H 'Content-Type: application/json' \
-  -d '{"productId":"teapot","quantity":-3}'
+  -d '{"productId":"teapot","quantity":-3}'; echo
 curl -s -X POST http://localhost:3000/api/v2/orders -H 'Content-Type: application/json' \
-  -d '{"productId":"__proto__","quantity":1}'
+  -d '{"productId":"__proto__","quantity":1}'; echo
 ```
 
 Sortie :
@@ -223,8 +223,9 @@ peut plus être attaquée. Deux principes accompagnent cette réduction :
 L’**OWASP** (_Open Worldwide Application Security Project_) est une fondation à but non
 lucratif qui publie des guides libres sur la sécurité des applications. Son document le plus
 connu, le **Top 10**, classe les grandes catégories de risques observées dans les
-applications web. L’édition 2021 est très largement utilisée comme référence ; OWASP publie
-périodiquement des mises à jour, consulte son site pour connaître l’édition la plus récente.
+applications web. Ce cours s’appuie sur l’édition 2021, encore très citée dans les audits,
+les outils et les offres d’emploi. Une édition 2025 a depuis été publiée (voir l’encadré plus
+bas) : précise donc toujours l’année quand tu cites un code comme `A03`.
 Les intitulés officiels sont en anglais ; voici ceux de l’édition 2021 :
 
 | Code     | Intitulé officiel                          | En clair                                            | Exemple dans notre pile                                               |
@@ -242,6 +243,17 @@ Les intitulés officiels sont en anglais ; voici ceux de l’édition 2021 :
 
 Dans l’édition 2021, le XSS est rangé dans la catégorie A03 (Injection) : dans les deux cas,
 une donnée est interprétée comme du code.
+
+:::note[L’édition 2025]
+L’édition 2025 garde l’essentiel des risques mais change l’ordre et donc les codes : par
+exemple, Injection y devient `A05:2025` et Security Misconfiguration `A02:2025`. Le SSRF est
+rattaché à Broken Access Control (`A01:2025`), et deux catégories apparaissent : _Software
+Supply Chain Failures_ (chaîne d’approvisionnement logicielle, qui élargit les composants
+vulnérables) et _Mishandling of Exceptional Conditions_ (mauvaise gestion des erreurs et cas
+anormaux). La démarche de cette leçon reste la même : passer chaque catégorie en revue et
+justifier une parade.
+
+:::
 
 ### Comment s’en servir
 

@@ -4,8 +4,10 @@ import Link from 'next/link';
 import { useActionState } from 'react';
 import {
   deleteAccountAction,
+  forgotPasswordAction,
   loginAction,
   registerAction,
+  resetPasswordAction,
 } from '../app/actions';
 import type { FormState } from '../app/actions';
 import { fr } from '../messages/fr';
@@ -60,6 +62,14 @@ export function LoginForm({ next }: { next?: string }) {
       >
         {fr.auth.loginSubmit}
       </button>
+      <p className="text-center text-sm">
+        <Link
+          href="/mot-de-passe-oublie"
+          className="text-accent hover:underline"
+        >
+          {fr.auth.forgot}
+        </Link>
+      </p>
       <p className="text-center text-sm text-muted">
         {fr.auth.noAccount}{' '}
         <Link
@@ -177,6 +187,78 @@ export function DeleteAccountForm() {
       {authError(state.error) && <Alert>{authError(state.error)}</Alert>}
       <button type="submit" disabled={pending} className={buttonClass.danger}>
         {fr.account.deleteButton}
+      </button>
+    </form>
+  );
+}
+
+export function ForgotPasswordForm() {
+  const [state, action, pending] = useActionState<
+    FormState & { sent?: boolean },
+    FormData
+  >(forgotPasswordAction, {});
+  if (state.sent) return <Alert tone="success">{fr.auth.forgotSent}</Alert>;
+  return (
+    <form action={action} className="space-y-5">
+      <div>
+        <label htmlFor="email" className={labelClass}>
+          {fr.auth.email}
+        </label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          required
+          className={inputClass}
+        />
+      </div>
+      {authError(state.error) && <Alert>{authError(state.error)}</Alert>}
+      <button
+        type="submit"
+        disabled={pending}
+        className={`${buttonClass.primary} w-full`}
+      >
+        {fr.auth.forgotSubmit}
+      </button>
+    </form>
+  );
+}
+
+export function ResetPasswordForm({ token }: { token: string }) {
+  const [state, action, pending] = useActionState<FormState, FormData>(
+    resetPasswordAction,
+    {},
+  );
+  return (
+    <form action={action} className="space-y-5">
+      <input type="hidden" name="token" value={token} />
+      <div>
+        <label htmlFor="password" className={labelClass}>
+          {fr.auth.newPassword}
+        </label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autoComplete="new-password"
+          required
+          minLength={12}
+          maxLength={128}
+          aria-describedby="password-help"
+          className={inputClass}
+        />
+        <p id="password-help" className="mt-1 text-xs text-faint">
+          {fr.auth.passwordHelp}
+        </p>
+      </div>
+      {authError(state.error) && <Alert>{authError(state.error)}</Alert>}
+      <button
+        type="submit"
+        disabled={pending}
+        className={`${buttonClass.primary} w-full`}
+      >
+        {fr.auth.resetSubmit}
       </button>
     </form>
   );

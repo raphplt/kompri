@@ -5,9 +5,11 @@ import { redirect } from 'next/navigation';
 import {
   attemptResponseSchema,
   authResponseSchema,
+  forgotPasswordRequestSchema,
   loginRequestSchema,
   oralViewSchema,
   registerRequestSchema,
+  z,
 } from '@kompri/shared';
 import type { OralView } from '@kompri/shared';
 import { api, ApiRequestError, noContent } from '../lib/api';
@@ -81,6 +83,38 @@ export async function loginAction(
   }
   await setSession(session.token, session.expiresAt);
   redirect(safeRedirect(field(data, 'next')));
+}
+
+export async function forgotPasswordAction(
+  _state: FormState & { sent?: boolean },
+  data: FormData,
+): Promise<FormState & { sent?: boolean }> {
+  const input = forgotPasswordRequestSchema.safeParse({
+    email: field(data, 'email'),
+  });
+  if (!input.success) return { error: 'invalid_input' };
+  try {
+    await api('/auth/password/forgot', z.object({}), { body: input.data });
+  } catch (error) {
+    return { error: codeOf(error) };
+  }
+  return { sent: true };
+}
+
+export async function resetPasswordAction(
+  _state: FormState,
+  data: FormData,
+): Promise<FormState> {
+  const password = field(data, 'password');
+  if (password.length < 12) return { error: 'password_short' };
+  try {
+    await api('/auth/password/reset', noContent, {
+      body: { token: field(data, 'token'), password },
+    });
+  } catch (error) {
+    return { error: codeOf(error) };
+  }
+  redirect('/connexion?mot-de-passe=change');
 }
 
 export async function logoutAction() {

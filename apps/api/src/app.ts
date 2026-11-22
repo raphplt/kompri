@@ -28,7 +28,10 @@ import {
   EXAMINER,
   SETTINGS,
   TUTOR,
+  MAILER,
 } from './context.ts';
+import { createMailer } from './mailer.ts';
+import type { Mailer } from './mailer.ts';
 import type { Clock, Examiner, Settings } from './context.ts';
 import { ErrorFilter } from './errors.ts';
 import { LearningController, LearningService } from './learning.ts';
@@ -129,6 +132,7 @@ export async function createApi(
     db?: PrismaClient;
     examiner?: Examiner;
     tutor?: LlmClient;
+    mailer?: Mailer;
     settings?: Partial<Settings>;
     clock?: Clock;
   } = {},
@@ -160,6 +164,15 @@ export async function createApi(
           useValue: options.examiner ?? llm!.examiner,
         },
         { provide: TUTOR, useValue: options.tutor ?? llm!.tutor },
+        {
+          provide: MAILER,
+          useValue:
+            options.mailer ??
+            createMailer({
+              MAIL_TRANSPORT: 'log',
+              MAIL_FROM: 'Kompri <no-reply@localhost>',
+            }),
+        },
         { provide: CLOCK, useValue: options.clock ?? (() => new Date()) },
         AuthService,
         AuthGuard,

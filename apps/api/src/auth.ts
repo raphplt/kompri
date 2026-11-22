@@ -19,11 +19,14 @@ import { deleteUserData } from '@kompri/db';
 import {
   authResponseSchema,
   deleteAccountRequestSchema,
+  forgotPasswordRequestSchema,
   loginRequestSchema,
+  resetPasswordRequestSchema,
   registerRequestSchema,
   userResponseSchema,
 } from '@kompri/shared';
-import { CLOCK, DATABASE, days, SETTINGS } from './context.ts';
+import { CLOCK, DATABASE, days, hours, MAILER, SETTINGS } from './context.ts';
+import type { Mailer } from './mailer.ts';
 import type { Clock, Settings } from './context.ts';
 import {
   ApiException,
@@ -36,6 +39,8 @@ import { dummyHash, hashPassword, verifyPassword } from './password.ts';
 
 export const maxFailedLogins = 5;
 export const lockMinutes = 15;
+export const resetLinkMinutes = 60;
+export const maxResetsPerHour = 3;
 
 export interface AuthenticatedUser {
   id: string;
@@ -67,7 +72,84 @@ export class AuthService {
     @Inject(DATABASE) private readonly db: PrismaClient,
     @Inject(SETTINGS) private readonly settings: Settings,
     @Inject(CLOCK) private readonly now: Clock,
+    @Inject(MAILER) private readonly mailer: Mailer,
   ) {}
+
+  /** Always succeeds from the caller's view, so that accounts cannot be probed. */
+  async forgotPassword(input: unknown) {
+    const { email } = parseInput(forgotPasswordRequestSchema, input);
+    const user = await this.db.user.findUnique({ where: { email } });
+    if (!user) return;
+    const now = this.now();
+    const recent = await this.db.passwordReset.count({
+      where: {
+        userId: user.id,
+        createdAt: { gte: new Date(now.getTime() - hours(1)) },
+      },
+    });
+    if (recent >= maxResetsPerHour) return;
+    const token = randomBytes(32).toString('base64url');
+    await this.db.passwordReset.create({
+      data: {
+        userId: user.id,
+        tokenHash: hashToken(token),
+        createdAt: now,
+        expiresAt: new Date(now.getTime() + resetLinkMinutes * 60_000),
+      },
+    });
+    const link = new URL('/mot-de-passe/nouveau', this.settings.WEB_URL);
+    link.searchParams.set('jeton', token);
+    await this.mailer.send({
+      to: user.email,
+      subject: 'Réinitialisation de ton mot de passe Kompri',
+      text: [
+        `Bonjour ${user.displayName ?? ''},`.trim(),
+        '',
+        'Tu as demandé à réinitialiser ton mot de passe Kompri. Ce lien est valable une heure et ne fonctionne qu’une fois :',
+        '',
+        link.toString(),
+        '',
+        'Si tu n’es pas à l’origine de cette demande, ignore ce message : ton mot de passe reste inchangé.',
+      ].join('\n'),
+    });
+  }
+
+  async resetPassword(input: unknown) {
+    const { token, password } = parseInput(resetPasswordRequestSchema, input);
+    const now = this.now();
+    const reset = await this.db.passwordReset.findUnique({
+      where: { tokenHash: hashToken(token) },
+    });
+    if (!reset || reset.usedAt || reset.expiresAt <= now)
+      throw new ApiException(
+        HttpStatus.BAD_REQUEST,
+        'reset_link_invalid',
+        'This reset link is invalid or expired',
+      );
+    const passwordHash = await hashPassword(password);
+    await this.db.$transaction(async (tx) => {
+      // Marking the link as used inside the transaction forbids a double use.
+      const used = await tx.passwordReset.updateMany({
+        where: { id: reset.id, usedAt: null },
+        data: { usedAt: now },
+      });
+      if (used.count !== 1)
+        throw new ApiException(
+          HttpStatus.BAD_REQUEST,
+          'reset_link_invalid',
+          'This reset link is invalid or expired',
+        );
+      await tx.user.update({
+        where: { id: reset.userId },
+        data: { passwordHash, failedLoginCount: 0, lockedUntil: null },
+      });
+      // Every open session ends: whoever knew the old password is logged out.
+      await tx.authSession.deleteMany({ where: { userId: reset.userId } });
+      await tx.passwordReset.deleteMany({
+        where: { userId: reset.userId, usedAt: null },
+      });
+    });
+  }
 
   private async openSession(user: {
     id: string;
@@ -277,6 +359,19 @@ export class AuthController {
   @HttpCode(200)
   login(@Body() body: unknown) {
     return this.auth.login(body);
+  }
+
+  @Post('auth/password/forgot')
+  @HttpCode(202)
+  async forgotPassword(@Body() body: unknown) {
+    await this.auth.forgotPassword(body);
+    return {};
+  }
+
+  @Post('auth/password/reset')
+  @HttpCode(204)
+  async resetPassword(@Body() body: unknown) {
+    await this.auth.resetPassword(body);
   }
 
   @Post('auth/logout')

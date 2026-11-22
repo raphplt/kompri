@@ -10,6 +10,7 @@ import {
 } from '@kompri/shared';
 import { createExaminerMock } from '@kompri/examiner/testing';
 import { createApi, developmentResponder } from './app.ts';
+import type { Mail } from './mailer.ts';
 import { createClient, createMockAdapter } from '@kompri/llm';
 import { skillStates } from './progress.ts';
 
@@ -22,6 +23,7 @@ let app: Awaited<ReturnType<typeof createApi>>;
 let base: string;
 const challengeId = 'js-basics-sans-ia';
 const created: string[] = [];
+const mails: Mail[] = [];
 let previousStatus: 'DRAFT' | 'PUBLISHED' = 'DRAFT';
 
 async function call(
@@ -76,6 +78,11 @@ beforeAll(async () => {
   app = await createApi({
     db: createDatabase(),
     examiner: { provider: 'mock', client: createExaminerMock() },
+    mailer: {
+      send: async (mail) => {
+        mails.push(mail);
+      },
+    },
     tutor: createClient({
       adapter: createMockAdapter(developmentResponder),
       usage: 'tutor',
@@ -404,6 +411,59 @@ describe('oral', () => {
     ).toBe(404);
     expect(
       (await call('/orals/not-a-uuid', { token: user.token })).status,
+    ).toBe(400);
+  });
+});
+
+describe('password reset', () => {
+  it('sends a single-use link, changes the password and ends every session', async () => {
+    const user = await register();
+    expect(
+      (
+        await call('/auth/password/forgot', {
+          body: { email: 'nobody@example.invalid' },
+        })
+      ).status,
+    ).toBe(202);
+    expect(mails).toHaveLength(0);
+    expect(
+      (await call('/auth/password/forgot', { body: { email: user.email } }))
+        .status,
+    ).toBe(202);
+    const mail = mails.at(-1)!;
+    expect(mail.to).toBe(user.email);
+    const token = new URL(
+      /https?:\/\/\S+/.exec(mail.text)![0],
+    ).searchParams.get('jeton')!;
+    expect(await db.passwordReset.count({ where: { tokenHash: token } })).toBe(
+      0,
+    );
+    const body = { token, password: 'a brand new pass phrase' };
+    expect((await call('/auth/password/reset', { body })).status).toBe(204);
+    expect((await call('/me', { token: user.token })).status).toBe(401);
+    const reuse = await call('/auth/password/reset', { body });
+    expect(reuse.status).toBe(400);
+    expect(reuse.body).toMatchObject({ code: 'reset_link_invalid' });
+    expect(
+      (
+        await call('/auth/login', {
+          body: { email: user.email, password: 'a brand new pass phrase' },
+        })
+      ).status,
+    ).toBe(200);
+    for (let i = 0; i < 4; i++)
+      await call('/auth/password/forgot', { body: { email: user.email } });
+    expect(mails.filter((m) => m.to === user.email)).toHaveLength(3);
+    advance(2 * 3600);
+    const expired = new URL(
+      /https?:\/\/\S+/.exec(mails.at(-1)!.text)![0],
+    ).searchParams.get('jeton')!;
+    expect(
+      (
+        await call('/auth/password/reset', {
+          body: { ...body, token: expired },
+        })
+      ).status,
     ).toBe(400);
   });
 });

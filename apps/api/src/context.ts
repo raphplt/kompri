@@ -6,6 +6,7 @@ export const SETTINGS = Symbol('SETTINGS');
 export const EXAMINER = Symbol('EXAMINER');
 export const CLOCK = Symbol('CLOCK');
 export const TUTOR = Symbol('TUTOR');
+export const MAILER = Symbol('MAILER');
 
 export type Settings = Pick<
   ApiEnv,
@@ -17,6 +18,7 @@ export type Settings = Pick<
   | 'SESSION_DAYS'
   | 'TUTOR_LIMIT_PER_WINDOW'
   | 'TUTOR_WINDOW_HOURS'
+  | 'WEB_URL'
 >;
 export const defaultSettings: Settings = {
   ORAL_QUESTION_COUNT: 3,
@@ -27,6 +29,7 @@ export const defaultSettings: Settings = {
   SESSION_DAYS: 30,
   TUTOR_LIMIT_PER_WINDOW: 60,
   TUTOR_WINDOW_HOURS: 24,
+  WEB_URL: 'http://localhost:3000',
 };
 
 export interface Examiner {

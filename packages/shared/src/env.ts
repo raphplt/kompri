@@ -31,6 +31,24 @@ export const apiEnvSchema = databaseEnvSchema.extend({
   SESSION_DAYS: positiveInteger(30, 365),
   TUTOR_LIMIT_PER_WINDOW: positiveInteger(60, 10_000),
   TUTOR_WINDOW_HOURS: positiveInteger(24, 24 * 31),
+  WEB_URL: z
+    .url()
+    .refine(
+      (value) =>
+        URL.canParse(value) &&
+        ['http:', 'https:'].includes(new URL(value).protocol),
+    )
+    .default('http://localhost:3000'),
+  MAIL_TRANSPORT: z.enum(['log', 'smtp']).default('log'),
+  SMTP_URL: z
+    .url()
+    .refine(
+      (value) =>
+        URL.canParse(value) &&
+        ['smtp:', 'smtps:'].includes(new URL(value).protocol),
+    )
+    .optional(),
+  MAIL_FROM: z.string().min(3).default('Kompri <no-reply@localhost>'),
 });
 export type ApiEnv = z.infer<typeof apiEnvSchema>;
 export const webEnvSchema = z.object({
