@@ -75,8 +75,8 @@ false
 2. Le **sel** (*salt*) est une valeur aléatoire, propre à chaque utilisateur, mélangée au mot
    de passe avant hachage. Il n’est pas secret : on le stocke à côté de l’empreinte. Il rend
    les tables précalculées inutiles et oblige à attaquer chaque compte séparément.
-3. Mais même salé, SHA-256 se calcule **trop vite** : plus d’un million d’essais par seconde
-   sur un seul cœur de processeur ordinaire, et beaucoup plus sur des cartes graphiques.
+3. Mais même salé, SHA-256 se calcule **trop vite** : de l’ordre d’un million d’essais par
+   seconde sur un seul cœur de processeur ordinaire, et beaucoup plus sur des cartes graphiques.
    Un mot de passe faible tombe en quelques instants.
 
 Il faut donc une fonction **lente exprès**, et si possible gourmande en **mémoire** pour
@@ -85,7 +85,8 @@ augmente quand le matériel progresse.
 
 ## Les algorithmes adaptés
 
-L’OWASP (Password Storage Cheat Sheet) recommande, par ordre de préférence :
+L’OWASP (Password Storage Cheat Sheet) recommande Argon2id en premier choix, scrypt à défaut,
+bcrypt seulement pour les systèmes existants et PBKDF2 quand une conformité FIPS-140 l’impose :
 
 | Algorithme | Quand l’utiliser | Configuration minimale recommandée par l’OWASP |
 | --- | --- | --- |
@@ -99,8 +100,10 @@ mémoire contre calcul ; consulte la fiche pour les autres combinaisons et véri
 à jour avant un projet réel : ces minimums évoluent avec le matériel.
 
 Dans ce cours, on utilise **scrypt**, intégré à Node.js depuis longtemps dans le module
-`node:crypto` : aucune dépendance à installer. Pour Argon2id, des paquets npm existent, et les
-versions récentes de Node.js 24 (à partir de la 24.7.0) proposent aussi `crypto.argon2()`.
+`node:crypto` : aucune dépendance à installer, et un format d’empreinte que tu vas construire
+toi-même. Pour Argon2id, des paquets npm existent ; Node.js 24 propose aussi `crypto.argon2()`
+depuis la version 24.7.0. Cette fonction était expérimentale à son arrivée et n’est documentée
+comme stable que depuis la 24.19.0 : vérifie ta version (`node -v`) avant de t’en servir.
 bcrypt reste très répandu : si tu le rencontres, retiens que la plupart de ses
 implémentations n’acceptent que 72 octets en entrée ; selon la bibliothèque, la suite du mot
 de passe est ignorée ou l’entrée est refusée.
@@ -453,8 +456,8 @@ l’exercice 2), ou on demande une réinitialisation.
 
 - On ne stocke ni ne chiffre les mots de passe : on les **hache** avec un algorithme lent et
   coûteux en mémoire.
-- Ordre de préférence de l’OWASP : Argon2id, puis scrypt, bcrypt pour l’existant, PBKDF2 si
-  FIPS est exigé. Minimum OWASP pour scrypt : N=2^17, r=8, p=1.
+- OWASP : Argon2id en premier choix, sinon scrypt ; bcrypt pour l’existant, PBKDF2 si FIPS
+  est exigé. Minimum OWASP pour scrypt : N=2^17, r=8, p=1.
 - Un sel aléatoire par mot de passe (`randomBytes(16)`), stocké avec l’empreinte et les
   paramètres.
 - `promisify(scrypt)` pour ne pas bloquer le serveur, `maxmem` pour autoriser 128 Mio,

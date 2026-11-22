@@ -508,7 +508,7 @@ describe('placement', () => {
       progress.skills.find((s) => s.skillId === id)?.state;
     expect(state('js-functions')).toBe('validated');
     expect(state('js-control-flow')).toBe('available');
-    expect(state('js-data')).toBe('upcoming');
+    expect(state('js-data')).toBe('available');
   });
 });
 
