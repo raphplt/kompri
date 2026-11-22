@@ -14,7 +14,8 @@ Les cours suivent `docs/content-guide.md` : complets, exacts, sourcés sans exc�
 
 Utiliser Node `.nvmrc` et pnpm `packageManager`. Lire `docs/architecture.md` avant les
 changements structurels. Un commit cohérent doit passer `pnpm lint`, `pnpm typecheck`
-et `pnpm test`. Exécuter `pnpm build` pour les changements de compilation/application.
+et `pnpm test`. Exécuter `pnpm build` pour les changements de compilation/application, puis `pnpm e2e` pour
+les changements d’interface ou de parcours.
 Démarrer PostgreSQL et appliquer migration + seed avant les tests d’intégration.
 `pnpm content:validate` et `pnpm evals` sont obligatoires après modification du contenu
 ou de l’examinateur. `pnpm format` applique le format partagé.

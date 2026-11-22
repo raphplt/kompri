@@ -159,6 +159,7 @@ export const fr = {
       `Question ${index} sur ${total}`,
     timeLeft: 'Temps restant',
     answerLabel: 'Ta réponse',
+    answerSection: 'Répondre à la question',
     answerHelp:
       'Réponds avec tes mots. Le collage est désactivé : l’oral vérifie ta compréhension, pas ta capacité à copier.',
     send: 'Envoyer ma réponse',

@@ -11,3 +11,5 @@ coverage/
 packages/db/src/generated/
 **/next-env.d.ts
 apps/web/AGENTS.md
+test-results/
+playwright-report/

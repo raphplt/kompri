@@ -170,7 +170,7 @@ export function OralChat({ initial }: { initial: OralView }) {
 
       {active && (
         <section
-          aria-label={fr.oral.answerLabel}
+          aria-label={fr.oral.answerSection}
           className="sticky bottom-4 rounded-2xl border border-line bg-raised p-4 shadow-lg"
         >
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">

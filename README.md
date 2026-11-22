@@ -60,6 +60,7 @@ Pour la production, voir le [guide de déploiement](docs/deploiement.md).
 | `pnpm content:validate`                  | Vérifie les références, doublons, grilles et cycles         |
 | `pnpm db:generate`                       | Régénère le client après modification du schéma             |
 | `pnpm db:migrate` / `pnpm db:seed`       | Applique les migrations / synchronise les exemples          |
+| `pnpm e2e`                               | Parcours de bout en bout dans Chromium (après `pnpm build`) |
 | `pnpm evals`                             | Rejoue deux références trois fois, toujours avec le mock    |
 | `pnpm evals:live`                        | Évaluation manuelle via le fournisseur configuré            |
 
