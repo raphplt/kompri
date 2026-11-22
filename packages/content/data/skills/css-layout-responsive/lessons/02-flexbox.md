@@ -403,6 +403,7 @@ Deux conteneurs flexibles sont nécessaires : `.site-header` dispose le nom et l
 navigation ; `.menu` dispose les `<li>`. Mettre `display: flex` sur `<nav>` ne servirait
 à rien : son seul enfant direct est le `<ul>`. Une variante consiste à garder
 `.site-header` sans `justify-content` et à donner `margin-right: auto` à `.brand`.
+
 :::
 
 ### Exercice 2 — Calculer des largeurs
@@ -438,6 +439,7 @@ Précision : le retrait est proportionnel à `flex-shrink` **multiplié par la t
 base**. Ici les bases sont égales, donc le partage est égal. Avec des contenus réels,
 `min-width: auto` peut aussi empêcher un élément de descendre sous la taille de son
 contenu.
+
 :::
 
 ### Exercice 3 — Trois cartes de même hauteur
@@ -495,6 +497,7 @@ ligne : trois bases de 250 px plus deux `gap` de 16 px exigent 782 px ; dans un
 conteneur plus étroit, la troisième carte passe à la ligne et s’étire sur toute la
 largeur. En dessous de 516 px (2 × 250 + 16), il n’y a plus qu’une carte par ligne. Une carte
 seule sur sa ligne s’étire, ce que la grille, vue dans la leçon suivante, évite.
+
 :::
 
 ## Récapitulatif

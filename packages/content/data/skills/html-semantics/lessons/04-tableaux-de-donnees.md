@@ -254,6 +254,7 @@ ligne se décale d’une colonne, et le tableau devient faux sans aucun message 
 Pour chaque ligne, additionne les `colspan` (1 par défaut) des cellules écrites et les
 cellules occupées par un `rowspan` venu d’au-dessus : le total doit être le même pour
 toutes les lignes. Ici : 3, puis 1 + 1 occupée + 1 = 3, puis 1 + 2 = 3.
+
 :::
 
 Les cellules fusionnées compliquent la lecture non visuelle. Avant d’en mettre, demande-toi
@@ -387,6 +388,7 @@ ligne de total.
 - Le total est dans `tfoot` ; « Total » est l’en-tête de sa ligne.
 - On aurait pu mettre les légumes en lignes et les parcelles en colonnes : les deux
   sont corrects, l’important est que chaque cellule ait ses deux en-têtes.
+
 :::
 
 ### Exercice 2 — Compter les cellules
@@ -450,6 +452,7 @@ Il suffit de retirer la cellule vide :
 Vérification : ligne 1 = 3 cellules ; ligne 2 = 3 cellules ; ligne 3 = « Mercredi »
 + « Fermé » venu d’au-dessus + « 18 h – 21 h » = 3. On en profite pour ajouter `thead` et
 `tbody`, qui rendent la structure explicite.
+
 :::
 
 ### Exercice 3 — Diagnostiquer un tableau
@@ -514,6 +517,7 @@ Le gras disparaît du HTML : les `th` sont en gras par défaut, et toute autre m
 forme relève du CSS. Attention : le code d’origine est **valide** pour le validateur. Les
 points 1 à 3 sont des défauts d’accessibilité (aucun en-tête, aucun nom), le point 4 une
 amélioration de lisibilité.
+
 :::
 
 ## Récapitulatif

@@ -13,10 +13,10 @@ sources:
     url: https://www.w3.org/TR/WCAG22/
 ---
 
-« 16px », « 1.5em », « 2rem », « 60ch » : CSS propose une dizaine d’unités, et choisir
+« 16px », « 1.5em », « 2rem », « 60ch » : CSS propose de nombreuses unités, et choisir
 la mauvaise produit des textes trop petits, des menus qui rétrécissent à chaque niveau
 ou une page qui ignore les réglages de l’utilisateur. Même chose pour les couleurs, qui
-s’écrivent de cinq façons différentes, et pour la typographie, qui fait à elle seule la
+s’écrivent de plusieurs façons, et pour la typographie, qui fait à elle seule la
 moitié de la lisibilité d’un site.
 
 Cette leçon te donne les outils pour lire n’importe quelle valeur CSS et choisir la
@@ -132,7 +132,7 @@ doivent être entourés d’espaces : `calc(100%-2rem)` est invalide.
 
 ## Les couleurs
 
-### Cinq façons d’écrire une couleur
+### Les écritures courantes d’une couleur
 
 ```css
 .named {
@@ -158,6 +158,8 @@ doivent être entourés d’espaces : `calc(100%-2rem)` est invalide.
 
 - Les **mots-clés** (`red`, `darkgreen`, `steelblue`, `transparent`…) sont pratiques pour
   tester, mais il en existe un nombre limité.
+- CSS connaît d’autres notations (`hwb()`, `lab()`, `oklch()`…) ; celles de cette leçon
+  suffisent pour débuter.
 - L’**hexadécimal** `#rrggbb` donne trois valeurs de 00 à ff (0 à 255). `#f60` est la
   forme courte de `#ff6600` : chaque chiffre est doublé.
 - `rgb()` décrit les mêmes trois composantes en décimal. Tu rencontreras aussi l’ancienne
@@ -424,6 +426,7 @@ de `.panel-title` ; `font-size` de `.panel-text` et de `.hint`.
 - `.hint` : 0,8em du parent `.panel-text` = 0,8 × 14 = **11.2px**.
 
 Tu peux vérifier chaque valeur dans l’onglet « Calculé » de l’inspecteur.
+
 :::
 
 ### Exercice 2 — Un bandeau lisible
@@ -458,6 +461,7 @@ Tu peux vérifier chaque valeur dans l’onglet « Calculé » de l’inspecteur
 `#1d4ed826` aurait aussi convenu (`26` en hexadécimal vaut 38, soit environ 15 % de
 255). `opacity: 0.15` aurait en revanche rendu le texte presque invisible. Vérifie enfin
 le contraste du texte sur ce fond avec l’inspecteur.
+
 :::
 
 ### Exercice 3 — Diagnostiquer un texte qui se chevauche
@@ -509,6 +513,7 @@ En prime, `font-size: 15px` sur `.card` ignore le réglage de l’utilisateur ;
   font-size: 0.85rem;
 }
 ```
+
 :::
 
 ## Récapitulatif

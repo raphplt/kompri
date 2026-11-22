@@ -405,6 +405,7 @@ Donne la spécificité de chaque sélecteur, puis classe-les du plus faible au p
 
 Du plus faible au plus fort : 5 (0, 0, 1) ; 1 (0, 0, 2) ; 7 (0, 1, 3) ; 2 et 4 à égalité
 (0, 2, 1) ; 3 (1, 0, 0) ; 6 (1, 0, 1).
+
 :::
 
 ### Exercice 2 — Prédire les couleurs
@@ -525,6 +526,7 @@ d’alerte :
 Variante plus robuste : écrire la règle de base avec `:where(.toolbar) button`
 (0, 0, 1), puis de simples classes `.button-alert` (0, 1, 0) et
 `.button-alert.small` (0, 2, 0) qui la surchargent sans effort.
+
 :::
 
 ## Récapitulatif

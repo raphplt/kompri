@@ -125,6 +125,7 @@ L’attribut `hidden` fonctionne grâce à une règle de la feuille du navigateu
 Tu croiseras dans du code ancien des mises en page faites avec `float: left`.
 Aujourd’hui, `float` ne sert plus qu’à son usage d’origine : laisser le texte s’écouler
 autour d’une image. Pour disposer des blocs, utilise flexbox ou grid.
+
 :::
 
 ## Le positionnement avec `position`
@@ -359,6 +360,7 @@ est dessinée au-dessus en cas de chevauchement ?
 C est dessinée au-dessus de A : A n’est pas positionnée, C l’est. Si on retirait
 `position: relative` de B, B reviendrait à 40 px ; C ne bougerait pas, puisqu’elle ne
 dépend pas du flux.
+
 :::
 
 ### Exercice 2 — Une carte avec un bouton de fermeture
@@ -409,6 +411,7 @@ précédente ; sinon, la notification peut atteindre 320 + 48 + 16 = 384 px. Le 
 le bouton, qui est sorti du flux. Le `z-index` n’est efficace que parce que `.toast`
 est positionnée ; une valeur modeste suffit tant qu’aucun autre contexte ne la
 recouvre.
+
 :::
 
 ### Exercice 3 — Diagnostiquer un menu caché
@@ -431,6 +434,7 @@ Corrections possibles :
   d’empilement), si rien d’autre n’en dépend.
 
 Vérifie le résultat dans l’inspecteur en survolant les éléments, puis au clavier.
+
 :::
 
 ## Récapitulatif

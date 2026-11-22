@@ -99,6 +99,7 @@ Plusieurs lignes surprennent :
 prérempli dans le HTML avec une valeur trop courte n’est pas signalé tant que personne ne
 l’a modifié. De même, `maxlength` empêche de taper au-delà de la limite, mais une valeur
 trop longue écrite directement dans l’attribut `value` reste considérée comme valide.
+
 :::
 
 ### Le type tel ne valide rien
@@ -154,8 +155,8 @@ Le CSS dispose de pseudo-classes qui reflètent l’état de validité :
 </style>
 ```
 
-L’élément `style` contient du CSS : ici, une bordure rouge foncé de 2 pixels sur les
-champs invalides après interaction. Avec `:invalid`, tous les champs obligatoires
+L’élément `style` contient du CSS et se place dans le `head` de la page : ici, une
+bordure rouge foncé de 2 pixels sur les champs invalides après interaction. Avec `:invalid`, tous les champs obligatoires
 seraient rouges avant même qu’on ait commencé à taper, ce qui est désagréable.
 
 :::warning[Pas seulement la couleur]
@@ -164,6 +165,7 @@ utilise un lecteur d’écran, ne la perçoit pas. Les WCAG interdisent de trans
 information **uniquement** par la couleur (critère 1.4.1, niveau A). La bulle du
 navigateur donne un message textuel ; tu verras dans la leçon 5 comment afficher des
 messages d’erreur textuels quand c’est le serveur qui refuse les données.
+
 :::
 
 ## Bien rédiger les consignes
@@ -208,8 +210,9 @@ l’utilise. Elle peut, en quelques secondes :
 - ne pas utiliser de navigateur du tout : n’importe quel programme peut envoyer une
   requête HTTP (un script, l’outil en ligne de commande `curl`, un robot).
 
-Le test a été fait dans Chromium : on retire `required` et on change le type du champ
-dans l’inspecteur, puis on envoie `pas-un-email`. Le serveur reçoit sans broncher ce
+Le test a été fait dans Chromium, avec un formulaire réduit à ce seul champ : on retire
+`required` et on change le type du champ dans l’inspecteur, puis on envoie
+`pas-un-email`. Le serveur reçoit sans broncher ce
 corps de requête :
 
 ```text
@@ -253,6 +256,7 @@ On ne supprime pas la validation native sous prétexte que le serveur revalide :
 améliore l’expérience. On veille simplement à ce que les deux règles soient les mêmes
 (un pseudo de 3 à 20 caractères des deux côtés), sinon le serveur refusera ce que le
 navigateur a accepté.
+
 :::
 
 ## Pièges courants
@@ -325,6 +329,7 @@ majuscules et les chiffres. Ajoute un texte d’aide pour le code de réduction.
   en entier (6 caractères exactement, grâce à `{6}` et à l’ancrage implicite).
 - Le texte d’aide donne le format avant la saisie et est relié au champ.
 - Côté serveur, toutes ces règles seront vérifiées à nouveau.
+
 :::
 
 ### Exercice 2 — Valide ou invalide ?
@@ -355,6 +360,7 @@ Pour chaque saisie, prédis si le navigateur l’accepte, et pourquoi.
 Ces résultats ont été vérifiés dans Chromium. En cas de doute, teste toi-même : la
 console des outils de développement permet aussi de vérifier un champ avec
 `document.querySelector('#email').checkValidity()`, qui renvoie `true` ou `false`.
+
 :::
 
 ### Exercice 3 — Convaincre un collègue
@@ -379,6 +385,7 @@ sécurité. »
 
 Ce qui est attendu : un mécanisme de contournement concret, la distinction confort /
 sécurité, et une liste de vérifications précise plutôt que « il faut tout vérifier ».
+
 :::
 
 ## Récapitulatif

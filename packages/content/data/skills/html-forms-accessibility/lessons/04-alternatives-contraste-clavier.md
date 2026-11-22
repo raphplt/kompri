@@ -154,7 +154,8 @@ pas les bords est difficile à repérer.
 Dans Chrome, l’inspecteur affiche le rapport de contraste d’un texte : sélectionne
 l’élément, puis clique sur le petit carré de couleur à côté de la propriété `color` dans
 le panneau des styles ; le sélecteur de couleur indique le rapport et s’il respecte les
-seuils. Firefox propose une information comparable dans son inspecteur d’accessibilité. Les outils d’audit de la leçon 5 détectent aussi les contrastes
+seuils. Firefox propose une information comparable dans son inspecteur
+d’accessibilité. Les outils d’audit de la leçon 5 détectent aussi les contrastes
 insuffisants.
 
 Un exemple minimal pour expérimenter, avec un élément `style` qui contient du CSS :
@@ -185,6 +186,7 @@ compétence dédiée.
 Le texte d’exemple d’un `placeholder` est grisé par défaut, et son contraste est souvent
 insuffisant. C’est une raison de plus pour ne jamais y mettre d’information
 indispensable.
+
 :::
 
 ### Jamais la couleur seule
@@ -281,6 +283,7 @@ l’élément qui a le focus. La pire erreur, malheureusement courante, est de l
 en CSS pour des raisons esthétiques :
 
 ```html
+<!-- Dans le head -->
 <style>
   /* À ne jamais faire sans le remplacer par un indicateur aussi visible */
   :focus { outline: none; }
@@ -337,6 +340,7 @@ Pour chaque image, écris l’attribut `alt` adapté et justifie.
 6. Un alt court qui donne la nature et le message principal (par exemple « Répartition
    des adhérents par âge, détail dans le tableau ci-dessous »), **et** les données
    complètes dans la page, idéalement dans un tableau.
+
 :::
 
 ### Exercice 2 — Contraste conforme ?
@@ -357,8 +361,10 @@ conforme au niveau AA dans la situation indiquée.
 3. Conforme : 20 px en gras dépasse les 14 points en gras (environ 18,7 px), c’est du grand texte, seuil 3:1.
 4. Non conforme : 20 px non gras est en dessous de 24 px, c’est du texte normal, seuil
    4,5:1.
-5. Non conforme : composant d’interface, seuil 3:1 (critère 1.4.11).
+5. Non conforme : composant d’interface, seuil 3:1 (critère 1.4.11), du moins si cette
+   bordure est le seul repère visuel qui permet de voir le champ.
 6. Conforme : les logos sont exemptés de l’exigence de contraste.
+
 :::
 
 ### Exercice 3 — Réparer la navigation au clavier
@@ -399,6 +405,7 @@ reste de la page** à cause de `tabindex="1"`.
 - L’alt de l’icône décrit l’action « Imprimer ».
 - L’ordre de tabulation suit maintenant l’ordre du code : Imprimer, Partager, Aide,
   Ajouter aux favoris.
+
 :::
 
 ## Récapitulatif

@@ -88,10 +88,11 @@ contienne le texte visible (critère 2.5.3, niveau A). Ici, il suffit de retirer
 <div aria-label="Zone de présentation">Texte</div>
 ```
 
-Un `div` sans rôle a un rôle générique, que la spécification ARIA interdit de nommer :
-Chromium ignore simplement cet `aria-label`, et le validateur du W3C affiche un
-avertissement (« Possible misuse of aria-label »). Si l’information est utile, elle doit
-être dans le texte.
+Un `div` sans rôle a un rôle générique, que la spécification ARIA interdit de nommer.
+Le validateur du W3C le signale (une erreur dans ses versions récentes, un simple
+avertissement « Possible misuse of aria-label » dans les plus anciennes), et les
+lecteurs d’écran n’annoncent pas ce nom de façon fiable, même si Chromium le calcule.
+Si l’information est utile, elle doit être dans le texte.
 
 ### aria-hidden sur un élément focalisable
 
@@ -101,7 +102,9 @@ avertissement (« Possible misuse of aria-label »). Si l’information est util
 
 `aria-hidden="true"` retire l’élément de l’arbre d’accessibilité, mais le lien reste
 atteignable avec Tab. Une personne qui utilise un lecteur d’écran arrive alors sur un
-élément « fantôme », sans nom. C’est la règle 4.
+élément « fantôme » : selon le navigateur et le lecteur d’écran, il est annoncé sans nom,
+ou pas du tout (Chromium, lui, le réintègre dans l’arbre au moment où il reçoit le focus).
+Le comportement devient imprévisible. C’est la règle 4.
 
 ### Un rôle sans le comportement
 
@@ -198,14 +201,17 @@ Ce que chaque choix apporte :
   d’écran le lit avec l’étiquette ;
 - le message est **textuel**, commence par « Erreur » et **propose une correction**
   (WCAG 3.3.1 et 3.3.3) ;
-- pas de `required` ni de `aria-required` en double : `required` suffit quand il est
-  présent, car il est déjà annoncé.
+- pas d’`aria-required="true"` en double de `required` : si un champ est obligatoire,
+  `required` suffit, car il est déjà annoncé (les attributs de validation sont omis ici
+  pour alléger l’exemple).
 
 :::note[Les messages qui apparaissent sans rechargement]
 Quand un message est inséré dans la page par JavaScript, sans rechargement, il faut le
 faire annoncer avec une **région live** (`role="status"`, `role="alert"` ou
-`aria-live`). Tu le verras dans la compétence sur le DOM : ces attributs n’ont d’effet
-que sur des contenus qui **changent**, pas sur une page qui vient d’être chargée.
+`aria-live`). Tu le verras dans la compétence sur le DOM : ces attributs sont conçus
+pour des contenus qui **changent** ; sur une page qui vient d’être chargée, leur effet
+n’est pas fiable.
+
 :::
 
 ## Tester une page au clavier
@@ -234,6 +240,7 @@ passer.
 Sur macOS, Safari ne parcourt pas tous les liens avec Tab par défaut : il faut l’activer
 dans ses réglages avancés, ou utiliser Option + Tab. Pour tes premiers tests, Chrome ou
 Firefox sont plus simples.
+
 :::
 
 ## Les outils d’audit
@@ -269,6 +276,7 @@ importante des exigences des WCAG demande un jugement humain.
 Un score Lighthouse de 100 signifie seulement que les tests automatiques de l’outil
 n’ont rien trouvé. Une page peut obtenir 100 et rester inutilisable au clavier. Les
 outils sont un point de départ, jamais une conclusion.
+
 :::
 
 ### Les lecteurs d’écran
@@ -365,6 +373,7 @@ d’usage, puis explique chaque modification.
 5. Le faux bouton devient un `button type="submit"` : focus, clavier et envoi du
    formulaire, sans script (règles 1 et 3). Le formulaire reçoit aussi `action` et
    `method`.
+
 :::
 
 ### Exercice 2 — Prédire un test au clavier
@@ -406,6 +415,7 @@ Problèmes :
    `aria-hidden` : élément fantôme (règle 4). Retirer `aria-hidden`.
 5. Le bouton « Me prévenir… » a `tabindex="-1"` : il n’est jamais atteint avec Tab.
    Retirer l’attribut.
+
 :::
 
 ### Exercice 3 — Rédiger un mini-rapport d’audit
@@ -437,6 +447,7 @@ le champ e-mail en `type="text"` n’offre ni clavier adapté ni contrôle de fo
 
 Ce qui est attendu : distinguer ce qui se mesure automatiquement de ce qui demande un
 jugement ou un test réel, et prioriser selon l’impact sur les personnes.
+
 :::
 
 ## Récapitulatif

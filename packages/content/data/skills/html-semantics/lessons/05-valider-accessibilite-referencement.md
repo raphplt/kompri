@@ -42,6 +42,7 @@ ton fichier, colle-le, clique sur « Check ».
 :::warning[Ne colle pas n’importe quoi]
 Le validateur en ligne reçoit tout ce que tu lui envoies. Ne lui soumets pas une page qui
 contient des données personnelles ou confidentielles.
+
 :::
 
 ### Un exemple réel
@@ -252,6 +253,7 @@ Une page valide peut être inaccessible (un `alt` qui dit « image », des liens
 un tableau sans en-têtes). Une page invalide n’est pas forcément inaccessible. La
 validation est un **filet de sécurité** qui élimine des erreurs bêtes, pas un audit
 d’accessibilité.
+
 :::
 
 ## Ce que la sémantique change pour le référencement
@@ -323,6 +325,7 @@ Warning: Consider adding a “lang” attribute to the “html” start tag to d
    style commun, utiliser une classe, qui peut être répétée.
 4. L’élément `html` n’a pas de `lang`. Ce n’est qu’un avertissement pour le validateur,
    mais c’est une exigence d’accessibilité (WCAG 3.1.1) : ajouter `lang="fr"`.
+
 :::
 
 ### Exercice 2 — Valide mais pas accessible
@@ -413,6 +416,7 @@ Les problèmes corrigés :
 
 Aucun de ces problèmes n’était détecté par le validateur : c’est exactement ce que
 signifie « valide ne veut pas dire accessible ».
+
 :::
 
 ### Exercice 3 — Expliquer à l’oral
@@ -435,6 +439,7 @@ personne qui relit le code, sans dépendre de noms de classes. »
 
 Ce qui est attendu : un mécanisme précis (arbre d’accessibilité, repères, liste des
 titres) plutôt qu’une affirmation vague comme « c’est mieux pour le SEO ».
+
 :::
 
 ## Récapitulatif

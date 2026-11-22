@@ -64,14 +64,18 @@ video {
 Tu pourrais penser que, puisque CSS gère la taille, les attributs `width` et `height`
 sont inutiles. C’est l’inverse : ils indiquent au navigateur les **proportions** de
 l’image **avant** qu’elle soit téléchargée. Combinés avec `height: auto`, ils lui
-permettent de réserver la bonne hauteur dès le départ. Sans eux, la zone vaut 0 pixel de
-haut, puis le texte est brutalement repoussé vers le bas quand l’image arrive : c’est un
+permettent de réserver la bonne hauteur dès le départ. Sans eux, le navigateur ne
+connaît pas la hauteur avant d’avoir reçu le fichier et ne réserve presque rien, puis le
+texte est brutalement repoussé vers le bas quand l’image arrive : c’est un
 **décalage de mise en page**, désagréable et source de clics ratés.
 
-Tu peux le constater : une image dont le fichier est introuvable, avec
-`width="1200" height="800"` et la règle de base, occupe quand même un rectangle aux
-bonnes proportions (360 × 240 pixels dans une fenêtre de 360 pixels). L’inspecteur
-affiche pour elle `aspect-ratio: auto 1200 / 800`, déduit des attributs.
+Tu peux le constater en simulant une connexion lente dans le panneau Réseau de
+l’inspecteur : pendant son téléchargement, une image avec `width="1200" height="800"`
+et la règle de base occupe déjà un rectangle aux bonnes proportions (360 × 240 pixels
+dans une fenêtre de 360 pixels, si `body` n’a pas de marge). L’onglet Calculé affiche
+pour elle `aspect-ratio: auto 1200 / 800`, déduit des attributs. Attention : si le
+fichier est introuvable, Chromium affiche à la place le texte de `alt`, sans réserver ce
+rectangle.
 
 ### L’espace fantôme sous les images
 
@@ -277,8 +281,8 @@ h1 {
 }
 ```
 
-Quand l’utilisateur zoome, la fenêtre mesure moins de pixels CSS : une taille en `vw`
-**ne grandit pas** avec le zoom. Elle ignore aussi le réglage de taille de police du
+Quand l’utilisateur zoome avec le zoom du navigateur (Ctrl et +), la fenêtre mesure
+moins de pixels CSS : une taille en `vw` **ne grandit pas** avec ce zoom. Elle ignore aussi le réglage de taille de police du
 navigateur. C’est un problème d’accessibilité : les WCAG demandent qu’un texte puisse
 être agrandi jusqu’à 200 % sans perte de contenu (critère « Redimensionnement du
 texte »). En gardant une part en `rem` dans le calcul (`1.2rem + 2.5vw`) et des bornes
@@ -334,7 +338,7 @@ h3 {
 
 ### Exercice 1 — Corriger une galerie déformée
 
-Sur mobile, les photos de cette galerie sont écrasées verticalement, un espace bizarre
+Sur mobile, les photos de cette galerie sont déformées (étirées en hauteur), un espace bizarre
 apparaît sous chacune, et la page défile horizontalement à cause du tableau des
 horaires. Corrige le CSS.
 
@@ -401,6 +405,7 @@ Côté HTML, on enveloppe le tableau : `<div class="hours-wrap"><table class="ho
 et on peut retirer `width: 700px` si le tableau tient naturellement. Les trois défauts
 avaient trois causes : `height` issue de l’attribut, image en ligne posée sur la ligne
 de base, largeur fixe d’un élément qui ne se replie pas.
+
 :::
 
 ### Exercice 2 — Choisir `srcset` ou `picture`
@@ -449,6 +454,7 @@ HTML.
 Les dimensions des attributs `width` et `height` sont celles du fichier de référence ;
 ce sont surtout leurs **proportions** qui comptent. L’`alt` décrit l’image, pas le
 fichier.
+
 :::
 
 ### Exercice 3 — Un titre fluide et accessible
@@ -476,6 +482,7 @@ D’autres coefficients conviennent, à condition de vérifier les tailles obten
 voulu pour un titre) et 115 px sur un écran de 1920 px ; surtout, une taille en `vw`
 seul ne réagit ni au réglage de police de l’utilisateur ni au zoom, ce qui contrevient
 au critère WCAG de redimensionnement du texte.
+
 :::
 
 ## Récapitulatif

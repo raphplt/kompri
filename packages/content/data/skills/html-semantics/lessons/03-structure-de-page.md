@@ -135,8 +135,8 @@ cette page :
 | `nav aria-label="Principale"`         | `navigation` « Principale » (repère) |
 | `main`                                | `main` (repère)                      |
 | `article`                             | `article`                            |
-| `header` et `footer` dans l’`article` | aucun rôle de repère                 |
-| `section` sans nom                    | aucun rôle de repère                 |
+| `header` et `footer` dans l’`article` | `sectionheader`, `sectionfooter` (pas des repères) |
+| `section` sans nom                    | `generic` (pas un repère)            |
 | `aside`                               | `complementary` (repère)             |
 | `footer` enfant de `body`             | `contentinfo` (repère)               |
 
@@ -214,6 +214,9 @@ vraiment importantes, pas pour toutes : trop de repères tuent les repères.
 `aside` contient un contenu **tangentiel** : encadré « à lire aussi », définition,
 publicité, biographie de l’auteur. Le critère est le sens, pas la position : une colonne
 de droite n’est pas forcément un `aside`, et un `aside` peut s’afficher n’importe où.
+Comme pour `section`, un `aside` placé dans un `article` ou une `section` n’est exposé
+comme repère « complémentaire » que s’il a un nom (`aria-label` ou `aria-labelledby`) ;
+enfant de `body` ou de `main`, il l’est toujours.
 
 ### footer
 
@@ -262,6 +265,7 @@ Tu liras peut-être qu’un `h1` dans chaque `section` serait automatiquement «
 selon l’imbrication. Les navigateurs et les lecteurs d’écran ne font pas ce calcul : un
 `h1` est annoncé comme titre de niveau 1, où qu’il soit. Choisis toujours le niveau
 explicitement.
+
 :::
 
 ## Pièges courants
@@ -391,7 +395,7 @@ justifie en une phrase.
 
 ### Exercice 3 — Corriger la structure
 
-Ce code contient quatre erreurs de structure. Trouve-les et explique leurs
+Ce code contient quatre défauts de structure. Trouve-les et explique leurs
 conséquences.
 
 ```html
@@ -450,8 +454,10 @@ Version corrigée :
 </body>
 ```
 
-Le point 4 est une recommandation, pas une règle de validité : sache distinguer les
-deux quand tu justifies une correction.
+Seul le point 2 est une erreur de validité, signalée par le validateur ; les points 1
+et 3 sont valides mais faussent les repères et le plan, et le point 4 est une
+recommandation. Sache distinguer ces cas quand tu justifies une correction.
+
 :::
 
 ## Récapitulatif

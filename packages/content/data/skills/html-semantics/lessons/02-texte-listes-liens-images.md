@@ -21,8 +21,9 @@ tout est fait avec des paragraphes mis en gras et des numéros tapés à la main
 
 Pour une personne voyante, aucune différence. Pour un lecteur d’écran, la première page
 annonce un titre de niveau 1 puis une liste de 4 éléments (la formulation exacte dépend
-du logiciel) et permet de sauter d’un titre à l’autre ; la seconde n’est qu’un long flot de texte. Pour un moteur de recherche, la
-première dit clairement quel est le sujet de la page. Pour toi dans six mois, la première
+du logiciel) et permet de sauter d’un titre à l’autre ; la seconde n’est qu’un long flot
+de texte. Pour un moteur de recherche, la première dit clairement quel est le sujet de la
+page. Pour toi dans six mois, la première
 se modifie sans casser la numérotation.
 
 C’est le principe du **HTML sémantique** : chaque élément porte un **sens** (titre,
@@ -258,6 +259,7 @@ Ouvre ta page localement, clique sur le lien et regarde la barre d’adresse : e
 montre le chemin complet calculé à partir de la page courante. Un lien relatif cassé
 donne une page « fichier introuvable » ; c’est l’erreur la plus fréquente quand on
 déplace des fichiers.
+
 :::
 
 ### Un texte de lien qui a du sens hors contexte
@@ -311,7 +313,8 @@ bouton est un signal d’alarme.
 - `src` : l’adresse de l’image (mêmes règles de chemins que pour les liens) ;
 - `alt` : le **texte de remplacement**, lu par les lecteurs d’écran, affiché si l’image
   ne se charge pas, utilisé par les moteurs de recherche ;
-- `width` et `height` : les dimensions intrinsèques en pixels, **sans unité**. Elles
+- `width` et `height` : les dimensions de l’image en pixels, **sans unité** (en général
+  ses dimensions réelles ; sans CSS, ce sont aussi ses dimensions d’affichage). Elles
   permettent au navigateur de réserver la place de l’image avant son téléchargement :
   le texte ne « saute » plus quand l’image arrive.
 
@@ -348,6 +351,7 @@ contexte. Ce n’est pas toujours une description.
 est une erreur : la norme exige l’attribut dans presque tous les cas, et selon le lecteur
 d’écran, la personne entend alors le nom du fichier (« i m g underscore 4 0 3 2 point
 j p g ») ou un simple « image » sans information.
+
 :::
 
 ### Image avec légende : figure et figcaption
@@ -505,6 +509,7 @@ Réécris ce paragraphe pour que chaque lien ait un texte explicite hors context
 Chaque texte de lien, lu seul dans une liste de liens, dit où il mène. On signale le
 format PDF parce qu’ouvrir un PDF n’est pas la même expérience qu’ouvrir une page web. Le
 mot « cliquez » disparaît : il exclut les personnes qui n’utilisent pas de souris.
+
 :::
 
 ## Récapitulatif

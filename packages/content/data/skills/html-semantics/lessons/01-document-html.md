@@ -97,6 +97,7 @@ Les noms d’éléments et d’attributs HTML ne sont pas sensibles à la casse 
 sont identiques pour le navigateur. La convention largement partagée est d’écrire en
 minuscules. Les guillemets autour des valeurs d’attributs sont parfois facultatifs, mais
 les mettre toujours évite des erreurs dès qu’une valeur contient une espace.
+
 :::
 
 ## L’imbrication : des boîtes dans des boîtes
@@ -324,6 +325,7 @@ pourra contenir `<script>`. S’il n’est pas échappé (`<` transformé en `&l
 navigateur l’exécutera : c’est une faille XSS (cross-site scripting). Les moteurs de
 gabarits sérieux échappent par défaut. Retiens dès maintenant le principe : **un texte
 n’est jamais du HTML tant qu’on ne l’a pas décidé**.
+
 :::
 
 ## Espaces, retours à la ligne et commentaires
@@ -417,6 +419,7 @@ Les corrections, une par une :
 
 L’ajout de `meta viewport` n’était pas une erreur bloquante, mais il fait partie du
 squelette attendu.
+
 :::
 
 ### Exercice 2 — Une page bilingue
@@ -451,6 +454,7 @@ connaître la langue de chaque passage.
 entourée d’un `span` portant son propre `lang` : un lecteur d’écran change alors de
 prononciation pour ces mots seulement. Le `span` est choisi parce qu’il n’ajoute aucun
 sens ni aucun effet visuel.
+
 :::
 
 ### Exercice 3 — Afficher du code dans une page
@@ -471,6 +475,7 @@ Chaque `<` devient `&lt;` et chaque `>` devient `&gt;` : sinon le navigateur cr�
 vrai lien. Le `&` devient `&amp;` car il pourrait commencer une entité. Les guillemets
 n’ont pas besoin d’être échappés ici : ils sont dans le texte, pas dans une valeur
 d’attribut.
+
 :::
 
 ## Récapitulatif

@@ -79,7 +79,7 @@ On les combine avec `and`, et on sépare des alternatives par une virgule :
 }
 
 @media print, (min-width: 64rem) {
-  /* à l’impression OU sur un écran d’au moins 64rem */
+  /* à l’impression OU dès que la fenêtre mesure au moins 64rem */
 }
 ```
 
@@ -296,6 +296,7 @@ d’un **conteneur**, ce qui permet à un composant de s’adapter à la place q
 `container-type: inline-size;`, puis on écrit `@container (min-width: 30rem) { … }`
 pour ses descendants. Les navigateurs actuels la prennent en charge ; les media queries
 restent suffisantes pour tout ce cours.
+
 :::
 
 ## Tester le responsive
@@ -377,6 +378,7 @@ Conversion : 30rem = 480 px, 48rem = 768 px, 75rem = 1200 px.
 
 Leçon : en mobile d’abord, range les media queries par `min-width` **croissante**. Ici
 le bleu marine n’apparaît jamais.
+
 :::
 
 ### Exercice 2 — Convertir en mobile d’abord
@@ -450,6 +452,7 @@ Correspondances : `max-width: 599px` couvrait 0 à 599 px, donc la base ; à par
 600 px (37,5 × 16), deux colonnes avec un `gap` de 24 px et des titres de 24 px ; à
 partir de 1024 px, quatre colonnes. Les tailles en `rem` respectent en plus le réglage
 de l’utilisateur. Le résultat est identique avec une police par défaut de 16 px.
+
 :::
 
 ### Exercice 3 — Un bandeau fluide
@@ -462,6 +465,15 @@ de l’utilisateur. Le résultat est identique avec une police par défaut de 16
 - centre son contenu, dont la largeur ne dépasse pas 40rem ;
 - supprime l’animation d’apparition du titre pour les utilisateurs qui ont demandé moins
   d’animations. On suppose que le titre a déjà `animation: fade-in 1s;`.
+
+```html
+<section class="hero">
+  <div class="hero-content">
+    <h1>Bienvenue au jardin</h1>
+    <p>Des ateliers chaque samedi.</p>
+  </div>
+</section>
+```
 
 :::solution
 ```css
@@ -488,6 +500,7 @@ grandit au lieu de déborder. `clamp()` donne 24 px de padding sur un petit écr
 360 px = 21,6 px, sous le minimum), 48 px à 800 px, et plafonne à 64 px à partir de
 1067 px environ. La media query `prefers-reduced-motion` respecte un réglage
 d’accessibilité du système.
+
 :::
 
 ## Récapitulatif

@@ -83,6 +83,7 @@ qu’on tape** : la personne qui revient sur le champ ne sait plus ce qu’on lu
 Son contraste par défaut est souvent faible, et s’il peut servir de nom de secours dans
 certains navigateurs, il ne remplace pas une étiquette visible. Utilise-le, au mieux,
 pour un exemple de format (`placeholder="exemple : 06 12 34 56 78"`), en plus du `label`.
+
 :::
 
 ### Le texte d’aide
@@ -130,6 +131,7 @@ code postal, un numéro de carte ou de téléphone sont des **identifiants** com
 chiffres : un zéro initial compte, et les flèches d’incrément n’ont aucun sens. Utilise
 `type="text"` avec `inputmode="numeric"`, qui affiche un pavé numérique sur mobile sans
 transformer la saisie en nombre.
+
 :::
 
 ### autocomplete : aider le navigateur à remplir
@@ -400,6 +402,7 @@ Ce formulaire de contact contient six problèmes. Trouve-les et corrige-les.
 4. La question était un simple paragraphe : elle devient la `legend` d’un `fieldset`.
 5. Le `textarea` n’avait pas de `name` : le message n’aurait jamais été envoyé.
 6. « OK » ne dit pas l’action, et le `type` est explicite.
+
 :::
 
 ### Exercice 2 — Choisir le type et l’autocomplétion
@@ -425,6 +428,7 @@ la valeur d’`autocomplete` adaptés.
 5. `type="password"`, `autocomplete="current-password"` : le navigateur propose le mot
    de passe enregistré.
 6. `type="date"`, `autocomplete="bday"`.
+
 :::
 
 ### Exercice 3 — Un formulaire de recherche de cours
@@ -466,6 +470,7 @@ déroulante « Niveau » (tous niveaux, débutant, confirmé). Le bouton s’int
 - Les cases répondent à une même question : `fieldset` et `legend`.
 - `method="get"` car c’est une recherche : la leçon 3 explique pourquoi.
 - Chaque `id` est unique et chaque `label` désigne le bon champ.
+
 :::
 
 ## Récapitulatif

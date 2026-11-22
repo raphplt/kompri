@@ -76,7 +76,8 @@ pixels. Deux fractions égales : **284** pixels chacune. Les colonnes commencent
 
 `2fr 1fr` donne deux tiers et un tiers de l’espace restant. Contrairement aux
 pourcentages, `fr` tient compte des `gap` : `repeat(3, 33.33%)` plus des `gap`
-déborderait, `repeat(3, 1fr)` jamais.
+déborde, alors que `repeat(3, 1fr)` partage ce qui reste après les `gap` (sauf contenu
+impossible à couper, voir les pièges plus bas).
 
 ### `repeat()` et `minmax()`
 
@@ -335,6 +336,7 @@ Un conteneur de 1000 pixels a `gap: 20px`. Donne la largeur de chaque colonne po
    Pour 4 : 880 + 60 = 940, ça tient. Pour 5 : 1100 + 80 = 1180, non. Donc
    **4 colonnes** ; espace pour les colonnes : 1000 − 60 = 940, soit **235** chacune.
    Les 10 éléments occupent 3 lignes (4 + 4 + 2), et les deux derniers gardent 235 px.
+
 :::
 
 ### Exercice 2 — Une page complète
@@ -392,13 +394,14 @@ L’ordre du HTML (contenu principal avant la barre latérale) reste logique pou
 lecture et le clavier ; seule la grille place l’aside à droite. Sur mobile, deux
 colonnes seront trop étroites : la leçon suivante montre comment passer à une seule
 colonne avec une media query.
+
 :::
 
 ### Exercice 3 — Corriger une galerie
 
-Cette galerie devait afficher des vignettes en colonnes égales qui s’adaptent à
-l’écran, mais une seule colonne apparaît, et quand on ajoute une largeur, la dernière
-ligne se déforme. Explique et corrige.
+Cette galerie devait afficher des vignettes en colonnes égales dont le nombre s’adapte
+à la largeur de l’écran, mais une seule colonne apparaît : les images, réduites au quart de la
+largeur, s’empilent les unes sous les autres. Explique et corrige.
 
 ```css
 .gallery {
@@ -437,6 +440,7 @@ Problèmes :
 complète. `auto-fit` serait préférable si tu voulais que peu d’images s’étirent sur
 toute la largeur. Les questions de taille d’image sont approfondies dans la dernière
 leçon.
+
 :::
 
 ## Récapitulatif

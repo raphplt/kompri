@@ -395,7 +395,7 @@ pseudo-éléments et pseudo-classes.
 | `intro { … }`                                   | cible une balise `<intro>` inexistante       | `.intro { … }`                          |
 | `p .intro` au lieu de `p.intro`                 | cherche un `.intro` à l’intérieur d’un `<p>` | coller les sélecteurs                   |
 | `.Intro` pour `class="intro"`                   | rien : casse différente                      | respecter la casse                      |
-| `color: darkred` sans `;` avant une autre ligne | la déclaration suivante devient invalide     | terminer chaque déclaration par `;`     |
+| `color: darkred` sans `;` avant une autre ligne | cette déclaration et la suivante sont ignorées | terminer chaque déclaration par `;`   |
 | Un sélecteur invalide dans un groupe            | toute la règle est ignorée                   | corriger ou séparer la règle            |
 | `href="style.css"` au lieu de `styles.css`      | aucun style                                  | vérifier le chemin et le nom du fichier |
 
@@ -434,6 +434,7 @@ de ces sélecteurs (réponds « aucun » si nécessaire) :
 Pour vérifier, ouvre la console du navigateur et tape par exemple
 `document.querySelectorAll('h2 ~ p')` : la méthode accepte les mêmes sélecteurs que CSS
 et renvoie la liste des éléments ciblés.
+
 :::
 
 ### Exercice 2 — Mettre en forme la recette
@@ -479,6 +480,7 @@ a:focus-visible {
 Remarques : `.recipe h2` est préférable à `h2` seul si d’autres `<h2>` existent ailleurs
 dans le site. Pour tester le focus, clique dans la barre d’adresse puis appuie sur
 Tabulation jusqu’à atteindre un lien.
+
 :::
 
 ### Exercice 3 — Réparer une feuille de style

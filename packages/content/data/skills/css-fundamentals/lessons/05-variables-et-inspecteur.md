@@ -220,21 +220,24 @@ Le `&` représente le sélecteur parent. La spécificité d’une règle imbriqu
 comme si le parent était entouré de `:is()` : ici `.card h2` vaut (0, 1, 1). Tu peux
 t’en passer entièrement : écrire `.card h2` à plat est tout aussi valable, et c’est ce
 que font les exemples de ce cours.
+
 :::
 
 ## L’inspecteur du navigateur
 
 Les outils de développement sont intégrés à tous les navigateurs. Ils s’ouvrent avec
 **F12** ou **Ctrl+Maj+I** (**Cmd+Option+I** sur macOS), ou par un clic droit sur un
-élément, puis « Inspecter ». Les noms ci-dessous sont ceux de Chrome et Edge, avec
-l’équivalent Firefox quand il diffère ; les fonctions sont les mêmes partout.
+élément, puis « Inspecter ». Dans Safari, il faut d’abord activer les fonctionnalités
+pour développeurs dans les réglages. Les noms ci-dessous sont ceux de Chrome et Edge en
+français, avec l’équivalent Firefox quand il diffère ; les libellés exacts peuvent varier
+selon la version et la langue, mais les fonctions se retrouvent partout.
 
 ### Sélectionner l’élément
 
 Le panneau **Éléments** (Firefox : **Inspecteur**) affiche l’arbre DOM tel que le
 navigateur l’a construit, ce qui peut différer de ton fichier si du HTML était mal
 fermé. Clique sur une balise pour la sélectionner, ou utilise l’outil de sélection
-(icône de flèche, **Ctrl+Maj+C**) puis clique dans la page.
+(icône de flèche, **Ctrl+Maj+C**, ou **Cmd+Maj+C** sur macOS) puis clique dans la page.
 
 Vérifie d’abord que tu as sélectionné **le bon élément** : un style qui « ne marche pas »
 s’applique parfois à un parent ou à un enfant de l’élément que tu regardes.
@@ -250,7 +253,7 @@ fichier et sa ligne d’origine (`styles.css:42`) : un clic t’y emmène.
 | `element.style` en haut                           | les déclarations de l’attribut `style` (vide s’il n’y en a pas) |
 | une déclaration **barrée**                        | elle a perdu dans la cascade : cherche plus haut celle qui gagne |
 | barrée **avec une icône d’avertissement**         | propriété inconnue ou valeur invalide : vérifie l’orthographe   |
-| une règle signalée « user agent stylesheet »      | un style par défaut du navigateur                               |
+| une règle « user agent stylesheet » (ou équivalent traduit) | un style par défaut du navigateur                     |
 | des sections « Hérité de… »                       | les propriétés héritées des ancêtres, avec leur règle d’origine |
 
 Une règle qui **n’apparaît pas du tout** n’a pas ciblé l’élément : soit le sélecteur ne
@@ -322,8 +325,8 @@ Face à « mon style ne s’applique pas », suis ces étapes dans l’ordre :
      pourquoi (importance, spécificité, ordre) et corrige la cause.
 4. **La déclaration est active mais rien ne change ?** Elle n’a peut-être pas d’effet
    dans ce contexte : `width` sur un élément en ligne, `margin-top` sur un `<span>`, une
-   marge qui fusionne. Firefox signale ces cas en grisant la déclaration, avec une
-   explication au survol.
+   marge qui fusionne. Firefox (et Chrome dans ses versions récentes) signale certains de
+   ces cas en grisant la déclaration, avec une explication au survol.
 5. **La valeur calculée est-elle celle attendue ?** Vérifie dans Calculé : une variable
    peut contenir autre chose que ce que tu crois, un `em` peut s’être accumulé.
 
@@ -411,6 +414,7 @@ Toutes les valeurs calculées sont identiques à la version d’origine. Les var
 déclarées sur `:root` pour être héritées partout. Nommer les variables par leur **rôle**
 (`--color-primary`) plutôt que par leur apparence (`--teal`) permet de changer la teinte
 sans que le nom devienne faux.
+
 :::
 
 ### Exercice 2 — Lire un inspecteur
@@ -456,6 +460,7 @@ element.style {
 Il faut aussi vérifier que `--blue` est bien définie : survoler `var(--blue)` dans le
 volet Styles affiche sa valeur, ou tape `getComputedStyle($0).getPropertyValue('--blue')`
 dans la console.
+
 :::
 
 ### Exercice 3 — Une alerte en trois variantes
@@ -495,6 +500,7 @@ Usage : `<p class="alert alert--danger">Paiement refusé, <strong>réessaie</str
 couleur : il **hérite** de `color` du paragraphe, soit `#991b1b`. Chaque variante tient
 en deux lignes, et ajouter une variante `--warning` ne demande aucune nouvelle
 déclaration de couleur ou de bordure.
+
 :::
 
 ## Récapitulatif

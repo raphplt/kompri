@@ -74,8 +74,9 @@ l’élément ; la **marge** éloigne l’élément de ses voisins.
 ```
 
 Ouvre cette page, fais un clic droit sur la carte, puis « Inspecter ». Le schéma du
-modèle de boîte de l’inspecteur (onglet « Calculé » dans Chrome et Edge, « Mise en page »
-dans Firefox) indique :
+modèle de boîte de l’inspecteur (dans Chrome et Edge, en haut de l’onglet « Calculé »,
+_Computed_ ; dans Firefox, dans l’onglet « Mise en page », _Layout_ ; les libellés
+peuvent varier selon la version et la langue) indique :
 
 - contenu : **300** pixels de large ;
 - largeur visible (bordure comprise) : 300 + 2 × 20 + 2 × 5 = **350** pixels ;
@@ -237,8 +238,8 @@ C’est presque toujours ce que tu veux. Pour limiter la largeur sans la figer, 
 répartit l’espace restant également entre les deux marges, ce qui **centre** le bloc.
 Dans un parent de 1000 pixels de large, la boîte fait 600 pixels et chaque marge
 latérale 200 pixels. Dans un parent de 400 pixels, elle fait 400 pixels et ses marges
-valent 0 : `max-width` laisse la boîte rétrécir. Le centrage par `auto` ne marche que si la boîte est plus étroite que son
-parent ; une marge verticale `auto` vaut simplement 0 pour un bloc dans le flux normal.
+valent 0 : `max-width` laisse la boîte rétrécir. Le centrage par `auto` ne marche que
+si la boîte est plus étroite que son parent ; une marge verticale `auto` vaut simplement 0 pour un bloc dans le flux normal.
 
 ### Hauteur et `overflow`
 
@@ -415,6 +416,7 @@ occupée (marges comprises).
 
 Attention au raccourci `padding: 10px 15px` : 10 en haut et en bas, **15** à gauche et à
 droite. C’est la valeur horizontale qui compte pour la largeur.
+
 :::
 
 ### Exercice 2 — Expliquer un espacement
@@ -484,6 +486,7 @@ droite. C’est la valeur horizontale qui compte pour la largeur.
 Le padding sépare désormais les marges des enfants de celles du parent : plus aucune
 fusion avec la section. `display: flow-root` sur `.news` aurait aussi fonctionné, en
 gardant les marges des enfants à l’intérieur du fond.
+
 :::
 
 ### Exercice 3 — Le champ qui dépasse
@@ -532,6 +535,7 @@ Correction 2 : retrancher soi-même padding et bordure avec `calc()`.
 
 La première est préférable : elle reste juste si tu changes le padding ou la bordure.
 Note que `calc()` exige des espaces autour du `-` et du `+`.
+
 :::
 
 ## Récapitulatif

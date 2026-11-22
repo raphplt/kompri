@@ -103,7 +103,8 @@ d’interrogation : c’est la **chaîne de requête** (query string).
 <form action="/recherche" method="get">
   <label for="q">Rechercher</label>
   <input type="search" id="q" name="q">
-  <select name="niveau">
+  <label for="niveau">Niveau</label>
+  <select id="niveau" name="niveau">
     <option value="debutant">Débutant</option>
   </select>
   <button type="submit">Chercher</button>
@@ -140,6 +141,7 @@ Un formulaire sans `action` est envoyé à l’adresse de la page courante, et s
 `method`, il utilise GET. Depuis `/cours/page.html`, un formulaire nu contenant un champ
 `a` valant 1 demande `/cours/page.html?a=1`. Écris toujours les deux attributs pour que
 l’intention soit explicite.
+
 :::
 
 ## POST : les données dans le corps
@@ -170,6 +172,7 @@ POST **cache** les données de la barre d’adresse, il ne les **protège** pas.
 la requête est visible dans l’onglet Réseau des outils de développement, et il circule
 en clair sur le réseau si le site n’utilise pas HTTPS. Un formulaire de connexion doit
 utiliser POST **et** HTTPS : l’un ne remplace pas l’autre.
+
 :::
 
 ## Ce que dit HTTP : méthodes sûres et idempotentes
@@ -295,6 +298,7 @@ le mot-clé devient « tour & émail ».
 Avec « tour & émail », le début devient `q=tour+%26+%C3%A9mail` : les espaces deviennent
 `+`, le `&` devient `%26` pour ne pas être pris pour un séparateur, et « é » devient ses
 deux octets UTF-8 `%C3%A9`.
+
 :::
 
 ### Exercice 2 — GET ou POST ?
@@ -320,6 +324,7 @@ Pour chaque formulaire, choisis la méthode et justifie en une phrase.
 6. GET est défendable (l’adresse `?lang=en` se partage), POST aussi si le choix est
    enregistré dans le profil de l’utilisateur. L’important est de justifier : lecture
    d’une version de la page ou modification d’une préférence.
+
 :::
 
 ### Exercice 3 — Prédire le corps d’une requête POST
@@ -361,6 +366,7 @@ pseudo=Ana+Lima&code=1%2B1%3D2&themes=html&themes=css&cgu=on&niveau=avance&messa
 - Dans le `textarea`, la virgule devient `%2C` et le retour à la ligne est normalisé en
   `%0D%0A` (retour chariot plus saut de ligne).
 - Le bouton d’envoi ajoute `action=envoyer`.
+
 :::
 
 ## Récapitulatif
