@@ -219,6 +219,8 @@ model OralTurn {
   text      String
   model     String?
   createdAt DateTime    @default(now()) @db.Timestamptz(3)
+  /// Integrity indicators of a learner answer; never used for grading.
+  signals   Json?
   session   OralSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
   @@unique([sessionId, sequence])

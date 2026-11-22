@@ -17,6 +17,7 @@ import { gradeSchema } from '@kompri/examiner';
 import {
   adminReviewDetailSchema,
   adminStatsSchema,
+  answerSignalsSchema,
   adminReviewSummarySchema,
   reviewDecisionSchema,
   reviewRequestSchema,
@@ -216,6 +217,7 @@ export class ReviewService {
         speaker: turn.speaker === 'EXAMINER' ? 'examiner' : 'learner',
         text: turn.text,
         at: turn.createdAt.toISOString(),
+        signals: answerSignalsSchema.nullable().parse(turn.signals ?? null),
       })),
       result: buildResult(
         grade,

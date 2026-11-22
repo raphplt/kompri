@@ -26,6 +26,7 @@ import {
 import type { Grade, OralState } from '@kompri/examiner';
 import {
   answerRequestSchema,
+  type AnswerSignals,
   attemptCreateSchema,
   attemptResponseSchema,
   contentIdSchema,
@@ -444,7 +445,7 @@ export class LearningService {
   }
 
   async answer(user: AuthenticatedUser, rawId: string, input: unknown) {
-    const { text } = parseInput(answerRequestSchema, input);
+    const { text, signals } = parseInput(answerRequestSchema, input);
     const session = await this.loadSession(user, rawId);
     if (session.status !== 'ACTIVE')
       throw conflict('oral_closed', 'This oral is no longer in progress');
@@ -476,7 +477,7 @@ export class LearningService {
         'The examiner is unavailable, please resend your answer',
       );
     }
-    await this.persistTurns(session, next, now);
+    await this.persistTurns(session, next, now, signals);
     if (next.status === 'ready') await this.grade(session.id, next, now);
     return this.view(user, session.id);
   }
@@ -501,6 +502,7 @@ export class LearningService {
     session: SessionWithContext,
     next: OralState,
     now: Date,
+    signals?: AnswerSignals,
   ) {
     const added = next.turns.slice(session.turns.length);
     try {
@@ -513,6 +515,7 @@ export class LearningService {
             text: turn.text,
             model: turn.speaker === 'examiner' ? session.model : null,
             createdAt: new Date(turn.at),
+            ...(turn.speaker === 'learner' && signals ? { signals } : {}),
           })),
         });
         await tx.oralSession.update({

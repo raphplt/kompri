@@ -149,8 +149,21 @@ export const attemptResponseSchema = z.object({
   oral: z.object({ id: z.string(), status: oralStatusSchema }).nullable(),
 });
 export type AttemptResponse = z.infer<typeof attemptResponseSchema>;
+/** Integrity indicators measured by the browser; informative, never graded. */
+export const answerSignalsSchema = z
+  .object({
+    pasteAttempts: z.number().int().min(0).max(10_000),
+    focusLosses: z.number().int().min(0).max(10_000),
+    firstInputMs: z.number().int().min(0).max(3_600_000).nullable(),
+    typingMs: z.number().int().min(0).max(3_600_000),
+  })
+  .strict();
+export type AnswerSignals = z.infer<typeof answerSignalsSchema>;
 export const answerRequestSchema = z
-  .object({ text: z.string().max(20_000) })
+  .object({
+    text: z.string().max(20_000),
+    signals: answerSignalsSchema.optional(),
+  })
   .strict();
 export const oralResultSchema = z.object({
   verdict: z.enum(['PASSED', 'FAILED']),
@@ -337,6 +350,7 @@ export const adminReviewDetailSchema = adminReviewSummarySchema.extend({
       speaker: z.enum(['examiner', 'learner']),
       text: z.string(),
       at: z.iso.datetime(),
+      signals: answerSignalsSchema.nullable(),
     }),
   ),
   result: oralResultSchema,

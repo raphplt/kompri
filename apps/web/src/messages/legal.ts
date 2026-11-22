@@ -91,6 +91,7 @@ E-mail : [contact@raphael-plassart.com](mailto:contact@raphael-plassart.com) —
 | Mot de passe | Te connecter ; seul un condensat (scrypt) est conservé | Exécution du contrat |
 | Travaux soumis aux défis | Préparer et conduire l’oral | Exécution du contrat |
 | Transcriptions d’oraux, notes et retours | Évaluer ta compréhension et suivre ta progression | Exécution du contrat |
+| Indicateurs de déroulement de l’oral (collages bloqués, sorties de l’onglet, temps de saisie) | Éclairer un éventuel réexamen ; jamais utilisés pour la note | Intérêt légitime |
 | Validations et dates d’expiration | Afficher tes compétences et te prévenir avant leur expiration | Exécution du contrat |
 | Questions posées au tuteur | Y répondre ; elles ne sont pas enregistrées | Exécution du contrat |
 | Demandes de réexamen et réponses | Réexaminer un résultat contesté | Exécution du contrat |

@@ -67,8 +67,8 @@ Application :
 - ✅ Grilles par niveaux et notes d’examinateur exploitées par les prompts
 - ✅ Références d’évaluation par famille de défi (7 oraux, dont 4 réalistes)
 - ⏳ Mesure avec un vrai modèle et relecture humaine des références
-- 🚧 Défenses contre l’injection de consignes et les réponses assistées (minuteur, collage
-  bloqué, tuteur coupé pendant l’oral ; signaux de saisie à venir)
+- ✅ Défenses contre l’injection de consignes et les réponses assistées : minuteur, collage
+  bloqué, tuteur coupé pendant l’oral, indicateurs de déroulement visibles au réexamen
 - ✅ Tuteur IA pendant l’apprentissage (autorisé), coupé pendant l’oral (interdit)
 
 ## Jalon 6 — Préparation au déploiement

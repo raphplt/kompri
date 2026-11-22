@@ -10,6 +10,8 @@ import { getCurrentUser, getToken } from '../../../../lib/session';
 import { fr } from '../../../../messages/fr';
 
 export const dynamic = 'force-dynamic';
+
+const seconds = (ms: number) => `${Math.round(ms / 1000)} s`;
 export const metadata: Metadata = {
   title: fr.admin.title,
   robots: { index: false },
@@ -60,7 +62,8 @@ export default async function ReviewPage({
           </Card>
           <OralResultView result={review.result} />
           <section>
-            <h2 className="mb-3 text-xl font-bold">{fr.admin.transcript}</h2>
+            <h2 className="mb-1 text-xl font-bold">{fr.admin.transcript}</h2>
+            <p className="mb-3 text-xs text-faint">{fr.admin.signalsNote}</p>
             <ol className="space-y-3">
               {review.turns.map((turn, index) => (
                 <li
@@ -73,6 +76,18 @@ export default async function ReviewPage({
                       : fr.oral.examiner}
                   </p>
                   <p className="whitespace-pre-wrap">{turn.text}</p>
+                  {turn.signals && (
+                    <p className="mt-2 text-xs text-faint">
+                      {fr.admin.signals(
+                        turn.signals.pasteAttempts,
+                        turn.signals.focusLosses,
+                        turn.signals.firstInputMs === null
+                          ? '—'
+                          : seconds(turn.signals.firstInputMs),
+                        seconds(turn.signals.typingMs),
+                      )}
+                    </p>
+                  )}
                 </li>
               ))}
             </ol>

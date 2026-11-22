@@ -461,7 +461,12 @@ export class AuthService {
             endedAt: true,
             turns: {
               orderBy: { sequence: 'asc' },
-              select: { speaker: true, text: true, createdAt: true },
+              select: {
+                speaker: true,
+                text: true,
+                createdAt: true,
+                signals: true,
+              },
             },
           },
         },

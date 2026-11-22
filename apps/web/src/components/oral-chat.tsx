@@ -47,12 +47,56 @@ export function OralChat({ initial }: { initial: OralView }) {
     submitted.current = false;
   }, []);
 
+  // Integrity indicators of the current answer, reset for each question.
+  const signals = useRef({
+    pasteAttempts: 0,
+    focusLosses: 0,
+    shownAt: Date.now(),
+    firstInputAt: 0,
+    lastInputAt: 0,
+  });
+  useEffect(() => {
+    signals.current = {
+      pasteAttempts: 0,
+      focusLosses: 0,
+      shownAt: Date.now(),
+      firstInputAt: 0,
+      lastInputAt: 0,
+    };
+  }, [oral.turns.length]);
+  useEffect(() => {
+    if (oral.status !== 'active') return;
+    const lost = () => {
+      signals.current.focusLosses += 1;
+    };
+    const hidden = () => {
+      if (document.visibilityState === 'hidden') lost();
+    };
+    window.addEventListener('blur', lost);
+    document.addEventListener('visibilitychange', hidden);
+    return () => {
+      window.removeEventListener('blur', lost);
+      document.removeEventListener('visibilitychange', hidden);
+    };
+  }, [oral.status]);
+
   const send = useCallback(
     (answer: string) => {
       if (submitted.current) return;
       submitted.current = true;
+      const s = signals.current;
+      const measured = {
+        pasteAttempts: s.pasteAttempts,
+        focusLosses: s.focusLosses,
+        firstInputMs: s.firstInputAt
+          ? Math.round(s.firstInputAt - s.shownAt)
+          : null,
+        typingMs: s.firstInputAt
+          ? Math.round(s.lastInputAt - s.firstInputAt)
+          : 0,
+      };
       startTransition(async () =>
-        apply(await answerOralAction(oral.id, answer)),
+        apply(await answerOralAction(oral.id, answer, measured)),
       );
     },
     [apply, oral.id],
@@ -159,9 +203,16 @@ export function OralChat({ initial }: { initial: OralView }) {
             <textarea
               id="answer"
               value={text}
-              onChange={(event) => setText(event.target.value)}
+              onChange={(event) => {
+                const at = Date.now();
+                if (!signals.current.firstInputAt)
+                  signals.current.firstInputAt = at;
+                signals.current.lastInputAt = at;
+                setText(event.target.value);
+              }}
               onPaste={(event) => {
                 event.preventDefault();
+                signals.current.pasteAttempts += 1;
                 setNotice(fr.oral.pasteBlocked);
               }}
               onDrop={(event) => event.preventDefault()}

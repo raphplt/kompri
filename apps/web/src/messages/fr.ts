@@ -384,6 +384,10 @@ export const fr = {
     response: 'Réponse envoyée à l’apprenant',
     submit: 'Enregistrer la décision',
     decided: 'Décision enregistrée et apprenant prévenu par e-mail.',
+    signals: (paste: number, focus: number, first: string, typing: string) =>
+      `Collages bloqués : ${paste} · sorties de l’onglet : ${focus} · première frappe : ${first} · durée de saisie : ${typing}`,
+    signalsNote:
+      'Indicateurs informatifs mesurés par le navigateur : ils ne prouvent rien seuls et n’entrent pas dans la note.',
     statsNav: 'Statistiques',
     reviewsNav: 'Réexamens',
     statsTitle: 'Statistiques',

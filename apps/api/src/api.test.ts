@@ -284,15 +284,33 @@ describe('oral', () => {
     ).toBe(409);
 
     advance(30);
+    const signals = {
+      pasteAttempts: 2,
+      focusLosses: 1,
+      firstInputMs: 4200,
+      typingMs: 21000,
+    };
     oral = oralViewSchema.parse(
       (
         await call(`/orals/${oral.id}/answers`, {
           token: user.token,
-          body: { text: long },
+          body: { text: long, signals },
         })
       ).body,
     );
     expect(oral.answeredCount).toBe(1);
+    const stored = await db.oralTurn.findFirst({
+      where: { sessionId: oral.id, speaker: 'LEARNER' },
+    });
+    expect(stored?.signals).toEqual(signals);
+    expect(
+      (
+        await call(`/orals/${oral.id}/answers`, {
+          token: user.token,
+          body: { text: long, signals: { ...signals, pasteAttempts: -1 } },
+        })
+      ).status,
+    ).toBe(400);
     // A late answer is recorded as unanswered and the oral continues.
     advance(120);
     oral = oralViewSchema.parse(

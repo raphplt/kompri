@@ -11,7 +11,8 @@ import {
   registerRequestSchema,
   z,
 } from '@kompri/shared';
-import type { OralView } from '@kompri/shared';
+import { answerSignalsSchema } from '@kompri/shared';
+import type { AnswerSignals, OralView } from '@kompri/shared';
 import { api, ApiRequestError, noContent } from '../lib/api';
 import {
   clearSession,
@@ -309,8 +310,16 @@ async function oralCall(
   }
 }
 
-export async function answerOralAction(oralId: string, text: string) {
-  return oralCall(`/orals/${encodeURIComponent(oralId)}/answers`, { text });
+export async function answerOralAction(
+  oralId: string,
+  text: string,
+  signals?: AnswerSignals,
+) {
+  const parsed = signals ? answerSignalsSchema.safeParse(signals) : null;
+  return oralCall(`/orals/${encodeURIComponent(oralId)}/answers`, {
+    text,
+    ...(parsed?.success ? { signals: parsed.data } : {}),
+  });
 }
 
 export async function abandonOralAction(oralId: string) {
