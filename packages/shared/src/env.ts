@@ -66,4 +66,13 @@ export const webEnvSchema = z.object({
         URL.canParse(value) &&
         ['http:', 'https:'].includes(new URL(value).protocol),
     ),
+  // Public address, used for canonical links, the sitemap and social previews.
+  WEB_URL: z
+    .url()
+    .refine(
+      (value) =>
+        URL.canParse(value) &&
+        ['http:', 'https:'].includes(new URL(value).protocol),
+    )
+    .default('http://localhost:3000'),
 });

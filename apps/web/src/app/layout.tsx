@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { parseEnvironment, webEnvSchema } from '@kompri/shared/env';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { logoutAction } from './actions';
@@ -7,7 +8,17 @@ import { VerifyBanner } from '../components/account-forms';
 import { fr } from '../messages/fr';
 import './globals.css';
 
+const siteUrl = parseEnvironment(webEnvSchema, process.env).WEB_URL;
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  openGraph: {
+    type: 'website',
+    locale: 'fr_FR',
+    siteName: fr.title,
+    title: `${fr.title} — ${fr.tagline}`,
+    description: fr.description,
+  },
   title: {
     default: `${fr.title} — ${fr.tagline}`,
     template: `%s · ${fr.title}`,
