@@ -287,7 +287,7 @@
   title: Tester son code
   description: Vérifier automatiquement que le code fait ce qu’on attend.
   estimatedHours: 5
-  prerequisites: [js-functions, node-runtime]
+  prerequisites: [js-async, node-runtime]
   objectives:
     - Expliquer à quoi servent les tests et distinguer tests unitaires et d’intégration.
     - Écrire des tests avec node:test et node:assert.

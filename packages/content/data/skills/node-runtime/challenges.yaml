@@ -267,9 +267,12 @@
 
     `npm run export`, de `npm run export -- atelier-velo` et d’un essai avec un
 
-    `EXPORT_DIR` où tu n’as pas le droit d’écrire (par exemple `/root/exports` sous Linux ou
+    `EXPORT_DIR` où tu n’as pas le droit d’écrire, suivi de `echo $?` (sous Linux ou macOS,
 
-    macOS), suivi de `echo $?`. Termine par la liste des lignes modifiées avec la raison de
+    crée un dossier protégé avec `mkdir verrou && chmod 500 verrou`, puis lance
+
+    `EXPORT_DIR=verrou/exports npm run export`). Termine par la liste des lignes modifiées avec la raison
+    de
 
     chacune.
 

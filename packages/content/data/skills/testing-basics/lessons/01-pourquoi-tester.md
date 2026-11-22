@@ -234,7 +234,7 @@ fichiers `*.test.js` à côté du code qu’ils testent. Choisis-en une par proj
 Un test lisible suit trois étapes, souvent appelées **Arrange, Act, Assert** :
 
 ```js
-test('le total du panier applique la remise de chaque ligne', () => {
+test('applique une remise de 25 % sur 80 €', () => {
   // Préparer (Arrange) : les données d'entrée
   const price = 80;
   const percent = 25;

@@ -268,8 +268,10 @@ dans tous les cas.
 
 - **Corriger sans test** : rien ne garantit que le bug ne reviendra pas.
 - **Écrire le test après la correction** sans l’avoir vu échouer : peut-être qu’il ne teste
-  pas le bug. Vérifie en annulant temporairement la correction (`git stash`, puis
-  `git stash pop`).
+  pas le bug. Vérifie en annulant temporairement la seule correction :
+  `git stash push src/split-bill.js` met de côté les modifications de ce fichier (un
+  `git stash` sans chemin rangerait aussi les nouveaux tests), relance les tests, puis
+  `git stash pop` remet la correction.
 - **Lancer seulement le nouveau test** : une régression ailleurs passe inaperçue. Termine
   toujours par la suite complète.
 - **Modifier ou supprimer un test qui échoue pour « faire passer » la suite**, sans se
@@ -301,8 +303,8 @@ de la demi-heure et de l’heure), vois-les échouer, corrige, relance toute la 
 
 :::solution
 Reproduction : `formatDuration(90)` donne `'2 h 30'`. La cause : `Math.round(1.5)` vaut 2.
-Toute durée dont la partie après l’heure dépasse 30 minutes est arrondie à l’heure
-supérieure.
+Toute durée dont la partie après l’heure atteint ou dépasse 30 minutes est arrondie à
+l’heure supérieure.
 
 ```js
 // test/duration.test.js

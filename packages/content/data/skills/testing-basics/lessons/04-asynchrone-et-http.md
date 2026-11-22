@@ -396,7 +396,9 @@ Les étapes clés :
    système un port libre. `server.address().port` indique lequel il a choisi.
 2. **Attendre l’écoute** : `listen` est asynchrone ; `await once(server, 'listening')`
    attend l’événement qui signale que le serveur est prêt.
-3. **Une vraie requête** avec `fetch`, exactement comme un client.
+3. **Une vraie requête** avec `fetch`, exactement comme un client. Pour une requête qui
+   envoie des données, on passe un second argument :
+   `fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: 'Lire' }) })`.
 4. **Vérifier statut, en-têtes et corps** : un test de route qui ne vérifie que le corps
    passerait à côté d’un mauvais code de statut.
 5. **Arrêter le serveur** dans `after`. Sans `server.close()`, le serveur continue d’écouter,
