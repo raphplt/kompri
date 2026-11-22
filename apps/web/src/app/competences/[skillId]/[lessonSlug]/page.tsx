@@ -90,13 +90,13 @@ export default async function LessonPage({ params }: Props) {
             Leçon {lesson.position} sur {skill.lessons.length} ·{' '}
             {fr.skill.minutes(lesson.durationMinutes)}
           </p>
-          <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">
+          <h1 className="mt-2 text-2xl font-extrabold tracking-tight sm:text-4xl">
             {lesson.title}
           </h1>
           <p className="mt-3 text-lg text-muted">{lesson.summary}</p>
         </header>
 
-        <Markdown source={lesson.body} className="prose-lg" />
+        <Markdown source={lesson.body} className="md:prose-lg" />
 
         {lesson.sources.length > 0 && (
           <section className="mt-12 rounded-xl border border-line bg-raised p-5">

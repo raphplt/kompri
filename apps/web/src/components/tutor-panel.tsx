@@ -103,7 +103,8 @@ export function TutorPanel({
         onClick={() => setOpen(true)}
         className="fixed right-4 bottom-4 z-30 rounded-full bg-accent px-5 py-3 font-semibold text-white shadow-lg hover:bg-accent-strong dark:text-slate-950"
       >
-        {fr.tutor.open}
+        <span className="sm:hidden">{fr.tutor.title}</span>
+        <span className="hidden sm:inline">{fr.tutor.open}</span>
       </button>
     );
 

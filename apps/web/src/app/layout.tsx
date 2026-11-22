@@ -22,8 +22,8 @@ async function Header() {
     /* The header stays usable when the API is down. */
   }
   return (
-    <header className="sticky top-0 z-20 border-b border-line bg-raised/90 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
+    <header className="z-20 sm:sticky sm:top-0 border-b border-line bg-raised/90 backdrop-blur">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
         <Link
           href="/"
           className="flex items-center gap-2 text-lg font-extrabold"
@@ -38,11 +38,11 @@ async function Header() {
         </Link>
         <nav
           aria-label="Navigation principale"
-          className="flex items-center gap-1 text-sm font-medium sm:gap-3"
+          className="flex flex-wrap items-center gap-1 text-sm font-medium whitespace-nowrap sm:gap-3"
         >
           <Link
             href="/#parcours"
-            className="rounded-md px-2 py-1 text-muted hover:text-accent"
+            className="hidden rounded-md px-2 py-1 text-muted hover:text-accent sm:inline"
           >
             {fr.nav.path}
           </Link>
