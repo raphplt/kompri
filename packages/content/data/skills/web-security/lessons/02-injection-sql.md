@@ -5,8 +5,8 @@ durationMinutes: 55
 sources:
   - title: OWASP — SQL Injection Prevention Cheat Sheet
     url: https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html
-  - title: OWASP Top 10 2021 — A03 Injection
-    url: https://owasp.org/Top10/2021/A03_2021-Injection/
+  - title: OWASP Top 10 2025 — A05 Injection
+    url: https://owasp.org/Top10/2025/A05_2025-Injection/
   - title: node-postgres — Queries
     url: https://node-postgres.com/features/queries
   - title: PostgreSQL — Pattern Matching (LIKE)
@@ -23,7 +23,7 @@ L’injection se produit quand un programme **assemble du code** (ici du SQL) en
 données venues de l’extérieur. Le moteur SQL reçoit une seule chaîne de caractères : il ne
 peut plus distinguer la partie écrite par le développeur de la partie fournie par
 l’utilisateur. Si cette dernière contient une apostrophe, elle ferme la chaîne SQL et tout ce
-qui suit devient du SQL exécuté. C’est la catégorie **A03:2021 Injection** du Top 10.
+qui suit devient du SQL exécuté. C’est la catégorie **A05:2025 Injection** du Top 10 (`A03` dans l’édition 2021).
 
 :::warning[Uniquement sur ta base de test]
 Les attaques de cette leçon s’exécutent sur une base créée pour l’occasion, sur ta machine.
@@ -384,7 +384,7 @@ app.use((error, req, res, next) => {
 });
 ```
 
-Afficher le détail d’une erreur SQL en production relève de la catégorie **A05:2021 Security
+Afficher le détail d’une erreur SQL en production relève de la catégorie **A02:2025 Security
 Misconfiguration**.
 
 ## Pièges et idées reçues

@@ -24,8 +24,8 @@ posent à **chaque** requête :
    l’**autorisation**.
 
 Les confondre est l’origine d’une grande partie des failles réelles. Dans le Top 10 de
-l’OWASP 2021, la première catégorie, **A01 Broken Access Control**, concerne l’autorisation ;
-la septième, **A07 Identification and Authentication Failures**, concerne l’authentification.
+l’OWASP 2025, la première catégorie, **A01 Broken Access Control**, concerne l’autorisation ;
+la septième, **A07 Authentication Failures**, concerne l’authentification.
 
 Dans cette compétence, tu vas construire pas à pas une API de notes personnelles : inscription
 avec mot de passe correctement haché, connexion par session et cookie, déconnexion, et

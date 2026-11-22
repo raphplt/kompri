@@ -25,7 +25,8 @@ affichées, et envoyer des requêtes à ton API **au nom de la victime**, avec s
 Même un cookie `HttpOnly`, illisible en JavaScript, ne l’empêche pas d’agir : le script
 n’a pas besoin de voler le cookie, il lui suffit de faire travailler le navigateur.
 
-Dans l’édition 2021 du Top 10 de l’OWASP, le XSS fait partie de **A03:2021 Injection**.
+Dans le Top 10 de l’OWASP (édition 2025), le XSS fait partie de **A05:2025 Injection**
+(`A03` en 2021).
 
 On distingue trois variantes selon le chemin suivi par la donnée :
 

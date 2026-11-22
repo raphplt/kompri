@@ -12,7 +12,7 @@
     \ VALUES\n  ('L’Étranger', 'Albert Camus', true),\n  ('Les Misérables', 'Victor Hugo', false),\n \
     \ ('100 % JavaScript', 'Jeanne O''Connor', true);\n```\n\nTravail demandé :\n\n1. **Modèle de menace\
     \ (cinq à huit lignes).** Pour la route `GET /search?q=…`, liste les\n   entrées non fiables, puis\
-    \ au moins deux menaces, chacune avec sa catégorie du Top 10\n   de l’OWASP 2021 et la parade que\
+    \ au moins deux menaces, chacune avec sa catégorie du Top 10\n   de l’OWASP 2025 et la parade que\
     \ tu mets en place.\n2. **La route.** `GET /search?q=…` renvoie une page HTML complète (`<!doctype\
     \ html>`,\n   `lang=\"fr\"`, encodage UTF-8) qui affiche « Résultats pour » suivi de la saisie, puis\
     \ la\n   liste des livres dont le titre **ou** l’auteur contient la saisie, sans tenir compte de\n\
@@ -88,7 +88,8 @@
       - score: 1
         description: Entrées et menaces correctes mais catégories approximatives ou parades absentes.
       - score: 2
-        description: Entrées, menaces, catégories 2021 exactes et parades vérifiables, défendues à l’oral.
+        description: Entrées, menaces, catégories exactes et datées (2025, ou 2021 si l’année est précisée)
+          et parades vérifiables, défendues à l’oral.
 - id: web-security-avec-ia
   family: AVEC_IA
   title: Durcir une API de notes publiques
@@ -113,7 +114,7 @@
     \ et renvoie un message générique ;\n- journal d’une ligne JSON par requête (méthode, chemin sans\
     \ chaîne de requête, statut,\n  durée), sans corps ni en-têtes ;\n- `npm audit` sans vulnérabilité\
     \ connue au moment du rendu.\n\nEnfin, rédige un tableau de modèle de menace : au moins six menaces,\
-    \ chacune avec sa\ncatégorie du Top 10 OWASP 2021, la parade et la façon dont tu l’as vérifiée.\n"
+    \ chacune avec sa\ncatégorie du Top 10 OWASP 2025, la parade et la façon dont tu l’as vérifiée.\n"
   deliverable: 'Colle : le code de chaque fichier (serveur, middlewares, configuration, `app.js`,
 
     `index.html`, migration SQL), la sortie de `npm audit`, la sortie de cinq commandes `curl`
@@ -141,7 +142,7 @@
       - score: 3
         description: Explique aussi les propositions de l’IA écartées ou corrigées, avec la raison.
     - id: threat-mapping
-      description: Relie chaque mesure à une menace précise et à une catégorie du Top 10 2021.
+      description: Relie chaque mesure à une menace précise et à une catégorie du Top 10 2025.
       maxScore: 3
       levels:
       - score: 0
@@ -221,7 +222,7 @@
     \ 'POST',\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify({ ...data,\
     \ product, rating: Number(data.rating) }),\n  });\n  form.reset();\n  loadReviews();\n});\n\nloadReviews();\n\
     ```\n\nTravail demandé :\n\n1. Liste chaque défaut de sécurité : fichier et ligne, scénario d’attaque\
-    \ concret (la\n   requête ou la saisie de l’attaquant), conséquence, catégorie du Top 10 OWASP 2021\
+    \ concret (la\n   requête ou la saisie de l’attaquant), conséquence, catégorie du Top 10 OWASP 2025\
     \ et\n   gravité (critique, élevée, moyenne, faible).\n2. Prouve au moins deux défauts en les exploitant\
     \ sur ta base de test (commande et\n   sortie obtenue).\n3. Fournis une version corrigée des deux\
     \ fichiers.\n4. Classe tes corrections par ordre de priorité et justifie ce classement.\n"

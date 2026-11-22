@@ -5,10 +5,10 @@ durationMinutes: 50
 sources:
   - title: OWASP — Threat Modeling Cheat Sheet
     url: https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html
-  - title: OWASP Top 10 — édition 2021
-    url: https://owasp.org/Top10/2021/
   - title: OWASP Top 10 — édition 2025
     url: https://owasp.org/Top10/2025/
+  - title: OWASP Top 10 — édition 2021
+    url: https://owasp.org/Top10/2021/
   - title: OWASP — Input Validation Cheat Sheet
     url: https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html
 ---
@@ -225,35 +225,36 @@ peut plus être attaquée. Deux principes accompagnent cette réduction :
 L’**OWASP** (_Open Worldwide Application Security Project_) est une fondation à but non
 lucratif qui publie des guides libres sur la sécurité des applications. Son document le plus
 connu, le **Top 10**, classe les grandes catégories de risques observées dans les
-applications web. Ce cours s’appuie sur l’édition 2021, encore très citée dans les audits,
-les outils et les offres d’emploi. Une édition 2025 a depuis été publiée (voir l’encadré plus
-bas) : précise donc toujours l’année quand tu cites un code comme `A03`.
-Les intitulés officiels sont en anglais ; voici ceux de l’édition 2021 :
+applications web. Ce cours s’appuie sur l’**édition 2025**, la plus récente. L’édition 2021
+reste très citée dans les audits, les outils et les offres d’emploi : les codes changent d’une
+édition à l’autre, donc précise toujours l’année quand tu cites un code comme `A05`.
+Les intitulés officiels sont en anglais ; voici ceux de l’édition 2025 :
 
-| Code     | Intitulé officiel                          | En clair                                            | Exemple dans notre pile                                               |
-| -------- | ------------------------------------------ | --------------------------------------------------- | --------------------------------------------------------------------- |
-| A01:2021 | Broken Access Control                      | Contrôle d’accès défaillant                         | `GET /api/notes/42` renvoie la note d’un autre utilisateur            |
-| A02:2021 | Cryptographic Failures                     | Défaillances cryptographiques                       | Mots de passe stockés en clair, site sans HTTPS                       |
-| A03:2021 | Injection                                  | Injection (SQL, commandes… et XSS)                  | Requête SQL construite par concaténation                              |
-| A04:2021 | Insecure Design                            | Conception non sécurisée                            | Prix de la commande fourni par le client                              |
-| A05:2021 | Security Misconfiguration                  | Mauvaise configuration                              | Messages d’erreur détaillés en production, en-têtes absents           |
-| A06:2021 | Vulnerable and Outdated Components         | Composants vulnérables ou obsolètes                 | Dépendance npm avec une faille connue                                 |
-| A07:2021 | Identification and Authentication Failures | Défaillances d’identification et d’authentification | Connexion sans limitation des tentatives                              |
-| A08:2021 | Software and Data Integrity Failures       | Défaillances d’intégrité                            | Script chargé depuis un CDN sans contrôle d’intégrité                 |
-| A09:2021 | Security Logging and Monitoring Failures   | Journalisation et surveillance insuffisantes        | Aucune trace des échecs de connexion                                  |
-| A10:2021 | Server-Side Request Forgery (SSRF)         | Falsification de requête côté serveur               | Le serveur télécharge une URL fournie par l’utilisateur sans contrôle |
+| Code     | Intitulé officiel                       | En clair                                              | Exemple dans notre pile                                                |
+| -------- | --------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------- |
+| A01:2025 | Broken Access Control                   | Contrôle d’accès défaillant (dont SSRF et CSRF)       | `GET /api/notes/42` renvoie la note d’un autre utilisateur             |
+| A02:2025 | Security Misconfiguration               | Mauvaise configuration                                | Messages d’erreur détaillés en production, en-têtes absents            |
+| A03:2025 | Software Supply Chain Failures          | Défaillances de la chaîne d’approvisionnement         | Dépendance npm avec une faille connue, paquet installé sans vérifier   |
+| A04:2025 | Cryptographic Failures                  | Défaillances cryptographiques                         | Mots de passe stockés en clair, site sans HTTPS                        |
+| A05:2025 | Injection                               | Injection (SQL, commandes… et XSS)                    | Requête SQL construite par concaténation                               |
+| A06:2025 | Insecure Design                         | Conception non sécurisée                              | Prix de la commande fourni par le client                               |
+| A07:2025 | Authentication Failures                 | Défaillances d’authentification                       | Connexion sans limitation des tentatives                               |
+| A08:2025 | Software or Data Integrity Failures     | Défaillances d’intégrité                              | Script chargé depuis un CDN sans contrôle d’intégrité                  |
+| A09:2025 | Security Logging and Alerting Failures  | Journalisation et alertes insuffisantes               | Aucune trace des échecs de connexion                                   |
+| A10:2025 | Mishandling of Exceptional Conditions   | Mauvaise gestion des erreurs et des cas anormaux      | Une erreur non gérée laisse une opération à moitié faite               |
 
-Dans l’édition 2021, le XSS est rangé dans la catégorie A03 (Injection) : dans les deux cas,
-une donnée est interprétée comme du code.
+Le XSS est rangé dans la catégorie Injection : dans les deux cas, une donnée est interprétée
+comme du code. Le SSRF (le serveur va chercher une URL fournie par l’attaquant) et le CSRF
+(une requête envoyée à l’insu de l’utilisateur) relèvent du contrôle d’accès.
 
-:::note[L’édition 2025]
-L’édition 2025 garde l’essentiel des risques mais change l’ordre et donc les codes : par
-exemple, Injection y devient `A05:2025` et Security Misconfiguration `A02:2025`. Le SSRF est
-rattaché à Broken Access Control (`A01:2025`), et deux catégories apparaissent : _Software
-Supply Chain Failures_ (chaîne d’approvisionnement logicielle, qui élargit les composants
-vulnérables) et _Mishandling of Exceptional Conditions_ (mauvaise gestion des erreurs et cas
-anormaux). La démarche de cette leçon reste la même : passer chaque catégorie en revue et
-justifier une parade.
+:::note[Correspondance avec l’édition 2021]
+Tu croiseras souvent les codes de 2021. Les risques sont presque les mêmes, mais l’ordre
+change : Injection était `A03:2021`, Security Misconfiguration `A05:2021`, Cryptographic
+Failures `A02:2021` et Insecure Design `A04:2021`. Le SSRF avait sa propre catégorie
+`A10:2021`, aujourd’hui intégrée à `A01:2025`. _Vulnerable and Outdated Components_
+(`A06:2021`) est élargi en _Software Supply Chain Failures_ (`A03:2025`), et _Mishandling of
+Exceptional Conditions_ (`A10:2025`) est nouveau. La démarche de cette leçon ne dépend pas de
+l’édition : passer chaque catégorie en revue et justifier une parade.
 
 :::
 
@@ -263,12 +264,12 @@ Le Top 10 n’est **pas** une liste exhaustive ni une norme de conformité. C’
 lecture pour relire une fonctionnalité :
 
 1. Pour chaque route, passe les dix catégories en revue : « cette route est-elle concernée par
-   A01 ? par A03 ? ».
+   A01 ? par A05 ? ».
 2. Note les risques trouvés avec leur catégorie : cela donne un vocabulaire commun avec
    l’équipe et avec les outils d’audit.
 3. Pour chaque risque, associe une parade et un test qui la vérifie.
 
-Par exemple, la version 1 de la boutique relève d’**A04** (le défaut est dans la conception :
+Par exemple, la version 1 de la boutique relève d’**A06:2025** (le défaut est dans la conception :
 le client décide du prix) et sa correction relève de la validation côté serveur.
 
 :::tip
@@ -287,7 +288,7 @@ Traite sa réponse comme un brouillon : vérifie chaque menace sur ton propre co
 - **« L’en-tête `X-Forwarded-For` donne l’adresse IP du client. »** N’importe qui peut
   l’écrire. Il n’est fiable que s’il est ajouté par un proxy que tu contrôles et que tu as
   configuré Express pour lui faire confiance.
-- **« On sécurisera à la fin. »** Une conception non sûre (A04) coûte cher à corriger après
+- **« On sécurisera à la fin. »** Une conception non sûre (A06) coûte cher à corriger après
   coup. Pose les quatre questions dès qu’une fonctionnalité est dessinée.
 - **« Valider suffit. »** Valider n’empêche pas d’échapper. Un nom comme `O'Brien` est valide
   et doit pourtant être inséré sans casser une requête SQL ni une page HTML.
@@ -332,7 +333,7 @@ Entrées non fiables et tentatives possibles :
 
 Une application de prise de notes propose : inscription, connexion, création de notes,
 partage d’une note par lien public, import d’une image depuis une URL. Pour chacune des
-situations suivantes, donne la catégorie du Top 10 2021 la plus pertinente et une parade.
+situations suivantes, donne la catégorie du Top 10 2025 la plus pertinente et une parade.
 
 1. Le lien public d’une note est `/share/1`, `/share/2`, etc.
 2. Le serveur va chercher l’image à l’URL fournie, y compris `http://localhost:5432`.
@@ -346,19 +347,21 @@ situations suivantes, donne la catégorie du Top 10 2021 la plus pertinente et u
 1. **A01 Broken Access Control** : les identifiants séquentiels se devinent. Parade : un
    jeton de partage aléatoire et long (par exemple 32 octets de `crypto.randomBytes`), et la
    possibilité de révoquer le partage.
-2. **A10 Server-Side Request Forgery (SSRF)** : le serveur devient un relais vers le réseau
-   interne. Parade : liste blanche de schémas (`https:` seulement) et de domaines, refus des
+2. **A01 Broken Access Control**, sous sa forme SSRF (_Server-Side Request Forgery_, qui avait
+   sa propre catégorie `A10:2021`) : le serveur devient un relais vers le réseau interne.
+   Parade : liste blanche de schémas (`https:` seulement) et de domaines, refus des
    adresses internes, ou suppression de la fonctionnalité au profit d’un envoi de fichier.
-3. **A02 Cryptographic Failures** : SHA-256 est trop rapide et l’absence de sel permet les
+3. **A04 Cryptographic Failures** : SHA-256 est trop rapide et l’absence de sel permet les
    tables précalculées. Parade : un algorithme de hachage de mots de passe (scrypt, Argon2id,
    bcrypt), vu dans la compétence suivante.
-4. **A06 Vulnerable and Outdated Components** : parade `npm audit`, mise à jour ou
-   remplacement de la dépendance, et suivi régulier.
-5. **A09 Security Logging and Monitoring Failures** : parade : journaliser les échecs (sans le
+4. **A03 Software Supply Chain Failures** (`A06:2021` _Vulnerable and Outdated Components_) :
+   parade `npm audit`, mise à jour ou remplacement de la dépendance, et suivi régulier.
+5. **A09 Security Logging and Alerting Failures** : parade : journaliser les échecs (sans le
    mot de passe !) avec l’heure, l’adresse IP et l’identifiant visé, et alerter en cas de
    rafale.
 
-Plusieurs réponses peuvent se défendre : la 1 est aussi un problème de conception (A04).
+Plusieurs réponses peuvent se défendre : la 1 est aussi un problème de conception (A06).
+Une réponse donnée avec les codes 2021, correctement datée, est juste aussi.
 L’important est de justifier la catégorie et de proposer une parade vérifiable.
 
 :::
@@ -419,5 +422,6 @@ cas légitime rare plutôt qu’accepter un cas dangereux.
   par le client sans le vérifier.
 - Valider à l’entrée par liste blanche, encoder à la sortie selon le contexte.
 - Réduire la surface d’attaque, appliquer le moindre privilège et la défense en profondeur.
-- Le Top 10 de l’OWASP (édition 2021 : A01 Broken Access Control à A10 SSRF) est une grille de
+- Le Top 10 de l’OWASP (édition 2025 : A01 Broken Access Control à A10 Mishandling of
+  Exceptional Conditions) est une grille de
   lecture commune, pas une liste exhaustive.

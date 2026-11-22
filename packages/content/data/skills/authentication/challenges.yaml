@@ -192,7 +192,7 @@
     \ 'Réservé aux administrateurs' });\n  const result = await pool.query('SELECT * FROM invoices ORDER\
     \ BY id');\n  res.json(result.rows);\n});\n\napp.listen(3000, () => console.log('API factures sur\
     \ http://localhost:3000'));\n```\n\nTravail demandé :\n\n1. Liste chaque défaut : ligne, scénario\
-    \ d’attaque concret, conséquence, catégorie du Top\n   10 OWASP 2021, gravité.\n2. Démontre au moins\
+    \ d’attaque concret, conséquence, catégorie du Top\n   10 OWASP 2025, gravité.\n2. Démontre au moins\
     \ trois défauts sur une base de test (commandes `curl` et sorties). Un\n   client ordinaire qui devient\
     \ administrateur compte comme une démonstration majeure.\n3. Réécris le code pour corriger tous les\
     \ défauts, en t’appuyant sur ce que tu as appris\n   (scrypt correct, sessions en base, cookie sûr,\

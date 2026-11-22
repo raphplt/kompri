@@ -518,7 +518,7 @@ app.use((req, res, next) => {
 Le middleware **reflète** toute origine avec `Allow-Credentials: true`. N’importe quel site
 peut donc faire un `fetch(…, { credentials: 'include' })` vers l’API et **lire** les réponses
 avec les cookies de la victime : profil, tâches, données personnelles. C’est une fuite de
-données (A01 Broken Access Control ou A05 Security Misconfiguration selon la lecture). Il
+données (A01 Broken Access Control ou A02 Security Misconfiguration selon la lecture, édition 2025). Il
 manque aussi `Vary: Origin`.
 
 Correction : n’autoriser que des origines connues, comme `cors-api.js` :

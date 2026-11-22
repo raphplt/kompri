@@ -5,8 +5,8 @@ durationMinutes: 55
 sources:
   - title: OWASP — Insecure Direct Object Reference Prevention Cheat Sheet
     url: https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html
-  - title: OWASP Top 10 2021 — A01 Broken Access Control
-    url: https://owasp.org/Top10/2021/A01_2021-Broken_Access_Control/
+  - title: OWASP Top 10 2025 — A01 Broken Access Control
+    url: https://owasp.org/Top10/2025/A01_2025-Broken_Access_Control/
   - title: OWASP — Authorization Cheat Sheet
     url: https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html
   - title: Node.js — Test runner
@@ -17,7 +17,8 @@ sources:
 
 Ton API sait maintenant **qui** fait chaque requête. Reste la question la plus souvent ratée :
 cette personne a-t-elle le droit d’agir sur **cette** donnée ? Le contrôle d’accès défaillant
-est la catégorie **A01:2021 Broken Access Control**, la première du Top 10 de l’OWASP.
+est la catégorie **A01:2025 Broken Access Control**, la première du Top 10 de l’OWASP
+(déjà en tête en 2021).
 
 Sa forme la plus courante porte un nom : **IDOR** (*Insecure Direct Object Reference*,
 référence directe non sécurisée à un objet). L’URL contient un identifiant (`/api/notes/1`),

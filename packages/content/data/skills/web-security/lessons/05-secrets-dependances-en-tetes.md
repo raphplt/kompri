@@ -23,10 +23,10 @@ des failles qui ne tiennent pas à la logique de tes routes, mais à **tout ce q
 - une réponse HTTP qui ne dit pas au navigateur de se protéger ;
 - une trace d’erreur qui affiche la configuration, un journal qui contient des mots de passe.
 
-Dans le Top 10 de l’OWASP 2021, ces défauts relèvent surtout de **A05 Security
-Misconfiguration**, **A06 Vulnerable and Outdated Components**, **A08 Software and Data
-Integrity Failures** et **A09 Security Logging and Monitoring Failures**. Cette leçon les
-traite un par un.
+Dans le Top 10 de l’OWASP 2025, ces défauts relèvent surtout de **A02 Security
+Misconfiguration**, **A03 Software Supply Chain Failures**, **A08 Software or Data Integrity
+Failures** et **A09 Security Logging and Alerting Failures**. Cette leçon les traite un par
+un.
 
 ## Les secrets hors du code
 
@@ -135,7 +135,7 @@ serveur.
 Chaque paquet npm installé exécute du code dans ton application, avec les mêmes droits
 qu’elle. Et chaque paquet a ses propres dépendances : quelques lignes dans `package.json`
 peuvent représenter des centaines de paquets dans `node_modules`. Une faille dans l’un d’eux
-est une faille chez toi (A06).
+est une faille chez toi (A03:2025).
 
 ### `npm audit`
 
