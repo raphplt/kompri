@@ -19,6 +19,7 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm audit --prod --audit-level=high
       - run: docker compose up -d --wait
       - run: pnpm db:migrate && pnpm db:seed
       - run: pnpm content:validate
