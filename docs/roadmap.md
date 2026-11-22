@@ -18,53 +18,55 @@ Légende : ✅ fait · 🚧 en cours · ⏳ à faire
 
 Contenu (parcours « développement web full-stack élémentaire ») :
 
-- ⏳ Format de contenu v2 : leçons Markdown, défis détaillés, grilles par niveaux, notes
+- ✅ Format de contenu v2 : leçons Markdown, défis détaillés, grilles par niveaux, notes
   d’examinateur invisibles pour l’apprenant, archivage des nœuds retirés
-- ⏳ Guide de rédaction des cours (`docs/content-guide.md`)
-- ⏳ Arbre d’environ 24 compétences réparties en domaines
-- ⏳ Cours complets et relus pour chaque compétence, défis des quatre familles
-- ⏳ Relecture d’exactitude de chaque cours et vérification des liens sources
+- ✅ Guide de rédaction des cours (`docs/content-guide.md`)
+- ✅ Arbre de 24 compétences réparties en 6 domaines
+- 🚧 Cours complets et relus pour chaque compétence, défis des quatre familles
+  (118 leçons et 92 défis rédigés ; 3 compétences relues et publiées)
+- 🚧 Relecture d’exactitude de chaque cours et vérification des liens sources
 
 Application :
 
-- ⏳ API : détail d’une compétence, leçons, défis (sans les notes d’examinateur)
-- ⏳ Web : arbre par domaines, page compétence, lecteur de leçon Markdown
-- ⏳ API : tentative, démarrage d’oral, tours, notation, validation et expiration
-- ⏳ Web : soumission du travail, oral chronométré par chat, résultat détaillé
-- ⏳ Références d’évaluation adaptées au nouveau contenu
+- ✅ API : détail d’une compétence, leçons, défis (sans les notes d’examinateur)
+- ✅ Web : arbre par domaines, page compétence, lecteur de leçon Markdown
+- ✅ API : tentative, démarrage d’oral, tours, notation, validation et expiration
+- ✅ Web : soumission du travail, oral chronométré par chat, résultat détaillé
+- ✅ Références d’évaluation adaptées au nouveau contenu
 
 ## Jalon 2 — Comptes
 
-- ⏳ Inscription, connexion, déconnexion par email et mot de passe (hachage moderne)
-- ⏳ Sessions par cookie HttpOnly, protection CSRF, limitation des tentatives
-- ⏳ Toutes les données rattachées au compte, contrôle d’appartenance sur chaque route
-- ⏳ Export et suppression du compte (RGPD)
+- ✅ Inscription, connexion, déconnexion par email et mot de passe (scrypt)
+- ✅ Sessions par cookie HttpOnly, protection CSRF, limitation des tentatives
+- ✅ Toutes les données rattachées au compte, contrôle d’appartenance sur chaque route
+- ✅ Export et suppression du compte (RGPD)
 
 ## Jalon 3 — Progression
 
-- ⏳ Tableau de bord : compétences validées, expirées, disponibles, verrouillées
-- ⏳ Expiration et renouvellement des validations
-- ⏳ Quotas d’oraux réservés atomiquement
+- ✅ Tableau de bord : compétences validées, expirées, disponibles, verrouillées
+- ✅ Expiration et renouvellement des validations
+- ✅ Quotas d’oraux réservés atomiquement
 - ⏳ Oral de positionnement pour entrer au bon endroit de l’arbre
 
 ## Jalon 4 — Fournisseurs LLM ouverts
 
-- ⏳ Adaptateur compatible OpenAI (Mistral, OpenAI, Ollama, vLLM, LM Studio…)
-- ⏳ Adaptateurs Anthropic (Claude) et Google (Gemini)
-- ⏳ Configuration par usage, documentation, tests par transport simulé uniquement
+- ✅ Adaptateur compatible OpenAI (Mistral, OpenAI, Gemini, Ollama, vLLM, LM Studio…)
+- ✅ Adaptateur Anthropic (Claude) ; Gemini via son endpoint compatible
+- ✅ Configuration par usage, documentation, tests par transport simulé uniquement
 
 ## Jalon 5 — Fiabilité de l’examinateur
 
-- ⏳ Grilles par niveaux et notes d’examinateur exploitées par les prompts
+- ✅ Grilles par niveaux et notes d’examinateur exploitées par les prompts
 - ⏳ Davantage de références d’évaluation par famille de défi
-- ⏳ Défenses contre l’injection de consignes et les réponses assistées (temps, signaux)
-- ⏳ Tuteur IA pendant l’apprentissage (autorisé), séparé de l’oral (interdit)
+- 🚧 Défenses contre l’injection de consignes et les réponses assistées (minuteur, collage
+  bloqué, tuteur coupé pendant l’oral ; signaux de saisie à venir)
+- ✅ Tuteur IA pendant l’apprentissage (autorisé), coupé pendant l’oral (interdit)
 
 ## Jalon 6 — Préparation au déploiement
 
-- ⏳ Images Docker de production, compose de production, vérifications de santé
-- ⏳ Configuration de production, en-têtes de sécurité, journaux structurés
-- ⏳ Pages légales (mentions, confidentialité), documentation d’exploitation
+- ✅ Images Docker de production, compose de production, vérifications de santé
+- ✅ Configuration de production, en-têtes de sécurité, journaux structurés
+- ✅ Pages légales (à compléter par l’éditeur), documentation d’exploitation
 
 ## Hors périmètre sans nouvelle demande
 

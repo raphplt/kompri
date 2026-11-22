@@ -1,163 +1,149 @@
-# Architecture des fondations
+# Architecture
 
 ## Modules et dépendances
 
 ```mermaid
 flowchart TD
-  Web["apps/web · Next.js"] -->|REST côté serveur| API["apps/api · NestJS"]
-  Web --> Shared["shared · Zod et environnement"]
+  Browser["Navigateur"] -->|HTML, actions serveur, cookie HttpOnly| Web["apps/web · Next.js"]
+  Web -->|REST + jeton Bearer, côté serveur| API["apps/api · NestJS"]
+  Web --> Shared["shared · contrats Zod et environnement"]
   API --> Shared
   API --> DB["db · Prisma"]
-  DB --> PG["PostgreSQL local"]
-  DB -->|seed| Content["content · YAML et schémas"]
-  API -->|validation du registre au démarrage| LLM["llm · registre par usage"]
-  Evals["evals · références et mesures"] --> Examiner["examiner · fonctions et état immuable"]
+  API --> Examiner["examiner · oral, fonctions pures"]
+  API --> LLM["llm · registre par usage"]
+  DB --> PG["PostgreSQL"]
+  DB -->|seed| Content["content · YAML, Markdown, schémas"]
+  Evals["evals · références et mesures"] --> Examiner
   Evals --> Content
-  Evals --> LLM
-  Examiner -->|types et client injecté| LLM
+  Examiner -->|client injecté| LLM
   Examiner -->|schémas| Content
   Content --> Shared
   LLM --> Shared
-  LLM --> Mock["Mock déterministe"]
-  LLM --> Mistral["Adaptateur Mistral · endpoint configurable"]
+  LLM --> Mock["mock déterministe"]
+  LLM --> OpenAI["Chat Completions · Mistral, OpenAI, Gemini, Ollama…"]
+  LLM --> Anthropic["Messages API · SDK Anthropic"]
 ```
 
-Les dépendances ne remontent jamais des packages vers les apps. ESLint bloque ces
-imports et les dépendances des trois modules centraux aux frameworks ou à Prisma.
-L’examinateur interdit également les imports Node et `fetch` directs. Les fonctions
-orchestrent le client injecté ; à entrées et réponses du client identiques, elles
-produisent le même résultat sans modifier l’état fourni.
+Les dépendances ne remontent jamais des packages vers les apps. ESLint bloque ces imports et
+les dépendances de `examiner`, `llm` et `content` aux frameworks ou à Prisma. L’examinateur
+n’importe ni module Node ni `fetch` : à entrées et réponses du client identiques, il produit
+le même résultat sans modifier l’état fourni. Les décisions structurantes sont dans `adr/`.
 
-Les packages internes exposent leur source TypeScript dans le workspace. `tsx` exécute
-les scripts et NestJS ; Next transpile `shared`. Les builds des packages produisent
-également `dist` pour vérifier l’émission. Ce ne sont pas des packages publiables ni
-une stratégie de déploiement. TypeScript strict vérifie aussi les tests.
+Les packages exposent leur source TypeScript ; `tsx` exécute l’API et les scripts, Next
+transpile `shared`. Le chargement du fichier `.env` vit dans `@kompri/shared/load-env`, que le
+code exécuté par Next n’importe jamais (sinon le bundler copierait `.env` dans le build).
 
-## Tranche verticale réellement raccordée
+## Contenu
 
-`GET /health` exécute `SELECT 1` et renvoie 503 avec un message générique en cas d’échec.
-`GET /skills` interroge PostgreSQL et valide sa réponse avec le schéma Zod partagé.
-Les paramètres de requête inattendus sont rejetés. La documentation `/docs` et
-`/openapi.json` est générée avec Swagger ; le contrat skills vient du même schéma Zod.
-La page française effectue une requête serveur sans cache et affiche les prérequis.
-Un message externalisé indique une indisponibilité. Aucun navigateur n’accède à la base.
-Les dictionnaires français et anglais existent, sans routage multilingue pour l’instant.
+`packages/content/data` est la source de vérité, éditée dans Git (voir
+[le guide de rédaction](content-guide.md)) :
 
-## Flux d’un oral
+- `domains.yaml` et `skills.yaml` décrivent l’arbre, ses prérequis et le statut
+  `draft`/`published` de chaque compétence ;
+- `skills/<id>/lessons/NN-slug.md` contient les leçons, avec un en-tête YAML ;
+- `skills/<id>/challenges.yaml` contient les défis, leurs notes d’examinateur et leurs grilles.
 
-Le flux suivant est exécuté par les tests et le banc, pas exposé par une route :
+`pnpm content:validate` vérifie schémas, références, cycles, complétude des compétences
+publiées (deux leçons au moins, une famille de défi de chaque sorte) et le dialecte Markdown
+rendu par le web (langages des blocs de code, encadrés `:::`, pas de HTML brut). Le seed
+projette ce contenu dans PostgreSQL ; un élément retiré des fichiers est archivé
+(`archivedAt`), jamais supprimé, pour que tentatives et validations gardent leurs références.
+Les leçons Markdown sont exclues de Prettier, qui altérerait encadrés et exemples volontairement
+fautifs.
 
-1. Charger le défi et la grille versionnés, recevoir le travail et un horodatage.
-2. Injecter le client `examiner` choisi par le registre ; préparer deux questions
-   fondées sur le défi, la grille et la soumission.
-3. Ajouter une réponse validée, demander une relance contextualisée et retourner un
-   nouvel état. Refuser les tours supplémentaires, le retour dans le temps et le changement de modèle.
-4. Noter après deux réponses. Valider le JSON, l’exhaustivité et l’unicité des critères,
-   leurs bornes, les justifications et la cohérence du verdict avec le seuil de la grille.
-5. Une future couche applicative persistera état, tours et validation, décidera de la
-   durée de validité et enregistrera la consommation de quota dans une transaction.
+## Parcours de l’apprenant
 
-Le prompt traite le code et la transcription comme des données non fiables. Ce garde-fou
-n’est pas une démonstration de résistance aux injections. Il n’y a ici ni chronomètre,
-ni exécution de code soumis, ni injection de bug, ni vocal, ni contrôle anti-assistance.
-Le positionnement, les règles de renouvellement et la durée d’expiration restent à définir.
-Les interfaces `SpeechToText` et `TextToSpeech` sont vides, sans implémentation.
+1. Le visiteur parcourt l’arbre et lit les leçons sans compte. Connecté, il voit l’état de
+   chaque compétence : validée, à renouveler, disponible, verrouillée ou à venir.
+2. Sur un défi, il soumet son travail (tentative). La tentative fige une copie du défi, des
+   notes d’examinateur et de la grille.
+3. Il démarre l’oral d’une tentative si la compétence est publiée, si chaque prérequis a été
+   validé au moins une fois, s’il n’a pas d’autre oral en cours et s’il lui reste du quota.
+   L’examinateur prépare les questions avant que la réservation du quota soit faite dans une
+   transaction verrouillée par utilisateur ; un index unique partiel garantit un seul oral
+   actif.
+4. Chaque question a une échéance (`ORAL_ANSWER_SECONDS`). Une réponse vide ou arrivée après
+   l’échéance (plus 15 s de tolérance réseau) est enregistrée comme absente et l’oral passe à
+   la question suivante. Le navigateur affiche un minuteur, bloque le collage et envoie le
+   brouillon à zéro. L’apprenant peut abandonner : les questions restantes sont absentes.
+5. Après la dernière réponse, la notation est tentée trois fois au plus. Un échec laisse
+   l’oral en `GRADING_FAILED`, relançable sans nouveau quota. Une réussite crée une validation
+   qui expire après `VALIDATION_DAYS`. Le résultat détaille chaque critère et un retour écrit.
+6. Pour retenter, l’apprenant soumet une nouvelle tentative : un oral par tentative.
 
-## LLM et évaluations
+Le tuteur IA répond aux questions sur une leçon, en streaming. Il est soumis à un quota
+(`TutorUsage`, sans contenu) et refusé tant qu’un oral est en cours.
 
-`LlmClient` expose texte, objet validé par Zod et streaming. Les usages `examiner`,
-`tutor` et `content-generation` choisissent chacun `mock` ou `mistral` et un modèle.
-L’URL de base et la clé sont configurables ; un endpoint européen compatible peut
-remplacer le service sans modifier l’examinateur. Un protocole différent nécessite
-uniquement un nouvel adaptateur. Le choix technique ne garantit pas à lui seul une résidence européenne.
+## Examinateur
 
-L’adaptateur réel utilise l’API de chat Mistral, les schémas JSON et SSE via `fetch`,
-avec un délai maximal de 30 secondes et sans reprise automatique. Les tokens proviennent
-du fournisseur ; s’ils sont absents, tokens et coût sont `null`, pas un zéro trompeur.
-Les tarifs sont renseignés par usage et le coût est une estimation, sans gestion des
-remises, caches ou taxes. Le mock émet zéro token facturable.
+`prepareOral`, `answerOral`, `abandonOral` et `gradeOral` reçoivent un état et un client LLM,
+et retournent un nouvel état. Les prompts (`packages/examiner/src/prompts.ts`) transmettent
+consigne, grille par niveaux, notes d’examinateur et travail comme données JSON non fiables.
+Le JSON de notation est validé : chaque critère une fois, scores dans les bornes,
+justification, verdict cohérent avec le seuil. Un modèle qui change pendant un oral est
+refusé.
 
-Chaque appel journalise usage, modèle, durée, tokens, coût estimé et statut ; jamais
-prompts, réponses, identités ni corps d’erreur du fournisseur. Les erreurs propagées
-par le client sont génériques. Le streaming gère les fragments UTF-8/SSE et l’annulation.
-Les tests utilisent le mock ; les tests de contrat de l’adaptateur simulent HTTP.
-La CI et l’environnement de test refusent les fournisseurs réels dans le registre.
-`pnpm evals` force le mock, même si `.env` contient une configuration réelle.
+Le banc (`pnpm evals`) rejoue des oraux de référence avec le mock et mesure erreur absolue,
+écart-type, amplitude et accord sur le verdict ; il échoue si le résultat attendu change.
+Les références sont `humanReview: pending` : elles ne mesurent pas une fiabilité humaine.
+`pnpm evals:live` rejoue les mêmes références avec le fournisseur configuré, à la demande.
 
-Deux fichiers décrivent soumission, transcription et note attendue par critère.
-Ils sont **illustratifs, avec `humanReview: pending`** : aucune validation humaine
-n’est prétendue. Le mock reconnaît des signaux synthétiques documentés, il ne juge pas
-la compréhension. Le banc conserve les questions de la transcription pour ne pas
-associer une réponse de référence à une question régénérée différente. Il appelle
-la notation trois fois et mesure erreur absolue par critère, écart-type, amplitude,
-accord sur le verdict et stabilité. La commande mock échoue si son résultat attendu change.
-`pnpm evals:live` est manuelle, nécessite une configuration réelle explicite et affiche
-les mêmes mesures ; aucun seuil de qualité humaine n’est encore calibré.
+## LLM
+
+`LlmClient` expose texte, objet validé par Zod et streaming. Chaque usage (`examiner`,
+`tutor`, `content-generation`) choisit son fournisseur et son modèle (voir
+[l’ADR 007](adr/007-llm-providers.md) et `.env.example`). Les sorties structurées utilisent un
+JSON Schema strict commun, revérifié par Zod. Chaque appel journalise usage, modèle, durée,
+tokens, coût estimé et statut ; jamais prompts, réponses, identités ni corps d’erreur. La CI et
+l’environnement de test refusent tout fournisseur réel ; les adaptateurs sont testés avec un
+transport simulé.
+
+## Web et sécurité
+
+Le navigateur ne parle qu’au serveur Next. Les pages sont des composants serveur qui appellent
+l’API ; les mutations passent par des actions serveur (vérification d’origine intégrée à
+Next) ou des route handlers qui contrôlent l’origine. Le jeton de session (256 bits aléatoires,
+stocké en base sous forme de condensat SHA-256) vit dans le cookie `kompri_session`
+(`HttpOnly`, `SameSite=Lax`, `Secure` en production) et est transmis à l’API en `Bearer`.
+
+L’API valide chaque entrée avec Zod, répond avec des erreurs `{statusCode, code, message}` sans
+valeur reçue ni détail interne, et vérifie l’appartenance de chaque tentative et de chaque oral.
+Les mots de passe sont hachés avec scrypt (N = 2^17, r = 8, p = 1) ; un compte est verrouillé
+15 minutes après 5 échecs ; un compte inconnu coûte le même temps qu’un mot de passe faux.
+En production, le web envoie CSP, HSTS et les en-têtes anti-cadrage et anti-reniflage.
 
 ## Modèle de données
 
-| Entité                    | Rôle et invariants                                                           |
-| ------------------------- | ---------------------------------------------------------------------------- |
-| User                      | Identifiant, email, date de création ; aucun mécanisme d’authentification    |
-| Skill / SkillPrerequisite | Projection de l’arbre YAML, référence RNCP optionnelle                       |
-| Challenge                 | Famille, consigne, grille et empreinte du contenu synchronisé                |
-| Attempt                   | Travail soumis et copie du défi à la tentative                               |
-| OralSession               | Propriétaire, tentative, mode, fournisseur/modèle, grille figée, début/fin   |
-| OralTurn                  | Locuteur, texte, modèle éventuel, horodatage et séquence unique par session  |
-| Validation                | Verdict, détail JSON par critère, compétence, dates de validation/expiration |
-| OralUsage                 | Une consommation unique par session, utilisateur et date pour les quotas     |
+| Entité                | Rôle et invariants                                                       |
+| --------------------- | ------------------------------------------------------------------------ |
+| User, AuthSession     | Compte, condensat du mot de passe, verrouillage ; sessions par condensat |
+| Domain, Skill, Lesson | Projection du contenu ; statut, position, archivage                      |
+| SkillPrerequisite     | Arêtes de l’arbre ; pas de prérequis sur soi-même                        |
+| Challenge             | Défi, notes d’examinateur, grille figée, empreinte du contenu            |
+| Attempt               | Travail soumis et copie du défi au moment de la tentative                |
+| OralSession           | Plan de questions, échéance, statut, verdict et notation                 |
+| OralTurn              | Tour numéroté, unique par session et séquence                            |
+| Validation            | Compétence validée, critères, dates de validation et d’expiration        |
+| OralUsage, TutorUsage | Consommations datées pour les quotas, sans contenu                       |
 
-Les clés étrangères composites imposent le même propriétaire à la tentative, à la
-session, à la validation et à la consommation. Des contraintes SQL imposent les dates
-cohérentes, les séquences positives et l’absence de prérequis sur soi-même. Les cycles
-complets sont vérifiés lors du chargement du contenu. L’appartenance de la compétence
-validée au défi et la forme des snapshots/notes devront être validées par la future
-transaction métier ; aucun endpoint d’écriture ne permet aujourd’hui de les contourner.
+Des clés étrangères composites imposent le même propriétaire à la tentative, à l’oral, à la
+validation et à la consommation. La suppression d’un compte efface atomiquement, par cascade,
+sessions, tentatives, oraux, tours, validations et consommations ; le test d’intégration vérifie
+les tables. Une migration appliquée n’est jamais réécrite.
 
-Une compétence peut avoir plusieurs validations historiques. Une validation courante
-doit être `PASSED` et non expirée ; la politique entre validations successives reste
-à préciser. `countConsumedOrals` compte sur `[début, fin[`, sans cumul stocké susceptible
-de dériver. L’application future devra réserver le quota de façon atomique pour éviter
-les courses ; seul le modèle et la lecture du compteur sont livrés.
+## Données personnelles
 
-Le seed charge tous les fichiers et valide le graphe avant la transaction. Il met à jour
-les identifiants existants et remplace leurs arêtes, sans duplication. Il ne supprime
-pas automatiquement les nœuds ou défis retirés des fichiers : conserver les références
-historiques nécessite une décision explicite d’archivage. L’empreinte et les snapshots
-rendent les changements auditables. Le contenu pédagogique est édité dans Git.
-
-## Configuration et données personnelles
-
-`.env.example` fournit seulement les valeurs de développement. `pnpm install` en copie
-le contenu dans `.env` si nécessaire ; ce fichier est ignoré par Git. Les variables du
-processus priment. Les schémas Zod vérifient au démarrage la base, le port, l’URL API et
-les fournisseurs/modèles/tarifs nécessaires. Une erreur liste les champs, pas leurs valeurs.
-Prisma peut générer son client sans connexion ; les migrations exigent une URL valide et attendent la connexion jusqu’à 30 secondes,
-car Compose peut rendre la main pendant l’initialisation de PostgreSQL.
-
-En local, PostgreSQL tourne dans Docker avec un volume nommé `postgres_data`, accessible
-sur la boucle locale au port 54329. Les apps écoutent sur la boucle locale également.
-Les emails, soumissions, transcriptions, notes, dates et consommations restent dans cette
-base. Git contient seulement du contenu et des exemples synthétiques.
-
-Un appel à un modèle réel transmet consigne, grille, travail et tours nécessaires à
-l’opération ; il ne transmet pas l’email ni l’identifiant utilisateur. Le travail libre
-peut lui-même contenir des données personnelles : le minimiser avant tout usage réel.
-Aucun contenu d’échange n’est enregistré par les logs LLM. Les logs Nest de ces routes
-ne consignent pas les corps de requête. Le mock ne transmet rien à l’extérieur.
-
-`deleteUserData` supprime l’utilisateur ; les cascades PostgreSQL effacent atomiquement
-tentatives, sessions, tours, validations et consommations. Le test d’intégration vérifie
-chaque table. Le contenu partagé demeure. Il n’existe pas encore de route publique de
-suppression : elle dépendra de l’authentification et de l’autorisation futures.
-La suppression en base n’efface pas d’éventuelles sauvegardes ou copies détenues par
-un fournisseur. Avant des données réelles, définir et documenter durées de conservation,
-purge et rotation des sauvegardes, accès, hébergement et conditions du fournisseur.
-Aucune conformité réglementaire ni politique de rétention opérationnelle n’est revendiquée.
+Un appel à un modèle réel transmet consigne, grille, notes, travail et tours de l’oral, ou
+la leçon et la question pour le tuteur ; jamais l’email ni l’identifiant. Le travail libre
+peut contenir des données personnelles : la page de confidentialité invite à ne pas en mettre.
+L’export (`GET /me/export`) fournit profil, tentatives, oraux, tours et validations en JSON.
+La suppression en base n’efface pas les sauvegardes ni les copies détenues par un fournisseur :
+leur conservation doit être définie avant l’ouverture au public (voir
+[le guide d’exploitation](deploiement.md)).
 
 ## Limites assumées
 
-La fondation prouve les branchements et les invariants mécaniques. Elle n’expose pas
-l’oral au web et ne permet pas d’apprendre ou de certifier une compétence en production.
-Les choix structurants sont consignés dans les ADR. Le fournisseur réel n’est testé
-qu’au niveau du contrat HTTP simulé ; un essai manuel sur données synthétiques reste requis.
+La qualité pédagogique d’un modèle n’est pas démontrée par les tests ni par le mock : elle doit
+être mesurée sur des oraux de référence relus par des humains. Il n’y a ni exécution du code
+soumis, ni vocal, ni positionnement pour l’instant ; le contrôle anti-assistance repose sur le
+minuteur, le blocage du collage et la coupure du tuteur, pas sur une surveillance.

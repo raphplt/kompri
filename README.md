@@ -3,8 +3,12 @@
 Kompri est une plateforme d’apprentissage de l’informatique à l’ère de l’IA.  
 L’IA est autorisée pour apprendre, interdite pour prouver.  
 Un arbre de compétences organise les défis et leurs prérequis.  
-Un oral valide une compétence pour une durée limitée.  
-Ce dépôt contient les fondations techniques et une démonstration minimale.
+Un oral chronométré, face à un examinateur IA, valide une compétence pour une durée limitée.
+
+Le premier parcours, « développement web full-stack élémentaire », compte 24 compétences
+en 6 domaines, avec des cours complets, des défis des quatre familles (sans IA, avec l’IA,
+contre l’IA, après l’IA) et un tuteur IA pour apprendre. Voir la
+[feuille de route](docs/roadmap.md) et le [journal](docs/journal.md).
 
 ## Prérequis et installation
 
@@ -28,15 +32,20 @@ ni aucune clé ne sont nécessaires. Les variables du processus priment sur `.en
 Le démarrage refuse une configuration manquante ou invalide.
 
 - Web : <http://localhost:3000>
-- API : <http://localhost:3001/health> et <http://localhost:3001/skills>
+- API : <http://localhost:3001/health> et <http://localhost:3001/tree>
 - Swagger : <http://localhost:3001/docs>
 - OpenAPI JSON généré : <http://localhost:3001/openapi.json>
 
-La page rend les trois compétences depuis l’API et PostgreSQL. Le contenu est illustratif.
+Sans fournisseur configuré, l’examinateur et le tuteur utilisent un mock déterministe :
+l’application est entièrement utilisable en local, sans clé ni appel payant. Le mock note
+selon la longueur des réponses (au moins 25 mots pour le maximum) ; il ne juge pas la
+compréhension. Pour un vrai modèle, voir `.env.example` (Mistral, OpenAI, Gemini, Claude,
+Ollama ou tout endpoint compatible OpenAI).
+
 Les tests d’intégration nécessitent la base migrée et seedée. Pour attendre explicitement
-sa disponibilité : `docker compose up -d --wait`. `db:migrate` attend aussi la
-base jusqu’à 30 secondes avant de lancer Prisma. Arrêter les services avec Ctrl+C
-et `docker compose stop` ; les données locales persistent dans le volume Docker.
+sa disponibilité : `docker compose up -d --wait`. Arrêter les services avec Ctrl+C et
+`docker compose stop` ; les données locales persistent dans le volume Docker.
+Pour la production, voir le [guide de déploiement](docs/deploiement.md).
 
 ## Commandes
 
@@ -54,8 +63,8 @@ et `docker compose stop` ; les données locales persistent dans le volume Docker
 | `pnpm evals`                             | Rejoue deux références trois fois, toujours avec le mock    |
 | `pnpm evals:live`                        | Évaluation manuelle via le fournisseur configuré            |
 
-Pour `evals:live`, définir `LLM_EXAMINER_PROVIDER=mistral`, le modèle, l’URL de base,
-la clé et les deux tarifs propres à cet usage dans `.env` (voir ses commentaires).
+Pour `evals:live`, définir dans `.env` un fournisseur réel pour `LLM_EXAMINER_PROVIDER`,
+le modèle, la clé et les deux tarifs de cet usage (voir les commentaires de `.env.example`).
 Les usages `tutor` et `content-generation` restent indépendants. La CI interdit
 les fournisseurs réels. Le modèle et les tarifs ne sont volontairement pas figés.
 Ne passer aux données réelles qu’après validation des conditions d’hébergement et de conservation.
@@ -63,19 +72,18 @@ Ne passer aux données réelles qu’après validation des conditions d’héber
 ## Structure
 
 ```text
-apps/web          Next.js, composants serveur, textes français et anglais externalisés
-apps/api          NestJS REST, validation Zod, Swagger
+apps/web          Next.js : parcours, leçons, défis, oral, tuteur ; textes dans src/messages
+apps/api          NestJS REST : comptes, contenu, tentatives, oraux, progression, tuteur
 packages/db       Prisma, migration, seed et accès PostgreSQL
 packages/shared   Contrats Zod et configuration d’environnement
-packages/llm      Interface, registre par usage, mock et adaptateur Mistral
+packages/llm      Registre par usage, mock, adaptateurs compatible OpenAI et Anthropic
 packages/examiner Préparation, tours, notation ; I/O injectées
-packages/content  Fichiers YAML, schémas et validation de l’arbre
+packages/content  Arbre, leçons Markdown, défis et grilles ; schémas et validation
 packages/evals    Références, mesure des écarts et de la stabilité
 packages/config   TypeScript, ESLint et Prettier partagés
-docs              Vision, architecture, versions et décisions
+docs              Vision, feuille de route, journal, architecture, contenu, déploiement, ADR
 ```
 
 Lire [l’architecture](docs/architecture.md), les [versions vérifiées](docs/versions.md)
 et les [conventions agents](CLAUDE.md). Les hooks vérifient les fichiers modifiés
 et les messages Conventional Commits. La CI reproduit les vérifications sur push et PR.
-Aucun endpoint d’oral, système d’authentification ou déploiement n’est livré.

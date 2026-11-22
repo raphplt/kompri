@@ -39,3 +39,21 @@ Sources : [Node](https://nodejs.org/en/about/previous-releases),
 [registre npm](https://registry.npmjs.org/),
 [API Mistral](https://docs.mistral.ai/api/endpoint/chat),
 [configuration Prisma](https://www.prisma.io/docs/orm/v7/reference/prisma-config-reference).
+
+## Mises à jour du 21 novembre 2026
+
+| Outil                   | Version | Raison                                                |
+| ----------------------- | ------- | ----------------------------------------------------- |
+| next                    | 16.4.6  | Failles critiques et modérées jusqu’à 16.4.4          |
+| zod                     | 4.6.7   | Épuisement mémoire sur collections contraintes        |
+| body-parser (surcharge) | 2.4.0   | Déni de service, dépendance d’Express                 |
+| multer (surcharge)      | 2.5.0   | Déni de service, dépendance de NestJS                 |
+| qs (surcharge)          | 6.17.1  | Exception non interceptée                             |
+| @anthropic-ai/sdk       | 1.5.0   | Adaptateur Claude ; version publiée depuis 2 semaines |
+| react-markdown          | 10.1.0  | Rendu des leçons sans HTML brut                       |
+| remark-gfm              | 4.0.1   | Tableaux et syntaxe GitHub                            |
+| remark-directive        | 4.0.0   | Encadrés `:::`                                        |
+| rehype-highlight        | 7.0.2   | Coloration syntaxique côté serveur                    |
+| @tailwindcss/typography | 0.5.20  | Typographie des leçons                                |
+
+`pnpm audit --prod` est propre après ces mises à jour.
