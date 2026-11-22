@@ -48,6 +48,7 @@ On compare souvent internet à la poste : chaque paquet est une lettre avec une 
 les routeurs sont les centres de tri. L’analogie aide à démarrer, mais elle a des limites :
 un paquet voyage en quelques millisecondes, et TCP vérifie que rien ne manque, ce que
 la poste ne fait pas pour toi.
+
 :::
 
 Internet n’est donc qu’un **moyen de transport**. Il ne sait pas ce que contiennent les
@@ -86,6 +87,7 @@ utilises le web, qui lui-même échange avec des serveurs de courrier.
 « Internet ne marche pas » et « ce site ne marche pas » sont deux diagnostics différents.
 Si tes autres sites et applications fonctionnent, internet n’est pas en cause : le
 problème vient plutôt du site, de son nom de domaine ou de ton navigateur.
+
 :::
 
 ## Clients et serveurs : deux rôles
@@ -174,6 +176,7 @@ ou un programme Node.js qui appelle une API.
 :::tip
 Quand un nouveau terme te résiste, demande à une IA de te le reformuler avec une autre
 analogie, puis vérifie que tu sais l’expliquer toi-même en deux phrases, sans regarder.
+
 :::
 
 ## Ce qui se passe quand tu tapes une adresse
@@ -319,6 +322,7 @@ Une réponse correcte ressemble à ceci :
 
 L’ordre compte : sans adresse IP, pas de connexion ; sans HTML, le navigateur ne sait pas
 quelles autres ressources demander.
+
 :::
 
 ## Récapitulatif

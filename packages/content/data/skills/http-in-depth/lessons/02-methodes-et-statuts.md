@@ -316,6 +316,7 @@ des `GET` automatiques. Si ton application supprime une note sur
 :::warning[Jamais de modification sur GET]
 Une action qui modifie des données (supprimer, payer, s’abonner, se déconnecter) ne doit
 jamais être déclenchée par un `GET`. Utilise `POST`, `PUT`, `PATCH` ou `DELETE`.
+
 :::
 
 « Sûre » concerne l’**intention** : un serveur peut écrire un journal ou compter les
@@ -364,6 +365,7 @@ la leçon suivante détaille les en-têtes qui pilotent le cache.
 :::note
 Ces propriétés sont des **promesses** que le serveur doit tenir : rien n’empêche
 techniquement un serveur mal écrit de supprimer des données sur un `GET`.
+
 :::
 
 ## Les codes de statut
@@ -507,6 +509,7 @@ statut de la réponse en cas de succès, puis le code d’une erreur plausible.
 6. `POST /books` → `409 Conflict` : la requête est valide en soi mais entre en conflit
    avec une ressource existante. `400` est acceptable si l’API le documente, mais `409`
    est plus précis.
+
 :::
 
 ### Exercice 2 : idempotence en pratique
@@ -532,6 +535,7 @@ sans risque et explique.
 5. **Risqué** : cet incrément n’est pas idempotent, chaque essai ajoute 1. `PATCH` n’est
    pas idempotent par nature ; seul le contenu précis de la modification permet de dire
    si la répéter est sans effet.
+
 :::
 
 ### Exercice 3 : corriger des réponses
@@ -555,6 +559,7 @@ propose le bon code.
 4. Discutable : l’utilisateur n’est pas authentifié, et se connecter pourrait régler le
    problème : `401 Unauthorized`, avec un en-tête `WWW-Authenticate`. `403` convient
    quand l’utilisateur est connecté mais n’a pas les droits.
+
 :::
 
 ## Récapitulatif

@@ -446,7 +446,8 @@ DETAIL:  Failing row contains (3, Cours sans enseignant, null).
 Sans `NOT NULL` sur `teacher_id`, le cours sans enseignant aurait été accepté : `REFERENCES`
 seul ne l’interdit pas. Les tables se créent dans l’ordre des dépendances : `teachers` avant
 `courses`, `courses` et `students` avant `enrollments`. Pour les supprimer, c’est l’ordre
-inverse (ou une seule instruction `DROP TABLE enrollments, students, courses, teachers;`).
+inverse. Supprime-les maintenant en une seule instruction, car la leçon 3 réutilise ces noms :
+`DROP TABLE enrollments, students, courses, teachers;`.
 :::
 
 ### Exercice 3 : repérer l’erreur de modélisation
@@ -496,6 +497,7 @@ CREATE TABLE recipe_ingredients (
 ```
 
 La clé composée convient ici parce qu’un ingrédient n’apparaît qu’une fois dans une recette.
+Si tu as créé la première version de `recipes`, supprime-la d’abord avec `DROP TABLE recipes;`.
 :::
 
 ## Récapitulatif

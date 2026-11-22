@@ -104,6 +104,7 @@ SELECT * FROM Authors;
 ```
 
 ```text
+CREATE TABLE
 ERROR:  relation "authors" does not exist
 LINE 1: SELECT * FROM Authors;
                       ^

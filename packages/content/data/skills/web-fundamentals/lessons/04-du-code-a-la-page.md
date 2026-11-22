@@ -188,6 +188,7 @@ Tant que le CSS n’est pas chargé, le navigateur évite d’afficher la page, 
 montrer un contenu sans mise en forme qui changerait d’aspect une fraction de seconde
 plus tard. On dit que le CSS **bloque le rendu**. Une feuille de style très lente à
 charger retarde donc l’affichage de toute la page.
+
 :::
 
 ## Étape 3 : arbre de rendu, mise en page et peinture
@@ -341,6 +342,7 @@ peut avoir lieu avant ou après C et E.
 
 Toute réponse qui commence par F, B, D, place C avant E et met A n’importe où après D
 est donc juste, à condition de savoir expliquer pourquoi C précède forcément E.
+
 :::
 
 ### Exercice 2 : diagnostiquer trois symptômes
@@ -419,6 +421,7 @@ L’inspecteur affiche donc deux éléments `li` bien distincts. Ici, l’omissi
 même autorisée par la norme ; ce n’est pas le cas de toutes les balises, d’où l’intérêt
 de toujours les fermer. (L’inspecteur montre aussi des nœuds texte contenant des
 retours à la ligne et des espaces : ils viennent de l’indentation du fichier.)
+
 :::
 
 ## Récapitulatif

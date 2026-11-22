@@ -60,6 +60,7 @@ Dans PowerShell, utilise `curl.exe`, et sache que les règles de guillemets diff
 fortement : un JSON entre guillemets simples peut perdre ses guillemets doubles en
 route. Pour ce cours, utilise WSL ou Git Bash, où les commandes s’écrivent exactement
 comme ici.
+
 :::
 
 ### N’afficher que l’essentiel
@@ -108,6 +109,7 @@ Le fichier `note.json` contient `{"id":1,"text":"Lire la RFC 9110","done":false}
 Si l’outil `jq` est installé sur ta machine, `curl -s http://localhost:3000/notes | jq .`
 affiche le JSON indenté et coloré. Ce n’est pas indispensable : les outils de
 développement du navigateur mettent aussi le JSON en forme.
+
 :::
 
 ### Codes de sortie : quand curl échoue-t-il ?
@@ -291,6 +293,7 @@ Une commande copiée depuis le navigateur contient souvent l’en-tête `Cookie`
 `Authorization` avec **ta** session. Avant de la coller dans un ticket ou une
 discussion, retire ces en-têtes ou remplace leur valeur. Un jeton publié doit être
 considéré comme compromis et révoqué.
+
 :::
 
 ### curl ou navigateur : qui voit quoi ?
@@ -348,6 +351,7 @@ Remarques :
   rejouable, il vaut mieux supprimer une note **créée par le scénario lui-même**, en
   récupérant son adresse dans l’en-tête `Location` ;
 - `405` sur `/notes` : la collection n’accepte que `GET`, `HEAD`, `POST` et `OPTIONS`.
+
 :::
 
 ### Exercice 2 : diagnostiquer avec les codes de sortie
@@ -371,6 +375,7 @@ vérifie (serveur des notes lancé sur le port 3000) :
    de statut, et `%{http_code}` vaut `000`.
 
 Vérifie chaque code avec `echo $?` juste après la commande.
+
 :::
 
 ### Exercice 3 : du navigateur au terminal
@@ -399,6 +404,7 @@ Les en-têtes `Accept`, `Accept-Language`, `Connection`, `Origin`, `Referer` et
 `User-Agent` peuvent tous être retirés : ce serveur ne s’en sert pas. Sur une vraie
 application, un cookie de session ou un en-tête `Authorization` ferait partie du
 minimum, et ne devrait pas être partagé.
+
 :::
 
 ## Récapitulatif

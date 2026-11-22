@@ -40,6 +40,7 @@ Ce cours décrit Chrome et Firefox. Edge reprend les outils de Chrome ; Safari p
 mêmes fonctions avec une présentation différente. Les intitulés exacts dépendent de la
 version et de la langue de ton navigateur : cherche la fonction décrite plutôt que le mot
 exact. Quand un intitulé est donné en anglais, c’est celui de l’interface anglaise.
+
 :::
 
 Les outils s’ouvrent en général en bas ou sur le côté de la fenêtre, avec plusieurs
@@ -153,6 +154,7 @@ domine, le serveur est lent ; si le téléchargement domine, la ressource est lo
 Les en-têtes de requête contiennent souvent tes **cookies** de connexion. Ne fais jamais
 de capture d’écran ni de copie de ces en-têtes pour les partager publiquement : avec ton
 cookie de session, quelqu’un pourrait se faire passer pour toi sur le site.
+
 :::
 
 ### Copier une requête
@@ -261,6 +263,7 @@ Les chiffres exacts varient avec le temps et le navigateur ; c’est la démarch
 5. Beaucoup de ressources ne sont pas retéléchargées : elles sont servies depuis le cache
    du navigateur, ou validées par le serveur avec un `304`. Le volume transféré baisse
    nettement, et la page se charge plus vite.
+
 :::
 
 ### Exercice 2 : la page qui ne charge pas
@@ -286,6 +289,7 @@ passe et ce que tu lui conseilles.
    Le problème est côté serveur : l’utilisatrice n’y peut rien, à part réessayer plus
    tard ou prévenir les responsables du site. Si c’est son propre serveur, il faut lire
    ses journaux d’erreurs.
+
 :::
 
 ### Exercice 3 : rejouer le trajet complet
@@ -309,6 +313,7 @@ absents ou nuls si une connexion était déjà ouverte ou si le DNS était en ca
 
 Si tu recharges la page, la résolution DNS et la connexion disparaissent souvent : le
 navigateur réutilise son cache DNS et une connexion déjà ouverte.
+
 :::
 
 ## Récapitulatif

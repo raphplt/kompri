@@ -385,6 +385,7 @@ Quand tu demandes de l’aide à une personne ou à une IA, donne : la commande 
 le répertoire courant, le message d’erreur **complet** (copié, pas résumé) et le code
 concerné. Mais vérifie d’abord toi-même les trois informations : fichier, ligne, type
 d’erreur. Très souvent, elles suffisent.
+
 :::
 
 ## Pièges et idées reçues
@@ -440,6 +441,7 @@ total.js a échoué
 - Ligne 5 : `ls` ne trouve pas le fichier, l’erreur est jetée, le code vaut 2 sous
   Linux (le `ls` de macOS renvoie 1 : seule la distinction entre 0 et « non nul » est
   universelle).
+
 :::
 
 ### Exercice 2 : diagnostiquer trois échecs
@@ -464,6 +466,7 @@ Pour chaque situation, indique la cause la plus probable et ce que tu vérifies 
    exécutée. « Unexpected end of input » signifie que le fichier se termine alors que
    quelque chose n’est pas refermé : une accolade, une parenthèse ou une chaîne.
    Vérifie les paires ouvrantes et fermantes.
+
 :::
 
 ### Exercice 3 : un script qui signale ses échecs
@@ -520,6 +523,7 @@ Usage : node diviser.js NOMBRE NOMBRE
 d’arguments avec `process.argv.length` : les deux premières cases sont occupées par les
 chemins de `node` et du script. `process.exitCode = 1` laisse le script se terminer
 normalement tout en signalant l’échec au shell.
+
 :::
 
 ## Récapitulatif

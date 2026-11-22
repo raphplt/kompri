@@ -225,8 +225,9 @@ UPDATE books SET price = price * 0.9 WHERE genre = 'roman' RETURNING title, pric
 UPDATE 3
 ```
 
-`12.90 * 0.9` vaut 11,61 exactement, mais `18.50 * 0.9` vaut 16,65 et serait arrondi si besoin :
-la colonne `numeric(6, 2)` arrondit toute valeur à deux décimales au moment de l’écriture. Comme
+Le calcul produit trois décimales (`18.50 * 0.9` donne `16.650`), mais la colonne `numeric(6, 2)`
+arrondit toute valeur à deux décimales au moment de l’écriture. Ici l’arrondi ne change rien ;
+avec une remise de 15 %, `18.50 * 0.85` donnerait `15.725`, stocké `15.73`. Comme
 pour un `SELECT` sans `ORDER BY`, l’ordre des lignes renvoyées par `RETURNING` n’est pas garanti.
 
 Si aucune ligne ne correspond, ce n’est pas une erreur :

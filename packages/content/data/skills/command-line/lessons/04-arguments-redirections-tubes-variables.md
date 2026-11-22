@@ -259,6 +259,7 @@ Le motif `' 404$'` est une **expression régulière** : `$` signifie « fin de l
 Construis un tube **pas à pas** : exécute la première commande, regarde le résultat,
 ajoute la suivante, et ainsi de suite. C’est aussi la meilleure façon de comprendre un
 tube proposé par une IA : exécute-le morceau par morceau.
+
 :::
 
 ## Les variables d’environnement
@@ -325,6 +326,7 @@ que tu utiliseras pour lancer un serveur avec une configuration :
 Dans PowerShell, une variable d’environnement se définit avec `$env:GREETING = "Salut"`
 et se lit avec `$env:GREETING` ; dans l’invite de commandes `cmd`, avec
 `set GREETING=Salut` et `%GREETING%`. Dans WSL, tout fonctionne comme dans cette leçon.
+
 :::
 
 ### PATH : où le shell trouve les programmes
@@ -357,6 +359,7 @@ base de données, clé d’API) à un programme sans l’écrire dans le code. M
 une commande tapée, comme `export API_KEY=…`, est enregistrée dans l’**historique** du
 shell, et un fichier de configuration ne doit jamais être publié. Tu apprendras plus
 tard à utiliser un fichier `.env` exclu du dépôt Git.
+
 :::
 
 ## Pièges et idées reçues
@@ -407,6 +410,7 @@ Résultats :
    garde les champs 1 et 4.
 4. `/api/menu`, `/api/orders`, `/favicon.ico`, `/index.html`, `/logo.png`,
    `/style.css`, soit `6` chemins.
+
 :::
 
 ### Exercice 2 : séparer résultats et erreurs
@@ -443,6 +447,7 @@ nombres.txt
 
 `ls` écrit son message d’erreur avant la liste des fichiers trouvés. Avec `>` au lieu de
 `>>`, il n’y aurait qu’un seul bloc.
+
 :::
 
 ### Exercice 3 : variable du shell ou d’environnement ?
@@ -477,6 +482,7 @@ Ville : Lyon
 
 Les apostrophes autour du texte de `bash -c` empêchent le shell **courant** de remplacer
 `$CITY` lui-même : c’est bien le shell enfant qui le fait.
+
 :::
 
 ## Récapitulatif

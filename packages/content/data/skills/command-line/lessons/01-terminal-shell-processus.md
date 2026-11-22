@@ -71,6 +71,7 @@ PowerShell est un excellent shell, mais ses commandes et sa syntaxe diffèrent d
 Le développement web se fait le plus souvent sur des serveurs Linux, et la plupart des
 documentations donnent des commandes bash. Avec WSL, tu travailles comme sur ces
 serveurs. Quand une différence avec Windows compte, le cours la signale.
+
 :::
 
 ## L’invite et ta première commande
@@ -114,6 +115,7 @@ sorties dépendent évidemment de ta machine.
 - **`Ctrl`+`L`** ou la commande `clear` : effacer l’écran.
 - **Copier-coller** : dans la plupart des terminaux Linux, `Ctrl`+`Maj`+`C` et
   `Ctrl`+`Maj`+`V` (car `Ctrl`+`C` interrompt) ; sous macOS, `Cmd`+`C` et `Cmd`+`V`.
+
 :::
 
 ## Qu’est-ce qu’une commande ?
@@ -169,6 +171,7 @@ Sous macOS, les commandes de base viennent d’une autre famille (BSD) que sous 
 (GNU). Elles se ressemblent beaucoup, mais certaines options diffèrent, et `--help`
 n’existe pas toujours : `man` reste la référence. Tu peux aussi demander à une IA
 d’expliquer une option, puis vérifier dans `man`.
+
 :::
 
 ## Les processus
@@ -228,6 +231,7 @@ les tâches, et `kill %1` arrête la tâche 1 ; bash affiche ensuite une ligne d
 En général, fermer la fenêtre du terminal arrête les processus qui y tournent, y
 compris un serveur lancé en arrière-plan. Pour un serveur de développement, garde une
 fenêtre ou un onglet dédié, au premier plan, et arrête-le avec `Ctrl`+`C`.
+
 :::
 
 Pour voir **tous** les processus de la machine et leur consommation, `top` affiche un
@@ -277,6 +281,7 @@ shell utilise en priorité sa version intégrée.
 
 Aide résumée : `cat --help`. Dans le manuel (`man ls`), tape `/-r` puis Entrée : `-r`
 (ou `--reverse`) inverse l’ordre du tri. Quitte avec `q`.
+
 :::
 
 ### Exercice 2 : maîtriser un processus
@@ -303,6 +308,7 @@ tâche 2 ; bash le confirme par une ligne `Terminated` (affichée au plus tard �
 commande suivante).
 
 3. `ps` liste `bash`, un seul `sleep` et `ps`. Pour finir proprement : `kill %1`.
+
 :::
 
 ### Exercice 3 : expliquer à quelqu’un
@@ -319,6 +325,7 @@ terminal n’est pas bloqué, il est occupé. En fermant la fenêtre, ton ami a 
 shell et les processus qu’il avait lancés, donc le serveur. Il fallait laisser cette
 fenêtre ouverte et en ouvrir une autre pour continuer à travailler, puis arrêter le
 serveur avec `Ctrl`+`C` le moment venu.
+
 :::
 
 ## Récapitulatif

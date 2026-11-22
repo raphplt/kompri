@@ -224,6 +224,7 @@ Le cookie ne contient **que** l’identifiant de session, pas le nom d’utilisa
 droits. Le client peut modifier un cookie à volonté : le serveur ne doit jamais faire
 confiance à une donnée de cookie qu’il n’a pas les moyens de vérifier. Ici, un
 identifiant inventé ne correspond à aucune session.
+
 :::
 
 ### Les attributs de Set-Cookie
@@ -486,6 +487,7 @@ et justifie.
 3. **Non** : hôte différent. Un sous-domaine différent est une autre origine.
 4. **Oui** : 443 est le port par défaut de `https`, l’URL est équivalente.
 5. **Non** : port 8443 au lieu de 443.
+
 :::
 
 ### Exercice 2 : prévoir le comportement du navigateur
@@ -512,6 +514,7 @@ peut-il lire la réponse ?
 3. `DELETE` : **prévol**. `DELETE` ne figure pas dans `Access-Control-Allow-Methods` :
    le prévol échoue, la requête **n’est pas envoyée**. Correction côté serveur :
    ajouter `DELETE` à la liste.
+
 :::
 
 ### Exercice 3 : un cookie de session correct

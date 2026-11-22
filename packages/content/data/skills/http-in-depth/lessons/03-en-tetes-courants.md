@@ -267,6 +267,7 @@ L’option `--json` de curl (disponible depuis la version 7.82) envoie un corps 
 ajoutant d’un coup `Content-Type: application/json` et `Accept: application/json` :
 `curl --json '{"city":"Lyon"}' http://localhost:3000/parse`. Vérifie ta version avec
 `curl --version`.
+
 :::
 
 ## Accept : dire ce que l’on sait lire
@@ -411,6 +412,7 @@ ada:secret
   fait pour cela.
 - Un jeton est un secret : pas dans le code source, pas dans un dépôt Git, pas dans une
   capture d’écran.
+
 :::
 
 `401` ou `403` ? `401` signifie « je ne sais pas qui tu es, authentifie-toi » ; `403`
@@ -434,6 +436,7 @@ comme les réseaux de diffusion de contenu) de garder des réponses. L’en-têt
 :::warning[no-cache ne veut pas dire « pas de cache »]
 `no-cache` autorise le stockage et impose une vérification à chaque fois. Pour interdire
 tout stockage, c’est `no-store`.
+
 :::
 
 ### Revalider avec ETag et If-None-Match
@@ -544,6 +547,7 @@ Content-Language: fr
 4. La réponse dépend de la langue demandée par le client : un cache doit garder une
    version par valeur d’`Accept-Language`, pour ne pas servir la page française à
    quelqu’un qui a demandé l’anglais.
+
 :::
 
 ### Exercice 2 : écrire les bonnes commandes
@@ -572,6 +576,7 @@ Erreurs fréquentes : oublier `Content-Type` à la première commande (le JSON e
 un formulaire) ; écrire `Authorization: demo-123` sans le schéma `Bearer` (réponse
 `401`) ; oublier les guillemets doubles de l’`ETag`, qui font partie de sa valeur
 (réponse `200` au lieu de `304`).
+
 :::
 
 ### Exercice 3 : choisir Cache-Control
@@ -592,6 +597,7 @@ Propose un en-tête `Cache-Control` pour chaque réponse et justifie :
    revalider à chaque fois avec `If-None-Match` ; le serveur répond `304` tant qu’elle
    n’a pas changé. Un court `max-age` (par exemple 60) est aussi défendable si quelques
    secondes de retard sont acceptables.
+
 :::
 
 ## Récapitulatif

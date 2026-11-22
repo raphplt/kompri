@@ -7,6 +7,8 @@ sources:
     url: https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html
   - title: OWASP Top 10 — édition 2021
     url: https://owasp.org/Top10/2021/
+  - title: OWASP Top 10 — édition 2025
+    url: https://owasp.org/Top10/2025/
   - title: OWASP — Input Validation Cheat Sheet
     url: https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html
 ---

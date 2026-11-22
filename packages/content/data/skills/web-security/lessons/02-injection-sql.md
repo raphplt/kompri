@@ -502,7 +502,7 @@ contre l’injection alors qu’un échappement manuel ne l’est pas toujours.
 Une réponse possible : « Avec une requête paramétrée, PostgreSQL reçoit d’abord le texte SQL
 avec des emplacements, l’analyse et fixe sa structure. Les valeurs arrivent séparément et
 sont traitées uniquement comme des données du type attendu : elles ne sont jamais relues
-comme du SQL, quelle que soit leur contenu. Avec un échappement manuel, on reconstruit une
+comme du SQL, quel que soit leur contenu. Avec un échappement manuel, on reconstruit une
 seule chaîne que le moteur analyse en entier ; la sécurité dépend alors de la capacité de
 notre fonction à prévoir tous les caractères et contextes dangereux. Un oubli, un champ
 numérique sans guillemets ou un encodage inattendu suffit à rouvrir la faille. »

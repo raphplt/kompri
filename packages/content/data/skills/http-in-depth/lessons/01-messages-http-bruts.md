@@ -34,6 +34,7 @@ Dans Windows PowerShell, le mot `curl` peut désigner une autre commande
 (`Invoke-WebRequest`) qui n’accepte pas les mêmes options. Tape **`curl.exe`** pour être
 sûr d’utiliser le vrai curl. Les guillemets se comportent aussi différemment de bash :
 le plus simple est de suivre ce cours dans WSL ou dans Git Bash.
+
 :::
 
 Crée un dossier `http-lab`, puis un fichier `server.mjs` avec le contenu suivant. Tu n’as
@@ -147,6 +148,7 @@ Les en-têtes de cette réponse :
 `Content-Length` compte des **octets**, pas des caractères. En UTF-8, « é » occupe deux
 octets. C’est pour cela que le serveur calcule la taille avec `Buffer.byteLength` plutôt
 qu’en comptant les lettres.
+
 :::
 
 ## Voir la requête avec curl -v
@@ -452,6 +454,7 @@ Voici un échange capturé avec `curl -v` (lignes `*` retirées) :
    `"text"` (6) + `:` (1) + `"Bonjour"` (9) + `}` (1) = 26 octets, exactement la valeur
    annoncée. Si le serveur avait annoncé 28, le client aurait attendu 2 octets de plus
    et serait resté bloqué, comme le serveur dans l’expérience de la leçon.
+
 :::
 
 ### Exercice 2 : écrire un POST à la main
@@ -524,6 +527,7 @@ C.  :method: GET
 - **C : HTTP/2** (ou HTTP/3). Les pseudo-en-têtes `:method`, `:path` et `:authority`
   remplacent la ligne de requête et l’en-tête `Host`. Le sens est exactement le même que
   dans B.
+
 :::
 
 ## Récapitulatif

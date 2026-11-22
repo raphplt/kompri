@@ -253,13 +253,13 @@ Vérifie avec `curl` (qui, lui, envoie les en-têtes que tu lui donnes) :
 
 ```bash
 curl -s -X POST http://localhost:3000/api/notes -H 'Origin: https://evil.example' \
-  -H 'Content-Type: application/json' -d '{"text":"hi"}'
+  -H 'Content-Type: application/json' -d '{"text":"hi"}'; echo
 curl -s -X POST http://localhost:3000/api/notes -H 'Origin: http://localhost:3000' \
-  -H 'Content-Type: application/json' -d '{"text":"hi"}'
+  -H 'Content-Type: application/json' -d '{"text":"hi"}'; echo
 curl -s -o /dev/null -w '%{http_code}\n' -X POST http://localhost:3000/api/notes \
   -H 'Content-Type: application/x-www-form-urlencoded' -d 'text=hi'
 curl -s -X POST http://localhost:3000/api/notes -H 'Sec-Fetch-Site: cross-site' \
-  -H 'Content-Type: application/json' -d '{"text":"hi"}'
+  -H 'Content-Type: application/json' -d '{"text":"hi"}'; echo
 ```
 
 ```text

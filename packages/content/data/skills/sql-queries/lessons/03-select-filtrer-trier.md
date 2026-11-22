@@ -354,8 +354,9 @@ SELECT title, genre FROM books WHERE genre IS NULL;
 (1 row)
 ```
 
-Conséquence importante : `genre <> 'roman'` n’inclut **pas** le livre sans genre. Si tu veux
-« tous les livres qui ne sont pas des romans, y compris ceux sans genre », il faut le dire :
+Conséquence importante : `genre <> 'roman'` n’inclut **pas** le livre sans genre, et
+`genre NOT IN ('roman', 'cuisine')` non plus. Si tu veux « tous les livres qui ne sont ni des
+romans ni des livres de cuisine, y compris ceux sans genre », il faut le dire :
 
 ```sql
 SELECT title, genre FROM books WHERE genre NOT IN ('roman', 'cuisine') OR genre IS NULL ORDER BY title;

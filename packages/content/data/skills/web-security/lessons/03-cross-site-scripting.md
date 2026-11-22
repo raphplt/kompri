@@ -87,8 +87,8 @@ app.listen(3000, () => console.log('http://localhost:3000'));
 Lance `node xss-server.js` et envoie une balise d’image piégée, encodée pour l’URL :
 
 ```bash
-curl -s "http://localhost:3000/vulnerable?q=%3Cimg%20src%3Dx%20onerror%3D%22document.title%3D'XSS'%22%3E"
-curl -s "http://localhost:3000/safe?q=%3Cimg%20src%3Dx%20onerror%3D%22document.title%3D'XSS'%22%3E"
+curl -s "http://localhost:3000/vulnerable?q=%3Cimg%20src%3Dx%20onerror%3D%22document.title%3D'XSS'%22%3E"; echo
+curl -s "http://localhost:3000/safe?q=%3Cimg%20src%3Dx%20onerror%3D%22document.title%3D'XSS'%22%3E"; echo
 ```
 
 Sortie :
@@ -241,9 +241,9 @@ Lance le serveur et publie deux commentaires :
 
 ```bash
 curl -s -X POST localhost:3000/api/comments -H 'Content-Type: application/json' \
-  -d '{"author":"Ada","text":"Très beau site !"}'
+  -d '{"author":"Ada","text":"Très beau site !"}'; echo
 curl -s -X POST localhost:3000/api/comments -H 'Content-Type: application/json' \
-  -d "{\"author\":\"Mallory\",\"text\":\"<img src=x onerror=\\\"document.title='XSS'\\\">\"}"
+  -d "{\"author\":\"Mallory\",\"text\":\"<img src=x onerror=\\\"document.title='XSS'\\\">\"}"; echo
 ```
 
 ```text

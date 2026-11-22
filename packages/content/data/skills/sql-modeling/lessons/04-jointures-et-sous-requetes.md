@@ -73,7 +73,8 @@ JOIN genres AS g ON b.genre_id = g.id;
 ```
 
 Le résultat contient les mêmes 7 lignes que la requête précédente (dans un ordre non garanti,
-faute d’`ORDER BY`), avec une seconde colonne nommée `genre`. Dès qu’une colonne existe dans les deux tables, le préfixe est **obligatoire** :
+faute d’`ORDER BY`), avec une seconde colonne nommée `genre`. Dès qu’une colonne existe dans les
+deux tables, le préfixe est **obligatoire** :
 
 ```sql
 SELECT id, title FROM books JOIN genres ON books.genre_id = genres.id;
@@ -537,8 +538,9 @@ de `NULL`.
 
 ### Une sous-requête dans le FROM
 
-Une sous-requête peut aussi servir de table temporaire dans le `FROM`. Elle doit alors avoir un
-alias :
+Une sous-requête peut aussi servir de table temporaire dans le `FROM`. Donne-lui un alias : il
+permet de désigner ses colonnes (`stats.loans_count`). Depuis PostgreSQL 16, l’alias est devenu
+facultatif, mais la plupart des autres SGBD et les versions plus anciennes l’exigent :
 
 ```sql
 SELECT m.name, stats.loans_count
@@ -702,5 +704,5 @@ Roux n’y est pas : « Poèmes du matin » n’a jamais été emprunté, mais �
 - Avec un `LEFT JOIN`, les conditions sur la table de droite vont dans le `ON`.
 - `RIGHT JOIN` se réécrit en `LEFT JOIN` ; `FULL JOIN` sert surtout à comparer deux listes.
 - Sous-requêtes : scalaire (`> (SELECT avg…)`), liste (`IN`), existence (`EXISTS`,
-  `NOT EXISTS`), table dérivée dans le `FROM` (avec alias).
+  `NOT EXISTS`), table dérivée dans le `FROM` (avec un alias, recommandé).
 - `NOT IN` sur une sous-requête qui peut renvoyer `NULL` donne zéro ligne : préfère `NOT EXISTS`.

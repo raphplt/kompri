@@ -44,6 +44,7 @@ remplace `lea` par ton propre nom d’utilisateur.
 Dans WSL, Linux a sa propre arborescence. Tes disques Windows sont accessibles sous
 `/mnt` : le disque `C:` devient `/mnt/c`. Pour de meilleures performances, garde tes
 projets dans ton dossier personnel Linux (`~`) plutôt que sous `/mnt/c`.
+
 :::
 
 ## Préparer un terrain d’entraînement
@@ -251,6 +252,7 @@ qui la suit. La complétion par **Tab** ajoute ces protections pour toi. Sous Li
 :::tip
 Pour tes propres fichiers de code, évite espaces et accents : préfère `mes-photos` ou
 `mes_photos`. Tu t’éviteras des ennuis avec de nombreux outils.
+
 :::
 
 ## Pièges et idées reçues
@@ -300,6 +302,7 @@ relatif, et donne le chemin absolu complet qu’il désigne (avec `/home/lea`).
 6. Relatif : `../..` remonte à `/home/lea`, puis on redescend :
    `/home/lea/atelier-terminal/projets/site`. Correct mais inutilement long :
    `site` suffisait.
+
 :::
 
 ### Exercice 2 : le parcours
@@ -337,6 +340,7 @@ Sorties de `pwd` (et de `cd -`, qui affiche le dossier atteint) :
 Pour l’étape 2, il faut remonter trois niveaux (`css` → `site` → `projets` →
 `atelier-terminal`) avant de descendre dans `notes`. Le premier `cd` sans argument
 garantit le point de départ ; `cd ~` aurait le même effet.
+
 :::
 
 ### Exercice 3 : lire ls -l
@@ -364,6 +368,7 @@ drwxr-xr-x 2 lea lea 4096 Nov 21 10:45 public
    C’est important : un fichier `.env` contient souvent des secrets, et il est facile
    d’oublier qu’il existe.
 3. 512 octets.
+
 :::
 
 ## Récapitulatif

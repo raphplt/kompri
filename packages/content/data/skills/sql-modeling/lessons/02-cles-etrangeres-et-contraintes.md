@@ -426,6 +426,26 @@ DETAIL:  Failing row contains (6, Sans arobase, pas-un-email, 2026-11-21).
 complètement une adresse e-mail est le travail de l’application. Une contrainte se supprime avec
 `ALTER TABLE members DROP CONSTRAINT members_email_check;`.
 
+Une clé étrangère s’ajoute de la même façon, avec la forme `FOREIGN KEY (colonne) REFERENCES
+table (colonne)` que tu as vue dans la sortie de `\d`. On ne peut pas modifier le `ON DELETE`
+d’une clé existante : on la supprime puis on la recrée, en une seule instruction pour qu’il n’y
+ait aucun instant sans contrôle. Par exemple, pour que la suppression d’un adhérent supprime ses
+emprunts (un mauvais choix ici, puisque c’est l’historique à protéger : si tu l’essaies,
+recharge ensuite `mediatheque.sql`) :
+
+```sql
+ALTER TABLE loans
+  DROP CONSTRAINT loans_member_id_fkey,
+  ADD CONSTRAINT loans_member_id_fkey
+    FOREIGN KEY (member_id) REFERENCES members (id) ON DELETE CASCADE;
+```
+
+```text
+ALTER TABLE
+```
+
+Le nom de la contrainte à supprimer se lit dans `\d loans`.
+
 ## Pièges et idées reçues
 
 - **Compter sur l’application seule** : toute autre source d’écriture contourne ses validations.

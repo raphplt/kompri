@@ -94,6 +94,7 @@ Date: Mon, 16 Nov 2026 10:00:00 GMT
 Le navigateur se fie à `Content-Type`, pas à l’extension du fichier, pour savoir quoi
 faire du contenu. Une feuille de style servie avec `Content-Type: text/plain` peut être
 refusée par le navigateur.
+
 :::
 
 ### Les codes de statut
@@ -218,6 +219,7 @@ et que tu parles bien au domaine affiché. Il ne dit **rien** de l’honnêteté
 Vérifie toujours le nom de domaine dans la barre d’adresse. Un cadenas sur un domaine
 inconnu ne prouve que la sécurité du tuyau, pas l’identité de l’entreprise que le site
 prétend être.
+
 :::
 
 ### HTTPS par défaut

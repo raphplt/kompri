@@ -83,6 +83,7 @@ Cuire 35 minutes à 180 °C
 :::warning[Un seul chevron écrase tout]
 `echo 'Ingrédients' > tarte-pommes.txt` remplacerait les deux lignes par une seule,
 sans avertissement. Vérifie toujours si tu veux `>` (remplacer) ou `>>` (ajouter).
+
 :::
 
 Pour écrire plus que quelques lignes, utilise un éditeur. Dans le terminal, `nano
@@ -127,6 +128,7 @@ différemment.)
 :::tip
 `tail -f journal.log` affiche les nouvelles lignes au fur et à mesure qu’elles sont
 écrites : pratique pour surveiller les journaux d’un serveur. Arrête avec `Ctrl`+`C`.
+
 :::
 
 ## Copier : cp
@@ -230,6 +232,7 @@ dossier.
   comprendre **chaque** caractère.
 - Travaille dans un projet versionné avec Git (compétence suivante) : c’est ton filet
   de sécurité.
+
 :::
 
 ## Les jokers
@@ -283,6 +286,7 @@ ls: cannot access '*.png': No such file or directory
 Les motifs ne correspondent pas aux fichiers cachés : `*` n’inclut pas `.env`. Et les
 motifs du shell ne sont pas des expressions régulières : `*` n’a pas ici le sens qu’il
 a dans `grep`.
+
 :::
 
 ## Pièges et idées reçues
@@ -340,6 +344,7 @@ portfolio/images:
 `mkdir -p` crée `portfolio` et ses deux sous-dossiers en une fois. `touch` accepte
 plusieurs fichiers. La redirection `>` crée `LISEZMOI.md` avec son contenu. Le dossier
 `images` est vide, d’où la section sans contenu à la fin.
+
 :::
 
 ### Exercice 2 : ranger sans rien perdre
@@ -369,6 +374,7 @@ echo rm images/*.jpg
 - `rm -i` affiche `rm: remove regular file 'nombres.txt'?` ; réponds `y`.
 - `echo rm images/*.jpg` affiche `rm images/photo1.jpg images/photo10.jpg
   images/photo2.jpg` sans rien supprimer. Retire `echo` pour exécuter vraiment.
+
 :::
 
 ### Exercice 3 : expliquer des catastrophes
@@ -396,6 +402,7 @@ corrige-la.
    dossier, la première commande échoue (`No such file or directory`) ou renomme un
    autre `config.js`. Correction : vérifier avec `pwd` et `ls`, ou utiliser des chemins
    absolus ; et `mv -i` pour ne rien écraser par surprise.
+
 :::
 
 ## Récapitulatif

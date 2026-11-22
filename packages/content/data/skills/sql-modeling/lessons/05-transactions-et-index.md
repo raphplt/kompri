@@ -422,18 +422,23 @@ WHERE loaned_on >= '2024-12-01' AND loaned_on < '2025-01-01';
 ```
 
 ```text
-                                                  QUERY PLAN
---------------------------------------------------------------------------------------------------------------
- Aggregate  (cost=29.20..29.21 rows=1 width=8)
-   ->  Index Only Scan using loan_archive_loaned_on_idx on loan_archive  (cost=0.42..26.44 rows=1101 width=0)
-         Index Cond: ((loaned_on >= '2024-12-01'::date) AND (loaned_on < '2025-01-01'::date))
-(3 rows)
+                                             QUERY PLAN
+----------------------------------------------------------------------------------------------------
+ Aggregate  (cost=2261.42..2261.43 rows=1 width=8)
+   ->  Bitmap Heap Scan on loan_archive  (cost=15.71..2258.67 rows=1101 width=0)
+         Recheck Cond: ((loaned_on >= '2024-12-01'::date) AND (loaned_on < '2025-01-01'::date))
+         ->  Bitmap Index Scan on loan_archive_loaned_on_idx  (cost=0.00..15.43 rows=1101 width=0)
+               Index Cond: ((loaned_on >= '2024-12-01'::date) AND (loaned_on < '2025-01-01'::date))
+(5 rows)
 ```
 
 L’index est trié par `loaned_on`, pas par `extract(month FROM loaned_on)`. Écrire la condition
-sous forme d’intervalle sur la colonne brute permet de l’utiliser. Ici, l’index suffit même à
-répondre sans lire la table (`Index Only Scan`). Pour la même raison, `LIKE '%mot%'` ne profite
-pas d’un index B-tree ordinaire : il n’y a pas de début de chaîne connu pour s’y repérer.
+sous forme d’intervalle sur la colonne brute permet de l’utiliser : le coût estimé passe
+d’environ 8 350 à 2 260. Si tu relances ce `EXPLAIN` plus tard, tu verras peut-être un
+`Index Only Scan` : une fois la table nettoyée par `VACUUM` (que PostgreSQL lance aussi
+automatiquement), l’index suffit à répondre sans lire la table. Pour la même raison que
+`extract`, `LIKE '%mot%'` ne profite pas d’un index B-tree ordinaire : il n’y a pas de début de
+chaîne connu pour s’y repérer.
 
 Un index B-tree sert aussi aux tris avec `LIMIT` : `ORDER BY loaned_on DESC LIMIT 10` peut lire
 les dix dernières entrées de l’index au lieu de trier 500 000 lignes. Fais l’essai avec

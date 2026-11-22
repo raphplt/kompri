@@ -96,6 +96,7 @@ taper une phrase de confirmation : tape exactement celle qui est indiquée dans 
 message, puis colle à nouveau. C’est une protection : des
 escrocs demandent parfois à leurs victimes de coller du code dans la console. Ne colle
 jamais de code dont tu ne comprends pas l’origine.
+
 :::
 
 ### Le port par défaut n’apparaît pas
@@ -183,6 +184,7 @@ Dans `https://votre-banque.fr.connexion-securisee.example/`, le domaine enregist
 `connexion-securisee.example`, pas `votre-banque.fr` : tout ce qui est à gauche n’est
 qu’un sous-domaine choisi par le propriétaire. Les sites d’hameçonnage exploitent cette
 confusion. Lis toujours le domaine en partant de la droite.
+
 :::
 
 ## Adresses IP
@@ -200,6 +202,7 @@ réseau IP. Il en existe deux versions en usage :
 :::note
 Les adresses `203.0.113.x` et `2001:db8::` utilisées dans ce cours sont réservées à la
 documentation : elles n’appartiennent à aucune machine réelle.
+
 :::
 
 Quelques adresses particulières :
@@ -278,6 +281,7 @@ Avec un nom qui passe par un alias, tu verras une ligne `canonical name`, qui co
 Une erreur comme « Ce site est inaccessible » accompagnée de `DNS_PROBE_FINISHED_NXDOMAIN`
 dans Chrome signifie que le nom de domaine n’a pas pu être résolu : faute de frappe,
 domaine expiré ou problème de DNS. Le serveur n’a même pas été contacté.
+
 :::
 
 ## Les ports : quel programme sur la machine ?
