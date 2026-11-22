@@ -63,15 +63,17 @@ le nombre de jetons, le coût estimé et le statut : jamais le contenu des écha
 
 La validation d’une compétence résulte d’une évaluation automatisée par l’examinateur IA,
 fondée sur une grille publique et justifiée critère par critère. Elle n’a pas d’effet
-juridique. Tu peux contester un résultat et demander un réexamen humain en écrivant à
-l’adresse de contact.
+juridique. Depuis la page de l’oral, tu peux contester un résultat dans les 30 jours : une
+personne réexamine alors ta transcription et peut confirmer ou modifier le verdict.
 
 ## Durées de conservation
 
 - Compte et données associées : jusqu’à la suppression du compte.
 - Sessions de connexion : 30 jours au plus.
 - Liens de réinitialisation : une heure, utilisables une seule fois.
-- Comptes inactifs : **[durée à définir avant mise en ligne]**.
+- Comptes inactifs : **[durée à définir avant mise en ligne]**, après un e-mail de préavis
+  envoyé 14 jours avant la suppression.
+- Liens de confirmation d’adresse e-mail : 24 heures.
 
 ## Cookies
 

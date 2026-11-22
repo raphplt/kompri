@@ -11,6 +11,7 @@ import {
 import type { OralActionResult } from '../app/actions';
 import { fr } from '../messages/fr';
 import { OralResultView } from './oral-result';
+import { ReviewPanel } from './review-panel';
 import { Alert, buttonClass, labelClass } from './ui';
 
 const errorText = (code: string) =>
@@ -223,6 +224,9 @@ export function OralChat({ initial }: { initial: OralView }) {
       )}
 
       {oral.result && <OralResultView result={oral.result} />}
+      {oral.status === 'completed' && (
+        <ReviewPanel oral={oral} onChange={setOral} />
+      )}
 
       {!active && (
         <div className="flex flex-wrap gap-3">

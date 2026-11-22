@@ -64,6 +64,23 @@ kompri.example.fr {
 | `WEB_PORT`                                        | Port publié sur la boucle locale (3000 par défaut)              |
 | `WEB_INSECURE_COOKIES=true`                       | Uniquement pour un essai local sans HTTPS                       |
 
+## Administrateurs et tâche quotidienne
+
+Donner le rôle d’administrateur à un compte existant (accès aux réexamens) :
+
+```bash
+docker compose -f compose.prod.yaml --env-file .env.production run --rm api \
+  node --import tsx src/jobs/make-admin.ts admin@example.fr
+```
+
+La tâche quotidienne envoie les rappels d’expiration et, si `INACTIVE_ACCOUNT_DAYS` est
+défini, prévient les comptes inactifs 14 jours avant de les supprimer. Elle est idempotente.
+La planifier une fois par jour sur le serveur (`crontab -e`) :
+
+```text
+17 4 * * * cd /srv/kompri && docker compose -f compose.prod.yaml --env-file .env.production run --rm api node --import tsx src/jobs/daily.ts >> /var/log/kompri-daily.log 2>&1
+```
+
 ## Mise à jour
 
 ```bash

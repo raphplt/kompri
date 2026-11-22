@@ -3,6 +3,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { logoutAction } from './actions';
 import { getCurrentUser } from '../lib/session';
+import { VerifyBanner } from '../components/account-forms';
 import { fr } from '../messages/fr';
 import './globals.css';
 
@@ -54,6 +55,14 @@ async function Header() {
               >
                 {fr.nav.dashboard}
               </Link>
+              {user.role === 'admin' && (
+                <Link
+                  href="/admin/reexamens"
+                  className="rounded-md px-2 py-1 text-muted hover:text-accent"
+                >
+                  {fr.admin.nav}
+                </Link>
+              )}
               <Link
                 href="/compte"
                 className="rounded-md px-2 py-1 text-muted hover:text-accent"
@@ -87,6 +96,7 @@ async function Header() {
           )}
         </nav>
       </div>
+      {user && !user.emailVerified && <VerifyBanner />}
     </header>
   );
 }

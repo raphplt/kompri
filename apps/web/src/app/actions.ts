@@ -117,6 +117,111 @@ export async function resetPasswordAction(
   redirect('/connexion?mot-de-passe=change');
 }
 
+export async function resendVerificationAction(): Promise<
+  FormState & { sent?: boolean }
+> {
+  try {
+    await api('/me/email/verification', z.object({}), {
+      method: 'POST',
+      token: await getToken(),
+    });
+  } catch (error) {
+    return { error: codeOf(error) };
+  }
+  return { sent: true };
+}
+
+export async function verifyEmailAction(
+  _state: FormState & { done?: boolean },
+  data: FormData,
+): Promise<FormState & { done?: boolean }> {
+  try {
+    await api('/auth/email/verify', noContent, {
+      body: { token: field(data, 'token') },
+    });
+  } catch (error) {
+    return { error: codeOf(error) };
+  }
+  revalidatePath('/', 'layout');
+  return { done: true };
+}
+
+export async function changePasswordAction(
+  _state: FormState & { done?: boolean },
+  data: FormData,
+): Promise<FormState & { done?: boolean }> {
+  const newPassword = field(data, 'newPassword');
+  if (newPassword.length < 12) return { error: 'password_short' };
+  try {
+    await api('/me/password', noContent, {
+      token: await getToken(),
+      body: { currentPassword: field(data, 'currentPassword'), newPassword },
+    });
+  } catch (error) {
+    return { error: codeOf(error) };
+  }
+  return { done: true };
+}
+
+export async function changeEmailAction(
+  _state: FormState & { done?: boolean },
+  data: FormData,
+): Promise<FormState & { done?: boolean }> {
+  try {
+    await api('/me/email', z.object({}), {
+      token: await getToken(),
+      body: {
+        password: field(data, 'password'),
+        newEmail: field(data, 'newEmail'),
+      },
+    });
+  } catch (error) {
+    return { error: codeOf(error) };
+  }
+  return { done: true };
+}
+
+export async function requestReviewAction(
+  oralId: string,
+  message: string,
+): Promise<OralActionResult> {
+  try {
+    const token = await getToken();
+    await api(`/orals/${encodeURIComponent(oralId)}/review`, z.object({}), {
+      token,
+      body: { message },
+    });
+    return {
+      ok: true,
+      oral: await api(`/orals/${encodeURIComponent(oralId)}`, oralViewSchema, {
+        token,
+      }),
+    };
+  } catch (error) {
+    return { ok: false, error: codeOf(error) };
+  }
+}
+
+export async function decideReviewAction(
+  _state: FormState & { done?: boolean },
+  data: FormData,
+): Promise<FormState & { done?: boolean }> {
+  const id = field(data, 'reviewId');
+  try {
+    await api(`/admin/reviews/${encodeURIComponent(id)}/decision`, noContent, {
+      token: await getToken(),
+      body: {
+        decision: field(data, 'decision'),
+        response: field(data, 'response'),
+      },
+    });
+  } catch (error) {
+    return { error: codeOf(error) };
+  }
+  revalidatePath(`/admin/reexamens/${id}`);
+  return { done: true };
+}
+
 export async function logoutAction() {
   const token = await getToken();
   if (token)

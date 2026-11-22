@@ -48,6 +48,13 @@ Application :
 - ✅ Quotas d’oraux réservés atomiquement
 - ✅ Oral de positionnement pour entrer au bon endroit de l’arbre
 
+## Jalon 3 bis — Finitions du compte et réexamen
+
+- ✅ Réinitialisation du mot de passe, vérification de l’e-mail, changement d’e-mail et de mot
+  de passe
+- ✅ Contestation d’un oral et réexamen humain par un administrateur
+- ✅ Rappels d’expiration et purge des comptes inactifs avec préavis (tâche quotidienne)
+
 ## Jalon 4 — Fournisseurs LLM ouverts
 
 - ✅ Adaptateur compatible OpenAI (Mistral, OpenAI, Gemini, Ollama, vLLM, LM Studio…)
