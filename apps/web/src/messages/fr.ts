@@ -406,6 +406,13 @@ export const fr = {
       overturned: 'Modifiés',
     },
   },
+  failure: {
+    title: 'Une erreur est survenue',
+    text: 'La page n’a pas pu s’afficher. Réessaie dans un instant ; si le problème persiste, écris-nous.',
+    retry: 'Réessayer',
+    home: 'Retour à l’accueil',
+  },
+  loading: 'Chargement…',
   notFound: {
     title: 'Page introuvable',
     text: 'Cette page n’existe pas ou plus.',
