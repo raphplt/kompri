@@ -140,10 +140,13 @@ model Lesson {
   body            String
   contentVersion  String
   archivedAt      DateTime?        @db.Timestamptz(3)
+  /// Weighted full-text vector (title, summary, body), written by the content sync.
+  searchVector    Unsupported("tsvector")?
   skill           Skill            @relation(fields: [skillId], references: [id], onDelete: Restrict)
   readBy          LessonProgress[]
 
   @@unique([skillId, slug])
+  @@index([searchVector], type: Gin)
 }
 
 model Challenge {

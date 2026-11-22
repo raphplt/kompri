@@ -21,6 +21,26 @@ test('a visitor browses the path, a skill and a lesson', async ({ page }) => {
   ).toBeVisible();
 });
 
+test('a visitor searches the lessons', async ({ page }) => {
+  await page.goto('/');
+  await page
+    .getByRole('navigation', { name: 'Navigation principale' })
+    .getByRole('link', { name: 'Rechercher' })
+    .click();
+  await page.getByRole('searchbox').fill('requetes parametrees');
+  await page.getByRole('button', { name: 'Rechercher' }).click();
+  await expect(page).toHaveURL(/q=requetes\+parametrees/);
+  await expect(page.getByRole('heading', { level: 2 })).toContainText(
+    'pour « requetes parametrees »',
+  );
+  await expect(page.locator('mark').first()).toBeVisible();
+  await page
+    .getByRole('link', { name: /Requêtes paramétrées/ })
+    .first()
+    .click();
+  await expect(page).toHaveURL(/requetes-parametrees-et-injection$/);
+});
+
 test('legal pages and the sitemap are published', async ({ page, request }) => {
   for (const path of ['/mentions-legales', '/confidentialite', '/conditions']) {
     await page.goto(path);

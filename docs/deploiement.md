@@ -17,6 +17,9 @@ Internet ──HTTPS──> proxy inverse (Caddy, nginx…) ──> web :3000 (N
   TLS et le publie. L’API et PostgreSQL ne sont jamais exposés.
 - Le navigateur ne parle qu’au serveur web : les actions serveur transmettent le jeton de
   session à l’API. Le cookie `kompri_session` est `HttpOnly`, `SameSite=Lax` et `Secure`.
+- Avec un PostgreSQL géré plutôt que le conteneur fourni, l’extension `unaccent` doit être
+  disponible (c’est le cas chez les principaux hébergeurs) : la migration `lesson_search`
+  la crée pour la recherche dans les cours.
 - Le conteneur `migrate` applique les migrations puis synchronise le contenu à chaque
   déploiement, avant le démarrage de l’API.
 

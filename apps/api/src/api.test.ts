@@ -5,6 +5,7 @@ import {
   challengeDetailSchema,
   oralViewSchema,
   progressResponseSchema,
+  searchResponseSchema,
   skillDetailSchema,
   treeResponseSchema,
   z,
@@ -15,6 +16,7 @@ import type { Mail } from './mailer.ts';
 import { runDailyTasks } from './daily.ts';
 import { createClient, createMockAdapter } from '@kompri/llm';
 import { nextLesson, skillStates } from './progress.ts';
+import { excerptParts } from './search.ts';
 
 const db = createDatabase();
 let now = new Date('2030-01-01T10:00:00Z');
@@ -125,6 +127,33 @@ afterAll(async () => {
   });
   await app?.close();
   await db.$disconnect();
+});
+
+describe('search', () => {
+  it('finds lessons without accents and highlights the words found', async () => {
+    const response = await call(
+      `/search?q=${encodeURIComponent('requetes parametrees')}`,
+    );
+    expect(response.status).toBe(200);
+    const body = searchResponseSchema.parse(response.body);
+    expect(body.results[0]).toMatchObject({
+      skillId: 'database-from-node',
+      slug: 'requetes-parametrees-et-injection',
+    });
+    expect(body.results[0]?.excerpt.some((part) => part.match)).toBe(true);
+    expect((await call('/search?q=a')).status).toBe(400);
+    expect(
+      searchResponseSchema.parse((await call('/search?q=le+la')).body).results,
+    ).toEqual([]);
+  });
+
+  it('splits highlighted excerpts', () => {
+    expect(excerptParts('Une  \u27E6promesse\u27E7 est\nun objet')).toEqual([
+      { text: 'Une ', match: false },
+      { text: 'promesse', match: true },
+      { text: ' est un objet', match: false },
+    ]);
+  });
 });
 
 describe('content', () => {

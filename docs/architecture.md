@@ -51,6 +51,12 @@ projette ce contenu dans PostgreSQL ; un élément retiré des fichiers est arch
 Les leçons Markdown sont exclues de Prettier, qui altérerait encadrés et exemples volontairement
 fautifs.
 
+La recherche (`GET /search`, page `/recherche`) utilise la recherche plein texte de
+PostgreSQL : une configuration `kompri_french` (racinisation française, accents ignorés par
+`unaccent`) et un vecteur pondéré titre > résumé > corps, stocké dans `Lesson.searchVector`
+avec un index GIN. Le seed recalcule le vecteur des leçons nouvelles ou modifiées via la
+fonction SQL `lesson_search_vector`, définie dans la migration `lesson_search`.
+
 ## Parcours de l’apprenant
 
 1. Le visiteur parcourt l’arbre et lit les leçons sans compte. Connecté, il voit l’état de

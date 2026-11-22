@@ -64,6 +64,14 @@ export async function syncContent(
         });
       }
 
+      const versions = new Map(
+        (
+          await tx.lesson.findMany({
+            select: { id: true, contentVersion: true },
+          })
+        ).map((l) => [l.id, l.contentVersion]),
+      );
+      const changedLessons: string[] = [];
       for (const lesson of content.lessons) {
         const data = {
           id: lesson.id,
@@ -78,6 +86,8 @@ export async function syncContent(
           contentVersion: hash(lesson),
           archivedAt: null,
         };
+        if (versions.get(lesson.id) !== data.contentVersion)
+          changedLessons.push(lesson.id);
         await tx.lesson.upsert({
           where: { id: lesson.id },
           create: data,
@@ -91,6 +101,13 @@ export async function syncContent(
         },
         data: { archivedAt: now },
       });
+      // Refresh the full-text vectors of new and changed lessons (see the
+      // lesson_search migration for lesson_search_vector).
+      await tx.$executeRaw`
+        UPDATE "Lesson"
+        SET "searchVector" = lesson_search_vector("title", "summary", "body")
+        WHERE "archivedAt" IS NULL
+          AND ("searchVector" IS NULL OR "id" = ANY(${changedLessons}))`;
 
       for (const [position, challenge] of content.challenges.entries()) {
         const rubric = content.rubrics.find(

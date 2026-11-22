@@ -58,6 +58,12 @@ async function Header() {
           >
             {fr.nav.path}
           </Link>
+          <Link
+            href="/recherche"
+            className="rounded-md px-2 py-1 text-muted hover:text-accent"
+          >
+            {fr.nav.search}
+          </Link>
           {user ? (
             <>
               <Link

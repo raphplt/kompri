@@ -37,6 +37,7 @@ import type { Clock, Examiner, Settings } from './context.ts';
 import { ErrorFilter } from './errors.ts';
 import { LearningController, LearningService } from './learning.ts';
 import { ProgressController } from './progress.ts';
+import { SearchController } from './search.ts';
 import { TutorController, TutorService } from './tutor.ts';
 import type { LlmClient, MockResponder } from '@kompri/llm';
 
@@ -149,6 +150,7 @@ export async function createApi(
       controllers: [
         HealthController,
         ContentController,
+        SearchController,
         AuthController,
         LearningController,
         ProgressController,

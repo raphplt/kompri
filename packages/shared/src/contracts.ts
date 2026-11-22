@@ -26,6 +26,26 @@ export type SkillSummary = z.infer<typeof skillSummarySchema>;
 export const skillsResponseSchema = z.array(skillSummarySchema);
 export const skillsQuerySchema = z.object({}).strict();
 
+export const searchQuerySchema = z.object({
+  q: z.string().trim().min(2).max(100),
+});
+
+export const searchResponseSchema = z.object({
+  query: z.string(),
+  results: z.array(
+    z.object({
+      skillId: z.string(),
+      skillTitle: z.string(),
+      slug: z.string(),
+      title: z.string(),
+      summary: z.string(),
+      /** Excerpt of the lesson; `match` parts are the words found. */
+      excerpt: z.array(z.object({ text: z.string(), match: z.boolean() })),
+    }),
+  ),
+});
+export type SearchResponse = z.infer<typeof searchResponseSchema>;
+
 export const treeResponseSchema = z.object({
   domains: z.array(domainResponseSchema),
   skills: z.array(skillSummarySchema),

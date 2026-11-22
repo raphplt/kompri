@@ -5,6 +5,7 @@ export const fr = {
     'Kompri est une plateforme d’apprentissage du développement web où l’IA est autorisée pour apprendre et interdite pour prouver : chaque compétence se valide à l’oral.',
   nav: {
     path: 'Parcours',
+    search: 'Rechercher',
     dashboard: 'Tableau de bord',
     account: 'Mon compte',
     login: 'Se connecter',
@@ -189,6 +190,19 @@ export const fr = {
       'Pour retenter, revois les notions signalées puis soumets une nouvelle version de ton travail.',
     transcript: 'Transcription',
     error: 'Une erreur est survenue. Réessaie dans un instant.',
+  },
+  search: {
+    title: 'Rechercher dans les cours',
+    label: 'Mots à rechercher',
+    placeholder: 'Par exemple : promesse, jointure, cookie…',
+    submit: 'Rechercher',
+    help: 'Les accents et les terminaisons sont ignorés. Mets un groupe de mots entre guillemets pour le chercher tel quel.',
+    tooShort: 'Saisis au moins deux caractères.',
+    count: (n: number, query: string) =>
+      n === 0
+        ? `Aucune leçon pour « ${query} »`
+        : `${n} leçon${n > 1 ? 's' : ''} pour « ${query} »`,
+    none: 'Essaie un autre mot ou un terme plus général.',
   },
   dashboard: {
     title: 'Tableau de bord',
