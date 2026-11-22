@@ -9,6 +9,9 @@ prises sans attendre de validation et la suite prévue.
   parallèle). Règle désormais appliquée : **un seul agent à la fois** ; le travail ciblé est
   fait directement ; les tâches lourdes sont espacées. Aucun outil ne donne le pourcentage
   consommé : la règle porte donc sur le nombre d’agents.
+- **Les 24 compétences sont relues et publiées.** Chaque relecture indépendante a réexécuté
+  le code et corrigé des erreurs réelles (serveur qui plantait pendant une expérience, schéma
+  OpenAPI faux, politique LTS de Node, plan EXPLAIN, sessions introuvables dans un défi…).
 - Livré depuis : oral de positionnement, réinitialisation du mot de passe par e-mail,
   adaptation mobile, audit des dépendances en CI, relectures HTML, CSS, Express/REST et
   JavaScript (données, DOM, asynchrone) appliquées. Tous les cours sont rédigés.

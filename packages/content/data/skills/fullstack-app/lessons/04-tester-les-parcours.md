@@ -510,12 +510,13 @@ précisément cette règle.
 :::solution
 ```js
 test('la sixième tentative ratée reçoit 429 avec Retry-After', async () => {
-  await signUp(server.baseUrl, 'ada@example.fr');
+  // Un e-mail qui ne sert qu’à ce test : le limiteur garde en mémoire les échecs des autres
+  await signUp(server.baseUrl, 'limite@example.fr');
   const attacker = createClient(server.baseUrl);
   const statuses = [];
   for (let i = 0; i < 6; i += 1) {
     const response = await attacker('POST', '/api/auth/login', {
-      email: 'ada@example.fr',
+      email: 'limite@example.fr',
       password: `essai numéro ${i} raté`,
     });
     statuses.push(response.status);
@@ -528,9 +529,11 @@ test('la sixième tentative ratée reçoit 429 avec Retry-After', async () => {
 Le test dure environ deux secondes : chaque échec calcule un hachage scrypt, sauf le sixième,
 refusé avant. Collecter les statuts dans un tableau puis les comparer d’un coup donne un
 message d’échec lisible : en cas d’erreur, `assert.deepEqual` affiche les deux tableaux et
-leur différence. Attention au
-piège mentionné plus haut : le limiteur garde ces échecs en mémoire pour les tests suivants du
-même fichier. Place ce test dans son propre fichier, ou utilise un e-mail qui ne sert qu’ici.
+leur différence. Attention au piège mentionné plus haut : le limiteur garde les échecs en
+mémoire d’un test à l’autre du même fichier. Dans `auth.test.js`, le test « mauvais mot de passe
+et compte inconnu » a déjà enregistré un échec pour `ada@example.fr` : avec cette adresse, la
+cinquième tentative recevrait déjà 429. D’où l’adresse `limite@example.fr`, qui ne sert qu’ici
+(ou un fichier de test séparé).
 
 :::
 

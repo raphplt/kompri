@@ -22,9 +22,9 @@ Contenu (parcours « développement web full-stack élémentaire ») :
   d’examinateur invisibles pour l’apprenant, archivage des nœuds retirés
 - ✅ Guide de rédaction des cours (`docs/content-guide.md`)
 - ✅ Arbre de 24 compétences réparties en 6 domaines
-- 🚧 Cours complets et relus pour chaque compétence, défis des quatre familles
-  (118 leçons et 92 défis rédigés ; 3 compétences relues et publiées)
-- 🚧 Relecture d’exactitude de chaque cours et vérification des liens sources
+- ✅ Cours complets pour les 24 compétences : 119 leçons (~319 000 mots), 96 défis
+- ✅ Relecture d’exactitude indépendante de chaque cours, liens sources vérifiés
+- ⏳ Relecture par des formateurs humains (hors portée de l’automatisation)
 
 Application :
 

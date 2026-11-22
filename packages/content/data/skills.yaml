@@ -297,7 +297,7 @@
 
 - id: web-security
   domain: quality
-  status: draft
+  status: published
   title: Sécurité web essentielle
   description: Reconnaître et corriger les failles les plus courantes.
   estimatedHours: 6
@@ -311,7 +311,7 @@
 
 - id: authentication
   domain: quality
-  status: draft
+  status: published
   title: Authentification et sessions
   description: Identifier les utilisateurs et protéger leurs données.
   estimatedHours: 6
@@ -325,7 +325,7 @@
 
 - id: fullstack-app
   domain: quality
-  status: draft
+  status: published
   title: Application full-stack complète
   description: Assembler interface, API, base de données et tests en un projet cohérent.
   estimatedHours: 10
