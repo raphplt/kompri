@@ -60,7 +60,9 @@ export class SearchController {
       )
       SELECT "skillId", "skillTitle", slug, title, summary,
         ts_headline('kompri_french',
-          regexp_replace(body, '\`\`\`[a-z]*|:::[a-z]*|\\]\\([^)]*\\)|[\`*#>|\\[]+', ' ', 'g'),
+          regexp_replace(
+            regexp_replace(body, '\`\`\`[a-z]*|:::[a-z]*|\\]\\([^)]*\\)|[#>|]+', ' ', 'g'),
+            '[\`*\\[]+', '', 'g'),
           q,
           ${`StartSel=${start}, StopSel=${stop}, MaxWords=30, MinWords=12, MaxFragments=2, FragmentDelimiter=" … "`}
         ) AS headline
