@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { adminReviewSummarySchema, z } from '@kompri/shared';
+import { AdminTabs } from '../../../components/admin-tabs';
 import { api } from '../../../lib/api';
 import { formatDateTime } from '../../../lib/format';
 import { getCurrentUser, getToken } from '../../../lib/session';
@@ -29,6 +30,7 @@ export default async function ReviewsPage({
   );
   return (
     <>
+      <AdminTabs current="reviews" />
       <div className="mb-6 flex flex-wrap items-baseline justify-between gap-3">
         <h1 className="text-3xl font-extrabold tracking-tight">
           {fr.admin.title}

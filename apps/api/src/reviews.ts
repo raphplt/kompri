@@ -16,6 +16,7 @@ import { challengeSchema, rubricSchema } from '@kompri/content';
 import { gradeSchema } from '@kompri/examiner';
 import {
   adminReviewDetailSchema,
+  adminStatsSchema,
   adminReviewSummarySchema,
   reviewDecisionSchema,
   reviewRequestSchema,
@@ -65,6 +66,75 @@ export class ReviewService {
         message,
         createdAt: now,
       },
+    });
+  }
+
+  /** Aggregates only: no individual learner data leaves this method. */
+  async stats() {
+    const now = this.now();
+    const [learners, active, orals7d, openReviews, completed, challenges] =
+      await Promise.all([
+        this.db.user.count({ where: { role: 'LEARNER' } }),
+        this.db.user.count({
+          where: {
+            role: 'LEARNER',
+            lastActiveAt: { gte: new Date(now.getTime() - days(30)) },
+          },
+        }),
+        this.db.oralSession.count({
+          where: { startedAt: { gte: new Date(now.getTime() - days(7)) } },
+        }),
+        this.db.reviewRequest.count({ where: { status: 'OPEN' } }),
+        this.db.oralSession.findMany({
+          where: { status: 'COMPLETED' },
+          select: {
+            verdict: true,
+            grade: true,
+            rubricSnapshot: true,
+            attempt: { select: { challengeId: true } },
+            reviewRequest: { select: { status: true } },
+          },
+        }),
+        this.db.challenge.findMany({
+          where: { archivedAt: null },
+          orderBy: [{ skillId: 'asc' }, { position: 'asc' }],
+          select: { id: true, title: true, skillId: true, family: true },
+        }),
+      ]);
+    const rows = challenges.map((challenge) => {
+      const orals = completed.filter(
+        (o) => o.attempt.challengeId === challenge.id,
+      );
+      const ratios = orals.map((o) => {
+        const grade = gradeSchema.parse(o.grade);
+        const rubric = rubricSchema.parse(o.rubricSnapshot);
+        const max = rubric.criteria.reduce((sum, c) => sum + c.maxScore, 0);
+        return grade.criteria.reduce((sum, c) => sum + c.score, 0) / max;
+      });
+      return {
+        challengeId: challenge.id,
+        title: challenge.title,
+        skillId: challenge.skillId,
+        family: challenge.family,
+        orals: orals.length,
+        passRate: orals.length
+          ? orals.filter((o) => o.verdict === 'PASSED').length / orals.length
+          : null,
+        averageScore: ratios.length
+          ? ratios.reduce((sum, r) => sum + r, 0) / ratios.length
+          : null,
+        reviews: orals.filter((o) => o.reviewRequest).length,
+        overturned: orals.filter(
+          (o) => o.reviewRequest?.status === 'OVERTURNED',
+        ).length,
+      };
+    });
+    return adminStatsSchema.parse({
+      learners,
+      activeLearners30d: active,
+      orals7d,
+      openReviews,
+      challenges: rows,
     });
   }
 
@@ -249,6 +319,11 @@ export class ReviewController {
 @Controller('admin')
 export class AdminController {
   constructor(@Inject(ReviewService) private readonly reviews: ReviewService) {}
+
+  @Get('stats')
+  stats() {
+    return this.reviews.stats();
+  }
 
   @Get('reviews')
   list(@Query() query: unknown) {

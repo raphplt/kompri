@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createDatabase } from '@kompri/db';
 import {
+  adminStatsSchema,
   challengeDetailSchema,
   oralViewSchema,
   progressResponseSchema,
@@ -632,6 +633,15 @@ describe('human review', () => {
     expect(mails.findLast((m) => m.to === user.email)?.text).toContain(
       'Coupure confirmée',
     );
+    const stats = adminStatsSchema.parse(
+      (await call('/admin/stats', { token: admin.token })).body,
+    );
+    const row = stats.challenges.find((c) => c.challengeId === challengeId)!;
+    expect(row.overturned).toBeGreaterThanOrEqual(1);
+    expect(row.orals).toBeGreaterThanOrEqual(row.reviews);
+    expect((await call('/admin/stats', { token: user.token })).status).toBe(
+      403,
+    );
   });
 });
 
@@ -681,6 +691,8 @@ describe('daily tasks', () => {
         webUrl: 'https://kompri.example',
         reminderDays: 14,
         inactiveAccountDays: 365,
+        // Other test or development accounts in the database must stay untouched.
+        onlyUserIds: [user.id],
       });
     const first = await run(at);
     expect(

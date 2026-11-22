@@ -17,13 +17,22 @@ export async function runDailyTasks(options: {
   webUrl: string;
   reminderDays: number;
   inactiveAccountDays?: number | undefined;
+  /** Restricts every step to these accounts (tests, targeted runs). */
+  onlyUserIds?: string[];
 }) {
   const { db, mailer, now, webUrl } = options;
   const report = { reminders: 0, notices: 0, deleted: 0 };
+  const scope = options.onlyUserIds
+    ? { userId: { in: options.onlyUserIds } }
+    : {};
+  const userScope = options.onlyUserIds
+    ? { id: { in: options.onlyUserIds } }
+    : {};
 
   // 1. Validations expiring soon, unless a later validation of the skill exists.
   const due = await db.validation.findMany({
     where: {
+      ...scope,
       verdict: 'PASSED',
       reminderSentAt: null,
       expiresAt: {
@@ -99,7 +108,11 @@ export async function runDailyTasks(options: {
       ],
     });
     const toNotify = await db.user.findMany({
-      where: { inactivityNoticeAt: null, ...inactiveSince(noticeLimit) },
+      where: {
+        ...userScope,
+        inactivityNoticeAt: null,
+        ...inactiveSince(noticeLimit),
+      },
       select: { id: true, email: true, displayName: true },
     });
     for (const user of toNotify) {
@@ -122,6 +135,7 @@ export async function runDailyTasks(options: {
     }
     const toDelete = await db.user.findMany({
       where: {
+        ...userScope,
         inactivityNoticeAt: {
           lte: new Date(now.getTime() - days(inactivityNoticeDays)),
         },

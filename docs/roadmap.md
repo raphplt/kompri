@@ -54,6 +54,7 @@ Application :
   de passe
 - ✅ Contestation d’un oral et réexamen humain par un administrateur
 - ✅ Rappels d’expiration et purge des comptes inactifs avec préavis (tâche quotidienne)
+- ✅ Statistiques agrégées par défi pour les administrateurs
 
 ## Jalon 4 — Fournisseurs LLM ouverts
 

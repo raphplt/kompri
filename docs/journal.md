@@ -3,6 +3,20 @@
 Entrées les plus récentes en haut. Chaque entrée résume ce qui a été livré, les décisions
 prises sans attendre de validation et la suite prévue.
 
+## 22 novembre 2026 (après-midi) — Compte, réexamen et suivi
+
+- Cours de sécurité mis à jour vers le Top 10 OWASP 2025 (vérifié sur owasp.org), avec la
+  correspondance 2021 ; les examinateurs acceptent un code 2021 daté.
+- Vérification de l’adresse e-mail (exigée avant un oral), changement de mot de passe et
+  d’e-mail, réinitialisation par lien unique.
+- Contestation d’un oral dans les 30 jours ; file de réexamen pour les administrateurs, qui
+  voient la transcription et les notes d’examinateur, puis confirment ou modifient le verdict.
+- Tâche quotidienne : rappels d’expiration et purge des comptes inactifs après préavis
+  (désactivée tant que la durée n’est pas fixée).
+- Statistiques agrégées par défi pour repérer les défis mal calibrés.
+- En attente du porteur du projet : informations légales, clé d’API Claude pour mesurer
+  l’examinateur, durée de conservation des comptes inactifs.
+
 ## 22 novembre 2026 — Reprise et règle de consommation
 
 - La première nuit a épuisé une fenêtre d’utilisation de 5 h (jusqu’à 9 agents en

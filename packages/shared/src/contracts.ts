@@ -342,3 +342,24 @@ export const adminReviewDetailSchema = adminReviewSummarySchema.extend({
   result: oralResultSchema,
 });
 export type AdminReviewDetail = z.infer<typeof adminReviewDetailSchema>;
+
+export const adminStatsSchema = z.object({
+  learners: z.number().int(),
+  activeLearners30d: z.number().int(),
+  orals7d: z.number().int(),
+  openReviews: z.number().int(),
+  challenges: z.array(
+    z.object({
+      challengeId: z.string(),
+      title: z.string(),
+      skillId: z.string(),
+      family: z.string(),
+      orals: z.number().int(),
+      passRate: z.number().nullable(),
+      averageScore: z.number().nullable(),
+      reviews: z.number().int(),
+      overturned: z.number().int(),
+    }),
+  ),
+});
+export type AdminStats = z.infer<typeof adminStatsSchema>;

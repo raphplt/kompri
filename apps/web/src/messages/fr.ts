@@ -383,6 +383,23 @@ export const fr = {
     response: 'Réponse envoyée à l’apprenant',
     submit: 'Enregistrer la décision',
     decided: 'Décision enregistrée et apprenant prévenu par e-mail.',
+    statsNav: 'Statistiques',
+    reviewsNav: 'Réexamens',
+    statsTitle: 'Statistiques',
+    statsIntro:
+      'Données agrégées pour repérer les défis mal calibrés : taux de réussite extrême, scores atypiques ou contestations fréquentes.',
+    learners: 'Apprenants',
+    active: 'Actifs sur 30 jours',
+    orals7d: 'Oraux sur 7 jours',
+    openReviews: 'Réexamens en attente',
+    columns: {
+      challenge: 'Défi',
+      orals: 'Oraux notés',
+      passRate: 'Réussite',
+      score: 'Score moyen',
+      reviews: 'Contestations',
+      overturned: 'Modifiés',
+    },
   },
   notFound: {
     title: 'Page introuvable',
