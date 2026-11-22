@@ -65,7 +65,8 @@ Application :
 ## Jalon 5 — Fiabilité de l’examinateur
 
 - ✅ Grilles par niveaux et notes d’examinateur exploitées par les prompts
-- ⏳ Davantage de références d’évaluation par famille de défi
+- ✅ Références d’évaluation par famille de défi (7 oraux, dont 4 réalistes)
+- ⏳ Mesure avec un vrai modèle et relecture humaine des références
 - 🚧 Défenses contre l’injection de consignes et les réponses assistées (minuteur, collage
   bloqué, tuteur coupé pendant l’oral ; signaux de saisie à venir)
 - ✅ Tuteur IA pendant l’apprentissage (autorisé), coupé pendant l’oral (interdit)

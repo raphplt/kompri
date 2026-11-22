@@ -38,10 +38,15 @@ const references = await Promise.all(
 );
 const report = await evaluate(references, await loadContent(), client);
 console.log(JSON.stringify(report, null, 2));
+// With the mock, only `exact` references are a pass/fail check.
+const exact = report.cases.filter((item) => item.mock === 'exact');
 if (
   !live &&
-  (report.meanAbsoluteError !== 0 ||
-    !report.stable ||
-    report.cases.some((item) => item.verdictAgreement !== 1))
+  exact.some(
+    (item) =>
+      item.meanAbsoluteError !== 0 ||
+      !item.stableVerdict ||
+      item.verdictAgreement !== 1,
+  )
 )
   process.exitCode = 1;

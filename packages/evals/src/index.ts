@@ -14,17 +14,23 @@ export const referenceSchema = z.object({
   submission: z.string().min(1),
   transcript: z.array(turnSchema).min(4),
   humanReview: z.enum(['pending', 'reviewed']),
+  /**
+   * `exact`: the deterministic mock must reproduce the expected grade (plumbing
+   * check run in CI). `report`: a realistic oral the mock cannot judge; it is
+   * replayed and reported with the mock, and only meaningful with a real model.
+   */
+  mock: z.enum(['exact', 'report']).default('exact'),
   expectedHumanGrade: gradeSchema,
 });
 export type ReferenceOral = z.infer<typeof referenceSchema>;
 export async function evaluate(
-  references: ReferenceOral[],
+  input: z.input<typeof referenceSchema>[],
   content: Content,
   client: LlmClient,
   runs = 3,
 ) {
   z.number().int().min(2).max(20).parse(runs);
-  z.array(referenceSchema).min(1).parse(references);
+  const references = z.array(referenceSchema).min(1).parse(input);
   const cases = [];
   for (const reference of references) {
     const challenge = content.challenges.find(
@@ -71,6 +77,7 @@ export async function evaluate(
     cases.push({
       id: reference.id,
       humanReview: reference.humanReview,
+      mock: reference.mock,
       criteria,
       meanAbsoluteError:
         criteria.reduce(

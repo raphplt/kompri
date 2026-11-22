@@ -85,6 +85,11 @@ refusé.
 
 Le banc (`pnpm evals`) rejoue des oraux de référence avec le mock et mesure erreur absolue,
 écart-type, amplitude et accord sur le verdict ; il échoue si le résultat attendu change.
+Une référence `mock: exact` vérifie le branchement : le mock doit retrouver la note attendue,
+et la CI échoue sinon. Une référence `mock: report` est un oral réaliste que le mock ne sait pas
+juger (il ne lit que la longueur des réponses) : elle est rejouée et affichée, et ne prend son
+sens qu’avec un vrai modèle. Les références couvrent les familles sans IA, avec l’IA, contre
+l’IA et après l’IA, avec des réussites, des échecs et des cas limites.
 Les références sont `humanReview: pending` : elles ne mesurent pas une fiabilité humaine.
 `pnpm evals:live` rejoue les mêmes références avec le fournisseur configuré, à la demande.
 
