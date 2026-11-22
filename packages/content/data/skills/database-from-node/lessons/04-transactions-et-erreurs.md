@@ -357,9 +357,11 @@ rejected Ce livre est déjà emprunté
 ```
 
 Un seul emprunt passe. Fais l’essai inverse : retire les deux `FOR UPDATE` du service, recharge
-la base et relance le script. Sur la machine de test, les deux emprunts ont réussi à chaque essai
-(`fulfilled 4` puis `fulfilled 5`) : chaque transaction a lu « livre disponible » avant que
-l’autre n’écrive. Ce genre de bug n’apparaît presque jamais en développement, où l’on clique une
+la base et relance le script plusieurs fois. Sur la machine de test, les deux emprunts ont réussi
+dans la majorité des essais (`fulfilled 4` puis `fulfilled 5`) : chaque transaction a lu « livre
+disponible » avant que l’autre n’écrive. Les autres fois, l’une des deux a simplement été un peu
+plus rapide : le résultat dépend du hasard de l’ordonnancement, ce qui rend le bug d’autant plus
+traître. Ce genre de bug n’apparaît presque jamais en développement, où l’on clique une
 fois à la fois, et surgit en production. Remets les verrous avant de continuer.
 
 ## Les erreurs de contraintes et leurs codes
@@ -695,7 +697,8 @@ minuscules et répond `201` avec l’adhérent créé. Une adresse déjà utilis
 un message clair, **sans** `SELECT` préalable. Écris le SQL dans un repository.
 
 :::solution
-`src/repositories/members-repository.js` :
+`src/repositories/members-repository.js` (si tu as gardé celui de la leçon 3, ajoute seulement
+la fonction `create` à côté des autres) :
 
 ```js
 import { pool } from '../db.js';
