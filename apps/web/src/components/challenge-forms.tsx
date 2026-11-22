@@ -44,10 +44,12 @@ export function StartOralForm({
   attemptId,
   questions,
   minutes,
+  placement = false,
 }: {
   attemptId: string;
   questions: number;
   minutes: number;
+  placement?: boolean;
 }) {
   const [state, action, pending] = useActionState<FormState, FormData>(
     startOralAction,
@@ -61,7 +63,7 @@ export function StartOralForm({
         onClick={() => setConfirming(true)}
         className={buttonClass.primary}
       >
-        {fr.challenge.startOral}
+        {placement ? fr.challenge.startPlacement : fr.challenge.startOral}
       </button>
     );
   return (
@@ -70,6 +72,15 @@ export function StartOralForm({
       className="space-y-3 rounded-lg border border-warning/40 bg-warning-soft p-4"
     >
       <input type="hidden" name="attemptId" value={attemptId} />
+      {placement && <input type="hidden" name="placement" value="true" />}
+      {placement && (
+        <>
+          <p className="font-semibold text-warning">
+            {fr.challenge.placementTitle}
+          </p>
+          <p className="text-sm text-ink">{fr.challenge.placementText}</p>
+        </>
+      )}
       <p className="font-semibold text-warning">
         {fr.challenge.oralWarningTitle}
       </p>

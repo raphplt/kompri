@@ -33,6 +33,7 @@ import {
   z,
 } from '@kompri/shared';
 import { AuthGuard, CurrentUser } from './auth.ts';
+import { acquiredSkills } from './progress.ts';
 import type { AuthenticatedUser } from './auth.ts';
 import { CLOCK, DATABASE, days, EXAMINER, hours, SETTINGS } from './context.ts';
 import type { Clock, Examiner, Settings } from './context.ts';
@@ -50,6 +51,9 @@ export const graceSeconds = 15;
 export const maxGradingTries = 3;
 const planSchema = z.object({ questions: z.array(z.string()).min(1) });
 const uuidSchema = z.uuid();
+const startOralSchema = z
+  .object({ placement: z.boolean().default(false) })
+  .strict();
 
 const oralStatus = {
   ACTIVE: 'active',
@@ -159,7 +163,12 @@ export class LearningService {
     );
   }
 
-  async startOral(user: AuthenticatedUser, rawAttemptId: string) {
+  async startOral(
+    user: AuthenticatedUser,
+    rawAttemptId: string,
+    input: unknown = {},
+  ) {
+    const { placement } = parseInput(startOralSchema, input ?? {});
     const attempt = await this.db.attempt.findFirst({
       where: { id: parseInput(uuidSchema, rawAttemptId), userId: user.id },
       include: {
@@ -182,19 +191,31 @@ export class LearningService {
       throw forbidden('skill_unavailable', 'This skill is not available');
     const prerequisites = skill.prerequisites.map((p) => p.prerequisiteId);
     if (prerequisites.length) {
-      const validated = await this.db.validation.findMany({
-        where: {
-          userId: user.id,
-          verdict: 'PASSED',
-          skillId: { in: prerequisites },
-        },
-        distinct: ['skillId'],
-        select: { skillId: true },
-      });
-      if (validated.length < prerequisites.length)
+      const [edges, validated] = await Promise.all([
+        this.db.skillPrerequisite.findMany({
+          select: { skillId: true, prerequisiteId: true },
+        }),
+        this.db.validation.findMany({
+          where: { userId: user.id, verdict: 'PASSED' },
+          distinct: ['skillId'],
+          select: { skillId: true },
+        }),
+      ]);
+      const graph = new Map<string, string[]>();
+      for (const edge of edges)
+        graph.set(edge.skillId, [
+          ...(graph.get(edge.skillId) ?? []),
+          edge.prerequisiteId,
+        ]);
+      const acquired = acquiredSkills(
+        graph,
+        validated.map((v) => v.skillId),
+      );
+      // A placement oral lets an experienced learner skip the prerequisites.
+      if (!placement && prerequisites.some((id) => !acquired.has(id)))
         throw forbidden(
           'prerequisites_missing',
-          'Validate every prerequisite skill before this oral',
+          'Validate the prerequisite skills or take a placement oral',
         );
     }
     const active = await this.db.oralSession.findFirst({
@@ -581,8 +602,12 @@ export class LearningController {
   }
 
   @Post('attempts/:id/oral')
-  startOral(@CurrentUser() user: AuthenticatedUser, @Param('id') id: string) {
-    return this.learning.startOral(user, id);
+  startOral(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id') id: string,
+    @Body() body: unknown,
+  ) {
+    return this.learning.startOral(user, id, body);
   }
 
   @Get('orals/:id')

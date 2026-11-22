@@ -46,7 +46,7 @@ Application :
 - ✅ Tableau de bord : compétences validées, expirées, disponibles, verrouillées
 - ✅ Expiration et renouvellement des validations
 - ✅ Quotas d’oraux réservés atomiquement
-- ⏳ Oral de positionnement pour entrer au bon endroit de l’arbre
+- ✅ Oral de positionnement pour entrer au bon endroit de l’arbre
 
 ## Jalon 4 — Fournisseurs LLM ouverts
 

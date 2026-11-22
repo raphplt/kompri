@@ -408,6 +408,50 @@ describe('oral', () => {
   });
 });
 
+describe('placement', () => {
+  it('requires prerequisites unless the oral is taken as a placement', async () => {
+    const user = await register();
+    const attempt = z.object({ id: z.string() }).parse(
+      (
+        await call('/attempts', {
+          token: user.token,
+          body: {
+            challengeId: 'js-functions-sans-ia',
+            work: 'function f() {}',
+          },
+        })
+      ).body,
+    );
+    const refused = await call(`/attempts/${attempt.id}/oral`, {
+      method: 'POST',
+      token: user.token,
+    });
+    expect(refused.status).toBe(403);
+    expect(refused.body).toMatchObject({ code: 'prerequisites_missing' });
+    const placement = await call(`/attempts/${attempt.id}/oral`, {
+      token: user.token,
+      body: { placement: true },
+    });
+    expect(placement.status).toBe(201);
+    const oral = oralViewSchema.parse(placement.body);
+    for (let i = 0; i < 3; i++) {
+      advance(20);
+      await call(`/orals/${oral.id}/answers`, {
+        token: user.token,
+        body: { text: long },
+      });
+    }
+    const progress = progressResponseSchema.parse(
+      (await call('/me/progress', { token: user.token })).body,
+    );
+    const state = (id: string) =>
+      progress.skills.find((s) => s.skillId === id)?.state;
+    expect(state('js-functions')).toBe('validated');
+    expect(state('js-control-flow')).toBe('available');
+    expect(state('js-data')).toBe('upcoming');
+  });
+});
+
 describe('tutor', () => {
   it('streams answers within a quota, refuses during an oral and stores no content', async () => {
     const user = await register();
@@ -468,6 +512,33 @@ describe('tutor', () => {
     const exported = await call('/me/export', { token: user.token });
     expect(exported.text).not.toContain('typeof null');
   });
+});
+
+it('unlocks the skills built on what a placement validated', () => {
+  const states = skillStates(
+    [
+      { id: 'a', status: 'PUBLISHED', prerequisites: [] },
+      { id: 'b', status: 'PUBLISHED', prerequisites: ['a'] },
+      { id: 'c', status: 'PUBLISHED', prerequisites: ['b'] },
+      { id: 'd', status: 'PUBLISHED', prerequisites: ['b'] },
+      { id: 'e', status: 'PUBLISHED', prerequisites: ['d'] },
+    ],
+    [
+      {
+        skillId: 'c',
+        validatedAt: new Date('2030-01-01T00:00:00Z'),
+        expiresAt: new Date('2031-01-01T00:00:00Z'),
+      },
+    ],
+    new Date('2030-06-01T00:00:00Z'),
+  );
+  expect(states.map((s) => s.state)).toEqual([
+    'available',
+    'available',
+    'validated',
+    'available',
+    'locked',
+  ]);
 });
 
 it('derives skill states from validations and prerequisites', () => {

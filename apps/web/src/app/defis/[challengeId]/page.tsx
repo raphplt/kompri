@@ -227,15 +227,12 @@ export default async function ChallengePage({ params }: Props) {
                             : fr.challenge.viewOral}{' '}
                           →
                         </Link>
-                      ) : locked ? (
-                        <p className="text-sm text-muted">
-                          {fr.challenge.lockedHint}
-                        </p>
                       ) : (
                         <StartOralForm
                           attemptId={attempt.id}
                           questions={oralQuestions}
                           minutes={oralMinutes}
+                          placement={locked}
                         />
                       )}
                     </div>

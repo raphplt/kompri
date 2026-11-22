@@ -139,7 +139,11 @@ export async function startOralAction(
     oral = await api(
       `/attempts/${encodeURIComponent(field(data, 'attemptId'))}/oral`,
       oralViewSchema,
-      { method: 'POST', token: await getToken() },
+      {
+        method: 'POST',
+        token: await getToken(),
+        body: { placement: field(data, 'placement') === 'true' },
+      },
     );
   } catch (error) {
     return { error: codeOf(error) };

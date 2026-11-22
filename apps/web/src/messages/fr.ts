@@ -68,7 +68,8 @@ export const fr = {
     validated: 'Compétence validée à l’oral, en cours de validité.',
     expired: 'Ta validation a expiré : repasse un oral pour la renouveler.',
     available: 'Tous les prérequis sont validés : tu peux passer l’oral.',
-    locked: 'Valide d’abord les compétences prérequises pour passer l’oral.',
+    locked:
+      'Prérequis non validés : valide-les d’abord, ou passe l’oral en positionnement si tu les maîtrises déjà.',
     upcoming: 'Le contenu de cette compétence est en préparation.',
   },
   families: {
@@ -140,6 +141,10 @@ export const fr = {
       `${questions} questions, ${minutes} minutes par réponse, sans aide ni copier-coller. Une réponse non envoyée à temps compte comme absente. L’oral consomme une session de ton quota.`,
     lockedHint:
       'Valide d’abord les compétences prérequises pour passer cet oral.',
+    placementTitle: 'Oral de positionnement',
+    placementText:
+      'Tu n’as pas encore validé les prérequis de cette compétence. Si tu les maîtrises déjà, passe cet oral en positionnement : en cas de réussite, les compétences prérequises compteront comme acquises pour débloquer la suite du parcours.',
+    startPlacement: 'Passer l’oral en positionnement',
     estimated: (minutes: number) => `Environ ${minutes} min`,
   },
   oral: {

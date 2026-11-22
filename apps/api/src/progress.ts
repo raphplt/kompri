@@ -10,9 +10,28 @@ import { CLOCK, DATABASE, hours, SETTINGS } from './context.ts';
 import type { Clock, Settings } from './context.ts';
 
 /**
+ * Skills that count as acquired for unlocking: every skill validated at least
+ * once, and every transitive prerequisite of such a skill. Passing a placement
+ * oral on an advanced skill therefore unlocks what it builds on.
+ */
+export function acquiredSkills(
+  prerequisitesOf: Map<string, string[]>,
+  validated: Iterable<string>,
+): Set<string> {
+  const acquired = new Set<string>();
+  const visit = (id: string) => {
+    if (acquired.has(id)) return;
+    acquired.add(id);
+    for (const next of prerequisitesOf.get(id) ?? []) visit(next);
+  };
+  for (const id of validated) visit(id);
+  return acquired;
+}
+
+/**
  * A skill is validated while one passed validation is current. Prerequisites
- * only need to have been validated once: an expired prerequisite asks for a
- * renewal but does not lock the skills built on it.
+ * only need to be acquired: an expired prerequisite asks for a renewal but
+ * does not lock the skills built on it.
  */
 export function skillStates(
   skills: { id: string; status: string; prerequisites: string[] }[],
@@ -25,6 +44,10 @@ export function skillStates(
     if (!current || validation.expiresAt > current.expiresAt)
       latest.set(validation.skillId, validation);
   }
+  const acquired = acquiredSkills(
+    new Map(skills.map((skill) => [skill.id, skill.prerequisites])),
+    latest.keys(),
+  );
   return skills.map((skill) => {
     const validation = latest.get(skill.id) ?? null;
     let state: SkillState;
@@ -32,7 +55,7 @@ export function skillStates(
       state = validation.expiresAt > now ? 'validated' : 'expired';
     else if (skill.status !== 'PUBLISHED') state = 'upcoming';
     else
-      state = skill.prerequisites.every((id) => latest.has(id))
+      state = skill.prerequisites.every((id) => acquired.has(id))
         ? 'available'
         : 'locked';
     return {
