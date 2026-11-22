@@ -14,8 +14,14 @@ prises sans attendre de validation et la suite prévue.
 - Tâche quotidienne : rappels d’expiration et purge des comptes inactifs après préavis
   (désactivée tant que la durée n’est pas fixée).
 - Statistiques agrégées par défi pour repérer les défis mal calibrés.
-- En attente du porteur du projet : informations légales, clé d’API Claude pour mesurer
-  l’examinateur, durée de conservation des comptes inactifs.
+- Pages légales complétées à partir des mentions du porteur du projet (micro-entreprise),
+  conditions générales d’utilisation ajoutées ; conservation : 2 ans d’inactivité, sauvegardes
+  30 jours. Seul l’hébergeur reste à renseigner.
+- Proxy HTTPS Caddy intégré au compose de production (profil `https`).
+- Quatre oraux de référence réalistes (familles avec, contre et après l’IA), en mode
+  `report` pour le mock ; sitemap, robots et métadonnées de partage ; indicateurs de
+  déroulement de l’oral visibles au réexamen, jamais notés.
+- En attente : choix de l’hébergeur, clé d’API Claude pour mesurer l’examinateur.
 
 ## 22 novembre 2026 — Reprise et règle de consommation
 
