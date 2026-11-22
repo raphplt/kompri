@@ -126,7 +126,7 @@ console.log(title);
 title.textContent = 'Titre modifié par JavaScript';
 ```
 
-La console affiche :
+La console de Chromium affiche :
 
 ```text
 null
@@ -138,7 +138,9 @@ classique, il **s’arrête**, télécharge et exécute le script, puis reprend.
 n’a pas encore lu le `body` : le `h1` n’existe pas encore dans le DOM. `querySelector` renvoie
 `null`, et modifier une propriété de `null` provoque une `TypeError`.
 
-Ce message est l’un des plus fréquents en développement front-end. Quand tu le vois, pose-toi
+Le texte exact varie selon le navigateur (Firefox le formule autrement), mais c’est toujours
+une `TypeError` qui mentionne `null`. C’est l’une des erreurs les plus fréquentes en
+développement front-end. Quand tu la vois, pose-toi
 deux questions : mon sélecteur est-il juste ? L’élément existe-t-il **au moment** où le code
 s’exécute ?
 
@@ -299,8 +301,10 @@ d’un fichier, recharge simplement la page.
 ### Et les autres solutions ?
 
 - **Placer le script juste avant `</body>`** fonctionne aussi : quand il s’exécute, tout ce qui
-  le précède est dans le DOM. C’est une technique ancienne ; elle retarde le début du
-  téléchargement du script, alors que `defer` et `module` le lancent dès la lecture du `head`.
+  le précède est dans le DOM. C’est une technique ancienne : le script est déclaré à la fin du
+  document, si bien que son téléchargement peut commencer plus tard (les navigateurs actuels
+  repèrent souvent ces ressources en avance, mais rien ne le garantit), alors que `defer` et
+  `module` le déclarent dès le `head`.
 - **L’événement `DOMContentLoaded`** (`document.addEventListener('DOMContentLoaded', …)`)
   permet d’attendre la fin de l’analyse depuis un script classique. Avec `defer` ou un module,
   il est inutile.
@@ -454,19 +458,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 La fonction n’est appelée qu’une fois le document analysé : le `h1` existe.
 
-Seconde possibilité, se protéger de `null` :
+Seconde possibilité, attendre le chargement complet de la page :
 
 ```js
-const title = document.querySelector('h1');
-if (title) {
+window.addEventListener('load', () => {
+  const title = document.querySelector('h1');
   title.textContent = 'Titre modifié par JavaScript';
-}
+});
 ```
 
-Le script ne plante plus… mais ne fait plus rien non plus, puisque le titre n’existe pas
-encore. Cette seconde version **masque** le problème au lieu de le résoudre : elle n’est utile
-que pour un élément réellement facultatif. La première est la bonne correction si l’on ne
-peut pas toucher au HTML ; si on le peut, `defer` ou `type="module"` reste plus simple.
+Cela fonctionne aussi, mais l’événement `load` attend en plus les images, les feuilles de style
+et les autres ressources : le titre change plus tard que nécessaire. On préfère donc
+`DOMContentLoaded`. Si l’on peut toucher au HTML, `defer` ou `type="module"` reste plus simple.
+
+Une fausse correction est à éviter : entourer le code d’un `if (title) { … }`. Le script ne
+plante plus… mais ne fait plus rien, puisque le titre n’existe pas encore. Ce test **masque** le
+problème au lieu de le résoudre ; il n’est utile que pour un élément réellement facultatif.
 :::
 
 ## Récapitulatif

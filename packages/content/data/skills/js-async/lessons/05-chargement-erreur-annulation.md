@@ -193,9 +193,9 @@ async function search(query) {
     if (error.name === 'AbortError') {
       return; // une recherche plus récente a pris le relais : on ne touche à rien
     }
-    // État « erreur »
+    // État « erreur » : annoncé par la région de statut, détaillé dans le bloc d’erreur
     list.replaceChildren();
-    status.textContent = '';
+    status.textContent = 'La recherche a échoué.';
     errorMessage.textContent = describeError(error);
     errorBox.hidden = false;
   } finally {
@@ -226,10 +226,10 @@ Comportement vérifié dans Chromium :
 | 0,5 s plus tard                          | `5 livre(s) trouvé(s).`          | les cinq livres          |
 | frappe rapide de `du`                    | `1 livre(s) trouvé(s).`          | Dune                     |
 | saisie de `zzz`                          | `Aucun livre trouvé.`            | vide                     |
-| réponse 500 du serveur (simulée)         | vide, bloc d’erreur affiché      | vide                     |
+| réponse 500 du serveur (simulée)         | `La recherche a échoué.` ; bloc d’erreur : `Le serveur a rencontré un problème (erreur 500).` | vide |
 | clic sur « Réessayer » (serveur rétabli) | `1 livre(s) trouvé(s).`          | Dune ; focus dans le champ |
-| réseau coupé (simulé)                    | `Impossible de joindre le serveur. Vérifie ta connexion.` dans le bloc d’erreur | vide |
-| réponse en plus de 5 s (simulée)         | `Le serveur met trop de temps à répondre.` | vide           |
+| réseau coupé (simulé)                    | `La recherche a échoué.` ; bloc d’erreur : `Impossible de joindre le serveur. Vérifie ta connexion.` | vide |
+| réponse en plus de 5 s (simulée)         | `La recherche a échoué.` ; bloc d’erreur : `Le serveur met trop de temps à répondre.` | vide |
 
 Analysons les mécanismes.
 
@@ -258,7 +258,9 @@ dépassée par la suivante.
 
 - Le paragraphe `role="status"` est présent dès le chargement : chaque changement de son texte
   est annoncé poliment par les lecteurs d’écran (« Recherche en cours… », puis « 1 livre(s)
-  trouvé(s). »). Sans lui, un utilisateur aveugle ne saurait pas que la liste a changé.
+  trouvé(s). », ou « La recherche a échoué. »). Sans lui, un utilisateur aveugle ne saurait pas
+  que la liste a changé. Le bloc d’erreur, lui, n’est pas une région live : c’est le statut qui
+  annonce l’échec, et le bloc qui en donne le détail et le bouton « Réessayer ».
 - `aria-busy="true"` sur la liste indique aux technologies d’assistance qu’elle est en cours de
   mise à jour ; le CSS s’en sert aussi pour atténuer les anciens résultats. Les garder visibles
   pendant le chargement évite que la page « saute » à chaque frappe.
@@ -269,8 +271,9 @@ dépassée par la suivante.
 ### 4. Des erreurs compréhensibles et récupérables
 
 `describeError` traduit les erreurs techniques en messages utiles : délai dépassé, serveur
-injoignable (`TypeError`, dont le message brut, « Failed to fetch », ne dit rien à un
-utilisateur), ou erreur HTTP. Le bouton « Réessayer » relance la même recherche. Comme le bloc
+injoignable (`TypeError`, dont le message brut ne dit rien à un utilisateur et varie selon le
+navigateur : « Failed to fetch » dans Chromium, un autre texte dans Firefox ou Safari), ou
+erreur HTTP. Le bouton « Réessayer » relance la même recherche. Comme le bloc
 d’erreur, et donc le bouton, va être masqué, le focus est d’abord placé dans le champ : sinon, un
 utilisateur au clavier se retrouverait au début de la page.
 
@@ -279,7 +282,9 @@ utilisateur au clavier se retrouverait au début de la page.
 Pour une action qui **modifie** des données (ajouter un livre, payer), un double clic ne doit pas
 envoyer deux requêtes. Le réflexe est de désactiver le bouton avec `button.disabled = true`.
 Mais dans Chromium, un bouton qui a le focus et qui devient désactivé **perd le focus**, qui
-retombe sur `body` : l’utilisateur au clavier est renvoyé au début de la page. Une alternative
+retombe sur `body` (c’est ce que prévoit la norme HTML ; tous les navigateurs ne l’appliquent
+pas de la même façon). L’utilisateur au clavier ou au lecteur d’écran perd alors sa position
+dans la page. Une alternative
 consiste à garder le bouton actif, à ignorer les envois pendant la requête, et à signaler l’état
 avec `aria-disabled`.
 

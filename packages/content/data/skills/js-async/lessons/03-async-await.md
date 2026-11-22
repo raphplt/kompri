@@ -540,8 +540,9 @@ async function sendEmail(email) {
 Problèmes :
 
 1. `loadSubscribers()` sans `await` : `subscribers` est une promesse, et
-   `subscribers.forEach` lève `TypeError: subscribers.forEach is not a function`. Comme `main`
-   n’est pas attendue et n’a pas de `catch`, c’est un rejet non géré : Node.js s’arrête.
+   `subscribers.forEach` lève `TypeError: subscribers.forEach is not a function`. Cette erreur
+   rompt la promesse de `sendNewsletter`, que `main` n’attend pas et que personne ne gère :
+   c’est un rejet non géré, et Node.js s’arrête.
 2. `forEach` avec un callback `async` : les envois ne sont pas attendus.
 3. Le message « envoyée à tout le monde » s’affiche avant tout envoi et ment en cas d’échec.
 4. Les erreurs de `sendEmail` ne sont rattrapées nulle part.

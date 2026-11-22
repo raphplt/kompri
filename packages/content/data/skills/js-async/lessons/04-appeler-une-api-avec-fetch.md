@@ -421,7 +421,9 @@ true
   nouvelle requête.
 
 Contrairement au `Promise.race` de la leçon 2, l’annulation **arrête réellement** la requête côté
-client : la connexion est fermée et la réponse ne sera jamais lue.
+client : le téléchargement est interrompu et la réponse ne sera jamais lue. Le serveur, lui, a
+pu recevoir la requête et la traiter quand même : annuler un `POST` ne garantit pas qu’il n’a
+pas été pris en compte.
 
 ## Pièges courants
 
@@ -444,7 +446,8 @@ try {
 }
 ```
 
-Sortie :
+Sortie avec Node.js 24 (dans un navigateur, les noms d’erreurs sont les mêmes mais les messages
+diffèrent) :
 
 ```text
 Dune

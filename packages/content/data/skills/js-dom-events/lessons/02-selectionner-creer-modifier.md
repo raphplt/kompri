@@ -186,7 +186,8 @@ texte écrit dans le HTML, alors que la propriété `href` donne l’adresse com
   `getAttribute(nom)`. `removeAttribute(nom)` supprime un attribut.
 - `hidden` masque un élément (comme `display: none`) : il disparaît de l’affichage **et** des
   technologies d’assistance. C’est la manière la plus simple d’afficher ou de masquer un
-  message.
+  message. Attention : une règle CSS qui donne un `display` à l’élément (par exemple
+  `.notice { display: flex; }`) l’emporte sur `hidden`, et l’élément reste visible.
 
 ### `classList` : changer l’apparence par les classes
 
@@ -390,8 +391,9 @@ Super article &lt;img src="x" onerror="alert('Code exécuté !')"&gt;
 Et surtout, **une boîte de dialogue « Code exécuté ! » s’ouvre**. Avec `innerHTML`, le texte du
 visiteur a créé une vraie image ; son chargement échoue, ce qui déclenche l’attribut `onerror`,
 qui exécute du JavaScript **écrit par le visiteur**. Avec `textContent`, la même chaîne
-s’affiche telle quelle, caractères `<` et `>` compris : le navigateur les a échappés en `&lt;`
-et `&gt;`.
+s’affiche telle quelle, caractères `<` et `>` compris : elle devient un simple nœud texte. Quand
+on relit `innerHTML`, le navigateur représente ces caractères par `&lt;` et `&gt;`, preuve qu’ils
+ne sont pas du HTML.
 
 C’est une **injection de code** côté client, appelée **XSS** (*Cross-Site Scripting*). Ici, ce
 n’est qu’une alerte ; un vrai attaquant lirait les données de la page, agirait au nom de la
@@ -500,8 +502,10 @@ Console :
 Hugo : Merci pour le lien <3
 ```
 
-Le message de Hugo contient `<3` : avec `textContent`, il s’affiche correctement. Avec
-`innerHTML`, le navigateur aurait tenté d’interpréter `<3` comme du HTML. Le compteur est
+Le message de Hugo contient `<3` : avec `textContent`, il s’affiche toujours tel quel. Avec
+`innerHTML`, ce texte précis passerait par chance (une balise ne peut pas commencer par un
+chiffre, vérifié dans Chromium), mais un message comme `<b>bravo</b>` ou
+`<img src=x onerror=…>` serait interprété comme du HTML. Le compteur est
 calculé à partir des **données** (`filter`), pas en comptant les éléments affichés : les données
 sont la source de vérité, le DOM n’en est que la représentation.
 :::

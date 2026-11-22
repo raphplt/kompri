@@ -654,7 +654,8 @@ calcule un nouvel état (avec `map`/`filter`, sans mutation), puis `render` reco
 l’affichage. L’écouteur est enregistré **une fois**, sur `#cart`, qui n’est jamais remplacé.
 
 Le défaut de ce rendu complet : le bouton activé au clavier est détruit, et le focus retomberait
-sur `body` (vérifié dans Chromium). On le redonne donc au bouton équivalent, ou au premier
+sur `body` (`document.activeElement` devient `body`, comme le prévoit la norme HTML ; vérifié
+dans Chromium). On le redonne donc au bouton équivalent, ou au premier
 bouton du panier si la ligne a disparu. Les `aria-label` donnent un nom compréhensible aux
 boutons `−` et `+` : sans eux, un lecteur d’écran n’annoncerait que le symbole, sans dire de
 quel produit il s’agit.

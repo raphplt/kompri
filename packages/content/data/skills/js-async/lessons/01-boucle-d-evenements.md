@@ -305,7 +305,7 @@ résolvent ce problème ; elles s’appuient sur la file des microtâches que tu
 1. **Croire que `setTimeout(fn, 0)` exécute `fn` tout de suite** : il passe après tout le code
    synchrone et après toutes les microtâches.
 2. **Utiliser une valeur avant qu’elle existe** : une variable modifiée dans un callback
-   asynchrone n’a pas encore sa nouvelle valeur à la ligne suivante (exercice 3).
+   asynchrone n’a pas encore sa nouvelle valeur à la ligne suivante (exercice 2).
 3. **Bloquer la boucle** avec un calcul long ou une boucle d’attente active : l’interface gèle,
    le serveur ne répond plus.
 4. **Entourer un `setTimeout` d’un `try…catch`** pour attraper une erreur de son callback : cela ne

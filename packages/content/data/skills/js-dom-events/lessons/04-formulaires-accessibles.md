@@ -319,8 +319,9 @@ changements de son contenu.
 Deux règles pratiques :
 
 1. **La région doit exister dans la page avant le message.** Mets un élément vide avec
-   `role="status"` dans le HTML, puis change son `textContent`. Une région créée en même temps
-   que son contenu n’est souvent pas annoncée.
+   `role="status"` dans le HTML, puis change son `textContent`. Une région insérée dans la page
+   déjà remplie risque de ne pas être annoncée : le comportement varie selon le navigateur et
+   le lecteur d’écran, d’où cette règle prudente.
 2. **Mets un texte complet et autonome** : « Tâche « Réviser » ajoutée. 2 tâche(s) en tout. »
    plutôt que « OK ».
 
@@ -333,7 +334,8 @@ utile ?**
 - Après une erreur : sur le premier champ invalide (`field.focus()`).
 - Après un ajout dans une liste : de retour dans le champ de saisie, pour enchaîner.
 - Après la suppression d’un élément qui avait le focus : sur un élément proche (le suivant, le
-  champ de saisie). Sinon, le focus retombe au début de la page.
+  champ de saisie). Sinon, le focus est perdu : `document.activeElement` devient `body`, et
+  l’utilisateur d’un lecteur d’écran peut se retrouver ramené en haut de la page.
 - Après la fermeture d’un panneau : sur le bouton qui l’avait ouvert.
 
 Ne retire jamais le contour de focus en CSS (`outline: none`) sans le remplacer par un style
