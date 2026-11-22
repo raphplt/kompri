@@ -30,8 +30,8 @@ l’obtenir. Prenons cet exemple complet :
 
 ```text
 https://www.example.com:8443/boutique/produits?categorie=livres&page=2#avis
-└─┬─┘   └──────┬──────┘ └┬─┘└───────┬───────┘ └──────────┬─────────┘ └┬─┘
-schéma        hôte     port       chemin             requête       fragment
+└─┬─┘   └──────┬──────┘ └┬─┘└───────┬────────┘└──────────┬───────────┘└─┬─┘
+schéma       hôte      port      chemin               requête       fragment
 ```
 
 | Partie                   | Dans l’exemple             | Rôle                                                         |
@@ -56,9 +56,9 @@ Quelques règles à connaître :
 ### Décomposer une URL avec la console du navigateur
 
 Tu n’as pas besoin de savoir programmer pour essayer. Ouvre n’importe quelle page dans ton
-navigateur, puis la **console** des outils de développement : touche `F12`, ou
-`Ctrl`+`Maj`+`J` sous Chrome et Edge, `Ctrl`+`Maj`+`K` sous Firefox, `Cmd`+`Option`+`J`
-sous Chrome sur macOS. Colle les lignes suivantes et valide avec Entrée :
+navigateur, puis la **console** des outils de développement : touche `F12` puis onglet
+**Console**, ou directement `Ctrl`+`Maj`+`J` sous Chrome et Edge, `Ctrl`+`Maj`+`K` sous
+Firefox (`Cmd`+`Option`+`J` et `Cmd`+`Option`+`K` sur macOS). Colle les lignes suivantes et valide avec Entrée :
 
 ```js
 const url = new URL(
@@ -246,7 +246,8 @@ Le DNS stocke différents types d’**enregistrements** :
 
 ### Observer une résolution DNS
 
-L’outil `nslookup` existe sous Linux, macOS et Windows. Dans un terminal :
+L’outil `nslookup` est fourni avec macOS et Windows ; sous Linux, il faut parfois
+l’installer (paquet `dnsutils` ou `bind-utils` selon la distribution). Dans un terminal :
 
 ```bash
 nslookup example.com
@@ -266,11 +267,13 @@ Address: 172.66.147.243
 ```
 
 Ta sortie sera différente : le serveur DNS interrogé dépend de ta configuration, et les
-adresses d’un site changent avec le temps. Lis-la ainsi :
+adresses d’un site changent avec le temps. Sous Windows, la présentation diffère un peu
+(et les intitulés peuvent être traduits), mais on y retrouve les mêmes informations.
+Lis-la ainsi :
 
 - `Server` est le résolveur DNS interrogé, et `#53` le port du service DNS ;
-- _Non-authoritative answer_ signifie que la réponse vient d’un cache, pas directement
-  du serveur faisant autorité ;
+- _Non-authoritative answer_ signifie que la réponse vient du résolveur (qui l’a
+  obtenue pour toi ou gardée en cache), pas directement du serveur faisant autorité ;
 - un même nom peut avoir **plusieurs adresses** : les grands sites répartissent la charge
   entre plusieurs machines.
 

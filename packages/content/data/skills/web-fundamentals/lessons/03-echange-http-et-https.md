@@ -106,9 +106,13 @@ famille :
 | ------- | --------------------------------------- | ------------------------------------------------------ |
 | `1xx`   | Information, échange en cours           | Rares dans ton quotidien                               |
 | `2xx`   | Succès                                  | `200 OK`                                               |
-| `3xx`   | Redirection : la ressource est ailleurs | `301 Moved Permanently`, `304 Not Modified`            |
+| `3xx`   | Redirection : la ressource est ailleurs | `301 Moved Permanently`, `302 Found`                   |
 | `4xx`   | Erreur **du client**                    | `404 Not Found`, `403 Forbidden`                       |
 | `5xx`   | Erreur **du serveur**                   | `500 Internal Server Error`, `503 Service Unavailable` |
+
+Un cas à part dans la famille `3xx` : `304 Not Modified` n’envoie nulle part ailleurs,
+il signifie « la copie que tu as déjà en cache est encore bonne ». Tu le croiseras dans
+le panneau Réseau.
 
 Retenir les familles suffit pour commencer : un `4xx` signifie que la requête pose
 problème (ressource inexistante, accès refusé), un `5xx` que le serveur a échoué en
@@ -129,7 +133,7 @@ Content-Length: 0
 
 - **`GET`** demande une ressource. C’est la méthode utilisée quand tu tapes une URL,
   quand tu cliques sur un lien, et quand le navigateur charge une image ou une feuille de
-  style. Une requête `GET` n’a pas de corps.
+  style. En pratique, une requête `GET` n’a pas de corps.
 - **`POST`** envoie des données au serveur pour qu’il les traite : un formulaire de
   contact, une inscription, une commande. Les données voyagent dans le **corps** de la
   requête.
@@ -200,6 +204,11 @@ Navigateur                                      Serveur www.example.com
     | <--------------------------------------------- |
 ```
 
+Ce schéma est simplifié : en réalité, c’est le navigateur qui ouvre la négociation TLS,
+et l’accord sur les clés se fait en même temps que l’envoi du certificat. L’idée à
+retenir est l’ordre : connexion, puis TLS (certificat vérifié, clés établies), puis
+seulement les messages HTTP, déjà chiffrés.
+
 Si la vérification échoue (certificat expiré, domaine qui ne correspond pas, autorité
 inconnue), le navigateur affiche une **page d’avertissement** pleine page et refuse
 d’afficher le site sans action explicite de ta part.
@@ -228,7 +237,8 @@ Aujourd’hui, HTTPS est la norme pour tous les sites, pas seulement les banques
 qu’un intermédiaire modifie les pages, et les navigateurs signalent les pages en HTTP
 comme « non sécurisées ». Beaucoup de sites répondent à toute requête en `http://` par
 une **redirection** `301` vers la même adresse en `https://`. Par exemple, au moment de la
-rédaction de ce cours, une requête vers `http://developer.mozilla.org/fr/` recevait :
+rédaction de ce cours, une requête vers `http://developer.mozilla.org/fr/` recevait
+(extrait des en-têtes) :
 
 ```http
 HTTP/1.1 301 Moved Permanently

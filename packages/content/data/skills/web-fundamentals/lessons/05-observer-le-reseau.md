@@ -87,7 +87,7 @@ toujours ces informations :
 | Durée et chronologie         | Le temps total et une barre qui situe la requête dans le temps         |
 
 En bas du panneau, une **barre de résumé** indique le nombre de requêtes, le volume
-transféré et, dans Chrome, les durées jusqu’aux événements `DOMContentLoaded` et `load`
+transféré et, selon le navigateur, les durées jusqu’aux événements `DOMContentLoaded` et `load`
 que tu as découverts dans la leçon précédente.
 
 La colonne **chronologie** (*waterfall*, « cascade ») est très parlante : tu y vois que

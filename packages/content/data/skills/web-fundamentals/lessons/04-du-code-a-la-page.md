@@ -129,7 +129,8 @@ JavaScript modifie.
 Le navigateur ne s’arrête jamais sur une erreur de HTML : la norme HTML décrit
 précisément comment **réparer** un document mal formé. Par exemple, ce fragment oublie
 de fermer les paragraphes et omet un élément de tableau (il est présenté comme du texte
-brut pour que tu voies exactement les balises écrites) :
+brut pour que tu voies exactement les balises écrites ; imagine-le dans le `body` d’une
+page qui commence par `<!doctype html>`) :
 
 ```text
 <p>Premier paragraphe
