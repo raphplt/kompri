@@ -3,6 +3,16 @@
 Entrées les plus récentes en haut. Chaque entrée résume ce qui a été livré, les décisions
 prises sans attendre de validation et la suite prévue.
 
+## 22 novembre 2026 — Reprise et règle de consommation
+
+- La première nuit a épuisé une fenêtre d’utilisation de 5 h (jusqu’à 9 agents en
+  parallèle). Règle désormais appliquée : **un seul agent à la fois** ; le travail ciblé est
+  fait directement ; les tâches lourdes sont espacées. Aucun outil ne donne le pourcentage
+  consommé : la règle porte donc sur le nombre d’agents.
+- Livré depuis : oral de positionnement, réinitialisation du mot de passe par e-mail,
+  adaptation mobile, audit des dépendances en CI, relectures HTML, CSS, Express/REST et
+  JavaScript (données, DOM, asynchrone) appliquées. Tous les cours sont rédigés.
+
 ## 21-22 novembre 2026 — Première nuit de travail autonome
 
 Livré (branche `claude/project-autonomous-progress-xyvkry`) :
