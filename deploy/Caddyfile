@@ -1,0 +1,6 @@
+# HTTPS reverse proxy for Kompri: Caddy obtains and renews the certificate for
+# $DOMAIN automatically (ports 80 and 443 must reach this server).
+{$DOMAIN} {
+	encode zstd gzip
+	reverse_proxy web:3000
+}

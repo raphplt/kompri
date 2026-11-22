@@ -57,5 +57,25 @@ services:
     ports:
       - '127.0.0.1:${WEB_PORT:-3000}:3000'
 
+  # Optional TLS proxy: docker compose --profile https up -d (requires DOMAIN).
+  proxy:
+    image: caddy:2.10.2-alpine
+    profiles: ['https']
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      web: { condition: service_healthy }
+
 volumes:
   postgres_data:
+  caddy_data:
+  caddy_config:

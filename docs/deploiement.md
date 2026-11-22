@@ -43,13 +43,19 @@ docker compose -f compose.prod.yaml --env-file .env.production ps
 Derrière un proxy d’entreprise qui inspecte TLS, ajouter au build
 `--secret id=extra_ca,src=/chemin/ca.pem` (option du Dockerfile, sans effet sinon).
 
-Exemple de configuration Caddy, qui obtient le certificat automatiquement :
+### HTTPS intégré
 
-```text
-kompri.example.fr {
-  reverse_proxy 127.0.0.1:3000
-}
+Le compose inclut un proxy Caddy optionnel (profil `https`) qui obtient et renouvelle le
+certificat automatiquement. Il suffit que le nom de domaine pointe vers le serveur et que les
+ports 80 et 443 soient ouverts :
+
+```bash
+echo 'DOMAIN=kompri.example.fr' >> .env.production
+docker compose -f compose.prod.yaml --env-file .env.production --profile https up -d
 ```
+
+Pour utiliser un proxy existant à la place, omettre le profil et le faire pointer vers
+`127.0.0.1:3000` (configuration dans `deploy/Caddyfile` pour exemple).
 
 ## Variables
 
