@@ -3,6 +3,16 @@
 Entrées les plus récentes en haut. Chaque entrée résume ce qui a été livré, les décisions
 prises sans attendre de validation et la suite prévue.
 
+## 22 novembre 2026 (soir) — Finitions et tests de bout en bout
+
+- `main` avancé sur la branche de travail (avance rapide) pour que le porteur du projet puisse
+  tester en local ; procédure Mac donnée.
+- Pages d’erreur ; suivi des leçons lues (page compétence, leçon, tableau de bord, export).
+- Tests de bout en bout Playwright en CI (visite, leçon, pages légales, 404, parcours complet
+  jusqu’à l’oral validé). Ils ont révélé deux défauts corrigés : les pages introuvables
+  répondaient 200 à cause d’un état de chargement global, et la zone de réponse de l’oral
+  avait le même nom accessible que son champ.
+
 ## 22 novembre 2026 (après-midi) — Compte, réexamen et suivi
 
 - Cours de sécurité mis à jour vers le Top 10 OWASP 2025 (vérifié sur owasp.org), avec la
