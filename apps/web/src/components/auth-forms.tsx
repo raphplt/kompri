@@ -139,11 +139,17 @@ export function RegisterForm() {
       </div>
       <p className="text-xs text-muted">
         {fr.auth.consent}{' '}
-        <Link href="/conditions" className="text-accent hover:underline">
+        <Link
+          href="/conditions"
+          className="text-accent underline underline-offset-2"
+        >
           {fr.footer.terms}
         </Link>
         {' · '}
-        <Link href="/confidentialite" className="text-accent hover:underline">
+        <Link
+          href="/confidentialite"
+          className="text-accent underline underline-offset-2"
+        >
           {fr.footer.privacy}
         </Link>
       </p>
