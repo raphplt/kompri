@@ -36,7 +36,7 @@ mkdir recettes/desserts/tartes
 ```
 
 ```text
-mkdir: cannot create directory 'recettes/desserts/tartes': No such file or directory
+mkdir: cannot create directory ‘recettes/desserts/tartes’: No such file or directory
 ```
 
 `mkdir` refuse de créer `tartes` parce que son parent `desserts` n’existe pas. L’option
@@ -118,10 +118,10 @@ wc tarte-pommes.txt
 99
 100
 100 nombres.txt
- 2  9 57 tarte-pommes.txt
+ 2 10 57 tarte-pommes.txt
 ```
 
-`tarte-pommes.txt` contient 2 lignes, 9 mots et 57 octets : les lettres accentuées et le
+`tarte-pommes.txt` contient 2 lignes, 10 mots et 57 octets : les lettres accentuées et le
 symbole « ° » occupent plusieurs octets en UTF-8. (Sous macOS, `wc` aligne ses colonnes
 différemment.)
 
@@ -256,6 +256,9 @@ photo1.jpg  photo10.jpg  photo2.jpg
 photo1.jpg  photo2.jpg
 ```
 
+L’ordre affiché dépend de la langue configurée sur ton système : avec un système en
+français, tu peux obtenir `photo10.jpg` avant `photo1.jpg`. Ce n’est pas une erreur.
+
 Point essentiel : c’est le **shell** qui remplace le motif par la liste des noms
 correspondants, **avant** de lancer la commande. `ls` ne voit jamais `*.jpg` ; il reçoit
 `photo1.jpg photo10.jpg photo2.jpg`. Tu peux le vérifier sans risque avec `echo` :
@@ -302,8 +305,10 @@ le **répertoire courant**. Fais `pwd` et `echo rm *` avant.
 `-f.txt` à `rm`, qui le lit comme des options. Écris `rm -- -f.txt` (`--` signifie « fin
 des options ») ou `rm ./-f.txt`.
 
-**« Pour vider un fichier, je le supprime et je le recrée. »** `> fichier` (une
-redirection sans commande) suffit à le vider, mais vérifie que c’est bien ce fichier.
+**« Pour vider un fichier, je le supprime et je le recrée. »** Dans bash, `> fichier`
+(une redirection sans commande) suffit à le vider, mais vérifie que c’est bien ce
+fichier. Sous zsh (macOS), écris plutôt `: > fichier` : seul, `> fichier` attend du
+texte au clavier (termine avec `Ctrl`+`D`).
 
 ## Exercices
 
@@ -343,7 +348,8 @@ portfolio/images:
 
 `mkdir -p` crée `portfolio` et ses deux sous-dossiers en une fois. `touch` accepte
 plusieurs fichiers. La redirection `>` crée `LISEZMOI.md` avec son contenu. Le dossier
-`images` est vide, d’où la section sans contenu à la fin.
+`images` est vide, d’où la section sans contenu à la fin. Selon la langue du système,
+`LISEZMOI.md` peut apparaître en dernier plutôt qu’en premier dans la liste.
 
 :::
 

@@ -117,11 +117,13 @@
     \ `type=\"module\"`, `async` éventuellement) et\n   explique ce que cela change pour l’analyse du\
     \ HTML.\n6. **Le cache.** Recharge sans désactiver le cache : qu’est-ce qui change dans le\n   panneau\
     \ Réseau et dans le volume transféré ?\n7. **La sécurité.** Clique sur l’icône à gauche de l’adresse\
-    \ pour afficher les\n   informations du certificat : pour quel domaine est-il valide, qui l’a émis,\n\
-    \   jusqu’à quand ? Explique ce que ces informations garantissent au visiteur.\n8. **Le délai.** Pour\
-    \ le document principal, l’onglet Délais : quelles étapes\n   vois-tu et laquelle domine ?\n\nConseils\
-    \ : demande à l’IA d’expliquer chaque terme inconnu, puis vérifie dans le\npanneau Réseau. Méfie-toi\
-    \ des réponses générales : tes observations priment sur ce\nque l’IA suppose de ce site.\n"
+    \ pour afficher les\n   informations du certificat (selon le navigateur, il faut passer par une entrée\n\
+    \   du type « Connexion sécurisée », puis « Certificat valide » ou « Plus\n   d’informations ») :\
+    \ pour quel domaine est-il valide, qui l’a émis, jusqu’à\n   quand ? Explique ce que ces informations\
+    \ garantissent au visiteur.\n8. **Le délai.** Pour le document principal, l’onglet Délais : quelles\
+    \ étapes\n   vois-tu et laquelle domine ?\n\nConseils : demande à l’IA d’expliquer chaque terme inconnu,\
+    \ puis vérifie dans le\npanneau Réseau. Méfie-toi des réponses générales : tes observations priment\
+    \ sur ce\nque l’IA suppose de ce site.\n"
   deliverable: 'Colle ta fiche d’enquête (points 1 à 8, avec les valeurs relevées et tes
 
     explications), le nom du navigateur et sa version, puis un court paragraphe : ce que

@@ -313,7 +313,8 @@ Node.js v24.21.0
 Ne lis pas tout : cherche les trois informations utiles.
 
 1. **Où ?** La première ligne : `total.js:4`, le fichier et le **numéro de ligne**. Node.js
-   recopie la ligne fautive et place un `^` sous l’endroit précis.
+   recopie la ligne fautive et place un `^` là où l’erreur a été détectée (ici sous
+   l’appel `log(`, pas exactement sous le nom fautif : lis toute la ligne).
 2. **Quoi ?** La ligne `ReferenceError: formatPrice is not defined` : le **type**
    d’erreur et son **message**. Ici, une fonction utilisée n’existe pas.
 3. **Par où est-on passé ?** La **pile d’appels** (*stack trace*), les lignes `at …`.

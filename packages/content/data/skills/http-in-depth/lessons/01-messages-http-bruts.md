@@ -26,8 +26,9 @@ avec `curl`, puis tu écris toi-même une requête HTTP caractère par caractèr
 
 Tu as besoin de **Node.js 24** et d’un terminal (voir la compétence « Terminal et ligne
 de commande »), ainsi que de **curl**, un client HTTP en ligne de commande. curl est
-installé d’office sur macOS et sur la plupart des distributions Linux. Windows 10 et 11
-fournissent `curl.exe`.
+installé d’office sur macOS, Windows 10 et 11 (sous le nom `curl.exe`) et sur beaucoup de
+distributions Linux ; s’il manque (`curl: command not found`), installe-le avec le
+gestionnaire de paquets, par exemple `sudo apt install curl` sous Ubuntu ou WSL.
 
 :::warning[Windows et PowerShell]
 Dans Windows PowerShell, le mot `curl` peut désigner une autre commande
@@ -49,7 +50,12 @@ const port = 3000;
 const server = createServer(async (req, res) => {
   // Lit le corps éventuel de la requête, morceau par morceau.
   let body = '';
-  for await (const chunk of req) body += chunk;
+  try {
+    for await (const chunk of req) body += chunk;
+  } catch {
+    // Le client a coupé la connexion avant la fin du corps : rien à répondre.
+    return;
+  }
 
   if (req.method === 'GET' && req.url === '/hello') {
     const html = '<!doctype html>\n<title>Salut</title>\n<p>Bonjour !</p>\n';
@@ -177,7 +183,6 @@ curl -v http://localhost:3000/echo?nom=Ada
 < Connection: keep-alive
 < Keep-Alive: timeout=5
 <
-{ [97 bytes data]
 * Connection #0 to host localhost left intact
 GET /echo?nom=Ada HTTP/1.1
 Host: localhost:3000

@@ -346,7 +346,8 @@ Remarques :
 
 - sans `-L`, curl ne suit pas la redirection : le statut reçu est bien `301` ;
 - les deux suppressions **dépendent de l’ordre** et de l’état du serveur : relancer le
-  scénario sans redémarrer le serveur fait échouer la première (`404` au lieu de `204`).
+  scénario sans redémarrer le serveur fait échouer la première (`404` au lieu de `204`),
+  ainsi que la vérification `HEAD` sur la note 1 du scénario de départ.
   C’est normal, et c’est une bonne question à se poser : pour que le scénario soit
   rejouable, il vaut mieux supprimer une note **créée par le scénario lui-même**, en
   récupérant son adresse dans l’en-tête `Location` ;

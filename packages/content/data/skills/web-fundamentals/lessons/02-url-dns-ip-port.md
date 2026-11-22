@@ -58,7 +58,8 @@ Quelques règles à connaître :
 Tu n’as pas besoin de savoir programmer pour essayer. Ouvre n’importe quelle page dans ton
 navigateur, puis la **console** des outils de développement : touche `F12` puis onglet
 **Console**, ou directement `Ctrl`+`Maj`+`J` sous Chrome et Edge, `Ctrl`+`Maj`+`K` sous
-Firefox (`Cmd`+`Option`+`J` et `Cmd`+`Option`+`K` sur macOS). Colle les lignes suivantes et valide avec Entrée :
+Firefox (`Cmd`+`Option`+`J` et `Cmd`+`Option`+`K` sur macOS). Colle les lignes suivantes
+et valide avec Entrée :
 
 ```js
 const url = new URL(
