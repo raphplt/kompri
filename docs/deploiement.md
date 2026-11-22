@@ -103,7 +103,8 @@ docker compose -f compose.prod.yaml exec -T postgres \
   pg_dump -U kompri -d kompri --format=custom > kompri-$(date +%F).dump
 ```
 
-Planifier cette commande chaque jour (cron), chiffrer et copier les fichiers hors du serveur,
+Planifier cette commande chaque jour (cron), garder 30 jours de sauvegardes (durée annoncée
+dans la politique de confidentialité), les chiffrer et les copier hors du serveur,
 et tester régulièrement une restauration :
 
 ```bash

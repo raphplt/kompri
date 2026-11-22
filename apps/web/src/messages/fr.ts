@@ -15,6 +15,7 @@ export const fr = {
   footer: {
     legal: 'Mentions légales',
     privacy: 'Confidentialité',
+    terms: 'Conditions d’utilisation',
     about: 'Comment ça marche',
     note: 'Contenus pédagogiques rédigés avec assistance et en attente de relecture humaine.',
   },
@@ -231,7 +232,7 @@ export const fr = {
     newPassword: 'Nouveau mot de passe',
     hasAccount: 'Déjà un compte ?',
     consent:
-      'En créant un compte, tu acceptes que tes travaux et oraux soient traités pour t’évaluer, comme décrit dans la politique de confidentialité.',
+      'En créant un compte, tu acceptes les conditions d’utilisation et le traitement de tes travaux et oraux pour t’évaluer, comme décrit dans la politique de confidentialité.',
     errors: {
       invalid_credentials: 'Adresse e-mail ou mot de passe incorrect.',
       account_locked:

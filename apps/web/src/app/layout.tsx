@@ -112,6 +112,9 @@ function Footer() {
           <Link href="/comment-ca-marche" className="hover:text-accent">
             {fr.footer.about}
           </Link>
+          <Link href="/conditions" className="hover:text-accent">
+            {fr.footer.terms}
+          </Link>
           <Link href="/confidentialite" className="hover:text-accent">
             {fr.footer.privacy}
           </Link>

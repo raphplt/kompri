@@ -139,6 +139,10 @@ export function RegisterForm() {
       </div>
       <p className="text-xs text-muted">
         {fr.auth.consent}{' '}
+        <Link href="/conditions" className="text-accent hover:underline">
+          {fr.footer.terms}
+        </Link>
+        {' · '}
         <Link href="/confidentialite" className="text-accent hover:underline">
           {fr.footer.privacy}
         </Link>
