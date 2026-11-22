@@ -1,0 +1,318 @@
+- id: fullstack-app-sans-ia
+  family: SANS_IA
+  title: Le carnet de prêts entre voisins
+  summary: Concevoir seul l’architecture et le contrat d’une petite application, puis écrire et tester
+    son module d’état d’interface.
+  estimatedMinutes: 60
+  instructions: "Une association de quartier veut une application où chaque voisin inscrit liste les\n\
+    objets qu’il **prête** (perceuse, échelle…) et note à qui et jusqu’à quand. Chaque voisin\nne voit\
+    \ et ne gère que ses propres objets. Tu travailles seul, sans IA, sans écrire le\nserveur : ce défi\
+    \ porte sur la conception et sur la logique de l’interface.\n\n1. **Architecture** (texte ou schéma\
+    \ en `text`) : les trois couches, ce qui est servi par\n   qui, l’origine unique, et trois décisions\
+    \ justifiées (avec leur coût).\n2. **Contrat d’API** sous forme de tableau : au moins six routes (comptes\
+    \ compris) avec\n   méthode, chemin, corps, succès et erreurs principales. Un objet est représenté\
+    \ par\n   `{ id, name, borrower, due_on, created_at }` ; `borrower` vaut `null` quand l’objet est\n\
+    \   disponible, `due_on` est une date `AAAA-MM-JJ` ou `null`.\n3. **Migration** `001_init.sql` pour\
+    \ les objets (on suppose la table `users` existante) :\n   types, contraintes et clé étrangère justifiés.\n\
+    4. **`public/state.js`** : module ES sans DOM ni réseau, qui exporte :\n   - `initialState`, avec\
+    \ un `status` parmi `loading`, `anonymous`, `ready`, `failed` ;\n   - `upsertItem(items, item)` et\
+    \ `removeItem(items, id)`, qui ne modifient jamais le\n     tableau reçu ;\n   - `visibleItems(items,\
+    \ filter)`, où `filter` vaut `all`, `available` ou `lent` ;\n   - `isOverdue(item, today)`, vrai si\
+    \ l’objet est prêté et que `due_on` est **avant**\n     `today` (deux chaînes `AAAA-MM-JJ`) ;\n  \
+    \ - `summaryLabel(items)` : « Aucun objet prêté », « 1 objet prêté » ou « N objets\n     prêtés ».\n\
+    5. **`test/state.test.js`** avec `node:test` : au moins six tests, dont les cas limites\n   (échéance\
+    \ le jour même, objet disponible avec une date, tableau vide, immutabilité).\n"
+  deliverable: 'Colle l’architecture, le contrat, la migration, `state.js`, `state.test.js` et la sortie
+
+    de `node --test test/state.test.js`.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: architecture
+      description: Décrit une architecture cohérente et justifie ses décisions par leurs raisons et leurs
+        coûts.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Architecture absente ou confuse (couches mélangées, base exposée au navigateur).
+      - score: 1
+        description: Trois couches décrites mais décisions non justifiées.
+      - score: 2
+        description: Décisions justifiées, conséquences de l’origine unique expliquées.
+      - score: 3
+        description: Compare des alternatives et prévoit l’effet d’un changement d’origine.
+    - id: contract-data
+      description: Produit un contrat d’API et un schéma sûrs et cohérents entre eux.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Contrat incomplet ou qui laisse le client choisir le propriétaire.
+      - score: 1
+        description: Routes présentes mais codes d’erreur ou contraintes incohérents.
+      - score: 2
+        description: Contrat complet, erreurs justes, migration avec clé étrangère, cascade et contraintes.
+      - score: 3
+        description: Justifie chaque contrainte et anticipe les cas limites (échéance sans emprunteur).
+    - id: state-tests
+      description: Écrit des fonctions d’état pures et les teste sur les cas limites.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Fonctions qui modifient leurs entrées ou tests absents.
+      - score: 1
+        description: Fonctions correctes mais tests limités au cas nominal.
+      - score: 2
+        description: Fonctions pures, tests des cas limites et de l’immutabilité.
+      - score: 3
+        description: Explique pourquoi la date du jour est un paramètre et modifie le module en direct
+          sans régression.
+- id: fullstack-app-avec-ia
+  family: AVEC_IA
+  title: Le suivi de lectures, de bout en bout
+  summary: Construire avec une IA une application full-stack complète et prête pour la production, puis
+    la défendre couche par couche.
+  estimatedMinutes: 240
+  instructions: "Tu peux utiliser une IA autant que tu veux. À l’oral, tu expliqueras chaque couche sans\n\
+    aide, tu justifieras l’architecture et tu modifieras le projet en direct.\n\nObjectif : **Mes lectures**,\
+    \ une application où chaque utilisateur suit ses livres : titre,\nauteur, statut (`to-read`, `reading`,\
+    \ `done`), note facultative de 1 à 5. Pile imposée :\nHTML, CSS et JavaScript sans framework, Node.js\
+    \ 24, Express 5, PostgreSQL, `pg`,\n`node:test`.\n\nExigences :\n\n1. **Architecture** : interface\
+    \ servie par Express sur la même origine que l’API ;\n   organisation du projet par responsabilités\
+    \ ; `createApp` séparé du démarrage.\n2. **API** : comptes (inscription, connexion, déconnexion, utilisateur\
+    \ courant) avec scrypt\n   et sessions en base ; CRUD des livres limité au propriétaire ; filtre par\
+    \ statut ;\n   validation stricte ; erreurs `{ error }` en JSON, 404 JSON pour les routes d’API\n\
+    \   inconnues.\n3. **Interface** : états `loading`, `anonymous`, `ready`, `failed`, plus `busy` et\
+    \ `error` ;\n   un module d’appels à l’API qui gère `response.ok`, le 204 et un délai maximal ; rendu\n\
+    \   sans `innerHTML` ; accessible au clavier ; utilisable sur un écran de 375 pixels.\n4. **Configuration**\
+    \ : variables d’environnement validées au démarrage, `.env.example`\n   versionné, scripts npm `start`,\
+    \ `dev`, `db:migrate`, `test`, migrations versionnées.\n5. **Tests** : un parcours de bout en bout\
+    \ par l’API, des tests à deux utilisateurs, des\n   tests unitaires des fonctions d’état ; base de\
+    \ test dédiée protégée par un garde-fou.\n6. **Production** : en-têtes de sécurité, vérification d’origine,\
+    \ journaux JSON sans\n   données sensibles, route de santé, arrêt propre sur `SIGTERM`, procédure\
+    \ de\n   sauvegarde et de restauration écrite et essayée.\n"
+  deliverable: 'Colle l’arborescence du projet, le contenu des fichiers (tu peux regrouper les fichiers
+
+    très proches du cours en indiquant ce qui change), la sortie de `npm test`, la sortie
+
+    d’une sauvegarde puis d’une restauration vérifiée, et une page de notes : décisions
+
+    d’architecture, ce que l’IA a proposé et que tu as refusé ou corrigé, limites connues.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: architecture
+      description: Explique l’architecture et suit le parcours complet d’une action à travers les couches.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne sait pas relier l’interface, l’API et la base.
+      - score: 1
+        description: Décrit les couches mais pas le chemin d’une requête.
+      - score: 2
+        description: Suit une action du clic à la base et retour, ordre des middlewares compris.
+      - score: 3
+        description: Justifie les décisions et leurs coûts, et ce que l’IA proposait d’autre.
+    - id: interface-states
+      description: Gère les états de l’interface et l’appel à l’API de façon robuste et accessible.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Cas heureux seulement, ou innerHTML avec des données.
+      - score: 1
+        description: Chargement et erreur gérés partiellement.
+      - score: 2
+        description: Tous les états gérés, 401 et serveur injoignable compris, rendu sûr et accessible.
+      - score: 3
+        description: Prévoit correctement l’affichage dans un scénario d’échec proposé à l’oral.
+    - id: testing
+      description: Teste les parcours essentiels et les règles de sécurité de façon fiable.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Tests absents, ou sur la base de développement.
+      - score: 1
+        description: Tests présents mais sans deux utilisateurs ou sans parcours complet.
+      - score: 2
+        description: Parcours, isolation et fonctions d’état testés, base protégée, régression démontrable.
+    - id: production
+      description: Prépare la mise en production et sait l’expliquer.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Configuration en dur ou secrets dans le dépôt.
+      - score: 1
+        description: Configuration correcte mais journaux, santé ou sauvegardes absents.
+      - score: 2
+        description: Configuration validée, journaux sûrs, santé, arrêt propre, sauvegarde restaurée.
+- id: fullstack-app-contre-ia
+  family: CONTRE_IA
+  title: Le budget du mois
+  summary: Auditer une petite application full-stack générée par une IA et corriger ses défauts de l’interface
+    jusqu’à la base.
+  estimatedMinutes: 100
+  instructions: "Un assistant a généré une application de suivi des dépenses. Elle « marche » sur la\n\
+    machine de son auteur. Avant de l’utiliser pour de vrai, tu dois en faire la revue complète :\ninterface,\
+    \ API, base, tests, configuration.\n\nLes modules `auth.js`, `sessions.js`, `password.js`, `login-limiter.js`\
+    \ et\n`routes/auth.js` sont ceux du cours (compétence Authentification et projet Tâches) : ils\nsont\
+    \ corrects et hors du périmètre de la revue.\n\nSchéma :\n\n```sql\nCREATE TABLE users (\n  id integer\
+    \ GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n  email text NOT NULL UNIQUE,\n  password_hash text NOT\
+    \ NULL\n);\nCREATE TABLE sessions (\n  token_hash text PRIMARY KEY,\n  user_id integer NOT NULL REFERENCES\
+    \ users (id) ON DELETE CASCADE,\n  created_at timestamptz NOT NULL DEFAULT now(),\n  expires_at timestamptz\
+    \ NOT NULL\n);\nCREATE TABLE expenses (\n  id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n\
+    \  owner_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,\n  label text NOT NULL,\n  amount\
+    \ real NOT NULL,\n  spent_on date NOT NULL\n);\n```\n\n`server.js` :\n\n```js\nimport express from\
+    \ 'express';\nimport pg from 'pg';\nimport { loadUser, requireAuth } from './auth.js';\nimport { authRouter\
+    \ } from './routes/auth.js';\n\nconst pool = new pg.Pool({\n  connectionString: process.env.DATABASE_URL\
+    \ || 'postgres://postgres:postgres@localhost:5432/budget',\n});\n\nconst app = express();\napp.use(express.json());\n\
+    app.use((req, res, next) => {\n  console.log(new Date().toISOString(), req.method, req.url, JSON.stringify(req.body\
+    \ ?? {}));\n  next();\n});\napp.use(loadUser(pool));\napp.use(express.static('public'));\napp.use('/api/auth',\
+    \ authRouter({ pool, secureCookies: false, log: console.log }));\n\napp.get('/api/expenses', requireAuth,\
+    \ async (req, res) => {\n  const month = req.query.month || new Date().toISOString().slice(0, 7);\n\
+    \  const result = await pool.query(\n    `SELECT id, label, amount, spent_on FROM expenses\n     WHERE\
+    \ owner_id = $1 AND to_char(spent_on, 'YYYY-MM') = $2\n     ORDER BY spent_on DESC`,\n    [req.user.id,\
+    \ month],\n  );\n  res.json(result.rows);\n});\n\napp.post('/api/expenses', requireAuth, async (req,\
+    \ res) => {\n  const { label, amount, spentOn } = req.body;\n  const result = await pool.query(\n\
+    \    `INSERT INTO expenses (owner_id, label, amount, spent_on)\n     VALUES ($1, $2, $3, $4) RETURNING\
+    \ id, label, amount, spent_on`,\n    [req.user.id, label, Number(amount), spentOn],\n  );\n  res.status(201).json(result.rows[0]);\n\
+    });\n\napp.delete('/api/expenses/:id', requireAuth, async (req, res) => {\n  await pool.query('DELETE\
+    \ FROM expenses WHERE id = $1', [req.params.id]);\n  res.status(204).end();\n});\n\napp.use((err,\
+    \ req, res, next) => {\n  console.error(err);\n  res.status(500).json({ error: err.message });\n});\n\
+    \napp.listen(3000, () => console.log('Budget sur http://localhost:3000'));\n```\n\n`public/app.js`,\
+    \ chargé par une page qui contient une liste `#expenses`, un paragraphe\n`#total` et un formulaire\
+    \ `#expense-form` (champs `label`, `amount`, `spentOn` de type\n`date`) :\n\n```js\nconst list = document.querySelector('#expenses');\n\
+    const total = document.querySelector('#total');\nconst form = document.querySelector('#expense-form');\n\
+    \nasync function loadExpenses() {\n  const response = await fetch('/api/expenses');\n  const expenses\
+    \ = await response.json();\n  list.innerHTML = expenses\n    .map((e) => `<li>${e.spent_on.slice(0,\
+    \ 10)} — ${e.label} : ${e.amount} €\n      <button data-id=\"${e.id}\">×</button></li>`)\n    .join('');\n\
+    \  const sum = expenses.reduce((acc, e) => acc + e.amount, 0);\n  total.textContent = `Total du mois\
+    \ : ${sum} €`;\n}\n\nform.addEventListener('submit', async (event) => {\n  event.preventDefault();\n\
+    \  const data = Object.fromEntries(new FormData(form));\n  await fetch('/api/expenses', {\n    method:\
+    \ 'POST',\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify(data),\n\
+    \  });\n  form.reset();\n  loadExpenses();\n});\n\nlist.addEventListener('click', async (event) =>\
+    \ {\n  if (!event.target.dataset.id) return;\n  await fetch(`/api/expenses/${event.target.dataset.id}`,\
+    \ { method: 'DELETE' });\n  loadExpenses();\n});\n\nloadExpenses();\n```\n\n`test/expenses.test.js`,\
+    \ lancé avec `node --test` pendant que le serveur tourne :\n\n```js\nimport { test } from 'node:test';\n\
+    import assert from 'node:assert/strict';\nimport pg from 'pg';\n\nconst pool = new pg.Pool({ connectionString:\
+    \ process.env.DATABASE_URL });\nconst BASE = 'http://localhost:3000';\nconst COOKIE = process.env.TEST_COOKIE;\
+    \ // copié depuis le navigateur après connexion\n\ntest('ajouter une dépense', async () => {\n  await\
+    \ pool.query('DELETE FROM expenses');\n  const response = await fetch(`${BASE}/api/expenses`, {\n\
+    \    method: 'POST',\n    headers: { 'Content-Type': 'application/json', Cookie: COOKIE },\n    body:\
+    \ JSON.stringify({ label: 'Courses', amount: '42.10', spentOn: '2026-11-03' }),\n  });\n  assert.ok(response.ok);\n\
+    });\n\ntest('lister les dépenses du mois', async () => {\n  const response = await fetch(`${BASE}/api/expenses?month=2026-11`,\
+    \ { headers: { Cookie: COOKIE } });\n  const expenses = await response.json();\n  assert.equal(expenses.length,\
+    \ 1);\n  await pool.end();\n});\n```\n\nTravail demandé :\n\n1. Liste chaque défaut : fichier, ligne,\
+    \ scénario qui le révèle (entrée, configuration ou\n   fuseau horaire), conséquence, gravité. Classe-les\
+    \ par couche.\n2. Reproduis au moins quatre défauts et montre la sortie obtenue.\n3. Corrige l’application\
+    \ : code complet des fichiers modifiés, migration si le schéma\n   change (on suppose la base déjà\
+    \ utilisée : pas de réécriture de la première migration).\n4. Remplace le fichier de test par des\
+    \ tests fiables (base dédiée, application démarrée par\n   le test, deux utilisateurs).\n"
+  deliverable: 'Colle ton tableau de défauts par couche, les reproductions (commandes et sorties), les
+
+    fichiers corrigés, la migration, les nouveaux tests et la sortie de `node --test`.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: defects-found
+      description: Identifie les défauts dans toutes les couches, y compris les plus discrets.
+      maxScore: 4
+    - id: root-cause
+      description: Explique la cause technique des défauts non évidents.
+      maxScore: 3
+    - id: fixes
+      description: Corrige sans régression et en respectant les migrations existantes.
+      maxScore: 3
+    - id: tests
+      description: Remplace les tests par une suite fiable et isolée.
+      maxScore: 2
+- id: fullstack-app-apres-ia
+  family: APRES_IA
+  title: Les échéances du projet Tâches
+  summary: Dépanner le projet Tâches du cours puis lui ajouter une date d’échéance, de la base jusqu’à
+    l’interface, sans le réécrire.
+  estimatedMinutes: 150
+  instructions: "Tu reprends le projet **Tâches** construit dans les leçons de cette compétence. Une\n\
+    personne de l’équipe l’a modifié avec une IA. Tous les fichiers sont ceux des leçons, sauf\n`src/routes/tasks.js`,\
+    \ reproduit ici en entier. `public/state.js` est rappelé pour\nréférence.\n\n`src/routes/tasks.js`\
+    \ :\n\n```js\n// src/routes/tasks.js — tâches de l’utilisateur connecté, et seulement les siennes\n\
+    import express from 'express';\nimport { requireAuth } from '../auth.js';\n\nconst filters = new Map([\n\
+    \  ['all', ''],\n  ['open', 'AND done = false'],\n  ['done', 'AND done = true'],\n]);\n\nfunction\
+    \ parseId(value) {\n  return /^[1-9][0-9]{0,9}$/.test(value) ? Number(value) : null;\n}\n\nfunction\
+    \ readTitle(body) {\n  const title = String(body?.title ?? '').trim();\n  return title.length >= 1\
+    \ && title.length <= 200 ? title : null;\n}\n\nexport function tasksRouter({ pool }) {\n  const router\
+    \ = express.Router();\n  router.use(requireAuth); // toutes les routes de ce routeur exigent une session\n\
+    \n  router.get('/', async (req, res) => {\n    const status = String(req.query.status ?? 'all');\n\
+    \    if (!filters.has(status)) {\n      return res.status(400).json({ error: 'status doit valoir all,\
+    \ open ou done' });\n    }\n    const result = await pool.query(\n      `SELECT id, title, done, created_at\
+    \ FROM tasks\n       WHERE owner_id = $1 ${filters.get(status)}\n       ORDER BY done, created_at\
+    \ DESC, id DESC`,\n      [req.user.id],\n    );\n    res.json(result.rows);\n  });\n\n  router.post('/',\
+    \ async (req, res) => {\n    const title = readTitle(req.body);\n    if (!title) return res.status(400).json({\
+    \ error: 'Le titre doit contenir de 1 à 200 caractères' });\n    const result = await pool.query(\n\
+    \      `INSERT INTO tasks (owner_id, title) VALUES ($1, $2)\n       RETURNING id, title, done, created_at`,\n\
+    \      [req.user.id, title],\n    );\n    res.status(201).json(result.rows[0]);\n  });\n\n  router.patch('/:id',\
+    \ async (req, res) => {\n    const id = parseId(req.params.id);\n    const changes = {};\n    if (req.body?.title\
+    \ !== undefined) {\n      changes.title = readTitle(req.body);\n      if (!changes.title) {\n    \
+    \    return res.status(400).json({ error: 'Le titre doit contenir de 1 à 200 caractères' });\n   \
+    \   }\n    }\n    if (req.body?.done !== undefined) {\n      if (typeof req.body.done !== 'boolean')\
+    \ {\n        return res.status(400).json({ error: 'done doit être un booléen' });\n      }\n     \
+    \ changes.done = req.body.done;\n    }\n    if (Object.keys(changes).length === 0) {\n      return\
+    \ res.status(400).json({ error: 'Rien à modifier' });\n    }\n    // COALESCE garde la valeur actuelle\
+    \ quand le champ n’est pas fourni\n    const result = await pool.query(\n      `UPDATE tasks SET title\
+    \ = COALESCE($1, title), done = COALESCE($2, done)\n       WHERE id = $3 AND owner_id = $4\n     \
+    \  RETURNING id, title, done, created_at`,\n      [changes.title || null, changes.done || null, id,\
+    \ req.user.id],\n    );\n    if (result.rowCount === 0) return res.status(404).json({ error: 'Tâche\
+    \ introuvable' });\n    res.json(result.rows[0]);\n  });\n\n  router.delete('/:id', async (req, res)\
+    \ => {\n    const result = await pool.query('DELETE FROM tasks WHERE id = $1 AND owner_id = $2', [\n\
+    \      parseId(req.params.id),\n      req.user.id,\n    ]);\n    if (result.rowCount === 0) return\
+    \ res.status(404).json({ error: 'Tâche introuvable' });\n    res.status(204).end();\n  });\n\n  return\
+    \ router;\n}\n```\n\n`public/state.js` (identique à la leçon 3) :\n\n```js\n// public/state.js — l’état\
+    \ de l’interface et des fonctions pures pour le transformer\nexport const initialState = Object.freeze({\n\
+    \  status: 'loading', // 'loading' | 'anonymous' | 'ready' | 'failed'\n  user: null,\n  tasks: [],\n\
+    \  filter: 'all', // 'all' | 'open' | 'done'\n  error: null,\n  busy: false,\n});\n\n// Tâches à faire\
+    \ d’abord, puis les plus récentes en premier (comme l’API)\nexport function sortTasks(tasks) {\n \
+    \ return tasks.toSorted(\n    (a, b) =>\n      Number(a.done) - Number(b.done) ||\n      b.created_at.localeCompare(a.created_at)\
+    \ ||\n      b.id - a.id,\n  );\n}\n\nexport function upsertTask(tasks, task) {\n  const others = tasks.filter((existing)\
+    \ => existing.id !== task.id);\n  return sortTasks([...others, task]);\n}\n\nexport function removeTask(tasks,\
+    \ id) {\n  return tasks.filter((task) => task.id !== id);\n}\n\nexport function visibleTasks(tasks,\
+    \ filter) {\n  if (filter === 'open') return tasks.filter((task) => !task.done);\n  if (filter ===\
+    \ 'done') return tasks.filter((task) => task.done);\n  return tasks;\n}\n\nexport function remainingLabel(tasks)\
+    \ {\n  const count = tasks.filter((task) => !task.done).length;\n  if (count === 0) return 'Aucune\
+    \ tâche restante';\n  return count === 1 ? '1 tâche restante' : `${count} tâches restantes`;\n}\n\
+    ```\n\nDemandes :\n\n1. **Bug signalé** : « depuis la dernière version, on ne peut plus décocher une\
+    \ tâche\n   terminée : la case se recoche toute seule ». Reproduis le bug avec `curl`, explique\n\
+    \   sa cause exacte et pourquoi l’interface « recoche » la case, corrige-le, et ajoute un\n   test\
+    \ de non-régression. Explique pourquoi les tests existants ne l’ont pas vu.\n2. **Date d’échéance**\
+    \ facultative, de bout en bout :\n   - nouvelle migration `002_due_on.sql` ;\n   - l’API accepte `due_on`\
+    \ (`AAAA-MM-JJ` d’une date réelle, ou `null` pour l’effacer) en\n     création et en modification,\
+    \ refuse le reste avec 400, et renvoie toujours `due_on`\n     sous forme de chaîne `AAAA-MM-JJ` ou\
+    \ `null`, quel que soit le fuseau du serveur ;\n   - dans `state.js`, une fonction pure `isLate(task,\
+    \ today)` : vraie si la tâche n’est pas\n     terminée et que son échéance est passée ;\n   - dans\
+    \ l’interface, un champ `date` facultatif à l’ajout, l’échéance affichée au format\n     `JJ/MM/AAAA`\
+    \ et une classe `late` pour les tâches en retard, avec un texte visible (pas\n     seulement une couleur)\
+    \ ;\n   - tests : validation des dates, isolation conservée, `isLate` sur ses cas limites.\n3. **Mise\
+    \ à jour du contrat** d’API (le tableau de la leçon 1) et de la procédure de\n   déploiement : dans\
+    \ quel ordre appliquer cette version en production ?\n"
+  deliverable: 'Colle la reproduction du bug (avant et après), l’explication, la migration, les fichiers
+
+    modifiés en entier, les nouveaux tests, la sortie de `npm test`, le contrat mis à jour et
+
+    la procédure de déploiement.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: bug-fix
+      description: Diagnostique le bug à partir de || et COALESCE et le verrouille par un test.
+      maxScore: 3
+    - id: feature-layers
+      description: Ajoute l’échéance proprement dans chaque couche, de la migration à l’interface.
+      maxScore: 4
+    - id: delivery
+      description: Fait évoluer le projet sans le réécrire et prépare son déploiement.
+      maxScore: 3

@@ -500,12 +500,15 @@ curl -s $B/api/inconnue; echo
 Dans le terminal du serveur, chaque requête laisse une ligne (les heures et durées varient) :
 
 ```text
-{"time":"2026-11-21T22:09:06.410Z","level":"info","message":"user registered","userId":1}
-{"time":"2026-11-21T22:09:06.410Z","level":"info","message":"request","method":"POST","path":"/api/auth/register","status":201,"durationMs":392,"userId":null}
-{"time":"2026-11-21T22:09:06.425Z","level":"info","message":"request","method":"POST","path":"/api/tasks","status":201,"durationMs":4,"userId":1}
-{"time":"2026-11-21T22:09:06.487Z","level":"info","message":"request","method":"POST","path":"/api/tasks","status":403,"durationMs":0,"userId":null}
+{"userId":1,"time":"2026-11-22T08:04:59.279Z","level":"info","message":"user registered"}
+{"method":"POST","path":"/api/auth/register","status":201,"durationMs":430,"userId":null,"time":"2026-11-22T08:04:59.283Z","level":"info","message":"request"}
+{"method":"POST","path":"/api/tasks","status":201,"durationMs":8,"userId":1,"time":"2026-11-22T08:04:59.300Z","level":"info","message":"request"}
+{"method":"POST","path":"/api/tasks","status":403,"durationMs":1,"userId":null,"time":"2026-11-22T08:04:59.308Z","level":"info","message":"request"}
 ```
 
+Les champs propres à l’événement viennent d’abord, puis `time`, `level` et `message` : placés en
+dernier dans l’objet, ces trois champs ne peuvent pas être écrasés par un champ du même nom (une
+première version de ce journal perdait son message quand on passait `{ message: error.message }`).
 L’inscription prend environ 400 ms (le hachage scrypt), une création de tâche quelques
 millisecondes. `userId` vaut `null` sur l’inscription, car l’utilisateur n’était pas encore
 connecté **au début** de la requête.
