@@ -104,6 +104,8 @@ export const fr = {
     validUntil: (date: string) => `Valide jusqu’au ${date}`,
     expiredOn: (date: string) => `Expirée le ${date}`,
     domain: 'Domaine',
+    lessonsRead: (read: number, total: number) => `${read} / ${total} lues`,
+    readMark: 'Lue',
   },
   lesson: {
     sources: 'Pour aller plus loin',
@@ -113,6 +115,9 @@ export const fr = {
     toChallenges: 'Passer aux défis',
     contents: 'Leçons de la compétence',
     solution: 'Solution',
+    markRead: 'Marquer comme lue',
+    read: 'Leçon lue',
+    markUnread: 'Marquer comme non lue',
     note: 'À noter',
     tip: 'Astuce',
     warning: 'Attention',
@@ -192,6 +197,8 @@ export const fr = {
     quota: (used: number, limit: number, hours: number) =>
       `${used} oral${used > 1 ? 's' : ''} sur ${limit} utilisés sur les ${hours} dernières heures.`,
     validated: 'Compétences validées',
+    lessonsRead: (read: number, total: number) =>
+      `${read} leçon${read > 1 ? 's' : ''} lue${read > 1 ? 's' : ''} sur ${total}`,
     toRenew: 'À renouveler',
     expiringSoon: 'Expire bientôt',
     available: 'Prochaines étapes',

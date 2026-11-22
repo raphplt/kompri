@@ -1,8 +1,18 @@
-import { Controller, Get, Inject, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Inject,
+  Param,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import type { PrismaClient } from '@kompri/db';
 import { challengeSchema } from '@kompri/content';
-import { progressResponseSchema } from '@kompri/shared';
+import { contentIdSchema, progressResponseSchema, z } from '@kompri/shared';
+import { notFound, parseInput } from './errors.ts';
 import type { SkillState } from '@kompri/shared';
 import { AuthGuard, CurrentUser } from './auth.ts';
 import type { AuthenticatedUser } from './auth.ts';
@@ -78,10 +88,49 @@ export class ProgressController {
     @Inject(CLOCK) private readonly now: Clock,
   ) {}
 
+  private async lessonId(rawSkill: string, rawSlug: string) {
+    const skillId = parseInput(contentIdSchema, rawSkill);
+    const slug = parseInput(z.string().regex(/^[a-z0-9][a-z0-9-]*$/), rawSlug);
+    const lesson = await this.db.lesson.findFirst({
+      where: { skillId, slug, archivedAt: null },
+      select: { id: true },
+    });
+    if (!lesson) throw notFound('Lesson');
+    return lesson.id;
+  }
+
+  @Put('me/lessons/:skillId/:slug')
+  @HttpCode(204)
+  async markRead(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('skillId') skillId: string,
+    @Param('slug') slug: string,
+  ) {
+    const lessonId = await this.lessonId(skillId, slug);
+    await this.db.lessonProgress.upsert({
+      where: { userId_lessonId: { userId: user.id, lessonId } },
+      create: { userId: user.id, lessonId, completedAt: this.now() },
+      update: {},
+    });
+  }
+
+  @Delete('me/lessons/:skillId/:slug')
+  @HttpCode(204)
+  async markUnread(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('skillId') skillId: string,
+    @Param('slug') slug: string,
+  ) {
+    const lessonId = await this.lessonId(skillId, slug);
+    await this.db.lessonProgress.deleteMany({
+      where: { userId: user.id, lessonId },
+    });
+  }
+
   @Get('me/progress')
   async progress(@CurrentUser() user: AuthenticatedUser) {
     const now = this.now();
-    const [skills, validations, used, sessions] = await Promise.all([
+    const [skills, validations, used, sessions, read] = await Promise.all([
       this.db.skill.findMany({
         where: { archivedAt: null },
         orderBy: { position: 'asc' },
@@ -107,6 +156,10 @@ export class ProgressController {
         take: 20,
         include: { attempt: { select: { challengeSnapshot: true } } },
       }),
+      this.db.lessonProgress.findMany({
+        where: { userId: user.id, lesson: { archivedAt: null } },
+        select: { lessonId: true },
+      }),
     ]);
     const statuses = {
       ACTIVE: 'active',
@@ -129,6 +182,7 @@ export class ProgressController {
         windowHours: this.settings.ORAL_WINDOW_HOURS,
       },
       activeOralId: sessions.find((s) => s.status === 'ACTIVE')?.id ?? null,
+      completedLessons: read.map((r) => r.lessonId).sort(),
       recentOrals: sessions.map((session) => {
         const challenge = challengeSchema.parse(
           session.attempt.challengeSnapshot,

@@ -62,6 +62,14 @@ export default async function Dashboard() {
       </h1>
       <p className="mt-2 text-muted">
         {fr.dashboard.progress(validated.length, published)}
+        {' · '}
+        {fr.dashboard.lessonsRead(
+          progress.completedLessons.length,
+          tree.skills.reduce(
+            (sum, s) => sum + (s.status === 'published' ? s.lessonCount : 0),
+            0,
+          ),
+        )}
       </p>
       <div
         className="mt-3 h-2 max-w-md overflow-hidden rounded-full bg-line"

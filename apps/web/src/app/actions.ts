@@ -223,6 +223,24 @@ export async function decideReviewAction(
   return { done: true };
 }
 
+export async function setLessonReadAction(
+  skillId: string,
+  slug: string,
+  read: boolean,
+): Promise<boolean> {
+  try {
+    await api(
+      `/me/lessons/${encodeURIComponent(skillId)}/${encodeURIComponent(slug)}`,
+      noContent,
+      { method: read ? 'PUT' : 'DELETE', token: await getToken() },
+    );
+  } catch {
+    return !read;
+  }
+  revalidatePath(`/competences/${skillId}`);
+  return read;
+}
+
 export async function logoutAction() {
   const token = await getToken();
   if (token)

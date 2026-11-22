@@ -31,6 +31,10 @@ export default async function SkillPage({ params }: Props) {
   const entry = progress?.skills.find((s) => s.skillId === skill.id);
   const titles = new Map(tree.skills.map((s) => [s.id, s.title]));
   const minutes = skill.lessons.reduce((sum, l) => sum + l.durationMinutes, 0);
+  const read = new Set(progress?.completedLessons ?? []);
+  const readCount = skill.lessons.filter((l) =>
+    read.has(`${skill.id}/${l.slug}`),
+  ).length;
 
   return (
     <>
@@ -83,6 +87,11 @@ export default async function SkillPage({ params }: Props) {
                   {fr.skill.minutes(minutes)}
                 </span>
               )}
+              {progress && skill.lessons.length > 0 && (
+                <span className="ml-2 text-sm font-normal text-success">
+                  {fr.skill.lessonsRead(readCount, skill.lessons.length)}
+                </span>
+              )}
             </h2>
             {skill.lessons.length ? (
               <ol className="divide-y divide-line overflow-hidden rounded-xl border border-line bg-raised">
@@ -92,8 +101,18 @@ export default async function SkillPage({ params }: Props) {
                       href={`/competences/${skill.id}/${lesson.slug}`}
                       className="flex gap-4 p-4 transition hover:bg-accent-soft"
                     >
-                      <span className="grid size-8 shrink-0 place-items-center rounded-full bg-accent-soft text-sm font-bold text-accent">
-                        {lesson.position}
+                      <span
+                        className={`grid size-8 shrink-0 place-items-center rounded-full text-sm font-bold ${
+                          read.has(`${skill.id}/${lesson.slug}`)
+                            ? 'bg-success-soft text-success'
+                            : 'bg-accent-soft text-accent'
+                        }`}
+                      >
+                        {read.has(`${skill.id}/${lesson.slug}`) ? (
+                          <span aria-label={fr.skill.readMark}>✓</span>
+                        ) : (
+                          lesson.position
+                        )}
                       </span>
                       <span className="flex-1">
                         <span className="block font-semibold">

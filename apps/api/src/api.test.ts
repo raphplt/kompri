@@ -786,6 +786,46 @@ describe('password reset', () => {
   });
 });
 
+describe('lesson progress', () => {
+  it('marks lessons as read idempotently and reports them', async () => {
+    const user = await register();
+    const lesson = await db.lesson.findFirstOrThrow({
+      where: { skillId: 'js-basics', archivedAt: null },
+      orderBy: { position: 'asc' },
+    });
+    const path = `/me/lessons/js-basics/${lesson.slug}`;
+    expect((await call(path, { method: 'PUT' })).status).toBe(401);
+    expect(
+      (await call(path, { method: 'PUT', token: user.token })).status,
+    ).toBe(204);
+    expect(
+      (await call(path, { method: 'PUT', token: user.token })).status,
+    ).toBe(204);
+    expect(
+      (
+        await call('/me/lessons/js-basics/absent', {
+          method: 'PUT',
+          token: user.token,
+        })
+      ).status,
+    ).toBe(404);
+    let progress = progressResponseSchema.parse(
+      (await call('/me/progress', { token: user.token })).body,
+    );
+    expect(progress.completedLessons).toEqual([lesson.id]);
+    expect((await call('/me/export', { token: user.token })).text).toContain(
+      lesson.id,
+    );
+    expect(
+      (await call(path, { method: 'DELETE', token: user.token })).status,
+    ).toBe(204);
+    progress = progressResponseSchema.parse(
+      (await call('/me/progress', { token: user.token })).body,
+    );
+    expect(progress.completedLessons).toEqual([]);
+  });
+});
+
 describe('placement', () => {
   it('requires prerequisites unless the oral is taken as a placement', async () => {
     const user = await register();

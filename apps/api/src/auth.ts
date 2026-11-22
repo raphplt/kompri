@@ -480,6 +480,7 @@ export class AuthService {
           },
         },
         oralUsage: { select: { sessionId: true, consumedAt: true } },
+        lessonProgress: { select: { lessonId: true, completedAt: true } },
       },
     });
     return { exportedAt: this.now().toISOString(), ...data };

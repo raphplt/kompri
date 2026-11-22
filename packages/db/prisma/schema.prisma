@@ -66,6 +66,7 @@ model User {
   createdAt          DateTime            @default(now()) @db.Timestamptz(3)
   authSessions       AuthSession[]
   tutorUsage         TutorUsage[]
+  lessonProgress     LessonProgress[]
   passwordResets     PasswordReset[]
   emailChecks        EmailVerification[]
   reviewRequests     ReviewRequest[]     @relation("RequestedReviews")
@@ -128,18 +129,19 @@ model SkillPrerequisite {
 }
 
 model Lesson {
-  id              String    @id
+  id              String           @id
   skillId         String
   slug            String
   position        Int
   title           String
   summary         String
   durationMinutes Int
-  sources         Json      @default("[]")
+  sources         Json             @default("[]")
   body            String
   contentVersion  String
-  archivedAt      DateTime? @db.Timestamptz(3)
-  skill           Skill     @relation(fields: [skillId], references: [id], onDelete: Restrict)
+  archivedAt      DateTime?        @db.Timestamptz(3)
+  skill           Skill            @relation(fields: [skillId], references: [id], onDelete: Restrict)
+  readBy          LessonProgress[]
 
   @@unique([skillId, slug])
 }
@@ -310,4 +312,16 @@ model ReviewRequest {
 
   @@unique([oralSessionId, userId])
   @@index([status, createdAt])
+}
+
+/// A lesson the learner marked as read.
+model LessonProgress {
+  userId      String
+  lessonId    String
+  completedAt DateTime @default(now()) @db.Timestamptz(3)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Restrict)
+
+  @@id([userId, lessonId])
+  @@index([lessonId])
 }

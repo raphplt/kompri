@@ -7,7 +7,8 @@ import { Markdown } from '../../../../components/markdown';
 import { TutorPanel } from '../../../../components/tutor-panel';
 import { Breadcrumbs, ButtonLink } from '../../../../components/ui';
 import { api, ApiRequestError } from '../../../../lib/api';
-import { getSkill } from '../../../../lib/data';
+import { getProgress, getSkill } from '../../../../lib/data';
+import { LessonReadToggle } from '../../../../components/lesson-read-toggle';
 import { getCurrentUser } from '../../../../lib/session';
 import { fr } from '../../../../messages/fr';
 
@@ -41,11 +42,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function LessonPage({ params }: Props) {
   const { skillId, lessonSlug } = await params;
-  const [lesson, skill, user] = await Promise.all([
+  const [lesson, skill, user, progress] = await Promise.all([
     getLesson(skillId, lessonSlug),
     getSkill(skillId),
     getCurrentUser().catch(() => null),
+    getProgress().catch(() => null),
   ]);
+  const read = new Set(progress?.completedLessons ?? []);
   if (!lesson || !skill) notFound();
   return (
     <div className="grid gap-10 lg:grid-cols-[16rem_1fr]">
@@ -69,6 +72,14 @@ export default async function LessonPage({ params }: Props) {
                       : 'text-muted hover:bg-raised hover:text-ink'
                   }`}
                 >
+                  {read.has(`${skill.id}/${item.slug}`) && (
+                    <span
+                      aria-label={fr.skill.readMark}
+                      className="mr-1 text-success"
+                    >
+                      ✓
+                    </span>
+                  )}
                   {item.position}. {item.title}
                 </Link>
               </li>
@@ -116,6 +127,16 @@ export default async function LessonPage({ params }: Props) {
               ))}
             </ul>
           </section>
+        )}
+
+        {user && (
+          <div className="mt-10 flex justify-center">
+            <LessonReadToggle
+              skillId={skill.id}
+              slug={lesson.slug}
+              initiallyRead={read.has(`${skill.id}/${lesson.slug}`)}
+            />
+          </div>
         )}
 
         <nav
