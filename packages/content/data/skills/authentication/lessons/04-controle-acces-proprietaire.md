@@ -325,10 +325,13 @@ sécurité : il casse quand la protection disparaît.
 
 ## Pièges et idées reçues
 
-- **Comparer des types différents.** `req.params.id` est une **chaîne** ; `note.owner_id`, lu
-  par `pg`, est un **nombre**. Un contrôle écrit `if (note.owner_id !== req.params.userId)`
-  compare `1 !== '1'`, toujours vrai, et refuse tout le monde… ou, écrit à l’envers, autorise
-  tout le monde. Compare des valeurs du même type, ou laisse PostgreSQL le faire.
+- **Comparer des types différents.** Les paramètres d’URL (`req.params`) sont des **chaînes** ;
+  une colonne `integer` lue par `pg` est un **nombre**. Sur une route
+  `/api/notes/:id/attachments/:attachmentId`, un contrôle écrit
+  `if (attachment.note_id !== req.params.id)` compare `1 !== '1'`, toujours vrai : le contrôle
+  refuse tout le monde, propriétaire compris (l’exercice 1 montre comment une correction hâtive
+  peut alors ouvrir une faille). Convertis d’abord (`parseId`), ou laisse PostgreSQL comparer
+  dans la clause `WHERE`.
 - **Lire l’utilisateur dans la requête.** `GET /api/notes?userId=1` ou un champ `userId` dans
   le corps : le client choisit qui il est. L’identité vient **uniquement** de la session.
 - **Protéger la lecture et oublier l’écriture.** Chaque méthode (`GET`, `PATCH`, `DELETE`)

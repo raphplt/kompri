@@ -66,7 +66,8 @@
       - score: 1
         description: Cas nominaux testés, cas d’échec ou normalisation absents.
       - score: 2
-        description: Cas nominaux et d’échec couverts, injection de la recherche utilisée intelligemment.
+        description: Cas nominaux et d’échec couverts, fonction de recherche factice (findUserByEmail)
+          utilisée pour vérifier les appels.
 - id: authentication-avec-ia
   family: AVEC_IA
   title: Le carnet d’adresses partagé en famille
@@ -173,7 +174,7 @@
     \ * FROM users WHERE email = $1', [email]);\n  const user = result.rows[0];\n  if (!user) {\n    return\
     \ res.status(404).json({ error: 'Aucun compte avec cet email' });\n  }\n  if (user.password_hash !==\
     \ hashPassword(password)) {\n    return res.status(401).json({ error: 'Mot de passe incorrect' });\n\
-    \  }\n  const sid = Buffer.from(`${user.id}:${Date.now()}`).toString('base64');\n  sessions.set(sid,\
+    \  }\n  const sid = Buffer.from(`${user.id}:${Date.now()}`).toString('base64url');\n  sessions.set(sid,\
     \ { user });\n  res.cookie('session', sid);\n  res.json({ id: user.id, email: user.email, role: user.role\
     \ });\n});\n\napp.post('/api/logout', (req, res) => {\n  res.clearCookie('session');\n  res.status(204).end();\n\
     });\n\napp.get('/api/me', auth, (req, res) => {\n  res.json(req.user);\n});\n\napp.patch('/api/me',\
@@ -233,16 +234,16 @@
     \ boolean NOT NULL DEFAULT false\n);\n```\n\n`src/password.js` est le module scrypt de la leçon (`hashPassword`\
     \ et `verifyPassword`,\nN=2^17, r=8, p=1, sel aléatoire, `timingSafeEqual`) ; il est correct et ne\
     \ doit pas être\nmodifié.\n\n`src/app.js` :\n\n```js\nimport express from 'express';\nimport { randomBytes\
-    \ } from 'node:crypto';\nimport { hashPassword, verifyPassword } from './password.js';\n\nconst sessions\
-    \ = new Map(); // jeton -> identifiant d’utilisateur\n\nfunction readCookie(req, name) {\n  for (const\
-    \ part of (req.headers.cookie ?? '').split(';')) {\n    const [key, ...rest] = part.trim().split('=');\n\
-    \    if (key === name) return rest.join('=');\n  }\n  return null;\n}\n\nexport function createApp({\
-    \ pool, secureCookies = false }) {\n  const app = express();\n  app.disable('x-powered-by');\n  app.use(express.json({\
-    \ limit: '10kb' }));\n\n  app.use(async (req, res, next) => {\n    req.sessionToken = readCookie(req,\
-    \ 'sid');\n    const userId = req.sessionToken ? sessions.get(req.sessionToken) : undefined;\n   \
-    \ req.user = null;\n    if (userId) {\n      const result = await pool.query('SELECT id, email FROM\
-    \ users WHERE id = $1', [userId]);\n      req.user = result.rows[0] ?? null;\n    }\n    next();\n\
-    \  });\n\n  function requireAuth(req, res, next) {\n    if (!req.user) return res.status(401).json({\
+    \ } from 'node:crypto';\nimport { hashPassword, verifyPassword } from './password.js';\n\nfunction\
+    \ readCookie(req, name) {\n  for (const part of (req.headers.cookie ?? '').split(';')) {\n    const\
+    \ [key, ...rest] = part.trim().split('=');\n    if (key === name) return rest.join('=');\n  }\n  return\
+    \ null;\n}\n\nexport function createApp({ pool, secureCookies = false }) {\n  const app = express();\n\
+    \  const sessions = new Map(); // jeton -> identifiant d’utilisateur\n  app.disable('x-powered-by');\n\
+    \  app.use(express.json({ limit: '10kb' }));\n\n  app.use(async (req, res, next) => {\n    req.sessionToken\
+    \ = readCookie(req, 'sid');\n    const userId = req.sessionToken ? sessions.get(req.sessionToken)\
+    \ : undefined;\n    req.user = null;\n    if (userId) {\n      const result = await pool.query('SELECT\
+    \ id, email FROM users WHERE id = $1', [userId]);\n      req.user = result.rows[0] ?? null;\n    }\n\
+    \    next();\n  });\n\n  function requireAuth(req, res, next) {\n    if (!req.user) return res.status(401).json({\
     \ error: 'Authentification requise' });\n    next();\n  }\n\n  function openSession(res, userId) {\n\
     \    const token = randomBytes(32).toString('base64url');\n    sessions.set(token, userId);\n    res.cookie('sid',\
     \ token, { httpOnly: true, secure: secureCookies, sameSite: 'lax', path: '/' });\n  }\n\n  app.post('/api/auth/register',\

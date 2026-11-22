@@ -241,7 +241,7 @@
 
 - id: sql-queries
   domain: data
-  status: draft
+  status: published
   title: 'SQL : interroger des données'
   description: Lire et modifier des données dans PostgreSQL.
   estimatedHours: 5
@@ -255,7 +255,7 @@
 
 - id: sql-modeling
   domain: data
-  status: draft
+  status: published
   title: Modélisation relationnelle et jointures
   description: Concevoir un schéma cohérent et croiser les tables.
   estimatedHours: 6
@@ -269,7 +269,7 @@
 
 - id: database-from-node
   domain: data
-  status: draft
+  status: published
   title: Base de données depuis Node.js
   description: Brancher une API Express sur PostgreSQL de façon sûre.
   estimatedHours: 6

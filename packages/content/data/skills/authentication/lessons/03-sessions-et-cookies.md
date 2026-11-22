@@ -342,6 +342,10 @@ vaudrait alors l’adresse du proxy pour tout le monde. Il faut configurer Expre
 
 ## Essayer le parcours complet
 
+Si tu as gardé le compte d’Ada créé à la leçon précédente, repars d’une base vide pour obtenir
+les mêmes sorties : `psql notes_auth -c "TRUNCATE users RESTART IDENTITY CASCADE"` (la cascade
+vide aussi `sessions` et `notes`, `RESTART IDENTITY` remet les identifiants à 1).
+
 Lance `node src/server.js` (avec `DATABASE_URL`), puis, dans un autre terminal, utilise un
 fichier de cookies `curl` (`-c` l’écrit, `-b` le relit) :
 
@@ -400,17 +404,28 @@ continuer jusqu’à recevoir autre chose qu’un 429.
 
 ### L’expiration côté serveur
 
-Simule une session périmée directement en base :
+Le compte d’Ada est encore bloqué par le limiteur : **redémarre le serveur** (le limiteur, en
+mémoire, repart de zéro), reconnecte-toi, puis simule une session périmée directement en base :
 
 ```bash
+curl -s -c jar.txt -X POST $B/api/auth/login -H 'Content-Type: application/json' \
+  -d '{"email":"ada@example.fr","password":"cheval agrafe batterie correcte"}' > /dev/null
+curl -s -b jar.txt $B/api/auth/me; echo
 psql notes_auth -c "UPDATE sessions SET expires_at = now() - interval '1 minute'"
 curl -s -b jar.txt $B/api/auth/me; echo
 psql notes_auth -c "DELETE FROM sessions WHERE expires_at <= now()"
 ```
 
-Après une nouvelle connexion avec `jar.txt`, la mise à jour rend la session invalide :
-`me` répond `{"error":"Authentification requise"}`, alors que le navigateur (ou `curl`) envoie
-toujours le cookie. Le `DELETE` supprime ensuite les sessions périmées.
+```text
+{"user":{"id":1,"email":"ada@example.fr"}}
+UPDATE 1
+{"error":"Authentification requise"}
+DELETE 1
+```
+
+La mise à jour rend la session invalide : `me` répond `{"error":"Authentification requise"}`,
+alors que le navigateur (ou `curl`) envoie toujours le cookie. Le `DELETE` supprime ensuite les
+sessions périmées.
 
 ## Pièges et idées reçues
 

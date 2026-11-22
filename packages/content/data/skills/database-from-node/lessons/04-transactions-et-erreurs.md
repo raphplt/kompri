@@ -417,7 +417,7 @@ Prix négatif     : 23514 books_price_check | Failing row contains (12, Soldé, 
 Le code `23503` couvre deux situations opposées : insérer une référence vers une ligne qui
 n’existe pas (genre 99), ou supprimer une ligne encore référencée (le livre 4, qui a des
 emprunts). Le nom de la contrainte permet de les distinguer. Pour une violation de `NOT NULL`,
-PostgreSQL 16 ne renseigne pas `constraint` (d’où le `-`), mais `column` vaut `'title'` ; ne
+PostgreSQL (vérifié en 16 et 18) ne renseigne pas `constraint` (d’où le `-`), mais `column` vaut `'title'` ; ne
 compte pas sur `constraint` pour ce cas. Les messages et détails peuvent être traduits selon la
 configuration du serveur, alors que les codes ne changent jamais : **teste toujours le code, pas
 le texte du message**.
