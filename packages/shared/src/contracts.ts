@@ -114,6 +114,8 @@ export const userResponseSchema = z.object({
   email: z.string(),
   displayName: z.string().nullable(),
   createdAt: z.iso.datetime(),
+  emailVerified: z.boolean(),
+  role: z.enum(['learner', 'admin']),
 });
 export type UserResponse = z.infer<typeof userResponseSchema>;
 export const authResponseSchema = z.object({
@@ -189,6 +191,16 @@ export const oralViewSchema = z.object({
     }),
   ),
   result: oralResultSchema.nullable(),
+  review: z
+    .object({
+      status: z.enum(['open', 'confirmed', 'overturned']),
+      message: z.string(),
+      response: z.string().nullable(),
+      createdAt: z.iso.datetime(),
+      decidedAt: z.iso.datetime().nullable(),
+    })
+    .nullable(),
+  reviewDeadline: z.iso.datetime().nullable(),
 });
 export type OralView = z.infer<typeof oralViewSchema>;
 
@@ -278,3 +290,55 @@ export const resetPasswordRequestSchema = z
     password: passwordSchema,
   })
   .strict();
+
+// E-mail verification and account changes.
+export const verifyEmailRequestSchema = z
+  .object({ token: z.string().regex(/^[\w-]{20,200}$/) })
+  .strict();
+export const changePasswordRequestSchema = z
+  .object({
+    currentPassword: z.string().min(1).max(128),
+    newPassword: passwordSchema,
+  })
+  .strict();
+export const changeEmailRequestSchema = z
+  .object({ password: z.string().min(1).max(128), newEmail: emailSchema })
+  .strict();
+
+// Human review of an automated grading.
+export const reviewRequestSchema = z
+  .object({ message: z.string().trim().min(20).max(2_000) })
+  .strict();
+export const reviewDecisionSchema = z
+  .object({
+    decision: z.enum(['confirm', 'overturn']),
+    response: z.string().trim().min(10).max(4_000),
+  })
+  .strict();
+export const adminReviewSummarySchema = z.object({
+  id: z.string(),
+  status: z.enum(['open', 'confirmed', 'overturned']),
+  createdAt: z.iso.datetime(),
+  learner: z.string(),
+  challengeTitle: z.string(),
+  skillId: z.string(),
+  verdict: z.enum(['PASSED', 'FAILED']),
+});
+export type AdminReviewSummary = z.infer<typeof adminReviewSummarySchema>;
+export const adminReviewDetailSchema = adminReviewSummarySchema.extend({
+  message: z.string(),
+  response: z.string().nullable(),
+  oralId: z.string(),
+  instructions: z.string(),
+  examinerNotes: z.string().nullable(),
+  submission: z.string(),
+  turns: z.array(
+    z.object({
+      speaker: z.enum(['examiner', 'learner']),
+      text: z.string(),
+      at: z.iso.datetime(),
+    }),
+  ),
+  result: oralResultSchema,
+});
+export type AdminReviewDetail = z.infer<typeof adminReviewDetailSchema>;

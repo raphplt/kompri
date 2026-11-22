@@ -19,7 +19,8 @@ import { createDatabase } from '@kompri/db';
 import type { PrismaClient } from '@kompri/db';
 import { createRegistry } from '@kompri/llm';
 import { examinerMockResponder } from '@kompri/examiner/testing';
-import { AuthController, AuthGuard, AuthService } from './auth.ts';
+import { AdminGuard, AuthController, AuthGuard, AuthService } from './auth.ts';
+import { AdminController, ReviewController, ReviewService } from './reviews.ts';
 import { ContentController } from './content.ts';
 import {
   CLOCK,
@@ -152,6 +153,8 @@ export async function createApi(
         LearningController,
         ProgressController,
         TutorController,
+        ReviewController,
+        AdminController,
       ],
       providers: [
         { provide: DATABASE, useValue: db },
@@ -178,6 +181,8 @@ export async function createApi(
         AuthGuard,
         LearningService,
         TutorService,
+        ReviewService,
+        AdminGuard,
       ],
     },
     { logger: ['error', 'warn'], bodyParser: false },

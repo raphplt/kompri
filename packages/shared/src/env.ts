@@ -39,6 +39,13 @@ export const apiEnvSchema = databaseEnvSchema.extend({
         ['http:', 'https:'].includes(new URL(value).protocol),
     )
     .default('http://localhost:3000'),
+  REQUIRE_EMAIL_VERIFICATION: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((value) => value === 'true'),
+  REVIEW_WINDOW_DAYS: positiveInteger(30, 365),
+  REMINDER_DAYS: positiveInteger(14, 365),
+  INACTIVE_ACCOUNT_DAYS: z.coerce.number().int().min(60).max(3650).optional(),
   MAIL_TRANSPORT: z.enum(['log', 'smtp']).default('log'),
   SMTP_URL: z
     .url()

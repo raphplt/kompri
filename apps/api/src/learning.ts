@@ -55,6 +55,39 @@ const startOralSchema = z
   .object({ placement: z.boolean().default(false) })
   .strict();
 
+export const reviewStatus = {
+  OPEN: 'open',
+  CONFIRMED: 'confirmed',
+  OVERTURNED: 'overturned',
+} as const;
+
+/** Result shown to the learner; the verdict is the session's, possibly overturned. */
+export function buildResult(
+  grade: Grade,
+  rubric: Rubric,
+  verdict: 'PASSED' | 'FAILED',
+  expiresAt: Date | null,
+) {
+  return {
+    verdict,
+    score: grade.criteria.reduce((sum, c) => sum + c.score, 0),
+    maxScore: rubric.criteria.reduce((sum, c) => sum + c.maxScore, 0),
+    passRatio: rubric.passRatio,
+    feedback: grade.feedback ?? null,
+    criteria: rubric.criteria.map((criterion) => {
+      const score = grade.criteria.find((c) => c.criterionId === criterion.id)!;
+      return {
+        criterionId: criterion.id,
+        description: criterion.description,
+        score: score.score,
+        maxScore: criterion.maxScore,
+        justification: score.justification,
+      };
+    }),
+    validationExpiresAt: expiresAt?.toISOString() ?? null,
+  };
+}
+
 const oralStatus = {
   ACTIVE: 'active',
   GRADING_FAILED: 'grading_failed',
@@ -169,6 +202,11 @@ export class LearningService {
     input: unknown = {},
   ) {
     const { placement } = parseInput(startOralSchema, input ?? {});
+    if (this.settings.REQUIRE_EMAIL_VERIFICATION && !user.emailVerifiedAt)
+      throw forbidden(
+        'email_unverified',
+        'Confirm your e-mail address before taking an oral',
+      );
     const attempt = await this.db.attempt.findFirst({
       where: { id: parseInput(uuidSchema, rawAttemptId), userId: user.id },
       include: {
@@ -319,6 +357,7 @@ export class LearningService {
         turns: { orderBy: { sequence: 'asc' } },
         attempt: true,
         validation: true,
+        reviewRequest: true,
       },
     });
     if (!session) throw notFound('Oral');
@@ -376,32 +415,32 @@ export class LearningService {
       turns: this.toState(session).turns,
       result:
         grade && session.verdict
-          ? this.toResult(grade, rubric, session.validation?.expiresAt ?? null)
+          ? buildResult(
+              grade,
+              rubric,
+              session.verdict,
+              session.validation?.expiresAt ?? null,
+            )
+          : null,
+      review: session.reviewRequest
+        ? {
+            status: reviewStatus[session.reviewRequest.status],
+            message: session.reviewRequest.message,
+            response: session.reviewRequest.response,
+            createdAt: session.reviewRequest.createdAt.toISOString(),
+            decidedAt: session.reviewRequest.decidedAt?.toISOString() ?? null,
+          }
+        : null,
+      reviewDeadline:
+        session.status === 'COMPLETED' &&
+        session.gradedAt &&
+        !session.reviewRequest
+          ? new Date(
+              session.gradedAt.getTime() +
+                days(this.settings.REVIEW_WINDOW_DAYS),
+            ).toISOString()
           : null,
     });
-  }
-
-  private toResult(grade: Grade, rubric: Rubric, expiresAt: Date | null) {
-    return {
-      verdict: grade.verdict,
-      score: grade.criteria.reduce((sum, c) => sum + c.score, 0),
-      maxScore: rubric.criteria.reduce((sum, c) => sum + c.maxScore, 0),
-      passRatio: rubric.passRatio,
-      feedback: grade.feedback ?? null,
-      criteria: rubric.criteria.map((criterion) => {
-        const score = grade.criteria.find(
-          (c) => c.criterionId === criterion.id,
-        )!;
-        return {
-          criterionId: criterion.id,
-          description: criterion.description,
-          score: score.score,
-          maxScore: criterion.maxScore,
-          justification: score.justification,
-        };
-      }),
-      validationExpiresAt: expiresAt?.toISOString() ?? null,
-    };
   }
 
   async answer(user: AuthenticatedUser, rawId: string, input: unknown) {

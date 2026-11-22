@@ -11,6 +11,7 @@ import {
 import { createExaminerMock } from '@kompri/examiner/testing';
 import { createApi, developmentResponder } from './app.ts';
 import type { Mail } from './mailer.ts';
+import { runDailyTasks } from './daily.ts';
 import { createClient, createMockAdapter } from '@kompri/llm';
 import { skillStates } from './progress.ts';
 
@@ -50,7 +51,10 @@ async function call(
   };
 }
 
-async function register(name = 'Alice') {
+const linkToken = (mail: Mail) =>
+  new URL(/https?:\/\/\S+/.exec(mail.text)![0]).searchParams.get('jeton')!;
+
+async function register(name = 'Alice', verify = true) {
   const email = `test-${crypto.randomUUID()}@example.invalid`;
   const response = await call('/auth/register', {
     body: { email, password: 'correct horse battery', displayName: name },
@@ -60,6 +64,16 @@ async function register(name = 'Alice') {
     .object({ token: z.string(), user: z.object({ id: z.string() }) })
     .parse(response.body);
   created.push(body.user.id);
+  if (verify) {
+    const mail = mails.findLast((m) => m.to === email)!;
+    expect(
+      (
+        await call('/auth/email/verify', {
+          body: { token: linkToken(mail) },
+        })
+      ).status,
+    ).toBe(204);
+  }
   return { email, token: body.token, id: body.user.id };
 }
 
@@ -415,6 +429,276 @@ describe('oral', () => {
   });
 });
 
+describe('account', () => {
+  it('requires a verified e-mail before an oral', async () => {
+    const user = await register('Nina', false);
+    const me = z
+      .object({ emailVerified: z.boolean(), role: z.string() })
+      .parse((await call('/me', { token: user.token })).body);
+    expect(me).toEqual({ emailVerified: false, role: 'learner' });
+    const attempt = z.object({ id: z.string() }).parse(
+      (
+        await call('/attempts', {
+          token: user.token,
+          body: { challengeId, work: 'work' },
+        })
+      ).body,
+    );
+    const refused = await call(`/attempts/${attempt.id}/oral`, {
+      method: 'POST',
+      token: user.token,
+    });
+    expect(refused.body).toMatchObject({ code: 'email_unverified' });
+    expect(
+      (
+        await call('/me/email/verification', {
+          method: 'POST',
+          token: user.token,
+        })
+      ).status,
+    ).toBe(202);
+    const token = linkToken(mails.findLast((m) => m.to === user.email)!);
+    expect((await call('/auth/email/verify', { body: { token } })).status).toBe(
+      204,
+    );
+    expect(
+      (await call('/auth/email/verify', { body: { token } })).body,
+    ).toMatchObject({ code: 'verification_link_invalid' });
+    expect(
+      (
+        await call(`/attempts/${attempt.id}/oral`, {
+          method: 'POST',
+          token: user.token,
+        })
+      ).status,
+    ).toBe(201);
+  });
+
+  it('changes the password and the e-mail with the current password', async () => {
+    const user = await register();
+    const other = z.object({ token: z.string() }).parse(
+      (
+        await call('/auth/login', {
+          body: { email: user.email, password: 'correct horse battery' },
+        })
+      ).body,
+    );
+    expect(
+      (
+        await call('/me/password', {
+          token: user.token,
+          body: {
+            currentPassword: 'wrong',
+            newPassword: 'another long phrase',
+          },
+        })
+      ).status,
+    ).toBe(401);
+    expect(
+      (
+        await call('/me/password', {
+          token: user.token,
+          body: {
+            currentPassword: 'correct horse battery',
+            newPassword: 'another long phrase',
+          },
+        })
+      ).status,
+    ).toBe(204);
+    expect((await call('/me', { token: other.token })).status).toBe(401);
+    expect((await call('/me', { token: user.token })).status).toBe(200);
+
+    const newEmail = `new-${crypto.randomUUID()}@example.invalid`;
+    expect(
+      (
+        await call('/me/email', {
+          token: user.token,
+          body: { password: 'another long phrase', newEmail },
+        })
+      ).status,
+    ).toBe(202);
+    expect(mails.findLast((m) => m.to === user.email)?.subject).toContain(
+      'Changement',
+    );
+    const token = linkToken(mails.findLast((m) => m.to === newEmail)!);
+    await call('/auth/email/verify', { body: { token } });
+    expect(
+      z
+        .object({ email: z.string() })
+        .parse((await call('/me', { token: user.token })).body).email,
+    ).toBe(newEmail);
+  });
+});
+
+describe('human review', () => {
+  it('lets a learner contest a grade and an administrator overturn it', async () => {
+    const user = await register();
+    const admin = await register('Admin');
+    const attempt = z.object({ id: z.string() }).parse(
+      (
+        await call('/attempts', {
+          token: user.token,
+          body: { challengeId, work: 'const x = 1;' },
+        })
+      ).body,
+    );
+    let oral = oralViewSchema.parse(
+      (
+        await call(`/attempts/${attempt.id}/oral`, {
+          method: 'POST',
+          token: user.token,
+        })
+      ).body,
+    );
+    oral = oralViewSchema.parse(
+      (
+        await call(`/orals/${oral.id}/abandon`, {
+          method: 'POST',
+          token: user.token,
+        })
+      ).body,
+    );
+    expect(oral.result?.verdict).toBe('FAILED');
+    expect(oral.reviewDeadline).not.toBeNull();
+    expect(
+      (
+        await call(`/orals/${oral.id}/review`, {
+          token: user.token,
+          body: { message: 'trop court' },
+        })
+      ).status,
+    ).toBe(400);
+    const message =
+      'Ma connexion a coupé pendant la première question, je demande un réexamen.';
+    expect(
+      (
+        await call(`/orals/${oral.id}/review`, {
+          token: user.token,
+          body: { message },
+        })
+      ).status,
+    ).toBe(201);
+    expect(
+      (
+        await call(`/orals/${oral.id}/review`, {
+          token: user.token,
+          body: { message },
+        })
+      ).status,
+    ).toBe(409);
+    expect(
+      oralViewSchema.parse(
+        (await call(`/orals/${oral.id}`, { token: user.token })).body,
+      ).review?.status,
+    ).toBe('open');
+
+    expect((await call('/admin/reviews', { token: user.token })).status).toBe(
+      403,
+    );
+    await db.user.update({ where: { id: admin.id }, data: { role: 'ADMIN' } });
+    const list = z
+      .array(z.object({ id: z.string(), status: z.string() }))
+      .parse((await call('/admin/reviews', { token: admin.token })).body);
+    const review = list.find((r) => r.status === 'open')!;
+    const detail = await call(`/admin/reviews/${review.id}`, {
+      token: admin.token,
+    });
+    expect(detail.text).toContain('Points de compréhension attendus');
+    expect(
+      (
+        await call(`/admin/reviews/${review.id}/decision`, {
+          token: admin.token,
+          body: {
+            decision: 'overturn',
+            response: 'Coupure confirmée, compétence validée.',
+          },
+        })
+      ).status,
+    ).toBe(204);
+    expect(
+      (
+        await call(`/admin/reviews/${review.id}/decision`, {
+          token: admin.token,
+          body: { decision: 'confirm', response: 'Deuxième décision refusée.' },
+        })
+      ).status,
+    ).toBe(409);
+    const after = oralViewSchema.parse(
+      (await call(`/orals/${oral.id}`, { token: user.token })).body,
+    );
+    expect(after.result?.verdict).toBe('PASSED');
+    expect(after.review?.status).toBe('overturned');
+    expect(after.result?.validationExpiresAt).not.toBeNull();
+    expect(mails.findLast((m) => m.to === user.email)?.text).toContain(
+      'Coupure confirmée',
+    );
+  });
+});
+
+describe('daily tasks', () => {
+  it('reminds expiring validations once and purges inactive accounts after notice', async () => {
+    const user = await register();
+    const attempt = await db.attempt.create({
+      data: {
+        userId: user.id,
+        challengeId,
+        submittedWork: 'x',
+        challengeSnapshot: {},
+      },
+    });
+    const session = await db.oralSession.create({
+      data: {
+        userId: user.id,
+        attemptId: attempt.id,
+        model: 'mock-v1',
+        provider: 'mock',
+        rubricSnapshot: {},
+        status: 'GRADING_FAILED',
+      },
+    });
+    const at = new Date('2031-01-01T08:00:00Z');
+    await db.validation.create({
+      data: {
+        userId: user.id,
+        skillId: 'js-basics',
+        oralSessionId: session.id,
+        verdict: 'PASSED',
+        criteria: [],
+        validatedAt: new Date('2030-07-10T00:00:00Z'),
+        expiresAt: new Date('2031-01-07T00:00:00Z'),
+      },
+    });
+    await db.user.update({
+      where: { id: user.id },
+      data: { lastActiveAt: new Date('2029-01-01T00:00:00Z') },
+    });
+    const sent: Mail[] = [];
+    const run = (now: Date) =>
+      runDailyTasks({
+        db,
+        mailer: { send: async (mail) => void sent.push(mail) },
+        now,
+        webUrl: 'https://kompri.example',
+        reminderDays: 14,
+        inactiveAccountDays: 365,
+      });
+    const first = await run(at);
+    expect(
+      sent.filter((m) => m.to === user.email).map((m) => m.subject),
+    ).toEqual([
+      'Des compétences Kompri arrivent à expiration',
+      'Ton compte Kompri va être supprimé',
+    ]);
+    expect(first.reminders).toBeGreaterThanOrEqual(1);
+    const second = await run(at);
+    expect(sent.filter((m) => m.to === user.email)).toHaveLength(2);
+    expect(await db.user.count({ where: { id: user.id } })).toBe(1);
+    void second;
+    await run(new Date(at.getTime() + 15 * 86_400_000));
+    expect(await db.user.count({ where: { id: user.id } })).toBe(0);
+  });
+});
+
 describe('password reset', () => {
   it('sends a single-use link, changes the password and ends every session', async () => {
     const user = await register();
@@ -425,12 +709,16 @@ describe('password reset', () => {
         })
       ).status,
     ).toBe(202);
-    expect(mails).toHaveLength(0);
+    const resets = () =>
+      mails.filter((m) => m.subject.startsWith('Réinitialisation'));
+    expect(
+      resets().filter((m) => m.to === 'nobody@example.invalid'),
+    ).toHaveLength(0);
     expect(
       (await call('/auth/password/forgot', { body: { email: user.email } }))
         .status,
     ).toBe(202);
-    const mail = mails.at(-1)!;
+    const mail = resets().at(-1)!;
     expect(mail.to).toBe(user.email);
     const token = new URL(
       /https?:\/\/\S+/.exec(mail.text)![0],
@@ -453,10 +741,10 @@ describe('password reset', () => {
     ).toBe(200);
     for (let i = 0; i < 4; i++)
       await call('/auth/password/forgot', { body: { email: user.email } });
-    expect(mails.filter((m) => m.to === user.email)).toHaveLength(3);
+    expect(resets().filter((m) => m.to === user.email)).toHaveLength(3);
     advance(2 * 3600);
     const expired = new URL(
-      /https?:\/\/\S+/.exec(mails.at(-1)!.text)![0],
+      /https?:\/\/\S+/.exec(resets().at(-1)!.text)![0],
     ).searchParams.get('jeton')!;
     expect(
       (

@@ -19,7 +19,10 @@ import { deleteUserData } from '@kompri/db';
 import {
   authResponseSchema,
   deleteAccountRequestSchema,
+  changeEmailRequestSchema,
+  changePasswordRequestSchema,
   forgotPasswordRequestSchema,
+  verifyEmailRequestSchema,
   loginRequestSchema,
   resetPasswordRequestSchema,
   registerRequestSchema,
@@ -47,8 +50,13 @@ export interface AuthenticatedUser {
   email: string;
   displayName: string | null;
   createdAt: Date;
+  emailVerifiedAt: Date | null;
+  role: 'LEARNER' | 'ADMIN';
   sessionId: string;
 }
+
+export const verificationLinkHours = 24;
+export const maxVerificationsPerHour = 3;
 
 const hashToken = (token: string) =>
   createHash('sha256').update(token).digest('hex');
@@ -58,12 +66,16 @@ export const toUserResponse = (user: {
   email: string;
   displayName: string | null;
   createdAt: Date;
+  emailVerifiedAt: Date | null;
+  role: 'LEARNER' | 'ADMIN';
 }) =>
   userResponseSchema.parse({
     id: user.id,
     email: user.email,
     displayName: user.displayName,
     createdAt: user.createdAt.toISOString(),
+    emailVerified: user.emailVerifiedAt !== null,
+    role: user.role === 'ADMIN' ? 'admin' : 'learner',
   });
 
 @Injectable()
@@ -156,6 +168,8 @@ export class AuthService {
     email: string;
     displayName: string | null;
     createdAt: Date;
+    emailVerifiedAt: Date | null;
+    role: 'LEARNER' | 'ADMIN';
   }) {
     const token = randomBytes(32).toString('base64url');
     const createdAt = this.now();
@@ -188,6 +202,7 @@ export class AuthService {
       const user = await this.db.user.create({
         data: { email, displayName, passwordHash, createdAt: this.now() },
       });
+      await this.sendVerification(user, email);
       return await this.openSession(user);
     } catch (error) {
       if (isUniqueViolation(error))
@@ -240,13 +255,162 @@ export class AuthService {
     });
     if (!session || session.expiresAt <= this.now()) return null;
     const { user } = session;
+    const now = this.now();
+    // Activity feeds the inactive-account purge; one write per hour at most.
+    if (
+      !user.lastActiveAt ||
+      now.getTime() - user.lastActiveAt.getTime() > hours(1)
+    )
+      await this.db.user.update({
+        where: { id: user.id },
+        // Coming back cancels a pending inactivity notice.
+        data: { lastActiveAt: now, inactivityNoticeAt: null },
+      });
     return {
       id: user.id,
       email: user.email,
       displayName: user.displayName,
       createdAt: user.createdAt,
+      emailVerifiedAt: user.emailVerifiedAt,
+      role: user.role,
       sessionId: session.id,
     };
+  }
+
+  /** Sends a link proving control of `email`; the account switches to it once used. */
+  private async sendVerification(
+    user: { id: string; displayName: string | null },
+    email: string,
+  ) {
+    const now = this.now();
+    const recent = await this.db.emailVerification.count({
+      where: {
+        userId: user.id,
+        createdAt: { gte: new Date(now.getTime() - hours(1)) },
+      },
+    });
+    if (recent >= maxVerificationsPerHour) return false;
+    const token = randomBytes(32).toString('base64url');
+    await this.db.emailVerification.create({
+      data: {
+        userId: user.id,
+        email,
+        tokenHash: hashToken(token),
+        createdAt: now,
+        expiresAt: new Date(now.getTime() + hours(verificationLinkHours)),
+      },
+    });
+    const link = new URL('/compte/verifier', this.settings.WEB_URL);
+    link.searchParams.set('jeton', token);
+    await this.mailer.send({
+      to: email,
+      subject: 'Confirme ton adresse e-mail Kompri',
+      text: [
+        `Bonjour ${user.displayName ?? ''},`.trim(),
+        '',
+        'Pour confirmer ton adresse e-mail, ouvre ce lien (valable 24 heures) :',
+        '',
+        link.toString(),
+        '',
+        'Si tu n’as pas créé de compte Kompri, ignore ce message.',
+      ].join('\n'),
+    });
+    return true;
+  }
+
+  async resendVerification(user: AuthenticatedUser) {
+    if (user.emailVerifiedAt)
+      throw conflict('email_already_verified', 'Email already verified');
+    if (!(await this.sendVerification(user, user.email)))
+      throw new ApiException(
+        HttpStatus.TOO_MANY_REQUESTS,
+        'verification_rate_limited',
+        'Too many verification e-mails, try again later',
+      );
+  }
+
+  async verifyEmail(input: unknown) {
+    const { token } = parseInput(verifyEmailRequestSchema, input);
+    const now = this.now();
+    const check = await this.db.emailVerification.findUnique({
+      where: { tokenHash: hashToken(token) },
+    });
+    const invalid = () =>
+      new ApiException(
+        HttpStatus.BAD_REQUEST,
+        'verification_link_invalid',
+        'This verification link is invalid or expired',
+      );
+    if (!check || check.usedAt || check.expiresAt <= now) throw invalid();
+    try {
+      await this.db.$transaction(async (tx) => {
+        const used = await tx.emailVerification.updateMany({
+          where: { id: check.id, usedAt: null },
+          data: { usedAt: now },
+        });
+        if (used.count !== 1) throw invalid();
+        await tx.user.update({
+          where: { id: check.userId },
+          data: { email: check.email, emailVerifiedAt: now },
+        });
+      });
+    } catch (error) {
+      if (isUniqueViolation(error))
+        throw conflict('email_taken', 'An account already uses this email');
+      throw error;
+    }
+  }
+
+  async changePassword(user: AuthenticatedUser, input: unknown) {
+    const { currentPassword, newPassword } = parseInput(
+      changePasswordRequestSchema,
+      input,
+    );
+    await this.assertPassword(user.id, currentPassword);
+    const passwordHash = await hashPassword(newPassword);
+    await this.db.$transaction([
+      this.db.user.update({ where: { id: user.id }, data: { passwordHash } }),
+      // Other devices are logged out; the current session stays open.
+      this.db.authSession.deleteMany({
+        where: { userId: user.id, id: { not: user.sessionId } },
+      }),
+    ]);
+  }
+
+  async changeEmail(user: AuthenticatedUser, input: unknown) {
+    const { password, newEmail } = parseInput(changeEmailRequestSchema, input);
+    await this.assertPassword(user.id, password);
+    if (newEmail === user.email)
+      throw conflict('email_unchanged', 'This is already your email');
+    if (await this.db.user.count({ where: { email: newEmail } }))
+      throw conflict('email_taken', 'An account already uses this email');
+    if (!(await this.sendVerification(user, newEmail)))
+      throw new ApiException(
+        HttpStatus.TOO_MANY_REQUESTS,
+        'verification_rate_limited',
+        'Too many verification e-mails, try again later',
+      );
+    await this.mailer.send({
+      to: user.email,
+      subject: 'Changement d’adresse e-mail demandé sur Kompri',
+      text: [
+        'Un changement d’adresse e-mail a été demandé pour ton compte Kompri.',
+        'Il ne prendra effet qu’après confirmation depuis la nouvelle adresse.',
+        '',
+        'Si tu n’es pas à l’origine de cette demande, change ton mot de passe.',
+      ].join('\n'),
+    });
+  }
+
+  private async assertPassword(userId: string, password: string) {
+    const stored = await this.db.user.findUniqueOrThrow({
+      where: { id: userId },
+    });
+    if (
+      !stored.passwordHash ||
+      !(await verifyPassword(password, stored.passwordHash))
+    )
+      throw unauthorized('invalid_credentials', 'Invalid password');
   }
 
   async logout(user: AuthenticatedUser) {
@@ -340,6 +504,21 @@ export class AuthGuard implements CanActivate {
   }
 }
 
+/** Requires an authenticated administrator; use after AuthGuard. */
+@Injectable()
+export class AdminGuard implements CanActivate {
+  canActivate(context: ExecutionContext) {
+    const request = context.switchToHttp().getRequest<RequestWithUser>();
+    if (request.user?.role !== 'ADMIN')
+      throw new ApiException(
+        HttpStatus.FORBIDDEN,
+        'admin_only',
+        'Administrator access required',
+      );
+    return true;
+  }
+}
+
 export const CurrentUser = createParamDecorator(
   (_data: unknown, context: ExecutionContext) =>
     context.switchToHttp().getRequest<RequestWithUser>().user!,
@@ -372,6 +551,44 @@ export class AuthController {
   @HttpCode(204)
   async resetPassword(@Body() body: unknown) {
     await this.auth.resetPassword(body);
+  }
+
+  @Post('auth/email/verify')
+  @HttpCode(204)
+  async verifyEmail(@Body() body: unknown) {
+    await this.auth.verifyEmail(body);
+  }
+
+  @Post('me/email/verification')
+  @HttpCode(202)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  async resendVerification(@CurrentUser() user: AuthenticatedUser) {
+    await this.auth.resendVerification(user);
+    return {};
+  }
+
+  @Post('me/password')
+  @HttpCode(204)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  async changePassword(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() body: unknown,
+  ) {
+    await this.auth.changePassword(user, body);
+  }
+
+  @Post('me/email')
+  @HttpCode(202)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  async changeEmail(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() body: unknown,
+  ) {
+    await this.auth.changeEmail(user, body);
+    return {};
   }
 
   @Post('auth/logout')

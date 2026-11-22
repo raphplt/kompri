@@ -35,6 +35,17 @@ enum SkillStatus {
   PUBLISHED
 }
 
+enum UserRole {
+  LEARNER
+  ADMIN
+}
+
+enum ReviewStatus {
+  OPEN
+  CONFIRMED
+  OVERTURNED
+}
+
 enum OralStatus {
   ACTIVE
   GRADING_FAILED
@@ -42,20 +53,27 @@ enum OralStatus {
 }
 
 model User {
-  id               String          @id @default(uuid())
-  email            String          @unique
-  displayName      String?
-  passwordHash     String?
-  failedLoginCount Int             @default(0)
-  lockedUntil      DateTime?       @db.Timestamptz(3)
-  createdAt        DateTime        @default(now()) @db.Timestamptz(3)
-  authSessions     AuthSession[]
-  tutorUsage       TutorUsage[]
-  passwordResets   PasswordReset[]
-  attempts         Attempt[]
-  sessions         OralSession[]
-  validations      Validation[]
-  oralUsage        OralUsage[]
+  id                 String              @id @default(uuid())
+  email              String              @unique
+  displayName        String?
+  role               UserRole            @default(LEARNER)
+  emailVerifiedAt    DateTime?           @db.Timestamptz(3)
+  lastActiveAt       DateTime?           @db.Timestamptz(3)
+  inactivityNoticeAt DateTime?           @db.Timestamptz(3)
+  passwordHash       String?
+  failedLoginCount   Int                 @default(0)
+  lockedUntil        DateTime?           @db.Timestamptz(3)
+  createdAt          DateTime            @default(now()) @db.Timestamptz(3)
+  authSessions       AuthSession[]
+  tutorUsage         TutorUsage[]
+  passwordResets     PasswordReset[]
+  emailChecks        EmailVerification[]
+  reviewRequests     ReviewRequest[]     @relation("RequestedReviews")
+  reviewsDecided     ReviewRequest[]     @relation("DecidedReviews")
+  attempts           Attempt[]
+  sessions           OralSession[]
+  validations        Validation[]
+  oralUsage          OralUsage[]
 }
 
 model AuthSession {
@@ -164,27 +182,28 @@ model Attempt {
 }
 
 model OralSession {
-  id               String      @id @default(uuid())
+  id               String         @id @default(uuid())
   userId           String
   attemptId        String
-  mode             OralMode    @default(CHAT)
+  mode             OralMode       @default(CHAT)
   model            String
   provider         String
   rubricSnapshot   Json
-  status           OralStatus  @default(ACTIVE)
+  status           OralStatus     @default(ACTIVE)
   plan             Json?
-  questionDeadline DateTime?   @db.Timestamptz(3)
+  questionDeadline DateTime?      @db.Timestamptz(3)
   verdict          Verdict?
   grade            Json?
-  gradedAt         DateTime?   @db.Timestamptz(3)
-  gradingAttempts  Int         @default(0)
-  startedAt        DateTime    @default(now()) @db.Timestamptz(3)
-  endedAt          DateTime?   @db.Timestamptz(3)
-  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  attempt          Attempt     @relation(fields: [attemptId, userId], references: [id, userId], onDelete: Cascade)
+  gradedAt         DateTime?      @db.Timestamptz(3)
+  gradingAttempts  Int            @default(0)
+  startedAt        DateTime       @default(now()) @db.Timestamptz(3)
+  endedAt          DateTime?      @db.Timestamptz(3)
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attempt          Attempt        @relation(fields: [attemptId, userId], references: [id, userId], onDelete: Cascade)
   turns            OralTurn[]
   validation       Validation?
   usage            OralUsage?
+  reviewRequest    ReviewRequest?
 
   @@unique([id, userId])
   @@unique([attemptId])
@@ -206,17 +225,18 @@ model OralTurn {
 }
 
 model Validation {
-  id            String      @id @default(uuid())
-  userId        String
-  skillId       String
-  oralSessionId String      @unique
-  verdict       Verdict
-  criteria      Json
-  validatedAt   DateTime    @db.Timestamptz(3)
-  expiresAt     DateTime    @db.Timestamptz(3)
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  skill         Skill       @relation(fields: [skillId], references: [id], onDelete: Restrict)
-  session       OralSession @relation(fields: [oralSessionId, userId], references: [id, userId], onDelete: Cascade)
+  id             String      @id @default(uuid())
+  userId         String
+  skillId        String
+  oralSessionId  String      @unique
+  verdict        Verdict
+  criteria       Json
+  validatedAt    DateTime    @db.Timestamptz(3)
+  expiresAt      DateTime    @db.Timestamptz(3)
+  reminderSentAt DateTime?   @db.Timestamptz(3)
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill          Skill       @relation(fields: [skillId], references: [id], onDelete: Restrict)
+  session        OralSession @relation(fields: [oralSessionId, userId], references: [id, userId], onDelete: Cascade)
 
   @@unique([oralSessionId, userId])
   @@index([userId, skillId, expiresAt])
@@ -255,4 +275,37 @@ model PasswordReset {
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
+}
+
+/// Single-use link proving that a user controls an e-mail address.
+model EmailVerification {
+  id        String    @id @default(uuid())
+  userId    String
+  email     String
+  tokenHash String    @unique
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  expiresAt DateTime  @db.Timestamptz(3)
+  usedAt    DateTime? @db.Timestamptz(3)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+/// A learner contests the automated grading of one oral; an administrator decides.
+model ReviewRequest {
+  id            String       @id @default(uuid())
+  userId        String
+  oralSessionId String       @unique
+  message       String
+  status        ReviewStatus @default(OPEN)
+  response      String?
+  decidedById   String?
+  createdAt     DateTime     @default(now()) @db.Timestamptz(3)
+  decidedAt     DateTime?    @db.Timestamptz(3)
+  user          User         @relation("RequestedReviews", fields: [userId], references: [id], onDelete: Cascade)
+  decidedBy     User?        @relation("DecidedReviews", fields: [decidedById], references: [id], onDelete: SetNull)
+  session       OralSession  @relation(fields: [oralSessionId, userId], references: [id, userId], onDelete: Cascade)
+
+  @@unique([oralSessionId, userId])
+  @@index([status, createdAt])
 }

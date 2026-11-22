@@ -19,6 +19,9 @@ export type Settings = Pick<
   | 'TUTOR_LIMIT_PER_WINDOW'
   | 'TUTOR_WINDOW_HOURS'
   | 'WEB_URL'
+  | 'REQUIRE_EMAIL_VERIFICATION'
+  | 'REVIEW_WINDOW_DAYS'
+  | 'REMINDER_DAYS'
 >;
 export const defaultSettings: Settings = {
   ORAL_QUESTION_COUNT: 3,
@@ -30,6 +33,9 @@ export const defaultSettings: Settings = {
   TUTOR_LIMIT_PER_WINDOW: 60,
   TUTOR_WINDOW_HOURS: 24,
   WEB_URL: 'http://localhost:3000',
+  REQUIRE_EMAIL_VERIFICATION: true,
+  REVIEW_WINDOW_DAYS: 30,
+  REMINDER_DAYS: 14,
 };
 
 export interface Examiner {
