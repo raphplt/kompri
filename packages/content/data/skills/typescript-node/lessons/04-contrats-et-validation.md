@@ -159,6 +159,7 @@ Si tu importes un type comme une valeur, `tsc` et Node.js protestent chacun à s
 
 ```text
 src/bookings/rules.ts(3,10): error TS1484: 'Booking' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+src/bookings/rules.ts(3,19): error TS1484: 'CreateBookingInput' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
 ```
 
 ```text
@@ -360,7 +361,9 @@ réponses d’erreur restent produites par **un seul** gestionnaire.
 
 ### Pourquoi pas un middleware pour `req.query` ?
 
-L’idée naturelle serait un `validateQuery` symétrique, qui remplacerait `req.query`. Essaie :
+L’idée naturelle serait un `validateQuery` symétrique, qui remplacerait `req.query`. Essaie ce
+middleware, placé avant le gestionnaire de `GET /` (on retire `limit`, un nombre, que le type
+de `req.query` refuserait) :
 
 ```ts
 (req, res, next) => {
@@ -711,7 +714,8 @@ démarre pas.
 Importer une valeur avec `import type` : la ligne est effacée, et l’usage de `bookingSchema`
 comme valeur (par exemple `bookingSchema.parse(…)`) est une erreur de `tsc` (le nom ne peut pas
 être utilisé comme valeur parce qu’il a été importé avec `import type`). Exécuté malgré tout,
-le code lèverait une `ReferenceError`, car le nom n’existe pas dans le module.
+le code lèverait une `ReferenceError` : la ligne d’import ayant été effacée, `bookingSchema`
+n’est défini nulle part dans le fichier.
 
 On peut en revanche utiliser `typeof bookingSchema` dans un **type** avec un `import type` :
 c’est une position de type, effacée elle aussi.

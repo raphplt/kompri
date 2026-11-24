@@ -77,6 +77,8 @@ npm install --save-dev typescript @types/node@24 @types/express
 
 Les cours de cette compétence ont été vérifiés avec ces versions : `express` 5.3.0, `zod` 4.6.7,
 `typescript` 7.0.2, `@types/express` 5.0.6 et `@types/node` 24.19.2, avec Node.js 24.21.0.
+Les messages d’erreur et les sorties reproduits dans les leçons ont été obtenus avec ces
+versions : avec une autre version, un message peut être formulé un peu différemment.
 
 Deux familles de paquets :
 
@@ -417,7 +419,7 @@ tsconfig.build.json(6,5): error TS5011: The common source directory of 'tsconfig
 
 ```bash
 npm run build
-find dist -type f
+find dist -type f | sort
 cat dist/server.js
 ```
 

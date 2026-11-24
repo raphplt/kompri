@@ -298,7 +298,7 @@
 
 - id: typescript-node
   domain: backend
-  status: draft
+  status: published
   title: TypeScript côté serveur
   description: Écrire une API Node.js en TypeScript et valider ce qui vient de l’extérieur.
   estimatedHours: 6

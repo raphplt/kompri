@@ -72,7 +72,8 @@ courte :
     baseUrl = `http://127.0.0.1:${server.address().port}/api/bookings`;
 ```
 
-`npm test` affiche `ℹ pass 4`, mais `npm run typecheck` proteste :
+`node --test test/bookings-api.test.ts` affiche `ℹ pass 4` (et `npm test` réussit aussi),
+mais `npm run typecheck` proteste :
 
 ```text
 test/bookings-api.test.ts(35,35): error TS2531: Object is possibly 'null'.
@@ -180,6 +181,7 @@ node --test test/rules.test.ts
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
+ℹ duration_ms 87.623263
 ```
 
 Les durées varient d’une exécution à l’autre. Ce que TypeScript apporte ici :
@@ -469,6 +471,7 @@ npm run check
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
+ℹ duration_ms 462.669398
 ```
 
 Quinze tests, trois fichiers, aucune erreur de type : le projet est vérifié dans ses deux
