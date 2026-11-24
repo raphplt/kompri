@@ -64,17 +64,16 @@ export const examinerMockResponder: MockResponder = (request) => {
           : words >= mockSignalWords.partial
             ? Math.ceil(criterion.maxScore / 2)
             : 0;
-      return {
-        criterionId: criterion.id,
-        score,
-        justification: `Signal synthétique : réponse de ${words} mots.`,
-      };
+      return [
+        criterion.id,
+        {
+          score,
+          justification: `Signal synthétique : réponse de ${words} mots.`,
+        },
+      ] as const;
     });
-    const total = criteria.reduce((sum, c) => sum + c.score, 0);
-    const maximum = rubric.criteria.reduce((sum, c) => sum + c.maxScore, 0);
     return {
-      criteria,
-      verdict: total / maximum >= rubric.passRatio ? 'PASSED' : 'FAILED',
+      criteria: Object.fromEntries(criteria),
       feedback:
         'Retour synthétique du mock : il mesure seulement la longueur des réponses, pas leur justesse.',
     };

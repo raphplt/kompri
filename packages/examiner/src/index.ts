@@ -26,8 +26,27 @@ export const gradeSchema = z.object({
   feedback: z.string().min(1).optional(),
 });
 export type Grade = z.infer<typeof gradeSchema>;
-/** The model must always write feedback; stored references may omit it. */
-const modelGradeSchema = gradeSchema.extend({ feedback: z.string().min(1) });
+/**
+ * What the model returns: one required entry per rubric criterion, keyed by its
+ * id, so a structured output cannot skip or repeat a criterion. The verdict is
+ * computed from the scores, never asked of the model.
+ */
+export function modelGradeSchema(rubric: Rubric) {
+  return z.object({
+    criteria: z.object(
+      Object.fromEntries(
+        rubric.criteria.map((criterion) => [
+          criterion.id,
+          z.object({
+            score: z.number().int().nonnegative(),
+            justification: z.string().min(1),
+          }),
+        ]),
+      ),
+    ),
+    feedback: z.string().min(1),
+  });
+}
 
 export const minQuestions = 2;
 export const maxQuestions = 5;
@@ -192,16 +211,27 @@ export async function gradeOral(
     throw new Error('Cannot grade an unfinished oral');
   if (client.model !== state.model)
     throw new Error('Cannot switch model during an oral');
-  const grade = await client.generateStructured(
+  const output = await client.generateStructured(
     request('grade', gradeInstructions, {
       challenge: state.challenge,
       rubric: state.rubric,
       submission: state.submission,
       turns: state.turns,
     }),
-    modelGradeSchema,
+    modelGradeSchema(state.rubric),
   );
-  return validateGrade(grade, state.rubric);
+  const criteria = state.rubric.criteria.map((criterion) => ({
+    criterionId: criterion.id,
+    ...output.criteria[criterion.id]!,
+  }));
+  return validateGrade(
+    {
+      criteria,
+      verdict: expectedVerdict({ criteria }, state.rubric),
+      feedback: output.feedback,
+    },
+    state.rubric,
+  );
 }
 
 // Replay preserves the reference examiner questions: different live follow-ups

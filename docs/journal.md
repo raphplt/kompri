@@ -3,6 +3,20 @@
 Entrées les plus récentes en haut. Chaque entrée résume ce qui a été livré, les décisions
 prises sans attendre de validation et la suite prévue.
 
+## 24 novembre 2026 — Examinateur réel, budget et nouveaux cours
+
+- Clé d’API Claude fournie par le porteur du projet ; elle est restée hors du dépôt. À
+  révoquer après usage, car elle a transité par la conversation.
+- Mesure réelle de l’examinateur avec Claude Opus 5.5 : 7/7 verdicts conformes et stables,
+  0,57 point d’écart moyen par critère, environ 1 $ ([détails](evaluations.md)). Elle a révélé
+  une note qui oubliait un critère : le modèle rend désormais une entrée obligatoire par
+  critère, et le verdict est calculé par la plateforme.
+- Plafond mensuel de dépense IA demandé (20 €) : `LLM_MONTHLY_BUDGET_USD=20` en production.
+  Atteint, il suspend les nouveaux oraux et le tuteur ; un oral commencé va à son terme.
+  Décision : un plafond en dollars, comme les tarifs, et 20 $ restent sous 20 €.
+- Six nouvelles compétences planifiées (Git en équipe, TypeScript ×2, React ×2, déploiement) ;
+  blocs de code TypeScript, JSX, YAML et Dockerfile autorisés dans les leçons.
+
 ## 22 novembre 2026 (fin de soirée) — Recherche, reprise et accessibilité
 
 - Le tableau de bord propose la prochaine leçon à lire : suite de la compétence lue en dernier,

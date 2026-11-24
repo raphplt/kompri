@@ -2,7 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { loadContent } from '@kompri/content';
 import type { Content } from '@kompri/content';
 import type { LlmClient } from '@kompri/llm';
-import { answerOral, gradeOral, prepareOral, validateGrade } from './index.ts';
+import {
+  answerOral,
+  gradeOral,
+  modelGradeSchema,
+  prepareOral,
+  validateGrade,
+} from './index.ts';
 import { createExaminerMock } from './testing.ts';
 
 const challengeId = 'js-basics-sans-ia';
@@ -111,6 +117,21 @@ describe('complete oral with an injected deterministic LLM', () => {
       expect(() => validateGrade(grade, rubric)).toThrow();
     },
   );
+});
+
+it('asks the model for exactly one score per criterion, keyed by id', async () => {
+  const { rubric } = pick(await loadContent());
+  const schema = modelGradeSchema(rubric);
+  const entry = { score: 0, justification: 'Rien de démontré.' };
+  const all = Object.fromEntries(rubric.criteria.map((c) => [c.id, entry]));
+  expect(schema.safeParse({ criteria: all, feedback: 'Retour.' }).success).toBe(
+    true,
+  );
+  const missing = { ...all };
+  delete missing[rubric.criteria[0]!.id];
+  expect(
+    schema.safeParse({ criteria: missing, feedback: 'Retour.' }).success,
+  ).toBe(false);
 });
 
 it('compares timestamps by instant, including fractional seconds', async () => {
