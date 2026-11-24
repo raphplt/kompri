@@ -1,0 +1,505 @@
+- id: react-data-forms-sans-ia
+  family: SANS_IA
+  title: L’inscription à un atelier
+  summary: Charger une ressource avec useEffect et construire, sans aide, un formulaire contrôlé, validé,
+    accessible et protégé contre la double soumission.
+  estimatedMinutes: 60
+  instructions: "Une association propose un atelier « Réparer son vélo ». Réalise **sans IA** la page\n\
+    d’inscription, dans un projet créé avec\n`npm create vite@latest atelier -- --template react --no-interactive`.\n\
+    \nL’API t’est fournie. Place ce fichier `server.js` à la racine du projet et lance-le dans\nun second\
+    \ terminal avec `node server.js` :\n\n```js\n// server.js — API d’inscription à un atelier, en mémoire\n\
+    import { createServer } from 'node:http';\n\nconst port = Number(process.env.PORT ?? 3004);\nconst\
+    \ workshop = { title: 'Réparer son vélo', date: '2026-12-12', seatsLeft: 5 };\nconst registrations\
+    \ = [{ id: 1, name: 'Awa Diallo', email: 'awa@example.fr', seats: 1 }];\n\nconst wait = (ms) => new\
+    \ Promise((resolve) => setTimeout(resolve, ms));\n\nfunction send(response, status, data) {\n  response.writeHead(status,\
+    \ { 'Content-Type': 'application/json; charset=utf-8' });\n  response.end(JSON.stringify(data));\n\
+    }\n\nasync function readJson(request) {\n  let text = '';\n  for await (const chunk of request) text\
+    \ += chunk;\n  return JSON.parse(text);\n}\n\ncreateServer(async (request, response) => {\n  const\
+    \ url = new URL(request.url, 'http://localhost');\n  console.log(`${request.method} ${url.pathname}${url.search}`);\n\
+    \  try {\n    if (url.searchParams.get('fail') === '1') {\n      await wait(300);\n      return send(response,\
+    \ 500, { error: 'Erreur interne simulée' });\n    }\n    if (url.pathname === '/api/workshop' && request.method\
+    \ === 'GET') {\n      await wait(400);\n      return send(response, 200, workshop);\n    }\n    if\
+    \ (url.pathname === '/api/registrations' && request.method === 'POST') {\n      await wait(800);\n\
+    \      const data = await readJson(request);\n      const name = typeof data.name === 'string' ? data.name.trim()\
+    \ : '';\n      const email = typeof data.email === 'string' ? data.email.trim().toLowerCase() : '';\n\
+    \      const seats = Number(data.seats);\n      const fields = {};\n      if (name.length < 2) fields.name\
+    \ = 'Nom trop court.';\n      if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) fields.email = 'Adresse\
+    \ invalide.';\n      if (!Number.isInteger(seats) || seats < 1 || seats > 4) fields.seats = 'Entre\
+    \ 1 et 4 places.';\n      if (Object.keys(fields).length > 0) return send(response, 400, { error:\
+    \ 'Données invalides', fields });\n      if (registrations.some((r) => r.email === email)) {\n   \
+    \     return send(response, 409, { error: 'Déjà inscrit', fields: { email: 'Cette adresse est déjà\
+    \ inscrite.' } });\n      }\n      if (seats > workshop.seatsLeft) {\n        const text = `Il ne\
+    \ reste que ${workshop.seatsLeft} place(s).`;\n        return send(response, 409, { error: 'Complet',\
+    \ fields: { seats: text } });\n      }\n      workshop.seatsLeft -= seats;\n      const registration\
+    \ = { id: registrations.length + 1, name, email, seats };\n      registrations.push(registration);\n\
+    \      return send(response, 201, { registration, seatsLeft: workshop.seatsLeft });\n    }\n    return\
+    \ send(response, 404, { error: 'Route inconnue' });\n  } catch {\n    return send(response, 400, {\
+    \ error: 'Requête invalide' });\n  }\n}).listen(port, () => console.log(`API de l’atelier : http://localhost:${port}/api/workshop`));\n\
+    ```\n\nConfigure le proxy de Vite pour que `/api` soit relayé vers `http://localhost:3004`.\n\nÉcris\
+    \ un composant `WorkshopSignup` (fichier `src/WorkshopSignup.jsx`, affiché par\n`App`) qui :\n\n1.\
+    \ charge `GET /api/workshop` dans un effet, avec annulation dans le nettoyage, et affiche\n   dans\
+    \ un paragraphe `role=\"status\"` « Chargement… », puis « Réparer son vélo — places\n   restantes\
+    \ : 5 », ou un message d’erreur compréhensible si le chargement échoue\n   (essaie avec `/api/workshop?fail=1`)\
+    \ ;\n2. affiche un formulaire contrôlé, dont l’état est **un seul objet**, avec trois champs :\n \
+    \  « Nom » (2 caractères minimum), « Adresse électronique » (format valide) et « Nombre\n   de places\
+    \ » (liste de 1 à 4, 1 par défaut) ;\n3. valide à l’envoi, puis au fil de la saisie pour un champ\
+    \ déjà quitté ; chaque erreur\n   est un texte qui explique la correction, relié au champ par `aria-describedby`,\
+    \ avec\n   `aria-invalid` ; à l’envoi, le focus va sur le premier champ en erreur et rien n’est\n\
+    \   envoyé ;\n4. envoie `POST /api/registrations` avec `{ name, email, seats }` (`seats` est un nombre)\
+    \ ;\n   pendant l’envoi, le bouton annonce l’attente et un double clic n’envoie qu’une requête ;\n\
+    5. en cas de succès (201), affiche « Inscription confirmée pour … », vide le formulaire et\n   met\
+    \ à jour les places restantes **à partir de la réponse** ;\n6. en cas de refus (400 ou 409), affiche\
+    \ les messages de `fields` sous les champs\n   concernés ; toute autre erreur s’affiche dans un statut.\n\
+    \nContraintes : JavaScript, `StrictMode` conservé, pas de bibliothèque en plus de React,\n`npm run\
+    \ lint` sans erreur, aucune donnée dérivée (les erreurs, par exemple) stockée dans\nun état.\n\nScénarios\
+    \ à vérifier : envoi à vide ; inscription avec `awa@example.fr` (déjà inscrite) ;\ndouble clic sur\
+    \ le bouton avec des données valides ; inscription de 4 places, puis d’une\nautre personne pour 2\
+    \ places.\n"
+  deliverable: 'Colle le code de `src/WorkshopSignup.jsx`, de `src/App.jsx` et de `vite.config.js`, puis
+
+    le résultat observé pour chacun des quatre scénarios (texte affiché et nombre de requêtes
+
+    `POST` dans l’onglet *Network*). Termine par trois ou quatre phrases expliquant pourquoi
+
+    le chargement est dans un effet et l’envoi dans un gestionnaire d’événement.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: effect-loading
+      description: Charge la ressource dans un effet correct et explique ses états et son nettoyage.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Requête dans le corps du composant ou effet async, ou incapable d’expliquer quand
+          l’effet s’exécute.
+      - score: 1
+        description: Chargement fonctionnel sans nettoyage ou sans état d’erreur, explication partielle.
+      - score: 2
+        description: Trois états, annulation dans le nettoyage, AbortError ignorée, double exécution de
+          StrictMode expliquée.
+      - score: 3
+        description: Explique aussi le test de response.ok et pourquoi le chargement relève d’un effet
+          et l’envoi d’un gestionnaire.
+    - id: controlled-form
+      description: Gère un formulaire contrôlé à plusieurs champs avec une validation dérivée.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Champs non contrôlés ou état éparpillé incohérent, validation absente.
+      - score: 1
+        description: Formulaire contrôlé mais erreurs stockées dans un état ou affichées au mauvais moment.
+      - score: 2
+        description: Objet values, gestionnaire générique, erreurs calculées à chaque rendu, affichage
+          après blur ou envoi.
+      - score: 3
+        description: Justifie chaque choix (propriété calculée, conversion du select, remise à zéro après
+          succès) et l’applique à un champ ajouté à l’oral.
+    - id: accessible-errors
+      description: Rend les erreurs perceptibles et utilisables sans la vue.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Erreurs signalées par la couleur ou par un texte non relié au champ.
+      - score: 1
+        description: Labels corrects, mais aria-invalid, aria-describedby ou le focus manquent.
+      - score: 2
+        description: Labels, aria-invalid, aria-describedby conditionnel, messages explicites et focus
+          sur le premier champ en erreur.
+      - score: 3
+        description: Explique ce qu’annonce un lecteur d’écran à chaque étape et le rôle des régions role="status".
+    - id: submission
+      description: Envoie une seule fois, traite les réponses du serveur et garde l’interface cohérente.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Pas de garde contre la double soumission, ou erreurs HTTP ignorées.
+      - score: 1
+        description: Garde ou traitement des erreurs présent, mais pas les deux, ou places restantes recalculées
+          localement.
+      - score: 2
+        description: Garde, statut d’envoi, finally, erreurs de fields sous les bons champs, mise à jour
+          depuis la réponse.
+      - score: 3
+        description: Discute disabled et aria-disabled, et explique pourquoi le serveur reste le dernier
+          rempart contre les doublons.
+- id: react-data-forms-avec-ia
+  family: AVEC_IA
+  title: Les prêts de la bibliothèque de quartier
+  summary: Construire avec une IA une application React complète sur une API fournie, avec contexte, hooks
+    personnalisés et tests, puis en défendre chaque choix.
+  estimatedMinutes: 150
+  instructions: "Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras expliquer chaque ligne\n\
+    sans aide, prévoir l’effet de petites modifications et corriger toi-même un comportement.\n\nObjectif\
+    \ : une application React (projet Vite, modèle `react`, JavaScript) pour gérer les\nprêts d’une petite\
+    \ bibliothèque. L’API est fournie : place ce `server.js` à la racine du\nprojet, lance-le avec `node\
+    \ server.js` et configure le proxy de Vite vers\n`http://localhost:3005`.\n\n```js\n// server.js —\
+    \ API de prêts de livres, en mémoire, avec délais simulés\nimport { createServer } from 'node:http';\n\
+    \nconst port = Number(process.env.PORT ?? 3005);\nlet nextId = 5;\nconst books = [\n  { id: 1, title:\
+    \ 'Le Petit Prince', author: 'Antoine de Saint-Exupéry', available: true, repair: false },\n  { id:\
+    \ 2, title: 'Germinal', author: 'Émile Zola', available: false, repair: false },\n  { id: 3, title:\
+    \ 'Candide', author: 'Voltaire', available: true, repair: true },\n  { id: 4, title: 'Bel-Ami', author:\
+    \ 'Guy de Maupassant', available: true, repair: false },\n];\n\nconst wait = (ms) => new Promise((resolve)\
+    \ => setTimeout(resolve, ms));\n\nfunction send(response, status, data) {\n  response.writeHead(status,\
+    \ { 'Content-Type': 'application/json; charset=utf-8' });\n  response.end(JSON.stringify(data));\n\
+    }\n\nasync function readJson(request) {\n  let text = '';\n  for await (const chunk of request) text\
+    \ += chunk;\n  return JSON.parse(text);\n}\n\ncreateServer(async (request, response) => {\n  const\
+    \ url = new URL(request.url, 'http://localhost');\n  console.log(`${request.method} ${url.pathname}${url.search}`);\n\
+    \  try {\n    if (url.searchParams.get('fail') === '1') {\n      await wait(300);\n      return send(response,\
+    \ 500, { error: 'Erreur interne simulée' });\n    }\n    const match = url.pathname.match(/^\\/api\\\
+    /books\\/(\\d+)$/);\n    const book = match && books.find((item) => item.id === Number(match[1]));\n\
+    \    if (url.pathname === '/api/books' && request.method === 'GET') {\n      await wait(500);\n  \
+    \    return send(response, 200, books);\n    }\n    if (url.pathname === '/api/books' && request.method\
+    \ === 'POST') {\n      await wait(600);\n      const data = await readJson(request);\n      const\
+    \ title = typeof data.title === 'string' ? data.title.trim() : '';\n      const author = typeof data.author\
+    \ === 'string' ? data.author.trim() : '';\n      const fields = {};\n      if (title.length < 2) fields.title\
+    \ = 'Titre trop court.';\n      if (author.length < 2) fields.author = 'Auteur trop court.';\n   \
+    \   if (Object.keys(fields).length > 0) return send(response, 400, { error: 'Données invalides', fields\
+    \ });\n      if (books.some((b) => b.title.toLowerCase() === title.toLowerCase() && b.author === author))\
+    \ {\n        return send(response, 409, { error: 'Doublon', fields: { title: 'Ce livre est déjà au\
+    \ catalogue.' } });\n      }\n      const created = { id: nextId++, title, author, available: true,\
+    \ repair: false };\n      books.push(created);\n      return send(response, 201, created);\n    }\n\
+    \    if (!match) return send(response, 404, { error: 'Route inconnue' });\n    // Délai simulé : le\
+    \ livre n° 1 répond en 1,5 s, les autres en 0,3 s.\n    await wait(request.method === 'GET' && book?.id\
+    \ === 1 ? 1500 : 300);\n    if (!book) return send(response, 404, { error: 'Livre introuvable' });\n\
+    \    if (request.method === 'GET') return send(response, 200, book);\n    if (request.method === 'PATCH')\
+    \ {\n      if (book.repair) return send(response, 409, { error: 'Livre en réparation : prêt impossible.'\
+    \ });\n      const data = await readJson(request);\n      book.available = data.available === true;\n\
+    \      return send(response, 200, book);\n    }\n    return send(response, 405, { error: 'Méthode\
+    \ non autorisée' });\n  } catch {\n    return send(response, 400, { error: 'Requête invalide' });\n\
+    \  }\n}).listen(port, () => console.log(`API des prêts : http://localhost:${port}/api/books`));\n\
+    ```\n\nFonctionnalités :\n\n1. **Catalogue** : la liste des livres est chargée au démarrage, avec\
+    \ états chargement,\n   erreur (avec bouton « Réessayer ») et succès. Un filtre « Tous / Disponibles\
+    \ / Prêtés »\n   et un compteur « N disponible(s) sur M » complètent la liste.\n2. **Fiche** : un\
+    \ clic sur un titre affiche la fiche du livre, chargée par\n   `GET /api/books/:id`. Cliquer sur «\
+    \ Le Petit Prince » puis aussitôt sur un autre livre\n   doit afficher la fiche du **dernier** livre\
+    \ choisi.\n3. **Prêt** : un bouton bascule « Prêté » (`aria-pressed`) change `available` par une mise\n\
+    \   à jour **optimiste** ; si le serveur refuse (essaie « Candide »), l’interface revient\n   à l’état\
+    \ précédent et explique pourquoi.\n4. **Ajout** : un formulaire « Titre », « Auteur » contrôlé, validé,\
+    \ aux erreurs\n   accessibles (y compris celles que renvoie le serveur), protégé contre la double\n\
+    \   soumission ; le livre créé apparaît dans la liste à partir de la réponse du serveur.\n5. **Bibliothécaire**\
+    \ : un contexte fournit la personne connectée (choix « Invité » ou\n   « Bibliothécaire » dans l’en-tête,\
+    \ sans vraie authentification) ; seuls les\n   bibliothécaires voient le formulaire d’ajout et les\
+    \ boutons « Prêté ».\n\nContraintes :\n\n- au moins un hook personnalisé réutilisable (par exemple\
+    \ `useFetch`) et le contexte écrit\n  avec la syntaxe de React 19 (`<MonContexte value={…}>`) ;\n\
+    - `StrictMode` conservé, `npm run lint` et `npm run build` sans erreur, console de\n  développement\
+    \ sans avertissement ;\n- au moins **quatre tests** Vitest + Testing Library + user-event (environnement\
+    \ jsdom,\n  `fetch` simulé) : un chargement en erreur, la fiche affichée après chargement, le\n  formulaire\
+    \ (erreurs accessibles et double clic), le retour arrière d’un prêt refusé ;\n- pour **un** de ces\
+    \ tests, montre qu’il échoue quand on casse volontairement le code\n  qu’il protège.\n\nConseil :\
+    \ demande à l’IA de t’expliquer chaque effet qu’elle écrit (« quel système\nexterne synchronise-t-il\
+    \ ? »), et vérifie toi-même les scénarios de course et de refus\ndans le navigateur avant de lui faire\
+    \ confiance.\n"
+  deliverable: "Colle le code des fichiers de `src/` que tu as créés ou modifiés (tests compris) et de\n\
+    `vite.config.js`, la sortie de `npx vitest run --reporter=verbose`, de `npm run lint` et de\n`npm\
+    \ run build`, puis :\n\n- le test que tu as fait échouer volontairement, la modification faite et\
+    \ le message\n  d’échec obtenu ;\n- le résultat observé pour « Le Petit Prince puis un autre livre\
+    \ » et pour le prêt de\n  « Candide » ;\n- quelques lignes sur ce que l’IA t’a apporté et ce que tu\
+    \ as dû corriger ou vérifier.\n"
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: code-ownership
+      description: Explique chaque partie de son code sans hésitation ni aide.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne sait pas expliquer des parties importantes de son propre code.
+      - score: 1
+        description: Explique le déroulé général mais pas les effets, les nettoyages ou les mises à jour
+          d’état.
+      - score: 2
+        description: Explique précisément effets, dépendances, gestionnaires asynchrones et mises à jour.
+      - score: 3
+        description: Explique aussi ce qu’il a refusé ou corrigé dans les propositions de l’IA, et pourquoi.
+    - id: data-consistency
+      description: Garde l’interface fidèle au serveur pendant les chargements et les modifications.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Course non traitée, erreurs HTTP ignorées ou mise à jour optimiste sans retour arrière.
+      - score: 1
+        description: Un des mécanismes (annulation, test de response.ok, retour arrière) manque ou est
+          mal expliqué.
+      - score: 2
+        description: Annulation, erreurs HTTP, réponse du serveur appliquée, retour arrière ciblé avec
+          formes fonctionnelles.
+      - score: 3
+        description: Compare recharger, appliquer la réponse et optimiste, et prédit le comportement si
+          on retire un mécanisme.
+    - id: context-and-hooks
+      description: Utilise un contexte et des hooks personnalisés à bon escient.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Pas de contexte ni de hook, ou règles des hooks enfreintes.
+      - score: 1
+        description: Contexte et hook présents mais mal justifiés, ou syntaxe obsolète sans le savoir.
+      - score: 2
+        description: Contexte en syntaxe React 19 protégé par un hook, hook personnalisé réutilisable,
+          règles de nommage respectées.
+      - score: 3
+        description: Explique les limites du contexte (re-rendus, dépendance cachée, aucune sécurité)
+          et quand un hook ne s’impose pas.
+    - id: tests
+      description: Écrit des tests orientés utilisateur qui échouent vraiment quand le code est faux.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Tests absents, ou qui passent sans rien vérifier.
+      - score: 1
+        description: Tests présents mais requêtes fragiles, await oubliés ou doublures non restaurées.
+      - score: 2
+        description: Requêtes par rôle et libellé, findBy attendus, fetch simulé et restauré, un test
+          vu en échec.
+      - score: 3
+        description: Explique pourquoi une doublure instantanée rend un test de double clic inutile et
+          comment le rendre probant.
+- id: react-data-forms-contre-ia
+  family: CONTRE_IA
+  title: Le tableau de tâches qui charge sans fin
+  summary: Trouver et corriger les défauts d’un hook de chargement, d’un composant et de ses tests générés
+    par une IA, dont certains n’apparaissent qu’avec des scénarios précis.
+  estimatedMinutes: 90
+  instructions: "Un assistant a généré ce petit gestionnaire de tâches : une API, un hook `useApi`, un\n\
+    composant `TaskBoard` et ses tests. Règles attendues : choisir un projet, voir ses tâches\net le nombre\
+    \ de tâches terminées, cocher ou décocher une tâche (le serveur refuse de\nmodifier une tâche archivée),\
+    \ ajouter une tâche (3 caractères minimum). Les tests doivent\nprotéger ces comportements.\n\nCrée\
+    \ un projet Vite (modèle `react`), installe les outils de test :\n\n```bash\nnpm install --save-dev\
+    \ vitest jsdom @testing-library/react @testing-library/dom @testing-library/user-event\n```\n\npuis\
+    \ ajoute les fichiers suivants.\n\n`server.js`, à la racine, lancé avec `node server.js` :\n\n```js\n\
+    // server.js — API de tâches en mémoire, avec délais simulés\nimport { createServer } from 'node:http';\n\
+    \nconst port = Number(process.env.PORT ?? 3002);\n\nlet nextId = 5;\nconst tasks = [\n  { id: 1, project:\
+    \ 'site', title: 'Écrire la page d’accueil', done: false, archived: false },\n  { id: 2, project:\
+    \ 'site', title: 'Choisir les couleurs', done: true, archived: false },\n  { id: 3, project: 'appli',\
+    \ title: 'Maquetter la connexion', done: false, archived: false },\n  { id: 4, project: 'appli', title:\
+    \ 'Ancien logo', done: true, archived: true },\n];\n\nconst wait = (ms) => new Promise((resolve) =>\
+    \ setTimeout(resolve, ms));\n\nfunction send(response, status, data) {\n  response.writeHead(status,\
+    \ { 'Content-Type': 'application/json; charset=utf-8' });\n  response.end(JSON.stringify(data));\n\
+    }\n\nasync function readJson(request) {\n  let text = '';\n  for await (const chunk of request) text\
+    \ += chunk;\n  return JSON.parse(text);\n}\n\ncreateServer(async (request, response) => {\n  const\
+    \ url = new URL(request.url, 'http://localhost');\n  console.log(`${request.method} ${url.pathname}${url.search}`);\n\
+    \  try {\n    if (url.searchParams.get('fail') === '1') {\n      await wait(300);\n      return send(response,\
+    \ 500, { error: 'Erreur interne simulée' });\n    }\n    const match = url.pathname.match(/^\\/api\\\
+    /tasks\\/(\\d+)$/);\n    if (url.pathname === '/api/tasks' && request.method === 'GET') {\n      const\
+    \ project = url.searchParams.get('project');\n      await wait(project === 'site' ? 1200 : 200); //\
+    \ le projet « site » est lent\n      return send(response, 200, tasks.filter((task) => task.project\
+    \ === project));\n    }\n    if (url.pathname === '/api/tasks' && request.method === 'POST') {\n \
+    \     await wait(300);\n      const data = await readJson(request);\n      const title = typeof data.title\
+    \ === 'string' ? data.title.trim() : '';\n      if (title.length < 3 || !['site', 'appli'].includes(data.project))\
+    \ {\n        return send(response, 400, { error: 'Titre de 3 caractères minimum et projet connu requis.'\
+    \ });\n      }\n      const task = { id: nextId++, project: data.project, title, done: false, archived:\
+    \ false };\n      tasks.push(task);\n      return send(response, 201, task);\n    }\n    if (match\
+    \ && request.method === 'PATCH') {\n      await wait(300);\n      const task = tasks.find((item) =>\
+    \ item.id === Number(match[1]));\n      if (!task) return send(response, 404, { error: 'Tâche introuvable.'\
+    \ });\n      if (task.archived) return send(response, 403, { error: 'Tâche archivée : modification\
+    \ impossible.' });\n      const data = await readJson(request);\n      task.done = data.done === true;\n\
+    \      return send(response, 200, task);\n    }\n    return send(response, 404, { error: 'Route inconnue.'\
+    \ });\n  } catch {\n    return send(response, 400, { error: 'Requête invalide.' });\n  }\n}).listen(port,\
+    \ () => console.log(`API des tâches : http://localhost:${port}/api/tasks`));\n```\n\n`vite.config.js`\
+    \ :\n\n```js\nimport react from '@vitejs/plugin-react';\nimport { defineConfig } from 'vitest/config';\n\
+    \nexport default defineConfig({\n  plugins: [react()],\n  server: {\n    proxy: {\n      '/api': 'http://localhost:3002',\n\
+    \    },\n  },\n  test: {\n    environment: 'jsdom',\n    setupFiles: ['./src/test/setup.js'],\n  },\n\
+    });\n```\n\n`src/test/setup.js` :\n\n```js\n// src/test/setup.js — exécuté avant chaque fichier de\
+    \ test\nimport { cleanup } from '@testing-library/react';\nimport { afterEach, vi } from 'vitest';\n\
+    \nafterEach(() => {\n  cleanup(); // démonte ce que render a affiché\n  vi.unstubAllGlobals(); //\
+    \ rend le vrai fetch après chaque test\n});\n```\n\n`src/main.jsx` :\n\n```jsx\nimport { StrictMode\
+    \ } from 'react';\nimport { createRoot } from 'react-dom/client';\nimport TaskBoard from './TaskBoard.jsx';\n\
+    \ncreateRoot(document.getElementById('root')).render(\n  <StrictMode>\n    <TaskBoard />\n  </StrictMode>,\n\
+    );\n```\n\n`src/useApi.js` :\n\n```js\nimport { useEffect, useState } from 'react';\n\n// Hook générique\
+    \ pour charger des données depuis l’API.\nexport function useApi(url, options = {}) {\n  const [data,\
+    \ setData] = useState(null);\n  const [loading, setLoading] = useState(true);\n  const [error, setError]\
+    \ = useState(null);\n\n  useEffect(() => {\n    setLoading(true);\n    fetch(url, options)\n     \
+    \ .then((res) => res.json())\n      .then((json) => {\n        setData(json);\n        setLoading(false);\n\
+    \      })\n      .catch((err) => {\n        setError(err.message);\n        setLoading(false);\n \
+    \     });\n  }, [url, options]);\n\n  return { data, setData, loading, error };\n}\n```\n\n`src/TaskBoard.jsx`\
+    \ :\n\n```jsx\nimport { useEffect, useState } from 'react';\nimport { useApi } from './useApi.js';\n\
+    \nfunction TaskBoard() {\n  const [project, setProject] = useState('site');\n  const {\n    data:\
+    \ tasks,\n    setData: setTasks,\n    loading,\n    error,\n  } = useApi(`/api/tasks?project=${project}`,\
+    \ { headers: { Accept: 'application/json' } });\n  const [doneCount, setDoneCount] = useState(0);\n\
+    \  const [title, setTitle] = useState('');\n  const [formError, setFormError] = useState('');\n\n\
+    \  useEffect(() => {\n    if (tasks) {\n      setDoneCount(tasks.filter((task) => task.done).length);\n\
+    \    }\n  }, [tasks]);\n\n  async function toggleTask(task) {\n    // Mise à jour optimiste pour une\
+    \ interface réactive\n    setTasks(tasks.map((t) => (t.id === task.id ? { ...t, done: !t.done } :\
+    \ t)));\n    try {\n      await fetch(`/api/tasks/${task.id}`, {\n        method: 'PATCH',\n     \
+    \   headers: { 'Content-Type': 'application/json' },\n        body: JSON.stringify({ done: !task.done\
+    \ }),\n      });\n    } catch (err) {\n      console.error('Erreur lors de la mise à jour', err);\n\
+    \    }\n  }\n\n  async function handleSubmit(event) {\n    event.preventDefault();\n    if (title.trim().length\
+    \ < 3) {\n      setFormError('Titre invalide');\n      return;\n    }\n    setFormError('');\n   \
+    \ await fetch('/api/tasks', {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json'\
+    \ },\n      body: JSON.stringify({ project, title }),\n    });\n    setTasks([...tasks, { id: Date.now(),\
+    \ project, title, done: false }]);\n    setTitle('');\n  }\n\n  return (\n    <main>\n      <h1>Tâches</h1>\n\
+    \      <label htmlFor=\"project\">Projet</label>\n      <select id=\"project\" value={project} onChange={(event)\
+    \ => setProject(event.target.value)}>\n        <option value=\"site\">Site vitrine</option>\n    \
+    \    <option value=\"appli\">Application mobile</option>\n      </select>\n      {loading && <p>Chargement…</p>}\n\
+    \      {error && <p className=\"error\">{error}</p>}\n      {tasks && (\n        <>\n          <p>\n\
+    \            {doneCount} / {tasks.length} terminée(s)\n          </p>\n          <ul>\n          \
+    \  {tasks.map((task) => (\n              <li key={task.id}>\n                <label>\n           \
+    \       <input type=\"checkbox\" checked={task.done} onChange={() => toggleTask(task)} />{' '}\n \
+    \                 {task.title}\n                </label>\n              </li>\n            ))}\n \
+    \         </ul>\n        </>\n      )}\n      <form onSubmit={handleSubmit}>\n        <input\n   \
+    \       placeholder=\"Nouvelle tâche\"\n          value={title}\n          onChange={(event) => setTitle(event.target.value)}\n\
+    \          className={formError ? 'invalid' : ''}\n        />\n        <span className=\"error\">{formError}</span>\n\
+    \        <button type=\"submit\">Ajouter</button>\n      </form>\n    </main>\n  );\n}\n\nexport default\
+    \ TaskBoard;\n```\n\n`src/TaskBoard.test.jsx` :\n\n```jsx\nimport { render, screen } from '@testing-library/react';\n\
+    import { expect, it, vi } from 'vitest';\nimport TaskBoard from './TaskBoard.jsx';\n\nit('affiche\
+    \ les tâches du projet', async () => {\n  global.fetch = vi.fn(() =>\n    Promise.resolve({\n    \
+    \  json: () => Promise.resolve([{ id: 1, title: 'Écrire la page d’accueil', done: false }]),\n   \
+    \ }),\n  );\n  render(<TaskBoard />);\n  screen.findByText('Écrire la page d’accueil');\n});\n\nit('signale\
+    \ un titre trop court', async () => {\n  render(<TaskBoard />);\n  screen.getByRole('button', { name:\
+    \ 'Ajouter' }).click();\n  expect(screen.getByRole('button', { name: 'Ajouter' })).toBeTruthy();\n\
+    });\n```\n\nTravail demandé :\n\n1. Lance `npm run dev` et `npx vitest run`, utilise l’application\
+    \ avec l’onglet *Network*\n   ouvert, et décris ce qui fonctionne et ce qui ne fonctionne pas. Teste\
+    \ au moins :\n   laisser la page ouverte dix secondes ; passer au projet « Application mobile » juste\n\
+    \   après le chargement ; cocher « Ancien logo » puis changer deux fois de projet ; envoyer\n   «\
+    \ ab », puis ajouter « Tester » et la cocher ; arrêter le serveur, recharger la page,\n   relancer\
+    \ le serveur et changer de projet.\n2. Liste chaque défaut : le fichier et la ligne, le symptôme observé\
+    \ (ou le scénario qui le\n   révèle), la cause précise et sa gravité. Les tests font partie du code\
+    \ à examiner.\n3. Propose une version corrigée de `useApi.js`, `TaskBoard.jsx` et `TaskBoard.test.jsx`,\n\
+    \   en gardant la même interface pour l’utilisateur.\n4. Pour chaque correction, indique le scénario\
+    \ ou le test qui prouve qu’elle fonctionne, et\n   montre qu’au moins un de tes tests échoue sur le\
+    \ code d’origine.\n"
+  deliverable: 'Colle ta liste de défauts (fichier, ligne, symptôme ou scénario, cause, gravité), le code
+
+    corrigé complet des trois fichiers, la sortie de `npx vitest run --reporter=verbose` sur ta
+
+    version, et pour chaque correction le scénario de vérification et son résultat.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: effect-defects
+      description: Identifie et explique les défauts du hook de chargement (boucle, course, erreurs HTTP).
+      maxScore: 3
+    - id: mutation-defects
+      description: Identifie les incohérences entre l’écran et le serveur lors des modifications.
+      maxScore: 3
+    - id: accessibility-and-derived
+      description: Repère l’état dérivé stocké et les erreurs de formulaire inaccessibles.
+      maxScore: 2
+    - id: test-quality
+      description: Démontre que les tests fournis ne protègent rien et en écrit de probants.
+      maxScore: 3
+- id: react-data-forms-apres-ia
+  family: APRES_IA
+  title: Les réservations de salles à reprendre
+  summary: Dépanner et faire évoluer une petite application React générée par une IA, sans tout régénérer,
+    avec des tests qui prouvent chaque correction.
+  estimatedMinutes: 90
+  instructions: "Une équipe utilise depuis peu cette application de réservation de salles, générée en\n\
+    grande partie par une IA. Tu la reprends. Ne la régénère pas : corrige et fais évoluer\nle code existant,\
+    \ en modifiant le moins possible ce qui fonctionne.\n\nCrée un projet Vite (modèle `react`), installe\
+    \ les outils de test comme dans la leçon 6,\npuis ajoute les fichiers suivants.\n\n`server.js`, à\
+    \ la racine, lancé avec `node server.js` :\n\n```js\n// server.js — API de réservations de salles,\
+    \ en mémoire\nimport { createServer } from 'node:http';\n\nconst port = Number(process.env.PORT ??\
+    \ 3003);\n\nlet bookings = [\n  { id: 1, day: 'lundi', time: '09:00', room: 'Salle Verte', owner:\
+    \ 'Inès', locked: false },\n  { id: 2, day: 'lundi', time: '14:00', room: 'Salle Bleue', owner: 'Malik',\
+    \ locked: false },\n  { id: 3, day: 'mardi', time: '10:00', room: 'Salle Verte', owner: 'Inès', locked:\
+    \ true },\n  { id: 4, day: 'mardi', time: '16:00', room: 'Salle Bleue', owner: 'Inès', locked: false\
+    \ },\n  { id: 5, day: 'mercredi', time: '11:00', room: 'Salle Verte', owner: 'Malik', locked: false\
+    \ },\n];\n\nconst wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));\n\nfunction send(response,\
+    \ status, data) {\n  if (data === undefined) return response.writeHead(status).end();\n  response.writeHead(status,\
+    \ { 'Content-Type': 'application/json; charset=utf-8' });\n  response.end(JSON.stringify(data));\n\
+    }\n\ncreateServer(async (request, response) => {\n  const url = new URL(request.url, 'http://localhost');\n\
+    \  console.log(`${request.method} ${url.pathname}${url.search}`);\n  if (url.pathname === '/api/bookings'\
+    \ && request.method === 'GET') {\n    const day = url.searchParams.get('day');\n    await wait(day\
+    \ === 'lundi' ? 1500 : 200); // le lundi est lent à charger\n    return send(response, 200, bookings.filter((booking)\
+    \ => booking.day === day));\n  }\n  const match = url.pathname.match(/^\\/api\\/bookings\\/(\\d+)$/);\n\
+    \  if (match && request.method === 'DELETE') {\n    await wait(300);\n    const booking = bookings.find((item)\
+    \ => item.id === Number(match[1]));\n    if (!booking) return send(response, 404, { error: 'Réservation\
+    \ introuvable.' });\n    if (booking.locked) {\n      return send(response, 403, { error: 'Réservation\
+    \ confirmée par l’accueil : annulation impossible.' });\n    }\n    bookings = bookings.filter((item)\
+    \ => item.id !== booking.id);\n    return send(response, 204);\n  }\n  return send(response, 404,\
+    \ { error: 'Route inconnue.' });\n}).listen(port, () => console.log(`API des réservations : http://localhost:${port}/api/bookings?day=lundi`));\n\
+    ```\n\n`vite.config.js` :\n\n```js\nimport react from '@vitejs/plugin-react';\nimport { defineConfig\
+    \ } from 'vitest/config';\n\nexport default defineConfig({\n  plugins: [react()],\n  server: {\n \
+    \   proxy: {\n      '/api': 'http://localhost:3003',\n    },\n  },\n  test: {\n    environment: 'jsdom',\n\
+    \    setupFiles: ['./src/test/setup.js'],\n  },\n});\n```\n\n`src/test/setup.js` :\n\n```js\n// src/test/setup.js\
+    \ — exécuté avant chaque fichier de test\nimport { cleanup } from '@testing-library/react';\nimport\
+    \ { afterEach, vi } from 'vitest';\n\nafterEach(() => {\n  cleanup(); // démonte ce que render a affiché\n\
+    \  vi.unstubAllGlobals(); // rend le vrai fetch après chaque test\n});\n```\n\n`src/main.jsx` :\n\n\
+    ```jsx\nimport { StrictMode } from 'react';\nimport { createRoot } from 'react-dom/client';\nimport\
+    \ App from './App.jsx';\n\ncreateRoot(document.getElementById('root')).render(\n  <StrictMode>\n \
+    \   <App />\n  </StrictMode>,\n);\n```\n\n`src/useBookings.js` :\n\n```js\nimport { useEffect, useState\
+    \ } from 'react';\n\n// Charge les réservations d’un jour.\nexport function useBookings(day) {\n \
+    \ const [bookings, setBookings] = useState([]);\n  const [loading, setLoading] = useState(true);\n\
+    \  const [error, setError] = useState('');\n\n  useEffect(() => {\n    async function load() {\n \
+    \     setLoading(true);\n      try {\n        const res = await fetch(`/api/bookings?day=${day}`);\n\
+    \        if (!res.ok) throw new Error(`Erreur ${res.status}`);\n        setBookings(await res.json());\n\
+    \      } catch (err) {\n        setError(err.message);\n      } finally {\n        setLoading(false);\n\
+    \      }\n    }\n    load();\n  }, [day]);\n\n  return { bookings, setBookings, loading, error };\n\
+    }\n```\n\n`src/App.jsx` :\n\n```jsx\nimport { useState } from 'react';\nimport DayTabs from './components/DayTabs.jsx';\n\
+    import DayView from './components/DayView.jsx';\nimport { useBookings } from './useBookings.js';\n\
+    \nconst days = ['lundi', 'mardi', 'mercredi'];\n\nfunction App() {\n  const [day, setDay] = useState('lundi');\n\
+    \  const [currentUser] = useState('Inès'); // en attendant la vraie connexion\n  const { bookings,\
+    \ setBookings, loading, error } = useBookings(day);\n  const [message, setMessage] = useState('');\n\
+    \n  async function cancelBooking(booking) {\n    setBookings(bookings.filter((b) => b.id !== booking.id));\n\
+    \    try {\n      await fetch(`/api/bookings/${booking.id}`, { method: 'DELETE' });\n      setMessage(`Réservation\
+    \ de ${booking.time} annulée.`);\n    } catch {\n      setBookings(bookings);\n      setMessage('Impossible\
+    \ d’annuler la réservation.');\n    }\n  }\n\n  return (\n    <main>\n      <h1>Réservations de salles</h1>\n\
+    \      <p>Connectée : {currentUser}</p>\n      <DayTabs days={days} day={day} onChange={setDay} />\n\
+    \      <p role=\"status\">{loading ? 'Chargement…' : message}</p>\n      {error && <p>Erreur : {error}</p>}\n\
+    \      <DayView day={day} bookings={bookings} currentUser={currentUser} onCancel={cancelBooking} />\n\
+    \    </main>\n  );\n}\n\nexport default App;\n```\n\n`src/components/DayTabs.jsx` :\n\n```jsx\nfunction\
+    \ DayTabs({ days, day, onChange }) {\n  return (\n    <nav aria-label=\"Jours\">\n      {days.map((d)\
+    \ => (\n        <button key={d} type=\"button\" aria-pressed={d === day} onClick={() => onChange(d)}>\n\
+    \          {d}\n        </button>\n      ))}\n    </nav>\n  );\n}\n\nexport default DayTabs;\n```\n\
+    \n`src/components/DayView.jsx` :\n\n```jsx\nimport BookingList from './BookingList.jsx';\n\nfunction\
+    \ DayView({ day, bookings, currentUser, onCancel }) {\n  return (\n    <section>\n      <h2>Réservations\
+    \ du {day}</h2>\n      <BookingList bookings={bookings} currentUser={currentUser} onCancel={onCancel}\
+    \ />\n    </section>\n  );\n}\n\nexport default DayView;\n```\n\n`src/components/BookingList.jsx`\
+    \ :\n\n```jsx\nimport BookingItem from './BookingItem.jsx';\n\nfunction BookingList({ bookings, currentUser,\
+    \ onCancel }) {\n  if (bookings.length === 0) return <p>Aucune réservation ce jour-là.</p>;\n  return\
+    \ (\n    <ul>\n      {bookings.map((booking) => (\n        <BookingItem\n          key={booking.id}\n\
+    \          booking={booking}\n          currentUser={currentUser}\n          onCancel={onCancel}\n\
+    \        />\n      ))}\n    </ul>\n  );\n}\n\nexport default BookingList;\n```\n\n`src/components/BookingItem.jsx`\
+    \ :\n\n```jsx\nfunction BookingItem({ booking, currentUser, onCancel }) {\n  return (\n    <li>\n\
+    \      {booking.time} — {booking.room} ({booking.owner}){' '}\n      {booking.owner === currentUser\
+    \ && (\n        <button type=\"button\" onClick={() => onCancel(booking)}>\n          Annuler\n  \
+    \      </button>\n      )}\n    </li>\n  );\n}\n\nexport default BookingItem;\n```\n\n`src/App.test.jsx`\
+    \ :\n\n```jsx\nimport { render, screen } from '@testing-library/react';\nimport { it, vi } from 'vitest';\n\
+    import App from './App.jsx';\n\nfunction jsonResponse(status, data) {\n  return new Response(JSON.stringify(data),\
+    \ {\n    status,\n    headers: { 'Content-Type': 'application/json' },\n  });\n}\n\nit('affiche les\
+    \ réservations du jour', async () => {\n  vi.stubGlobal(\n    'fetch',\n    vi.fn().mockResolvedValue(\n\
+    \      jsonResponse(200, [\n        { id: 1, day: 'lundi', time: '09:00', room: 'Salle Verte', owner:\
+    \ 'Inès', locked: false },\n      ]),\n    ),\n  );\n  render(<App />);\n  screen.findByText('09:00\
+    \ — Salle Verte (Inès)');\n});\n```\n\nTickets à traiter :\n\n1. **Signalement** : « Quand je clique\
+    \ sur mardi juste après avoir ouvert l’application,\n   je vois un moment les réservations de mardi,\
+    \ puis celles de lundi s’affichent sous le\n   titre “Réservations du mardi”. »\n2. **Signalement**\
+    \ : « J’ai annulé ma réservation de mardi 10:00, l’application m’a dit\n   “Réservation de 10:00 annulée.”,\
+    \ mais elle est revenue quand j’ai rouvert mardi. »\n   (L’accueil confirme : les réservations validées\
+    \ par l’accueil ne peuvent pas être\n   annulées en ligne.)\n3. **Évolution** : la personne connectée\
+    \ (`currentUser`) traverse `DayView` et\n   `BookingList`, qui ne s’en servent pas, pour arriver à\
+    \ `BookingItem`. Remplace cette\n   transmission par un contexte, prêt à accueillir plus tard la vraie\
+    \ connexion.\n4. **Tests** : la suite de tests doit protéger les tickets 1 et 2. Pour le ticket 2,\
+    \ écris\n   d’abord un test qui **échoue** sur le code actuel, puis corrige.\n\nContraintes : JavaScript,\
+    \ `StrictMode` conservé, pas de bibliothèque supplémentaire,\n`npm run lint` sans erreur, mêmes textes\
+    \ affichés qu’aujourd’hui sauf pour les nouveaux\nmessages d’erreur.\n"
+  deliverable: 'Pour chaque ticket : la cause trouvée (fichier, ligne, explication), les fichiers modifiés
+
+    (code complet de chaque fichier modifié), et la preuve (scénario dans le navigateur ou
+
+    test). Ajoute la sortie de `npx vitest run --reporter=verbose` **avant** la correction du
+
+    ticket 2 (avec ton nouveau test en échec) et **après**, puis tout autre défaut que tu as
+
+    remarqué en chemin, corrigé ou non, avec ta justification.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: diagnosis
+      description: Remonte de chaque signalement à sa cause précise dans le code.
+      maxScore: 3
+    - id: minimal-fix
+      description: Corrige et fait évoluer le code existant sans le régénérer.
+      maxScore: 3
+    - id: tests
+      description: Prouve les corrections par des tests vus en échec puis en succès.
+      maxScore: 3
+    - id: oral-change
+      description: Réalise ou décrit correctement une modification demandée pendant l’oral.
+      maxScore: 2
