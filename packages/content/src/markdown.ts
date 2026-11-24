@@ -10,6 +10,11 @@ export const codeLanguages = [
   'http',
   'text',
   'diff',
+  'ts',
+  'tsx',
+  'jsx',
+  'yaml',
+  'dockerfile',
 ] as const;
 export const calloutKinds = ['note', 'tip', 'warning', 'solution'] as const;
 

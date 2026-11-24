@@ -66,8 +66,9 @@ La compétence entière doit couvrir tous ses objectifs déclarés dans `skills.
 ### Syntaxe disponible
 
 - Markdown GitHub : titres, listes, tableaux, liens, gras, code en ligne.
-- Blocs de code avec langage obligatoire : `html`, `css`, `js`, `json`, `sql`, `bash`,
-  `http`, `text`. Pas de HTML brut hors des blocs de code : il n’est pas rendu.
+- Blocs de code avec langage obligatoire : `html`, `css`, `js`, `jsx`, `ts`, `tsx`, `json`,
+  `yaml`, `sql`, `bash`, `dockerfile`, `diff`, `http`, `text`. Pas de HTML brut hors des
+  blocs de code : il n’est pas rendu.
 - Encadrés : `:::note`, `:::tip`, `:::warning` et `:::solution`, fermés par `:::` en début
   de ligne, précédé d’une ligne vide (sinon il serait rattaché à une liste).
   Une solution est repliée par défaut. Un encadré peut avoir un titre :

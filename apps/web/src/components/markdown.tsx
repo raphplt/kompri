@@ -1,6 +1,8 @@
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
+import dockerfile from 'highlight.js/lib/languages/dockerfile';
 import rehypeHighlight from 'rehype-highlight';
+import { common } from 'lowlight';
 import remarkDirective from 'remark-directive';
 import remarkGfm from 'remark-gfm';
 import { fr } from '../messages/fr';
@@ -127,7 +129,14 @@ export function Markdown({
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkDirective, remarkCallouts]}
         rehypePlugins={[
-          [rehypeHighlight, { detect: false, plainText: ['text', 'http'] }],
+          [
+            rehypeHighlight,
+            {
+              detect: false,
+              languages: { ...common, dockerfile },
+              plainText: ['text', 'http'],
+            },
+          ],
         ]}
         components={components}
         skipHtml

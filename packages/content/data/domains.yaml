@@ -3,7 +3,7 @@
   description: Comprendre le web et maîtriser les outils du développeur.
 - id: frontend
   title: Interface web
-  description: Structurer, rendre accessibles et mettre en forme des pages web.
+  description: Structurer, rendre accessibles et mettre en forme des pages web, puis construire des interfaces avec React.
 - id: javascript
   title: JavaScript
   description: Programmer avec JavaScript, du langage au navigateur.
@@ -15,4 +15,4 @@
   description: Modéliser, interroger et exploiter une base PostgreSQL.
 - id: quality
   title: Qualité et sécurité
-  description: Tester, sécuriser et assembler une application complète.
+  description: Tester, sécuriser, assembler et mettre en production une application complète.

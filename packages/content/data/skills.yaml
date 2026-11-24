@@ -43,6 +43,21 @@
     - Créer, fusionner des branches et résoudre un conflit simple.
     - Travailler avec un dépôt distant — clone, push, pull, fetch et pull request.
 
+- id: git-collaboration
+  domain: foundations
+  status: draft
+  title: Collaborer avec Git
+  description: Travailler à plusieurs sur un dépôt sans perdre ni écraser le travail des autres.
+  estimatedHours: 6
+  prerequisites: [git-basics]
+  objectives:
+    - Organiser le travail en branches courtes et choisir entre fusion et rebasage.
+    - Réécrire un historique local proprement — amend, rebase interactif, fixup — et savoir
+      quand ne pas le faire.
+    - Résoudre des conflits de fusion et de rebasage, y compris sur plusieurs fichiers.
+    - Retrouver et annuler un changement — revert, reset, restore, reflog, bisect.
+    - Proposer, relire et intégrer une pull request ; étiqueter une version.
+
 - id: html-semantics
   domain: frontend
   status: published
@@ -98,6 +113,34 @@
     - Mettre en page en deux dimensions avec grid.
     - Concevoir mobile d’abord avec les media queries et des unités relatives.
     - Rendre les images et la typographie adaptatives.
+
+- id: react-fundamentals
+  domain: frontend
+  status: draft
+  title: 'React : composants et état'
+  description: Construire une interface en composants qui réagissent aux données.
+  estimatedHours: 8
+  prerequisites: [js-dom-events, js-functions]
+  objectives:
+    - Expliquer le modèle de React — composants, rendu déclaratif, JSX — et créer un projet avec Vite.
+    - Composer des composants et leur transmettre des props.
+    - Gérer l’état local avec useState et réagir aux événements.
+    - Afficher des listes avec des clés et un rendu conditionnel.
+    - Remonter l’état vers un parent commun et garder une source de vérité unique.
+
+- id: react-data-forms
+  domain: frontend
+  status: draft
+  title: 'React : données, effets et formulaires'
+  description: Charger des données d’une API, gérer les formulaires et partager l’état.
+  estimatedHours: 8
+  prerequisites: [react-fundamentals, js-async]
+  objectives:
+    - Charger des données avec useEffect en gérant chargement, erreur et annulation.
+    - Construire des formulaires contrôlés avec validation et messages accessibles.
+    - Envoyer des modifications à une API et mettre l’interface à jour de façon cohérente.
+    - Partager un état avec un contexte et extraire la logique dans un hook personnalisé.
+    - Tester un composant avec une bibliothèque de test orientée utilisateur.
 
 - id: js-basics
   domain: javascript
@@ -183,6 +226,20 @@
     - Appeler une API HTTP avec fetch, lire le statut et le corps JSON.
     - Gérer chargement, erreur et annulation dans une interface.
 
+- id: typescript-basics
+  domain: javascript
+  status: draft
+  title: 'TypeScript : typer son JavaScript'
+  description: Décrire la forme des données pour que l’éditeur et le compilateur trouvent les erreurs.
+  estimatedHours: 8
+  prerequisites: [js-data]
+  objectives:
+    - Expliquer ce qu’apporte TypeScript, ce qu’il ne vérifie pas à l’exécution, et lancer tsc.
+    - Typer variables, fonctions, tableaux et objets ; s’appuyer sur l’inférence.
+    - Modéliser des données avec types, interfaces, unions, littéraux et types optionnels.
+    - Rétrécir un type par des contrôles (typeof, in, unions discriminées) et éviter any.
+    - Écrire des fonctions et types génériques simples, utiliser les types utilitaires courants.
+
 - id: http-in-depth
   domain: backend
   status: published
@@ -238,6 +295,20 @@
     - Valider les entrées et renvoyer des erreurs cohérentes et utiles.
     - Paginer, filtrer et trier une collection.
     - Documenter une API et la tester avec des requêtes reproductibles.
+
+- id: typescript-node
+  domain: backend
+  status: draft
+  title: TypeScript côté serveur
+  description: Écrire une API Node.js en TypeScript et valider ce qui vient de l’extérieur.
+  estimatedHours: 6
+  prerequisites: [typescript-basics, express-server]
+  objectives:
+    - Configurer un projet Node.js en TypeScript — tsconfig strict, modules ES, exécution et build.
+    - Typer un serveur Express — paramètres, corps, réponses et erreurs.
+    - Valider à l’exécution les entrées externes avec un schéma et en déduire les types.
+    - Partager des types entre modules sans dupliquer les définitions.
+    - Tester un module TypeScript avec node:test.
 
 - id: sql-queries
   domain: data
@@ -337,3 +408,17 @@
     - Organiser le projet, la configuration et les scripts.
     - Tester les parcours essentiels de bout en bout.
     - Préparer une mise en production — variables d’environnement, journaux, sécurité.
+
+- id: deployment
+  domain: quality
+  status: draft
+  title: Déployer et exploiter une application
+  description: Mettre en production une application Node.js et la garder en bonne santé.
+  estimatedHours: 8
+  prerequisites: [fullstack-app]
+  objectives:
+    - Configurer une application par l’environnement et garder les secrets hors du dépôt.
+    - Construire une image Docker de production et orchestrer les services avec Compose.
+    - Publier derrière un proxy inverse en HTTPS.
+    - Automatiser les vérifications avec une intégration continue.
+    - Exploiter — journaux, contrôles de santé, sauvegardes et restauration, mises à jour.

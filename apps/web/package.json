@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@kompri/shared": "workspace:*",
+    "highlight.js": "11.11.2",
+    "lowlight": "3.3.0",
     "next": "16.4.6",
     "react": "19.3.0",
     "react-dom": "19.3.0",
