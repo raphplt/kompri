@@ -45,7 +45,7 @@
 
 - id: git-collaboration
   domain: foundations
-  status: draft
+  status: published
   title: Collaborer avec Git
   description: Travailler à plusieurs sur un dépôt sans perdre ni écraser le travail des autres.
   estimatedHours: 6

@@ -106,8 +106,8 @@ git fetch
 echo "Atelier prêt dans ~/conflits/sacha"
 ```
 
-`set -e` arrête le script à la première commande en échec. Les `sed -i.bak … && rm` font
-une modification ciblée qui fonctionne sous Linux comme sous macOS. Place-toi ensuite dans
+`set -e` arrête le script à la première commande en échec. Les `sed -i.bak …` suivis d’un
+`rm` du fichier `.bak` font une modification ciblée qui fonctionne sous Linux comme sous macOS. Place-toi ensuite dans
 le clone de Sacha :
 
 ```bash
@@ -696,11 +696,12 @@ au suivant. C’est la commande qui exprime directement l’intention.
 Autre chemin possible : `git restore --ours src/cart.js` (pendant un rebasage, la version de
 la base, qui contient déjà la correction), `git add`, puis `git rebase --continue`. Le commit
 rejoué n’apporte alors aucune modification ; avec Git 2.43, le rebasage le laisse
-simplement tomber et termine. Le résultat est le même, mais l’intention est moins claire
+simplement tomber et passe à la suite. Le résultat est le même, mais l’intention est moins claire
 pour qui relira ta démarche.
 
-Git détecte tout seul les commits **strictement identiques** déjà présents dans la base : il
-les saute avant même de commencer, en affichant
+Git détecte tout seul les commits dont la **modification est exactement la même** qu’un
+commit déjà présent dans la base (même si le message ou l’auteur diffèrent) : il les saute
+avant même de commencer, en affichant
 `warning: skipped previously applied commit …`. Ici, la correction de ta collègue fait
 partie d’un commit qui modifie aussi d’autres lignes : ce n’est pas le même correctif, Git
 ne peut pas savoir qu’il contient le tien.

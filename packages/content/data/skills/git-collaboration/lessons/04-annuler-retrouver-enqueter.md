@@ -53,7 +53,8 @@ reflog, pas les modifications jamais commitées). Deux usages fréquents en équ
 
 Camille a oublié de créer sa branche : deux commits sur la lettre d’information sont sur son
 `main` local, pas encore poussés. Pour reproduire la situation dans ton atelier `~/equipe`
-(clone de Camille, sur un `main` à jour) :
+(clone de Camille, sur un `main` à jour ; les sorties ci-dessous viennent d’un atelier
+recréé, où `main` ne contient que le premier commit) :
 
 ```bash
 printf '\n## Lettre d’information\n\nInscription depuis le pied de page.\n' >> README.md
@@ -83,11 +84,11 @@ git log --oneline --graph --all
 ```
 
 ```text
-HEAD is now at dee2d51 Initialise la boutique
+HEAD is now at dee2d51 Ajoute le calcul du sous-total
 Switched to branch 'feat/newsletter'
 * a82d1ea (HEAD -> feat/newsletter) Ajoute la validation de l’adresse
 * eb9f9fa Documente la lettre d’information
-* dee2d51 (origin/main, main) Initialise la boutique
+* dee2d51 (origin/main, main) Ajoute le calcul du sous-total
 ```
 
 L’ordre est essentiel : **d’abord** l’étiquette `feat/newsletter`, qui protège les deux
@@ -265,7 +266,7 @@ suite. Le graphe au moment de la décision :
 |\
 | * 4d81d8c (feat/newsletter) Ajoute l’inscription à la lettre d’information
 |/
-* dee2d51 Initialise la boutique
+* dee2d51 Ajoute le calcul du sous-total
 ```
 
 ```bash
@@ -305,9 +306,9 @@ Date:   Fri Mar 20 10:54:40 2026 +0100
  2 files changed, 7 deletions(-)
 ```
 
-C’est aussi le principe du bouton « Revert » que GitHub propose sur une pull request
-fusionnée : il prépare un commit d’annulation, dans une nouvelle pull request. On pousse
-ce commit : `main` est réparée, sans réécriture.
+On pousse ce commit (`git push`) : `main` est réparée, sans réécriture. C’est aussi le
+principe du bouton « Revert » que GitHub propose sur une pull request fusionnée : il
+prépare le commit d’annulation dans une nouvelle pull request, qu’il reste à fusionner.
 
 ### Réintégrer la branche après correction : annuler l’annulation
 
@@ -351,7 +352,7 @@ Merge made by the 'ort' strategy.
 |\|
 | * 4d81d8c Ajoute l’inscription à la lettre d’information
 |/
-* dee2d51 Initialise la boutique
+* dee2d51 Ajoute le calcul du sous-total
 ```
 
 Depuis Git 2.43, l’annulation d’une annulation est intitulée `Reapply "…"` ; les versions

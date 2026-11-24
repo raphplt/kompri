@@ -338,7 +338,8 @@ hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 ```
 
 Le refus est attendu : les commits rebasés remplacent ceux du serveur. Surtout pas de
-`git pull` ici, qui fusionnerait les anciennes et les nouvelles versions des mêmes commits.
+`git pull` ici : il mélangerait les anciennes et les nouvelles versions des mêmes commits
+(par une fusion avec le réglage `pull.rebase false`).
 Sacha force prudemment :
 
 ```bash
@@ -500,13 +501,13 @@ git show --no-patch v1.0.0
 v1.0.0
 tag v1.0.0
 Tagger: Camille Martin <camille@example.com>
-Date:   Sun Apr 12 14:29:00 2026 +0100
+Date:   Sun Apr 12 14:29:00 2026 +0200
 
 Première version publique
 
 commit 7c6f573009d5b647b94c3ed29531ed50d4b48168 (HEAD -> main, tag: v1.0.0, origin/main)
 Author: Camille Martin <camille@example.com>
-Date:   Sun Apr 12 14:27:00 2026 +0100
+Date:   Sun Apr 12 14:27:00 2026 +0200
 
     Ajoute les codes promotionnels (#12)
 ```

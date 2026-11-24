@@ -292,9 +292,10 @@ Fast-forward
  create mode 100644 LICENSE
 ```
 
-Dans une équipe, l’intégration passe normalement par une pull request (leçon 5). Mais le
-bouton de fusion de la plateforme applique l’une des trois stratégies suivantes, que tu
-peux reproduire en local pour comprendre ce qu’elles produisent. Ce sont des
+Dans une équipe, l’intégration passe normalement par une pull request (leçon 5). Le bouton
+de fusion de la plateforme produit l’un des trois résultats suivants, que tu peux
+reproduire en local pour comprendre ce qu’ils donnent (sur GitHub, l’option « Rebase and
+merge » correspond à une branche rebasée puis intégrée en avance rapide). Ce sont des
 **alternatives** : pour les comparer, on remet `main` à l’état de `origin/main` entre deux
 essais avec `git reset --hard origin/main`, possible ici car rien n’a été poussé.
 
@@ -422,8 +423,9 @@ locaux **non poussés** et que le distant a avancé. Après ces essais, Camille 
 `main` sur `origin/main`, qui contient maintenant aussi un commit de Sacha, « Explique
 comment contribuer ». Elle ajoute une fonction `itemCount` à `src/cart.js` et commite
 « Ajoute le comptage des articles » directement sur `main` (dans un petit projet, certaines
-équipes l’acceptent) ; Sacha a poussé « Précise le titulaire des droits » entre-temps. Un `git pull` classique créerait un
-commit « Merge branch 'main' of… ». À la place :
+équipes l’acceptent) ; Sacha a poussé « Précise le titulaire des droits » entre-temps. Avec
+le réglage `pull.rebase false` choisi dans la compétence précédente, un `git pull` créerait
+un commit « Merge branch 'main' of… ». À la place :
 
 ```bash
 git pull --rebase
@@ -444,9 +446,10 @@ Successfully rebased and updated refs/heads/main.
 
 `git pull --rebase` fait un `fetch`, puis rebase tes commits locaux sur la branche distante.
 Il ne réécrit que **tes commits qui n’ont jamais quitté ta machine** : c’est sans danger,
-et l’historique partagé reste linéaire. Si tu veux en faire ton comportement par défaut,
-`git config --global pull.rebase true` remplace le réglage `false` choisi dans la compétence
-précédente ; ce choix revient à toi ou à ton équipe.
+et l’historique partagé reste linéaire. Camille publie ensuite son commit avec un simple
+`git push`, qui est maintenant une avance rapide pour le serveur. Si tu veux en faire ton
+comportement par défaut, `git config --global pull.rebase true` remplace le réglage
+`false` ; ce choix revient à toi ou à ton équipe.
 
 ## Fusion ou rebasage : comment choisir
 

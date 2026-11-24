@@ -91,8 +91,8 @@ Application :
 
 Six compétences de plus, rédigées puis relues une par une, publiées après relecture :
 
-- 🚧 Collaborer avec Git (`git-collaboration`)
-- ⏳ TypeScript : typer son JavaScript (`typescript-basics`)
+- ✅ Collaborer avec Git (`git-collaboration`) — 5 leçons, 4 défis, relu
+- 🚧 TypeScript : typer son JavaScript (`typescript-basics`)
 - ⏳ TypeScript côté serveur (`typescript-node`)
 - ⏳ React : composants et état (`react-fundamentals`)
 - ⏳ React : données, effets et formulaires (`react-data-forms`)

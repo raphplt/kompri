@@ -110,7 +110,9 @@ git commit -am "fini les tests"
 git log --oneline
 ```
 
-L’historique obtenu (empreintes différentes chez toi) :
+L’historique obtenu (empreintes différentes chez toi ; ces sorties viennent d’un atelier
+recréé, où `main` ne contient que le premier commit : si tu as gardé l’atelier de la leçon
+précédente, `main` en contient davantage, ce qui ne change rien à la suite) :
 
 ```text
 c966f21 (HEAD -> feat/remise) fini les tests
@@ -432,6 +434,7 @@ hint: Updates were rejected because the remote contains work that you do not
 hint: have locally. This is usually caused by another repository pushing to
 hint: the same ref. If you want to integrate the remote changes, use
 hint: 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 ```
 
 Le refus est une **protection** : le serveur a un commit (celui de Sacha) que Camille n’a
@@ -457,8 +460,8 @@ adopte sa version : le commit `87f112b` de Sacha **disparaît de la branche dist
  + 87f112b...f481c1f feat/remise -> feat/remise (forced update)
 ```
 
-Et quand Sacha fait ensuite `git pull`, Git tente de fusionner les deux histoires, qui
-ont chacune créé `test/discount.test.js` :
+Et quand Sacha fait ensuite `git pull` (avec le réglage `pull.rebase false`), Git tente de
+fusionner les deux histoires, qui ont chacune créé `test/discount.test.js` :
 
 ```text
 From /home/camille/equipe/serveur
@@ -519,6 +522,7 @@ error: failed to push some refs to '/home/camille/equipe/serveur.git'
 hint: Updates were rejected because the tip of the remote-tracking branch has
 hint: been updated since the last checkout. If you want to integrate the
 hint: remote changes, use 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 ```
 
 Aucune option ne remplace le réflexe : **avant de forcer, `git fetch` puis
