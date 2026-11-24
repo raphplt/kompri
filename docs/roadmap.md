@@ -84,6 +84,17 @@ Application :
 - ✅ Tests de bout en bout Playwright en CI, du compte à l’oral validé
 - ✅ Audit d’accessibilité WCAG 2.1 A/AA automatisé (axe), thèmes clair et sombre
 
+## Jalon 8 — Approfondissements (demandé le 24 novembre 2026)
+
+Six compétences de plus, rédigées puis relues une par une, publiées après relecture :
+
+- 🚧 Collaborer avec Git (`git-collaboration`)
+- ⏳ TypeScript : typer son JavaScript (`typescript-basics`)
+- ⏳ TypeScript côté serveur (`typescript-node`)
+- ⏳ React : composants et état (`react-fundamentals`)
+- ⏳ React : données, effets et formulaires (`react-data-forms`)
+- ⏳ Déployer et exploiter une application (`deployment`)
+
 ## Hors périmètre sans nouvelle demande
 
 Paiement et abonnements, vocal, gamification (séries, classements, duels), espace écoles,
