@@ -3,12 +3,12 @@ title: Partager un état avec un contexte et extraire des hooks personnalisés
 summary: Fournir une valeur à tout un sous-arbre avec createContext, un fournisseur et useContext, connaître les limites du contexte, et regrouper une logique réutilisable dans des hooks personnalisés comme useFetch et useFormFields.
 durationMinutes: 65
 sources:
-  - title: React — createContext
-    url: https://fr.react.dev/reference/react/createContext
-  - title: React — useContext
-    url: https://fr.react.dev/reference/react/useContext
-  - title: React — Transmettre des données en profondeur avec le contexte
-    url: https://fr.react.dev/learn/passing-data-deeply-with-context
+  - title: React — createContext (documentation en anglais, à jour pour React 19)
+    url: https://react.dev/reference/react/createContext
+  - title: React — Passing Data Deeply with Context (en anglais)
+    url: https://react.dev/learn/passing-data-deeply-with-context
+  - title: React — Annonce de React v19 (section « Context as a provider »)
+    url: https://react.dev/blog/2024/12/05/react-19
   - title: React — Réutiliser de la logique grâce aux Hooks personnalisés
     url: https://fr.react.dev/learn/reusing-logic-with-custom-hooks
 ---
@@ -91,8 +91,10 @@ export default ThemeProvider;
 Avec React 19, **le contexte lui-même s’utilise comme composant fournisseur** :
 `<ThemeContext value={…}>`. Tu trouveras dans du code plus ancien et dans beaucoup de réponses
 d’IA l’écriture `<ThemeContext.Provider value={…}>`. Elle fonctionne toujours (vérifié avec
-React 19.3, sans avertissement), mais l’équipe de React a annoncé qu’elle serait dépréciée
-dans une version future : écris `<ThemeContext value={…}>`.
+React 19.3, sans avertissement), mais l’annonce officielle de React 19 précise que
+`<Context.Provider>` sera déprécié dans une version future : écris `<ThemeContext value={…}>`.
+Attention, la traduction française de la documentation de React utilise encore l’ancienne
+écriture ; la version anglaise (react.dev) est à jour.
 
 Le fournisseur détient l’état (`theme`) et le fournit avec la fonction qui le change
 (`toggleTheme`). Fournir un objet `{ theme, toggleTheme }` est la forme la plus courante : les
@@ -166,6 +168,7 @@ On pourrait tout écrire dans un seul fichier. Mais le linter du projet Vite ave
 
 ```text
 warning react(only-export-components): Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.
+warning react(only-export-components): Fast refresh only works when a file only exports components. Move your React context(s) to a separate file.
 ```
 
 Le rechargement à chaud de Vite (leçon 1 de la compétence précédente) ne fonctionne bien que

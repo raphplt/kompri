@@ -351,15 +351,15 @@
     \ 'Ajouter' }).click();\n  expect(screen.getByRole('button', { name: 'Ajouter' })).toBeTruthy();\n\
     });\n```\n\nTravail demandé :\n\n1. Lance `npm run dev` et `npx vitest run`, utilise l’application\
     \ avec l’onglet *Network*\n   ouvert, et décris ce qui fonctionne et ce qui ne fonctionne pas. Teste\
-    \ au moins :\n   laisser la page ouverte dix secondes ; passer au projet « Application mobile » juste\n\
-    \   après le chargement ; cocher « Ancien logo » puis changer deux fois de projet ; envoyer\n   «\
-    \ ab », puis ajouter « Tester » et la cocher ; arrêter le serveur, recharger la page,\n   relancer\
-    \ le serveur et changer de projet.\n2. Liste chaque défaut : le fichier et la ligne, le symptôme observé\
-    \ (ou le scénario qui le\n   révèle), la cause précise et sa gravité. Les tests font partie du code\
-    \ à examiner.\n3. Propose une version corrigée de `useApi.js`, `TaskBoard.jsx` et `TaskBoard.test.jsx`,\n\
-    \   en gardant la même interface pour l’utilisateur.\n4. Pour chaque correction, indique le scénario\
-    \ ou le test qui prouve qu’elle fonctionne, et\n   montre qu’au moins un de tes tests échoue sur le\
-    \ code d’origine.\n"
+    \ au moins\n   (certains symptômes n’apparaissent qu’une fois un autre défaut corrigé) : laisser la\n\
+    \   page ouverte dix secondes ; passer au projet « Application mobile » juste\n   après le chargement\
+    \ ; cocher « Ancien logo » puis changer deux fois de projet ; envoyer\n   « ab », puis ajouter « Tester\
+    \ » et la cocher ; arrêter le serveur, recharger la page,\n   relancer le serveur et changer de projet.\n\
+    2. Liste chaque défaut : le fichier et la ligne, le symptôme observé (ou le scénario qui le\n   révèle),\
+    \ la cause précise et sa gravité. Les tests font partie du code à examiner.\n3. Propose une version\
+    \ corrigée de `useApi.js`, `TaskBoard.jsx` et `TaskBoard.test.jsx`,\n   en gardant la même interface\
+    \ pour l’utilisateur.\n4. Pour chaque correction, indique le scénario ou le test qui prouve qu’elle\
+    \ fonctionne, et\n   montre qu’au moins un de tes tests échoue sur le code d’origine.\n"
   deliverable: 'Colle ta liste de défauts (fichier, ligne, symptôme ou scénario, cause, gravité), le code
 
     corrigé complet des trois fichiers, la sortie de `npx vitest run --reporter=verbose` sur ta

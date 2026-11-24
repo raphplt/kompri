@@ -125,7 +125,9 @@ Enfin, ajoute un script `test` dans `package.json` :
 ```
 
 Dans un terminal interactif, `npm test` lance Vitest en mode **surveillance** : il relance les
-tests concernés à chaque enregistrement (`q` pour quitter). `npx vitest run` les exécute une seule fois, comme en intégration continue.
+tests concernés à chaque enregistrement. Vitest affiche alors lui-même ses raccourcis
+(`press h to show help, press q to quit`) : `q` pour quitter. `npx vitest run` exécute les
+tests une seule fois, comme en intégration continue.
 Vitest trouve tout seul les fichiers dont le nom se termine par `.test.js` ou `.test.jsx` ; on
 les place à côté du fichier testé.
 
@@ -169,6 +171,7 @@ npx vitest run src/components/ContactDetail.test.jsx
 
 ```text
  RUN  v5.1.1 /chemin/vers/carnet
+
 
  Test Files  1 passed (1)
       Tests  2 passed (2)

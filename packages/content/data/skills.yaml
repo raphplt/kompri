@@ -130,7 +130,7 @@
 
 - id: react-data-forms
   domain: frontend
-  status: draft
+  status: published
   title: 'React : données, effets et formulaires'
   description: Charger des données d’une API, gérer les formulaires et partager l’état.
   estimatedHours: 8

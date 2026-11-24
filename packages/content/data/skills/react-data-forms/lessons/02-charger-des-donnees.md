@@ -16,7 +16,7 @@ sources:
 ## Le problème : des données qui arrivent plus tard
 
 Une vraie application n’a pas ses données écrites en dur dans `App.jsx` : elle les demande à
-un serveur. Dans la compétence « JavaScript asynchrone », tu as appris à le faire avec `fetch`,
+un serveur. Dans la compétence « Asynchrone, promesses et fetch », tu as appris à le faire avec `fetch`,
 à tester `response.ok`, à annuler une requête avec `AbortController` et à éviter qu’une réponse
 lente écrase une réponse plus récente. Il reste à brancher tout cela sur le modèle de React :
 
@@ -31,7 +31,7 @@ le chargement des données.
 ## L’API du projet fil rouge
 
 Dans le projet `carnet` créé à la leçon précédente, crée un dossier `server` et place-y ce
-fichier. Comme dans la compétence « JavaScript asynchrone », tu n’as pas besoin d’en
+fichier. Comme dans la compétence « Asynchrone, promesses et fetch », tu n’as pas besoin d’en
 comprendre chaque ligne : il utilise uniquement le module `node:http` de Node.js, garde les
 contacts en mémoire et **simule des délais** pour rendre visibles les problèmes d’attente.
 
@@ -191,11 +191,10 @@ fetch('http://localhost:3001/api/contacts');
 ```
 
 La requête atteint bien le serveur, mais Chromium refuse de donner la réponse à ton code. La
-promesse est rompue avec `TypeError: Failed to fetch`, et la console explique (ici avec les
-ports de l’essai) :
+promesse est rompue avec `TypeError: Failed to fetch`, et la console explique :
 
 ```text
-Access to fetch at 'http://localhost:3471/api/contacts' from origin 'http://localhost:5391' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+Access to fetch at 'http://localhost:3001/api/contacts' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
 ```
 
 C’est la **politique de même origine** : par défaut, une page ne peut lire que les réponses de
@@ -251,7 +250,7 @@ Trois précisions :
 ## Un module pour parler à l’API
 
 Plutôt que d’éparpiller `fetch` dans les composants, regroupe les appels dans `src/api.js`.
-Tu reconnaîtras la fonction `getJson` de la compétence « JavaScript asynchrone », adaptée :
+Tu reconnaîtras la fonction `getJson` de la compétence « Asynchrone, promesses et fetch », adaptée :
 
 ```js
 // src/api.js — un seul endroit pour parler à l’API
@@ -431,7 +430,7 @@ rendu affiche donc déjà le message d’attente, sans appel à `setStatus` dans
 
 **Le paragraphe `role="status"` est toujours présent.** Seul son texte change : les lecteurs
 d’écran annoncent ainsi « Chargement des contacts… », puis « 4 contact(s). » ou « Le
-chargement a échoué. », comme tu l’as vu dans la compétence « JavaScript asynchrone ».
+chargement a échoué. », comme tu l’as vu dans la compétence « Asynchrone, promesses et fetch ».
 
 **Le nettoyage annule la requête.** Le contrôleur est créé dans l’effet, son signal est
 transmis à `apiRequest`, et le nettoyage appelle `controller.abort()`. Une requête annulée
@@ -510,6 +509,7 @@ seconde après, sur « Bruno Petit ». Résultat mesuré dans Chromium :
 ```text
 réponse reçue pour le contact 2
 réponse reçue pour le contact 1
+réponse reçue pour le contact 1
 ```
 
 La fiche d’Awa remplace celle de Bruno alors que c’est Bruno qui est sélectionné. La requête
@@ -519,7 +519,14 @@ arrivée gagne : c’est la **condition de course** que tu connais déjà. Sur u
 temps de réponse varient sans cesse ; ici le délai est fixe pour que tu puisses reproduire le
 bug à coup sûr.
 
-Un second défaut, plus discret : clique sur Bruno, attends, puis clique sur « Chloé Martin ».
+Pourquoi deux réponses pour Awa ? En apparaissant, `ContactDetail` est monté : StrictMode
+exécute donc l’effet deux fois et envoie deux requêtes pour le contact 1. Le journal de l’API
+montre que Chromium n’a envoyé la seconde, identique à la première, qu’après avoir reçu la
+réponse de celle-ci : elle arrive environ 1,5 s après la première et rappelle `setContact` avec
+la fiche d’Awa.
+
+Un second défaut, plus discret : recharge la page, clique sur Bruno, attends sa fiche, puis
+clique sur « Chloé Martin ».
 100 ms plus tard, Chloé est sélectionnée mais la fiche affichée est encore celle de Bruno,
 sans aucune indication de chargement. L’état `contact` n’est remis à `null` qu’au tout premier
 rendu.
@@ -723,7 +730,7 @@ Scénario Awa puis Bruno vérifié dans Chromium : la fiche de Bruno reste affic
 La fiche n° 1 met 1,5 s à répondre. Modifie `ContactDetail` pour abandonner une fiche qui ne
 répond pas en 1 seconde, avec le message « Erreur : le serveur met trop de temps à
 répondre. ». Un changement de contact doit toujours annuler sans message. Indice :
-`AbortSignal.timeout` et `AbortSignal.any`, vus dans la compétence « JavaScript asynchrone ».
+`AbortSignal.timeout` et `AbortSignal.any`, vus dans la compétence « Asynchrone, promesses et fetch ».
 
 :::solution
 ```jsx

@@ -15,7 +15,7 @@ sources:
 
 ## Le problème : un rendu doit rester pur
 
-Dans la compétence « React : composants, props et état », tu as appris deux règles :
+Dans la compétence « React : composants et état », tu as appris deux règles :
 
 - pendant le **rendu**, un composant est **pur** : il calcule du JSX à partir de ses props et
   de son état, sans rien modifier à l’extérieur ;
@@ -460,7 +460,7 @@ L’enchaînement :
 3. L’effet appelle `setResults` avec un **nouveau** tableau (`filter` en crée toujours un) :
    nouveau rendu, nouvel objet `options`, et ainsi de suite.
 
-Le linter avait prévenu :
+Le linter avait prévenu (en plus de l’avertissement `set-state-in-effect` vu plus haut) :
 
 ```text
 src/App.jsx:15:7: warning react-hooks(exhaustive-deps): React hook useEffect depends on `options`, which changes every render help: Try memoizing this variable with `useRef` or `useCallback`.

@@ -15,7 +15,7 @@ sources:
 
 ## Le problème : un formulaire, c’est un dialogue
 
-Dans la compétence « Formulaires HTML et accessibilité », tu as construit des formulaires
+Dans la compétence « Formulaires et accessibilité », tu as construit des formulaires
 dont le **navigateur** gérait la validation (`required`, `type="email"`, `pattern`) et que le
 **serveur** revalidait en renvoyant une page d’erreurs. Dans une application React, la page ne
 se recharge pas : c’est ton composant qui doit tout orchestrer.
@@ -327,7 +327,7 @@ Ce que chaque choix apporte :
 
 **Un `label` relié à chaque champ.** `htmlFor` (et non `for`, mot réservé en JavaScript)
 désigne l’`id` du champ. Le clic sur l’étiquette place le focus dans le champ, et le lecteur
-d’écran annonce « Nom, zone de saisie ». Un `placeholder` n’est pas une étiquette : il
+d’écran annonce l’étiquette « Nom » avec le type du champ. Un `placeholder` n’est pas une étiquette : il
 disparaît dès qu’on tape.
 
 **`required` et `noValidate`.** `noValidate` sur le formulaire désactive les bulles de
@@ -386,8 +386,8 @@ Le composant utilise un état `isSubmitting` pour trois choses :
 `isSubmitting` repasse à `false` dans le bloc `finally`, que l’envoi réussisse ou échoue :
 sinon, après une erreur, le formulaire resterait bloqué.
 
-Pourquoi `aria-disabled` plutôt que `disabled` ? Tu l’as vu dans la compétence « JavaScript
-asynchrone » : un bouton qui a le focus et devient `disabled` le **perd**. Vérifié ici avec
+Pourquoi `aria-disabled` plutôt que `disabled` ? Tu l’as vu dans la compétence « Asynchrone,
+promesses et fetch » : un bouton qui a le focus et devient `disabled` le **perd**. Vérifié ici avec
 `disabled={isSubmitting}` : après le clic, le focus tombe sur `body`, et l’utilisateur au
 clavier perd sa position. Avec `aria-disabled`, le bouton garde le focus ; comme il reste
 cliquable, c’est la garde `if (isSubmitting) return;` qui ignore les clics. Les deux vont

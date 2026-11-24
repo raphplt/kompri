@@ -291,7 +291,7 @@ l’effet de chargement de la leçon 2, en remplaçant le `filter` par :
 setAttempt((n) => n + 1); // relance l’effet de chargement : la liste vient du serveur
 ```
 
-Mesuré sur la suppression de Chloé : la liste se met à jour environ 1,1 s après le clic (0,3 s
+Mesuré sur la suppression de Chloé : la liste se met à jour environ 0,9 s après le clic (0,3 s
 pour le `DELETE`, puis 0,5 s pour le nouveau `GET /api/contacts`), et entre les deux Chloé
 reste affichée avec son bouton « Supprimer » revenu à la normale.
 
