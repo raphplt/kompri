@@ -532,8 +532,10 @@ Les points à savoir expliquer :
 - **État local justifié** : le texte en cours de saisie ne concerne que `AddItemForm`. `App`
   ne reçoit que le résultat final, par `onAdd(trimmedName)`.
 - **Clés** : l’identifiant est créé **une fois**, dans `handleAdd`, avec
-  `crypto.randomUUID()` (disponible dans les navigateurs à jour sur `localhost` et en
-  HTTPS). Les filtres utilisent leur `value`, unique et stable.
+  `crypto.randomUUID()`. Rappel de la leçon 5 : cette fonction n’existe que sur `localhost`
+  ou en HTTPS ; ouverte en HTTP via l’adresse réseau de `npm run dev -- --host`, l’application
+  échoue à l’ajout (`crypto.randomUUID is not a function`). Les filtres utilisent leur
+  `value`, unique et stable.
 - **Accessibilité** : vrai `form` avec `onSubmit` (Entrée fonctionne), `label` relié au champ,
   case à cocher dans son `label`, `aria-pressed` pour signaler le filtre actif.
 - `event.preventDefault()` empêche le rechargement de la page, comme dans la compétence « DOM

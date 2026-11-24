@@ -521,12 +521,13 @@ Au premier clic sur « Basculer le mode admin », `AdminPanel` appelle deux `use
 d’un. La page devient blanche et la console affiche :
 
 ```text
-React has detected a change in the order of Hooks called by AdminPanel. This will lead to bugs and errors if not fixed.
+React has detected a change in the order of Hooks called by AdminPanel. This will lead to bugs and errors if not fixed. For more information, read the Rules of Hooks: https://react.dev/link/rules-of-hooks
 
    Previous render            Next render
    ------------------------------------------------------
 1. useState                   useState
 2. undefined                  useState
+   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ```
 
 suivi de l’erreur `Rendered more hooks than during the previous render.`
@@ -747,8 +748,9 @@ export default App;
 1. **`onClick={addWish()}`** appelle `addWish` pendant **chaque** rendu. Chaque appel ajoute
    un livre et demande un nouveau rendu, qui rappelle `addWish`, et ainsi de suite. La boucle
    ne s’arrête que parce qu’à six envies, le `return` anticipé affiche « Liste pleine » sans
-   évaluer le bouton (vérifié avec un `console.log` dans le corps : sept rendus, avec des
-   longueurs de 0 à 6). Sans ce `return`, React lèverait l’erreur `Too many re-renders`. Il
+   évaluer le bouton (vérifié avec un `console.log(wishes.length)` dans le corps : il
+   affiche 0, 1, 2… jusqu’à 6, ce dernier deux fois à cause de StrictMode). Sans ce
+   `return`, React lèverait l’erreur `Too many re-renders`. Il
    faut `onClick={addWish}`.
 2. **`wishes.push` + `setWishes(wishes)`** mute le tableau et repasse la même référence : React
    ne refait pas le rendu. Il faut `setWishes([...wishes, 'Livre'])`.

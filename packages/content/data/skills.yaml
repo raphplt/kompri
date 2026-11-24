@@ -116,7 +116,7 @@
 
 - id: react-fundamentals
   domain: frontend
-  status: draft
+  status: published
   title: 'React : composants et état'
   description: Construire une interface en composants qui réagissent aux données.
   estimatedHours: 8

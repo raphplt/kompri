@@ -458,7 +458,8 @@ tu verras dans les prochaines leçons (clés manquantes, attributs mal nommés�
    indique un blocage par la politique CORS). Passe toujours par `npm run dev` ou
    `npm run preview`.
 4. **Oublier `export default`.** La page reste blanche et la console indique
-   `The requested module '/src/App.jsx' does not provide an export named 'default'`.
+   `The requested module '/src/App.jsx' does not provide an export named 'default'` (après
+   une modification, le chemin peut être suivi de `?t=` et d’un nombre ajouté par Vite).
 5. **Modifier `dist/` à la main.** Le dossier est écrasé à chaque build : on modifie `src/`.
 6. **Écrire un composant avec une minuscule** (`function app()`). React le prendrait pour une
    balise HTML inconnue ; la leçon 3 montre l’avertissement obtenu.

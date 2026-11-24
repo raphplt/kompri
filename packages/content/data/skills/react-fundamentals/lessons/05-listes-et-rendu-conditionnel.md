@@ -308,6 +308,17 @@ Le meilleur candidat est l’identifiant venu des données (l’`id` d’une bas
 Pour un élément créé dans l’interface, génère l’identifiant **une seule fois, à la
 création**, dans le gestionnaire d’événement : `{ id: crypto.randomUUID(), … }`.
 
+:::warning[Un identifiant qui exige un contexte sécurisé]
+Le navigateur ne fournit `crypto.randomUUID()` que dans un **contexte sécurisé** : une page
+servie en HTTPS, ou depuis `localhost` comme avec `npm run dev`. Si tu ouvres l’application
+depuis un autre appareil avec l’adresse « Network » qu’affiche `npm run dev -- --host` (du
+type `http://192.168.1.20:5173/`), la page est en HTTP sur une adresse qui n’est pas
+`localhost` : `crypto.randomUUID` vaut alors `undefined`, et l’ajout échoue avec
+`crypto.randomUUID is not a function` (vérifié dans Chromium). Teste sur `localhost`, ou
+utilise un autre identifiant unique (un compteur, par exemple) pour ce type d’essai.
+
+:::
+
 Deux clés identiques déclenchent un autre avertissement :
 
 ```text
