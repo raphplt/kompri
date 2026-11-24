@@ -411,7 +411,7 @@
 
 - id: deployment
   domain: quality
-  status: draft
+  status: published
   title: Déployer et exploiter une application
   description: Mettre en production une application Node.js et la garder en bonne santé.
   estimatedHours: 8

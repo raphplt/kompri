@@ -209,34 +209,34 @@
     \ et l’application tourne depuis une semaine. Avant de l’ouvrir au public, elle te\ndemande un audit.\n\
     \nFichiers suivis par Git (`git ls-files`) :\n\n```text\n.env\n.gitignore\nDockerfile\nREADME.md\n\
     compose.yaml\neslint.config.js\nmigrations/001_init.sql\nops/backup.sh\npackage-lock.json\npackage.json\n\
-    public/index.html\nsrc/server.js\ntest/api.test.js\n```\n\n`.gitignore` :\n\n```text\nnode_modules/\n\
-    ```\n\n`.env` :\n\n```bash\nNODE_ENV=production\nPOSTGRES_PASSWORD=recettes2026\nSESSION_SECRET=change-me-later\n\
-    ```\n\n`package.json` (extrait) : `\"start\": \"node src/server.js\"`,\n`\"db:migrate\": \"node scripts/migrate.js\"\
-    `, dépendances `express` et `pg`, dépendances de\ndéveloppement `eslint`, `@eslint/js` et `globals`.\n\
-    \n`src/server.js` (extrait) :\n\n```js\nconst app = express();\napp.set('trust proxy', true);\napp.use(express.json());\n\
-    app.use(loginLimiter); // 5 tentatives par minute et par req.ip\n\napp.get('/health', (req, res) =>\
-    \ res.send('OK'));\n// … routes de l’API …\n\nconst server = app.listen(process.env.PORT ?? 3000);\n\
-    process.on('SIGTERM', () => server.close(() => pool.end()));\n```\n\n`Dockerfile` :\n\n```dockerfile\n\
-    FROM node:latest\nWORKDIR /usr/src/app\nCOPY . .\nRUN npm install\nENV NODE_ENV=production\nEXPOSE\
-    \ 3000\nHEALTHCHECK --interval=30s CMD curl -f http://localhost:3000/health || exit 1\nCMD [\"sh\"\
-    , \"-c\", \"npm run db:migrate && npm start\"]\n```\n\n`compose.yaml` :\n\n```yaml\nservices:\n  db:\n\
-    \    image: postgres:latest\n    restart: always\n    environment:\n      POSTGRES_USER: recettes\n\
-    \      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}\n      POSTGRES_DB: recettes\n    ports:\n      - \"\
-    5432:5432\"\n\n  api:\n    build: .\n    image: recettes:latest\n    restart: always\n    env_file:\
-    \ .env\n    environment:\n      DATABASE_URL: postgres://recettes:${POSTGRES_PASSWORD}@db:5432/recettes\n\
-    \    ports:\n      - \"80:3000\"\n    depends_on:\n      - db\n```\n\n`ops/backup.sh` :\n\n```bash\n\
-    #!/bin/bash\n# Sauvegarde nocturne (cron : 0 2 * * * /home/deploy/recettes/ops/backup.sh)\ncd /home/deploy/recettes\n\
-    docker compose exec -T db pg_dumpall -U recettes > backups/recettes-$(date +%F).sql\necho \"Sauvegarde\
-    \ OK\"\n```\n\n`README.md`, section « Déploiement » :\n\n```text\n1. Sur le serveur : git clone …\
-    \ && cd recettes\n2. docker compose up -d --build\n3. Mise à jour : git pull && docker compose up\
-    \ -d --build\n4. Les sauvegardes sont dans backups/ : on est tranquilles.\n```\n\nTravail demandé\
-    \ :\n\n1. Liste chaque défaut : fichier et ligne, conséquence concrète (ce qui peut arriver, à\n \
-    \  qui), gravité (critique, importante, mineure).\n2. Dis ce qu’il faut faire **immédiatement** au\
-    \ sujet de ce qui a déjà été commité, dans\n   quel ordre.\n3. Fournis les fichiers corrigés : `.gitignore`,\
-    \ `.dockerignore`, `Dockerfile` (et le script\n   de contrôle de santé), `compose.yaml` avec un proxy\
-    \ HTTPS, `ops/backup.sh`, et la\n   procédure de déploiement et de retour arrière corrigée.\n4. Pour\
-    \ trois défauts de ton choix, décris une vérification (commande et résultat attendu)\n   qui prouve\
-    \ qu’il est corrigé.\n"
+    public/index.html\nscripts/migrate.js\nsrc/server.js\ntest/api.test.js\n```\n\n`.gitignore` :\n\n\
+    ```text\nnode_modules/\n```\n\n`.env` :\n\n```bash\nNODE_ENV=production\nPOSTGRES_PASSWORD=recettes2026\n\
+    SESSION_SECRET=change-me-later\n```\n\n`package.json` (extrait) : `\"start\": \"node src/server.js\"\
+    `,\n`\"db:migrate\": \"node scripts/migrate.js\"`, dépendances `express` et `pg`, dépendances de\n\
+    développement `eslint`, `@eslint/js` et `globals`.\n\n`src/server.js` (extrait) :\n\n```js\nconst\
+    \ app = express();\napp.set('trust proxy', true);\napp.use(express.json());\napp.use(loginLimiter);\
+    \ // 5 tentatives par minute et par req.ip\n\napp.get('/health', (req, res) => res.send('OK'));\n\
+    // … routes de l’API …\n\nconst server = app.listen(process.env.PORT ?? 3000);\nprocess.on('SIGTERM',\
+    \ () => server.close(() => pool.end()));\n```\n\n`Dockerfile` :\n\n```dockerfile\nFROM node:latest\n\
+    WORKDIR /usr/src/app\nCOPY . .\nRUN npm install\nENV NODE_ENV=production\nEXPOSE 3000\nHEALTHCHECK\
+    \ --interval=30s CMD curl -f http://localhost:3000/health || exit 1\nCMD [\"sh\", \"-c\", \"npm run\
+    \ db:migrate && npm start\"]\n```\n\n`compose.yaml` :\n\n```yaml\nservices:\n  db:\n    image: postgres:latest\n\
+    \    restart: always\n    environment:\n      POSTGRES_USER: recettes\n      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}\n\
+    \      POSTGRES_DB: recettes\n    ports:\n      - \"5432:5432\"\n\n  api:\n    build: .\n    image:\
+    \ recettes:latest\n    restart: always\n    env_file: .env\n    environment:\n      DATABASE_URL:\
+    \ postgres://recettes:${POSTGRES_PASSWORD}@db:5432/recettes\n    ports:\n      - \"80:3000\"\n   \
+    \ depends_on:\n      - db\n```\n\n`ops/backup.sh` :\n\n```bash\n#!/bin/bash\n# Sauvegarde nocturne\
+    \ (cron : 0 2 * * * /home/deploy/recettes/ops/backup.sh)\ncd /home/deploy/recettes\ndocker compose\
+    \ exec -T db pg_dumpall -U recettes > backups/recettes-$(date +%F).sql\necho \"Sauvegarde OK\"\n```\n\
+    \n`README.md`, section « Déploiement » :\n\n```text\n1. Sur le serveur : git clone … && cd recettes\n\
+    2. docker compose up -d --build\n3. Mise à jour : git pull && docker compose up -d --build\n4. Les\
+    \ sauvegardes sont dans backups/ : on est tranquilles.\n```\n\nTravail demandé :\n\n1. Liste chaque\
+    \ défaut : fichier et ligne, conséquence concrète (ce qui peut arriver, à\n   qui), gravité (critique,\
+    \ importante, mineure).\n2. Dis ce qu’il faut faire **immédiatement** au sujet de ce qui a déjà été\
+    \ commité, dans\n   quel ordre.\n3. Fournis les fichiers corrigés : `.gitignore`, `.dockerignore`,\
+    \ `Dockerfile` (et le script\n   de contrôle de santé), `compose.yaml` avec un proxy HTTPS, `ops/backup.sh`,\
+    \ et la\n   procédure de déploiement et de retour arrière corrigée.\n4. Pour trois défauts de ton\
+    \ choix, décris une vérification (commande et résultat attendu)\n   qui prouve qu’il est corrigé.\n"
   deliverable: 'Colle ta liste de défauts (fichier, ligne, conséquence, gravité), tes actions immédiates,
 
     les fichiers corrigés complets, puis les trois vérifications avec leurs commandes.
@@ -271,8 +271,8 @@
     \ ./node_modules\nCOPY package.json ./\nCOPY src ./src\nCOPY scripts ./scripts\nCOPY migrations ./migrations\n\
     COPY public ./public\nARG APP_VERSION=dev\nENV APP_VERSION=$APP_VERSION\nUSER node\nEXPOSE 3000\n\
     HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \\\n  CMD [\"node\", \"scripts/healthcheck.js\"\
-    ]\nCMD [\"npm\", \"start\"]\n```\n\n`compose.yaml` (extrait ; `db` et `migrate` sont ceux du cours,\
-    \ avec volume et conditions) :\n\n```yaml\n  api:\n    image: guestbook:${APP_VERSION:?APP_VERSION\
+    ]\nCMD [\"npm\", \"start\"]\n```\n\n`compose.yaml` (extrait ; `db` et `migrate` sont ceux de la leçon\
+    \ 3, avec volume et\nconditions) :\n\n```yaml\n  api:\n    image: guestbook:${APP_VERSION:?APP_VERSION\
     \ manquant dans .env}\n    restart: unless-stopped\n    environment:\n      NODE_ENV: production\n\
     \      DATABASE_URL: postgres://guestbook:${POSTGRES_PASSWORD}@db:5432/guestbook\n      TRUST_PROXY:\
     \ 0\n    networks: [backend, web]\n    depends_on:\n      db:\n        condition: service_healthy\n\
@@ -285,24 +285,25 @@
     sauvegarde. Le schéma contient `messages (id, author, body, created_at)`, et la version\n1.0.0 de\
     \ l’API lit et écrit `author`. Depuis peu, l’API limite à 5 messages par minute et\npar `req.ip`.\n\
     \n**Incident 1.** Des visiteurs écrivent que leur message « a disparu » pendant la\njournée de lundi,\
-    \ quand une nouvelle version a été déployée. Dans les journaux de l’ancien\nconteneur, récupérés juste\
-    \ avant le déploiement suivant :\n\n```text\napi-1  | {\"method\":\"POST\",\"path\":\"/api/messages\"\
-    ,\"status\":201,\"durationMs\":9,\"ip\":\"172.18.0.3\",\"protocol\":\"http\",\"time\":\"2026-11-23T09:12:40.118Z\"\
-    ,\"level\":\"info\",\"message\":\"request\"}\napi-1  | npm error path /app\napi-1  | npm error command\
-    \ failed\napi-1  | npm error signal SIGTERM\napi-1  | npm error command sh -c node src/server.js\n\
-    ```\n\n**Incident 2.** Depuis la mise en place du limiteur, des visiteurs reçoivent\n`429 Trop de\
-    \ messages` alors qu’ils n’en ont envoyé aucun. Toutes les lignes `request`\ncontiennent `\"ip\":\"\
-    172.18.0.3\",\"protocol\":\"http\"`.\n\n**Incident 3.** L’hébergeur alerte : disque à 92 %. Le fichier\
-    \ de journal JSON du\nconteneur `guestbook-api-1`, sous `/var/lib/docker/containers/`, pèse à lui\
-    \ seul plusieurs\ngigaoctets.\n\n**Évolution.** L’équipe veut renommer la colonne `author` en `display_name`\
-    \ (l’API exposera\n`displayName`). Exigence : à chaque étape, on doit pouvoir revenir à la version\
-    \ précédente\nde l’API en changeant seulement `APP_VERSION`.\n\nTravail demandé :\n\n1. Pour chaque\
-    \ incident : la cause précise, prouvée à partir des éléments fournis ; la\n   correction minimale\
-    \ (diff) ; la commande qui prouve que c’est corrigé et le résultat\n   attendu.\n2. Pour l’évolution\
-    \ : le plan en versions successives, avec pour chacune la migration SQL,\n   ce que lit et écrit le\
-    \ code, et pourquoi le retour arrière reste possible. Écris\n   complètement la migration et les modifications\
-    \ de requêtes de la **première** version.\n3. Écris la procédure de restauration de test des sauvegardes,\
-    \ exécute-la sur ton poste\n   (avec le livre d’or du cours), et propose une fréquence pour la rejouer.\n"
+    \ quand une nouvelle version a été déployée. Un collègue suivait\n`docker compose logs -f api` pendant\
+    \ ce déploiement ; voici les dernières lignes de\nl’ancien conteneur :\n\n```text\napi-1  | {\"method\"\
+    :\"POST\",\"path\":\"/api/messages\",\"status\":201,\"durationMs\":9,\"ip\":\"172.18.0.3\",\"protocol\"\
+    :\"http\",\"time\":\"2026-11-23T09:12:40.118Z\",\"level\":\"info\",\"message\":\"request\"}\napi-1\
+    \  | npm error path /app\napi-1  | npm error command failed\napi-1  | npm error signal SIGTERM\napi-1\
+    \  | npm error command sh -c node src/server.js\n```\n\n**Incident 2.** Depuis la mise en place du\
+    \ limiteur, des visiteurs reçoivent\n`429 Trop de messages` alors qu’ils n’en ont envoyé aucun. Toutes\
+    \ les lignes `request`\ncontiennent `\"ip\":\"172.18.0.3\",\"protocol\":\"http\"`.\n\n**Incident 3.**\
+    \ L’hébergeur alerte : disque à 92 %. Le fichier de journal JSON du\nconteneur `guestbook-api-1`,\
+    \ sous `/var/lib/docker/containers/`, pèse à lui seul plusieurs\ngigaoctets.\n\n**Évolution.** L’équipe\
+    \ veut renommer la colonne `author` en `display_name` (l’API exposera\n`displayName`). Exigence :\
+    \ à chaque étape, on doit pouvoir revenir à la version précédente\nde l’API en changeant seulement\
+    \ `APP_VERSION`.\n\nTravail demandé :\n\n1. Pour chaque incident : la cause précise, prouvée à partir\
+    \ des éléments fournis ; la\n   correction minimale (diff) ; la commande qui prouve que c’est corrigé\
+    \ et le résultat\n   attendu.\n2. Pour l’évolution : le plan en versions successives, avec pour chacune\
+    \ la migration SQL,\n   ce que lit et écrit le code, et pourquoi le retour arrière reste possible.\
+    \ Écris\n   complètement la migration et les modifications de requêtes de la **première** version.\n\
+    3. Écris la procédure de restauration de test des sauvegardes, exécute-la sur ton poste\n   (avec\
+    \ le livre d’or du cours), et propose une fréquence pour la rejouer.\n"
   deliverable: 'Pour chaque incident : cause, diff, commande de vérification et sortie obtenue (sur ton
 
     poste, avec le livre d’or du cours). Puis le plan de renommage, la migration et le diff de

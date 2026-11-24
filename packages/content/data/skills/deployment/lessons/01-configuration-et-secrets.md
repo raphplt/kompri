@@ -466,10 +466,12 @@ git check-ignore -v .env .env.test .env.example
 ```text
 .gitignore:2:.env	.env
 .gitignore:3:.env.*	.env.test
+.gitignore:4:!.env.example	.env.example
 ```
 
-`.env.example` n’apparaît pas : il n’est pas ignoré, il sera versionné. Pour finir, crée la base,
-copie le modèle et lance l’application :
+Chaque ligne donne le fichier `.gitignore`, le numéro de ligne et la règle qui a décidé. Pour
+`.env.example`, c’est l’exception `!.env.example` : le `!` signifie que le fichier n’est **pas**
+ignoré, il sera versionné. Pour finir, crée la base, copie le modèle et lance l’application :
 
 ```bash
 createdb guestbook

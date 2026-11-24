@@ -274,9 +274,9 @@ la vérification complète a lieu, avec cette autorité en plus. On voit HTTP/2,
 
 La seconde façon, `curl -k`, **désactive** toute vérification du certificat. Elle suffit pour un
 essai rapide en local, mais n’apprend rien sur la validité du certificat et ne protège plus
-contre une interception : ne l’utilise jamais vers un serveur réel, ni dans un script. Évite
-aussi d’ouvrir `https://localhost` dans ton navigateur habituel pendant l’atelier : il
-mémoriserait l’en-tête HSTS pour `localhost`.
+contre une interception : ne l’utilise jamais vers un serveur réel, ni dans un script. Un
+navigateur, lui, affiche un avertissement de sécurité sur `https://localhost`, pour la même
+raison : c’est attendu dans cet atelier, et ce serait une alerte sérieuse sur un vrai site.
 
 ## Ce que l’application voit : `X-Forwarded-*` et `trust proxy`
 

@@ -234,7 +234,7 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U postgres"
+          --health-cmd "pg_isready -h 127.0.0.1 -U postgres"
           --health-interval 5s
           --health-timeout 3s
           --health-retries 10
@@ -291,6 +291,8 @@ virtuelle du runner ; le port publié `5432:5432` rend donc la base joignable su
 
 `options` passe des options à `docker run`, dont un contrôle de santé : GitHub attend que le
 service soit sain avant de lancer les étapes, comme `condition: service_healthy` dans Compose.
+`-h 127.0.0.1` a la même raison qu’à la leçon 3 : ne pas déclarer prêt le serveur temporaire de
+l’initialisation.
 
 `DATABASE_URL`, défini dans `env` au niveau du job, est visible de toutes les étapes. Son mot de
 passe n’est pas un secret : la base est créée vide pour ce job, n’est joignable que depuis lui,
@@ -313,7 +315,8 @@ et disparaît à la fin. Le nom de la base contient `test`, comme l’exige le g
 
 `needs: test` : l’image n’est construite que si les tests passent. Ce job n’a pas besoin de
 `actions/checkout` : `docker/build-push-action` construit par défaut à partir du dépôt Git, au
-commit qui a déclenché le workflow, en respectant `.dockerignore`.
+commit qui a déclenché le workflow. Le contexte ne contient donc que des fichiers commités : un
+`.env` local, jamais versionné, ne peut pas y entrer.
 
 - `docker/setup-buildx-action` prépare le constructeur BuildKit nécessaire au cache.
 - `push: false` : on vérifie seulement que l’image se construit. Une image qui ne se construit
@@ -448,6 +451,7 @@ Tu peux aussi rejouer les étapes du job `test` sur ton poste, avec Docker :
 ```bash
 docker run -d --name ci-postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=guestbook_test \
   -p 5432:5432 postgres:18
+until docker exec ci-postgres pg_isready -q -h 127.0.0.1 -U postgres; do sleep 1; done
 export DATABASE_URL=postgres://postgres:postgres@localhost:5432/guestbook_test
 npm ci && npm run lint && npm test
 docker rm -f ci-postgres

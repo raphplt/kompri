@@ -21,8 +21,8 @@ Contenu (parcours « développement web full-stack élémentaire ») :
 - ✅ Format de contenu v2 : leçons Markdown, défis détaillés, grilles par niveaux, notes
   d’examinateur invisibles pour l’apprenant, archivage des nœuds retirés
 - ✅ Guide de rédaction des cours (`docs/content-guide.md`)
-- ✅ Arbre de 24 compétences réparties en 6 domaines
-- ✅ Cours complets pour les 24 compétences : 119 leçons (~319 000 mots), 96 défis
+- ✅ Arbre de 30 compétences réparties en 6 domaines
+- ✅ Cours complets pour les 30 compétences : 152 leçons (~439 000 mots), 120 défis
 - ✅ Relecture d’exactitude indépendante de chaque cours, liens sources vérifiés
 - ⏳ Relecture par des formateurs humains (hors portée de l’automatisation)
 
@@ -96,7 +96,7 @@ Six compétences de plus, rédigées puis relues une par une, publiées après r
 - ✅ TypeScript côté serveur (`typescript-node`) — 5 leçons, 4 défis, relu
 - ✅ React : composants et état (`react-fundamentals`) — 6 leçons, 4 défis, relu
 - ✅ React : données, effets et formulaires (`react-data-forms`) — 6 leçons, 4 défis, relu
-- 🚧 Déployer et exploiter une application (`deployment`)
+- ✅ Déployer et exploiter une application (`deployment`) — 6 leçons, 4 défis, relu
 
 ## Hors périmètre sans nouvelle demande
 

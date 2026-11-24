@@ -137,6 +137,12 @@ ls -l .env
 
 `600` : lecture et écriture pour le propriétaire, rien pour les autres comptes de la machine.
 
+La compétence précédente mettait en garde contre un `.env` copié sur le serveur « pour aller
+vite » : le risque visé est la copie de ton fichier de **développement**, qui finit dans une
+archive, une image ou une sauvegarde. Celui-ci est propre au serveur, créé sur place, exclu du
+dépôt par `.gitignore` et de l’image par `.dockerignore`. Si ton hébergeur propose un
+gestionnaire de secrets, il reste préférable.
+
 `docker compose config` affiche le fichier final, variables remplacées : pratique pour vérifier,
 mais il affiche aussi les mots de passe. Pour seulement valider la syntaxe :
 `docker compose config --quiet` (aucune sortie si tout va bien).
@@ -381,8 +387,10 @@ ALTER ROLE
   standard (ici le document `<<'SQL'`).
 - `-v pw=…` définit une variable `psql`, et `:'pw'` l’insère **comme une chaîne SQL
   correctement échappée**. Le mot de passe n’apparaît pas dans le texte de la commande SQL.
-- `docker compose up -d` recrée les conteneurs dont la configuration a changé (`migrate`,
-  `api`), avec le nouveau `DATABASE_URL`.
+- `docker compose up -d` recrée les conteneurs dont la configuration a changé : `migrate` et
+  `api`, avec le nouveau `DATABASE_URL`, mais aussi `db`, dont la variable `POSTGRES_PASSWORD` a
+  changé. Pour `db`, c’est sans effet sur les données : le volume est conservé, et la variable
+  n’est plus lue puisque la base existe déjà. Compte une coupure de quelques secondes.
 
 ## Pièges et idées reçues
 

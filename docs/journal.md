@@ -14,8 +14,17 @@ prises sans attendre de validation et la suite prévue.
 - Plafond mensuel de dépense IA demandé (20 €) : `LLM_MONTHLY_BUDGET_USD=20` en production.
   Atteint, il suspend les nouveaux oraux et le tuteur ; un oral commencé va à son terme.
   Décision : un plafond en dollars, comme les tarifs, et 20 $ restent sous 20 €.
-- Six nouvelles compétences planifiées (Git en équipe, TypeScript ×2, React ×2, déploiement) ;
-  blocs de code TypeScript, JSX, YAML et Dockerfile autorisés dans les leçons.
+- **Six nouvelles compétences rédigées, relues et publiées** : Collaborer avec Git, TypeScript :
+  typer son JavaScript, TypeScript côté serveur, React : composants et état, React : données,
+  effets et formulaires, Déployer et exploiter une application. 33 leçons et 24 défis de plus ;
+  le parcours compte 30 compétences, 152 leçons (~439 000 mots) et 120 défis.
+- Même méthode que pour les premiers cours, un agent à la fois : un rédacteur exécute tout
+  (Git 2.43, TypeScript 7.0.2, React 19.3 dans Chromium, Docker, Caddy, PostgreSQL), puis un
+  relecteur indépendant rejoue les scénarios et corrige. Exemples de défauts trouvés en
+  relecture : un exercice Git impossible faute d’un `push`, une stratégie de migration qui
+  cassait le retour arrière, une clé de défi qui aurait fait perdre des données PostgreSQL,
+  des affirmations dépendantes des versions désormais datées.
+- Blocs de code TypeScript, JSX, YAML et Dockerfile autorisés dans les leçons.
 
 ## 22 novembre 2026 (fin de soirée) — Recherche, reprise et accessibilité
 

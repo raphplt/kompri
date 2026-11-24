@@ -320,8 +320,10 @@ RUN --mount=type=secret,id=npm_token \
 docker build --secret id=npm_token,env=NPM_TOKEN -t leak:secret .
 ```
 
-L’historique de cette image ne contient que la commande, pas la valeur, et `/run/secrets`
-n’existe pas dans le conteneur final.
+`env=NPM_TOKEN` lit la valeur dans la variable `NPM_TOKEN` de ton shell, qui doit donc être
+définie : sinon, la construction ne s’arrête pas, le secret est simplement vide
+(`jeton lu : 0 octets`). L’historique de cette image ne contient que la commande, pas la valeur,
+et `/run/secrets` n’existe pas dans le conteneur final.
 
 ## Lancer le conteneur
 
@@ -508,7 +510,7 @@ docker run -d --name stop-test -e DATABASE_URL=postgres://x@db/x guestbook:1.0.0
 sleep 2
 time docker stop stop-test
 docker inspect stop-test --format '{{.State.ExitCode}}'
-docker logs stop-test | tail -2
+docker logs stop-test 2>&1 | tail -2
 docker rm stop-test
 ```
 
