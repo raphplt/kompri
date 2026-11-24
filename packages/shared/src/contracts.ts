@@ -388,6 +388,12 @@ export const adminStatsSchema = z.object({
   activeLearners30d: z.number().int(),
   orals7d: z.number().int(),
   openReviews: z.number().int(),
+  /** Estimated LLM spend of the current month (UTC) and its cap, if any. */
+  llmSpend: z.object({
+    month: z.string(),
+    costUsd: z.number(),
+    budgetUsd: z.number().nullable(),
+  }),
   challenges: z.array(
     z.object({
       challengeId: z.string(),

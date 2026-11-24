@@ -35,11 +35,12 @@ import { createMailer } from './mailer.ts';
 import type { Mailer } from './mailer.ts';
 import type { Clock, Examiner, Settings } from './context.ts';
 import { ErrorFilter } from './errors.ts';
+import { spendLogger } from './spend.ts';
 import { LearningController, LearningService } from './learning.ts';
 import { ProgressController } from './progress.ts';
 import { SearchController } from './search.ts';
 import { TutorController, TutorService } from './tutor.ts';
-import type { LlmClient, MockResponder } from '@kompri/llm';
+import type { LlmClient, MetricLogger, MockResponder } from '@kompri/llm';
 
 @Controller()
 class HealthController implements OnApplicationShutdown {
@@ -118,8 +119,9 @@ export const developmentResponder: MockResponder = (request) => {
 
 export function createLlmFromEnvironment(
   env: Record<string, string | undefined>,
+  log?: MetricLogger,
 ) {
-  const registry = createRegistry(env, undefined, developmentResponder);
+  const registry = createRegistry(env, log, developmentResponder);
   return {
     examiner: {
       provider: registry.providerFor('examiner'),
@@ -143,7 +145,7 @@ export async function createApi(
   const llm =
     options.examiner && options.tutor
       ? null
-      : createLlmFromEnvironment(process.env);
+      : createLlmFromEnvironment(process.env, spendLogger(db));
   const app = await NestFactory.create<NestExpressApplication>(
     {
       module: AppModule,

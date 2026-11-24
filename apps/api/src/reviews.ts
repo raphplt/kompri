@@ -30,6 +30,7 @@ import type { Clock, Settings } from './context.ts';
 import { conflict, notFound, parseInput } from './errors.ts';
 import { buildResult, reviewStatus } from './learning.ts';
 import type { Mailer } from './mailer.ts';
+import { monthlySpend, monthOf } from './spend.ts';
 
 const uuidSchema = z.uuid();
 
@@ -135,6 +136,11 @@ export class ReviewService {
       activeLearners30d: active,
       orals7d,
       openReviews,
+      llmSpend: {
+        month: monthOf(now),
+        costUsd: await monthlySpend(this.db, now),
+        budgetUsd: this.settings.LLM_MONTHLY_BUDGET_USD ?? null,
+      },
       challenges: rows,
     });
   }

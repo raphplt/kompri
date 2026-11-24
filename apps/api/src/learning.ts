@@ -46,6 +46,7 @@ import {
   notFound,
   parseInput,
 } from './errors.ts';
+import { assertBudget } from './spend.ts';
 
 /** Network latency allowance after the displayed deadline. */
 export const graceSeconds = 15;
@@ -269,6 +270,7 @@ export class LearningService {
     const challenge = challengeSchema.parse(snapshot);
     const rubric = rubricSchema.parse(snapshot.rubric);
     const startedAt = this.now();
+    await assertBudget(this.db, this.settings, startedAt);
     let state: OralState;
     try {
       state = await prepareOral(

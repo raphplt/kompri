@@ -20,6 +20,7 @@ import type { AuthenticatedUser } from './auth.ts';
 import { CLOCK, DATABASE, hours, SETTINGS, TUTOR } from './context.ts';
 import type { Clock, Settings } from './context.ts';
 import { ApiException, notFound, parseInput } from './errors.ts';
+import { assertBudget } from './spend.ts';
 
 export const tutorInstructions = `Tu es le tuteur de Kompri, une plateforme où l’IA est autorisée pour
 apprendre et interdite pour prouver. Tu aides un apprenant adulte à comprendre une compétence
@@ -114,6 +115,7 @@ export class TutorService {
         })
       : null;
     if (body.lessonSlug && !lesson) throw notFound('Lesson');
+    await assertBudget(this.db, this.settings, this.now());
     await this.db.tutorUsage.create({
       data: { userId: user.id, consumedAt: this.now() },
     });

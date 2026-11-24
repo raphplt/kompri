@@ -17,6 +17,7 @@ import { runDailyTasks } from './daily.ts';
 import { createClient, createMockAdapter } from '@kompri/llm';
 import { nextLesson, skillStates } from './progress.ts';
 import { excerptParts } from './search.ts';
+import { monthOf, recordSpend } from './spend.ts';
 
 const db = createDatabase();
 let now = new Date('2030-01-01T10:00:00Z');
@@ -112,6 +113,7 @@ beforeAll(async () => {
       ORAL_LIMIT_PER_WINDOW: 2,
       ORAL_ANSWER_SECONDS: 60,
       TUTOR_LIMIT_PER_WINDOW: 2,
+      LLM_MONTHLY_BUDGET_USD: 5,
     },
     clock: () => now,
   });
@@ -958,6 +960,63 @@ describe('placement', () => {
     expect(state('js-functions')).toBe('validated');
     expect(state('js-control-flow')).toBe('available');
     expect(state('js-data')).toBe('available');
+  });
+});
+
+describe('monthly AI budget', () => {
+  it('accumulates the estimated cost of paid calls only', async () => {
+    const at = new Date('2099-03-15T00:00:00Z');
+    await db.llmMonthlySpend.deleteMany({ where: { month: '2099-03' } });
+    await recordSpend(db, { estimatedCostUsd: 0 }, at);
+    await recordSpend(db, { estimatedCostUsd: null }, at);
+    expect(
+      await db.llmMonthlySpend.findUnique({ where: { month: '2099-03' } }),
+    ).toBeNull();
+    await recordSpend(db, { estimatedCostUsd: 0.25 }, at);
+    await recordSpend(db, { estimatedCostUsd: 0.5 }, at);
+    const row = await db.llmMonthlySpend.findUniqueOrThrow({
+      where: { month: '2099-03' },
+    });
+    expect(Number(row.costUsd)).toBe(0.75);
+    expect(row.calls).toBe(2);
+    await db.llmMonthlySpend.delete({ where: { month: '2099-03' } });
+  });
+
+  it('refuses new orals and tutor messages once the budget is spent', async () => {
+    const user = await register();
+    const month = monthOf(now);
+    await db.llmMonthlySpend.create({ data: { month, costUsd: 5, calls: 1 } });
+    try {
+      const attempt = z.object({ id: z.string() }).parse(
+        (
+          await call('/attempts', {
+            token: user.token,
+            body: { challengeId, work: 'work' },
+          })
+        ).body,
+      );
+      const oral = await call(`/attempts/${attempt.id}/oral`, {
+        method: 'POST',
+        token: user.token,
+      });
+      expect(oral.status).toBe(503);
+      expect(oral.body).toMatchObject({ code: 'llm_budget_exhausted' });
+      const tutor = await call('/tutor/messages', {
+        token: user.token,
+        body: {
+          skillId: 'js-basics',
+          messages: [{ role: 'user', content: 'Une question' }],
+        },
+      });
+      expect(tutor.status).toBe(503);
+      expect(tutor.body).toMatchObject({ code: 'llm_budget_exhausted' });
+      // A refused message does not consume the learner's tutor quota.
+      expect(
+        (await call('/tutor/quota', { token: user.token })).body,
+      ).toMatchObject({ used: 0 });
+    } finally {
+      await db.llmMonthlySpend.delete({ where: { month } });
+    }
   });
 });
 

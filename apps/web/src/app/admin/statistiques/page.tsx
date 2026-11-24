@@ -18,6 +18,12 @@ export const metadata: Metadata = {
 const percent = (value: number | null) =>
   value === null ? '—' : `${Math.round(value * 100)} %`;
 
+const usd = new Intl.NumberFormat('fr-FR', {
+  style: 'currency',
+  currency: 'USD',
+  maximumFractionDigits: 2,
+});
+
 export default async function StatsPage() {
   const user = await getCurrentUser();
   if (!user) redirect('/connexion?suite=/admin/statistiques');
@@ -38,6 +44,19 @@ export default async function StatsPage() {
         {fr.admin.statsTitle}
       </h1>
       <p className="mt-2 mb-8 max-w-3xl text-muted">{fr.admin.statsIntro}</p>
+      <Card className="mb-4">
+        <p className="text-sm text-muted">
+          {fr.admin.llmSpend(stats.llmSpend.month)}
+        </p>
+        <p className="mt-1 text-3xl font-extrabold tabular-nums">
+          {usd.format(stats.llmSpend.costUsd)}
+        </p>
+        <p className="text-sm text-faint">
+          {stats.llmSpend.budgetUsd === null
+            ? fr.admin.llmNoBudget
+            : fr.admin.llmBudget(usd.format(stats.llmSpend.budgetUsd))}
+        </p>
+      </Card>
       <div className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {tiles.map(([label, value]) => (
           <Card key={label}>

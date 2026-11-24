@@ -45,6 +45,12 @@ export const apiEnvSchema = databaseEnvSchema.extend({
     .transform((value) => value === 'true'),
   REVIEW_WINDOW_DAYS: positiveInteger(30, 365),
   REMINDER_DAYS: positiveInteger(14, 365),
+  /** Monthly cap on estimated LLM spend; unset means no cap. */
+  LLM_MONTHLY_BUDGET_USD: z.coerce
+    .number()
+    .positive()
+    .max(1_000_000)
+    .optional(),
   INACTIVE_ACCOUNT_DAYS: z.coerce.number().int().min(60).max(3650).optional(),
   MAIL_TRANSPORT: z.enum(['log', 'smtp']).default('log'),
   SMTP_URL: z

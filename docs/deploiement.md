@@ -70,6 +70,7 @@ Pour utiliser un proxy existant à la place, omettre le profil et le faire point
 | `VALIDATION_DAYS`, `SESSION_DAYS`                 | Durée d’une validation et d’une session de connexion            |
 | `LLM_<USAGE>_PROVIDER`, `_MODEL`, tarifs          | Fournisseur et modèle par usage (voir `.env.example`)           |
 | `<FOURNISSEUR>_API_KEY`, `<FOURNISSEUR>_BASE_URL` | Clé et endpoint du fournisseur                                  |
+| `LLM_MONTHLY_BUDGET_USD`                          | Plafond mensuel de dépense IA estimée (voir ci-dessous)         |
 | `WEB_PORT`                                        | Port publié sur la boucle locale (3000 par défaut)              |
 | `WEB_INSECURE_COOKIES=true`                       | Uniquement pour un essai local sans HTTPS                       |
 
@@ -151,3 +152,14 @@ figurer dans la politique de confidentialité.
       `pnpm evals:live` sur des références relues par des humains.
 - [ ] Faire relire les cours par des formateurs (contenus marqués « relecture en attente »).
 - [ ] Mettre en place sauvegardes, supervision et alertes.
+
+## Budget de l’IA
+
+Chaque appel payant ajoute son coût estimé (jetons × tarifs `LLM_*_USD_PER_MILLION`) à la
+table `LlmMonthlySpend`, par mois civil UTC. Quand `LLM_MONTHLY_BUDGET_USD` est atteint,
+l’API refuse les nouveaux oraux et les messages au tuteur (`503 llm_budget_exhausted`) jusqu’au
+mois suivant ; un oral déjà commencé va jusqu’à sa notation, le dépassement reste donc limité
+aux oraux en cours. Les administrateurs voient la dépense du mois dans les statistiques.
+
+Ce plafond repose sur une estimation : réglez aussi une limite de dépense mensuelle dans la
+console du fournisseur, qui reste la seule garantie stricte.

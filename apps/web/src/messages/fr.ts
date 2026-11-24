@@ -293,6 +293,8 @@ export const fr = {
       'Cette tentative a déjà son oral. Soumets une nouvelle version pour retenter.',
     examiner_unavailable:
       'L’examinateur est momentanément indisponible. Réessaie dans un instant.',
+    llm_budget_exhausted:
+      'Les nouveaux oraux sont suspendus jusqu’au début du mois prochain : le budget mensuel de l’examinateur est atteint.',
     skill_unavailable: 'Cette compétence n’est pas encore ouverte.',
     oral_closed: 'Cet oral est terminé.',
     answer_conflict: 'Cette question a déjà reçu une réponse.',
@@ -338,6 +340,8 @@ export const fr = {
         'Le tuteur est désactivé pendant un oral : l’IA est autorisée pour apprendre, pas pour prouver.',
       tutor_quota_exceeded:
         'Tu as utilisé toutes tes réponses du tuteur pour cette période.',
+      llm_budget_exhausted:
+        'Le tuteur est suspendu jusqu’au début du mois prochain : le budget mensuel de l’IA est atteint.',
       unauthenticated: 'Connecte-toi pour utiliser le tuteur.',
       generic: 'Le tuteur est momentanément indisponible.',
     },
@@ -421,6 +425,9 @@ export const fr = {
     active: 'Actifs sur 30 jours',
     orals7d: 'Oraux sur 7 jours',
     openReviews: 'Réexamens en attente',
+    llmSpend: (month: string) => `Dépense IA estimée (${month})`,
+    llmBudget: (budget: string) => `sur un plafond de ${budget}`,
+    llmNoBudget: 'aucun plafond configuré',
     columns: {
       challenge: 'Défi',
       orals: 'Oraux notés',

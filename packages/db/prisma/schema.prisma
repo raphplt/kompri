@@ -328,3 +328,11 @@ model LessonProgress {
   @@id([userId, lessonId])
   @@index([lessonId])
 }
+
+/// Estimated LLM spend per calendar month (UTC), to enforce LLM_MONTHLY_BUDGET_USD.
+model LlmMonthlySpend {
+  month     String   @id // YYYY-MM
+  costUsd   Decimal  @default(0) @db.Decimal(12, 6)
+  calls     Int      @default(0)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+}
