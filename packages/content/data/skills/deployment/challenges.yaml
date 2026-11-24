@@ -1,0 +1,327 @@
+- id: deployment-sans-ia
+  family: SANS_IA
+  title: Mettre en conteneurs l’API des inscriptions
+  summary: Écrire le .dockerignore, le Dockerfile et le compose.yaml d’une petite API Express avec PostgreSQL,
+    puis justifier chaque choix.
+  estimatedMinutes: 55
+  instructions: "Une association gère les inscriptions à ses ateliers avec une petite API Express 5 et\n\
+    PostgreSQL. Le code fonctionne ; il faut le préparer pour la production avec Docker. Fais\nce travail\
+    \ **sans aide d’IA**, avec les leçons de la compétence si besoin.\n\nCe que tu sais du projet :\n\n\
+    ```text\nworkshops/\n├── package.json, package-lock.json\n├── .env                 configuration locale\
+    \ (DATABASE_URL, PORT=8080…)\n├── eslint.config.js\n├── migrations/          001_init.sql, 002_waiting_list.sql\n\
+    ├── scripts/migrate.js   applique les migrations (lit DATABASE_URL), puis se termine\n├── src/   \
+    \              index.js (point d’entrée), config.js, routes/\n├── public/              index.html,\
+    \ app.js, styles.css\n├── test/                tests node:test\n└── node_modules/\n```\n\n```json\n\
+    {\n  \"name\": \"workshops\",\n  \"type\": \"module\",\n  \"scripts\": {\n    \"start\": \"node src/index.js\"\
+    ,\n    \"db:migrate\": \"node scripts/migrate.js\",\n    \"test\": \"node --test \\\"test/**/*.test.js\\\
+    \"\"\n  },\n  \"dependencies\": { \"express\": \"^5.3.0\", \"pg\": \"^8.23.1\" },\n  \"devDependencies\"\
+    : { \"eslint\": \"^10.15.0\", \"@eslint/js\": \"^10.0.1\", \"globals\": \"^17.14.0\" }\n}\n```\n\n\
+    - L’application écoute sur `PORT` (8080 par défaut) et lit `DATABASE_URL`, `NODE_ENV`.\n- `GET /api/ready`\
+    \ exécute `SELECT 1` : 200 si la base répond, 503 sinon.\n- `src/index.js` gère déjà `SIGTERM` (fermeture\
+    \ du serveur puis du pool).\n\nTravail demandé :\n\n1. Écris le `.dockerignore`.\n2. Écris un `Dockerfile`\
+    \ de production : image officielle Node.js 24 réduite, deux étapes,\n   dépendances de production\
+    \ seulement, utilisateur non root, contrôle de santé qui\n   vérifie vraiment la disponibilité (écris\
+    \ le petit script nécessaire), démarrage\n   compatible avec un arrêt propre.\n3. Écris un `compose.yaml`\
+    \ avec trois services : `db` (PostgreSQL 18, données\n   persistantes, base jamais exposée), `migrate`\
+    \ (job qui applique les migrations quand la\n   base est prête) et `api` (démarrée seulement après\
+    \ les migrations réussies, publiée\n   sur le port 8080 de la machine **pour la seule boucle locale**).\
+    \ Le mot de passe vient\n   d’un fichier `.env` placé à côté, obligatoire.\n4. Écris le `.env.example`\
+    \ correspondant.\n5. Réponds en deux à quatre phrases à chaque question :\n   a. Pourquoi `CMD [\"\
+    node\", \"src/index.js\"]` et pas `CMD [\"npm\", \"start\"]` ?\n   b. Que se passerait-il si tu passais\
+    \ le mot de passe avec `ARG` ou `ENV` dans le\n      `Dockerfile` ?\n   c. Pourquoi `depends_on: [db]`\
+    \ ne suffit-il pas pour le job de migration ?\n   d. Que fait `docker compose down -v`, et quand ne\
+    \ faut-il jamais le lancer ?\n"
+  deliverable: 'Colle les cinq fichiers (`.dockerignore`, `Dockerfile`, script de contrôle de santé,
+
+    `compose.yaml`, `.env.example`), puis tes réponses aux quatre questions. Si tu as pu
+
+    l’exécuter, ajoute la sortie de `docker compose ps -a` une minute après
+
+    `docker compose up -d`.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: image-build
+      description: Construit une image de production minimale et explique l’ordre des instructions et
+        le cache.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Image non fonctionnelle ou de développement (npm install, latest, COPY . . sans exclusion).
+      - score: 1
+        description: Image fonctionnelle mais avec dépendances de développement ou ordre qui casse le
+          cache, sans savoir l’expliquer.
+      - score: 2
+        description: Deux étapes, npm ci --omit=dev, copies explicites, image de base réduite et étiquetée
+          ; explique le cache.
+      - score: 3
+        description: Justifie aussi le choix de l’image de base, de l’étiquette et ce que le multi-étapes
+          apporte ou non ici.
+    - id: runtime-safety
+      description: Exécute sans privilèges, sans secret dans l’image, avec un contrôle de santé utile
+        et un arrêt propre.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Root, secret dans l’image ou CMD qui empêche l’arrêt propre, sans en voir le problème.
+      - score: 1
+        description: Une partie des protections présentes, explications approximatives (signaux ou secrets).
+      - score: 2
+        description: USER node, aucun secret, HEALTHCHECK sur la disponibilité, forme exec avec node ;
+          explique chacun.
+      - score: 3
+        description: Explique précisément PID 1, SIGTERM puis SIGKILL après 10 s, et pourquoi docker history
+          révèle ARG et ENV.
+    - id: compose-orchestration
+      description: Décrit les services, le volume, le réseau et l’ordre de démarrage dans compose.yaml.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Fichier qui ne démarre pas ou qui expose la base sans persistance.
+      - score: 1
+        description: Démarre, mais depends_on sans condition, ou pas de volume, ou base publiée.
+      - score: 2
+        description: Volume nommé correct, base non publiée, conditions service_healthy et service_completed_successfully.
+      - score: 3
+        description: Explique aussi l’interpolation et le caractère obligatoire des variables, la boucle
+          locale et le cas de down -v.
+    - id: configuration-secrets
+      description: Sépare configuration et secrets du dépôt et de l’image.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Mot de passe dans un fichier versionné ou dans l’image.
+      - score: 1
+        description: Secret hors du dépôt mais .env non exclu de l’image ou .env.example avec une vraie
+          valeur.
+      - score: 2
+        description: .env exclu du dépôt et de l’image, .env.example factice et documenté, variable obligatoire
+          côté Compose.
+- id: deployment-avec-ia
+  family: AVEC_IA
+  title: Le kit de mise en production complet
+  summary: Construire avec une IA le déploiement complet d’une application (image, Compose, HTTPS, CI,
+    sauvegardes), le faire fonctionner, puis le défendre.
+  estimatedMinutes: 240
+  instructions: "Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras expliquer chaque ligne\
+    \ de\nchaque fichier, prévoir l’effet d’une modification et réaliser un petit changement sans\naide.\n\
+    \nPars de l’application de ton choix : le livre d’or de cette compétence, ou l’application\n« Tâches\
+    \ » de la compétence « Application full-stack ». Produis un kit de mise en production\nqui contient\
+    \ :\n\n1. `src/config.js` (ou l’équivalent) qui valide l’environnement et refuse de démarrer\n   avec\
+    \ une configuration invalide, et un `.env.example` documenté.\n2. Un `.dockerignore` et un `Dockerfile`\
+    \ de production (multi-étapes, `npm ci --omit=dev`,\n   utilisateur non root, `HEALTHCHECK` sur la\
+    \ disponibilité, arrêt propre sur `SIGTERM`).\n3. Un `compose.yaml` : PostgreSQL 18 avec volume nommé,\
+    \ job de migration, API, et Caddy en\n   proxy inverse HTTPS (`Caddyfile` fourni). Aucun port publié\
+    \ sauf ceux de Caddy ;\n   `trust proxy` correctement réglé ; rotation des journaux.\n4. Un workflow\
+    \ GitHub Actions qui, à chaque push sur `main` et chaque pull request,\n   installe, lance ESLint,\
+    \ lance les tests contre un service PostgreSQL et construit\n   l’image ; actions épinglées sur des\
+    \ versions que tu as vérifiées.\n5. `ops/backup.sh` (sauvegarde `pg_dump`, rétention écrite) et une\
+    \ procédure de\n   restauration de test dans une base jetable.\n6. Un `EXPLOITATION.md` d’une page\
+    \ : déployer une nouvelle version, revenir en arrière,\n   faire tourner le mot de passe de la base,\
+    \ règle pour écrire des migrations compatibles.\n\nFais-le fonctionner en local, avec `SITE_ADDRESS=localhost`.\
+    \ Conseil : fais expliquer à\nl’IA chaque option qu’elle propose, puis vérifie-la en l’exécutant ;\
+    \ les assistants\nproposent souvent des chemins de volume ou des versions d’actions dépassés.\n"
+  deliverable: 'Colle tous les fichiers du kit, puis les sorties suivantes, obtenues chez toi :
+
+    `docker compose ps -a` ; `curl -sI http://localhost/` ;
+
+    `curl -s --cacert caddy-root.crt -D - -o /dev/null https://localhost/<une route de santé>` ;
+
+    les deux dernières lignes de `docker compose logs api` après `docker compose stop api`
+
+    avec la durée affichée par `time` ; la sortie complète de ta restauration de test.
+
+    Termine par une liste : ce que l’IA a proposé de faux ou de dépassé, et comment tu l’as
+
+    détecté.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: code-ownership
+      description: Explique chaque fichier du kit sans aide et sait d’où vient chaque option.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne sait pas expliquer des parties importantes de ses fichiers.
+      - score: 1
+        description: Explique le rôle général des fichiers mais pas les options (conditions, volumes,
+          permissions).
+      - score: 2
+        description: Explique précisément chaque option et ce qui se passerait sans elle.
+      - score: 3
+        description: Explique aussi ce que l’IA avait proposé de faux et comment il l’a vérifié par l’exécution.
+    - id: container-stack
+      description: Image, Compose et proxy HTTPS fonctionnent et respectent les règles de sécurité vues.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: La pile ne démarre pas, ou la base ou l’API sont exposées directement.
+      - score: 1
+        description: Démarre, mais avec des défauts importants (root, secret dans l’image, trust proxy
+          faux, pas de volume).
+      - score: 2
+        description: Pile complète et sûre, preuves fournies (redirection 308, HSTS, arrêt en moins d’une
+          seconde).
+      - score: 3
+        description: Justifie aussi les compromis (étiquette d’image, HSTS et sa durée, arrêt et délai
+          de grâce).
+    - id: ci-pipeline
+      description: Le workflow vérifie réellement le projet et applique le moindre privilège.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Workflow absent, invalide ou qui ne lance pas les tests contre une base.
+      - score: 1
+        description: Lance lint et tests, mais sans service PostgreSQL sain, sans permissions ou avec
+          des versions non vérifiées.
+      - score: 2
+        description: Déclencheurs, service PostgreSQL, cache, build de l’image, permissions minimales,
+          versions vérifiées.
+      - score: 3
+        description: Explique l’épinglage par empreinte, les secrets absents des forks et sait modifier
+          le workflow à l’oral.
+    - id: operations
+      description: Sauvegarde, restauration, déploiement et retour arrière sont décrits et éprouvés.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Pas de sauvegarde ou sauvegarde jamais restaurée.
+      - score: 1
+        description: Sauvegarde automatisée mais restauration non prouvée ou rétention non justifiée.
+      - score: 2
+        description: Restauration de test prouvée par des comptages, rétention justifiée, procédure de
+          déploiement et de retour arrière.
+      - score: 3
+        description: Explique les migrations compatibles et la perte maximale de données, et propose une
+          copie hors du serveur.
+- id: deployment-contre-ia
+  family: CONTRE_IA
+  title: Le kit de déploiement des Recettes
+  summary: Auditer un Dockerfile, un compose.yaml et une procédure de sauvegarde générés par une IA, trouver
+    les défauts et les corriger.
+  estimatedMinutes: 75
+  instructions: "Une développeuse a demandé à un assistant « un déploiement Docker simple pour mon API\
+    \ de\nrecettes (Express 5, PostgreSQL), sur un serveur Linux ». Elle a commité ce qu’il a\nproduit,\
+    \ et l’application tourne depuis une semaine. Avant de l’ouvrir au public, elle te\ndemande un audit.\n\
+    \nFichiers suivis par Git (`git ls-files`) :\n\n```text\n.env\n.gitignore\nDockerfile\nREADME.md\n\
+    compose.yaml\neslint.config.js\nmigrations/001_init.sql\nops/backup.sh\npackage-lock.json\npackage.json\n\
+    public/index.html\nsrc/server.js\ntest/api.test.js\n```\n\n`.gitignore` :\n\n```text\nnode_modules/\n\
+    ```\n\n`.env` :\n\n```bash\nNODE_ENV=production\nPOSTGRES_PASSWORD=recettes2026\nSESSION_SECRET=change-me-later\n\
+    ```\n\n`package.json` (extrait) : `\"start\": \"node src/server.js\"`,\n`\"db:migrate\": \"node scripts/migrate.js\"\
+    `, dépendances `express` et `pg`, dépendances de\ndéveloppement `eslint`, `@eslint/js` et `globals`.\n\
+    \n`src/server.js` (extrait) :\n\n```js\nconst app = express();\napp.set('trust proxy', true);\napp.use(express.json());\n\
+    app.use(loginLimiter); // 5 tentatives par minute et par req.ip\n\napp.get('/health', (req, res) =>\
+    \ res.send('OK'));\n// … routes de l’API …\n\nconst server = app.listen(process.env.PORT ?? 3000);\n\
+    process.on('SIGTERM', () => server.close(() => pool.end()));\n```\n\n`Dockerfile` :\n\n```dockerfile\n\
+    FROM node:latest\nWORKDIR /usr/src/app\nCOPY . .\nRUN npm install\nENV NODE_ENV=production\nEXPOSE\
+    \ 3000\nHEALTHCHECK --interval=30s CMD curl -f http://localhost:3000/health || exit 1\nCMD [\"sh\"\
+    , \"-c\", \"npm run db:migrate && npm start\"]\n```\n\n`compose.yaml` :\n\n```yaml\nservices:\n  db:\n\
+    \    image: postgres:latest\n    restart: always\n    environment:\n      POSTGRES_USER: recettes\n\
+    \      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}\n      POSTGRES_DB: recettes\n    ports:\n      - \"\
+    5432:5432\"\n\n  api:\n    build: .\n    image: recettes:latest\n    restart: always\n    env_file:\
+    \ .env\n    environment:\n      DATABASE_URL: postgres://recettes:${POSTGRES_PASSWORD}@db:5432/recettes\n\
+    \    ports:\n      - \"80:3000\"\n    depends_on:\n      - db\n```\n\n`ops/backup.sh` :\n\n```bash\n\
+    #!/bin/bash\n# Sauvegarde nocturne (cron : 0 2 * * * /home/deploy/recettes/ops/backup.sh)\ncd /home/deploy/recettes\n\
+    docker compose exec -T db pg_dumpall -U recettes > backups/recettes-$(date +%F).sql\necho \"Sauvegarde\
+    \ OK\"\n```\n\n`README.md`, section « Déploiement » :\n\n```text\n1. Sur le serveur : git clone …\
+    \ && cd recettes\n2. docker compose up -d --build\n3. Mise à jour : git pull && docker compose up\
+    \ -d --build\n4. Les sauvegardes sont dans backups/ : on est tranquilles.\n```\n\nTravail demandé\
+    \ :\n\n1. Liste chaque défaut : fichier et ligne, conséquence concrète (ce qui peut arriver, à\n \
+    \  qui), gravité (critique, importante, mineure).\n2. Dis ce qu’il faut faire **immédiatement** au\
+    \ sujet de ce qui a déjà été commité, dans\n   quel ordre.\n3. Fournis les fichiers corrigés : `.gitignore`,\
+    \ `.dockerignore`, `Dockerfile` (et le script\n   de contrôle de santé), `compose.yaml` avec un proxy\
+    \ HTTPS, `ops/backup.sh`, et la\n   procédure de déploiement et de retour arrière corrigée.\n4. Pour\
+    \ trois défauts de ton choix, décris une vérification (commande et résultat attendu)\n   qui prouve\
+    \ qu’il est corrigé.\n"
+  deliverable: 'Colle ta liste de défauts (fichier, ligne, conséquence, gravité), tes actions immédiates,
+
+    les fichiers corrigés complets, puis les trois vérifications avec leurs commandes.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: secrets-handling
+      description: Identifie les fuites de secrets (dépôt, image, sauvegardes) et donne la bonne réponse
+        d’incident.
+      maxScore: 3
+    - id: runtime-defects
+      description: Trouve et explique les défauts de l’image et du démarrage.
+      maxScore: 3
+    - id: compose-network-data
+      description: Trouve les défauts d’exposition réseau, de persistance et d’ordre de démarrage.
+      maxScore: 3
+    - id: operations-fixes
+      description: Corrige sauvegardes et déploiement, et prouve ses corrections.
+      maxScore: 3
+- id: deployment-apres-ia
+  family: APRES_IA
+  title: Le livre d’or en production, trois incidents et une évolution
+  summary: Dépanner un déploiement existant (arrêts brutaux, adresses IP fausses, disque plein) et préparer
+    une migration compatible avec le retour arrière, sans tout réécrire.
+  estimatedMinutes: 150
+  instructions: "Le livre d’or tourne en production depuis six mois, déployé avec Docker Compose derrière\n\
+    Caddy par un collègue parti depuis. Tu reprends l’exploitation. Règle : **modifie le moins\nde lignes\
+    \ possible** ; ne régénère aucun fichier.\n\n`Dockerfile` (extrait de l’étape finale) :\n\n```dockerfile\n\
+    FROM node:24-trixie-slim AS runtime\nENV NODE_ENV=production\nWORKDIR /app\nCOPY --from=deps /app/node_modules\
+    \ ./node_modules\nCOPY package.json ./\nCOPY src ./src\nCOPY scripts ./scripts\nCOPY migrations ./migrations\n\
+    COPY public ./public\nARG APP_VERSION=dev\nENV APP_VERSION=$APP_VERSION\nUSER node\nEXPOSE 3000\n\
+    HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \\\n  CMD [\"node\", \"scripts/healthcheck.js\"\
+    ]\nCMD [\"npm\", \"start\"]\n```\n\n`compose.yaml` (extrait ; `db` et `migrate` sont ceux du cours,\
+    \ avec volume et conditions) :\n\n```yaml\n  api:\n    image: guestbook:${APP_VERSION:?APP_VERSION\
+    \ manquant dans .env}\n    restart: unless-stopped\n    environment:\n      NODE_ENV: production\n\
+    \      DATABASE_URL: postgres://guestbook:${POSTGRES_PASSWORD}@db:5432/guestbook\n      TRUST_PROXY:\
+    \ 0\n    networks: [backend, web]\n    depends_on:\n      db:\n        condition: service_healthy\n\
+    \      migrate:\n        condition: service_completed_successfully\n\n  caddy:\n    image: caddy:2\n\
+    \    restart: unless-stopped\n    environment:\n      SITE_ADDRESS: ${SITE_ADDRESS:?SITE_ADDRESS manquant\
+    \ dans .env}\n    ports:\n      - \"80:80\"\n      - \"443:443\"\n      - \"443:443/udp\"\n    volumes:\n\
+    \      - ./Caddyfile:/etc/caddy/Caddyfile:ro\n      - caddy-data:/data\n      - caddy-config:/config\n\
+    \    networks: [web]\n```\n\n`ops/backup.sh` existe : c’est celui du cours (`pg_dump --format=custom`,\
+    \ rétention 14\njours et 12 mois), lancé chaque nuit par `cron`. Personne n’a jamais restauré une\n\
+    sauvegarde. Le schéma contient `messages (id, author, body, created_at)`, et la version\n1.0.0 de\
+    \ l’API lit et écrit `author`. Depuis peu, l’API limite à 5 messages par minute et\npar `req.ip`.\n\
+    \n**Incident 1.** Des visiteurs écrivent que leur message « a disparu » pendant la\njournée de lundi,\
+    \ quand une nouvelle version a été déployée. Dans les journaux de l’ancien\nconteneur, récupérés juste\
+    \ avant le déploiement suivant :\n\n```text\napi-1  | {\"method\":\"POST\",\"path\":\"/api/messages\"\
+    ,\"status\":201,\"durationMs\":9,\"ip\":\"172.18.0.3\",\"protocol\":\"http\",\"time\":\"2026-11-23T09:12:40.118Z\"\
+    ,\"level\":\"info\",\"message\":\"request\"}\napi-1  | npm error path /app\napi-1  | npm error command\
+    \ failed\napi-1  | npm error signal SIGTERM\napi-1  | npm error command sh -c node src/server.js\n\
+    ```\n\n**Incident 2.** Depuis la mise en place du limiteur, des visiteurs reçoivent\n`429 Trop de\
+    \ messages` alors qu’ils n’en ont envoyé aucun. Toutes les lignes `request`\ncontiennent `\"ip\":\"\
+    172.18.0.3\",\"protocol\":\"http\"`.\n\n**Incident 3.** L’hébergeur alerte : disque à 92 %. Le fichier\
+    \ de journal JSON du\nconteneur `guestbook-api-1`, sous `/var/lib/docker/containers/`, pèse à lui\
+    \ seul plusieurs\ngigaoctets.\n\n**Évolution.** L’équipe veut renommer la colonne `author` en `display_name`\
+    \ (l’API exposera\n`displayName`). Exigence : à chaque étape, on doit pouvoir revenir à la version\
+    \ précédente\nde l’API en changeant seulement `APP_VERSION`.\n\nTravail demandé :\n\n1. Pour chaque\
+    \ incident : la cause précise, prouvée à partir des éléments fournis ; la\n   correction minimale\
+    \ (diff) ; la commande qui prouve que c’est corrigé et le résultat\n   attendu.\n2. Pour l’évolution\
+    \ : le plan en versions successives, avec pour chacune la migration SQL,\n   ce que lit et écrit le\
+    \ code, et pourquoi le retour arrière reste possible. Écris\n   complètement la migration et les modifications\
+    \ de requêtes de la **première** version.\n3. Écris la procédure de restauration de test des sauvegardes,\
+    \ exécute-la sur ton poste\n   (avec le livre d’or du cours), et propose une fréquence pour la rejouer.\n"
+  deliverable: 'Pour chaque incident : cause, diff, commande de vérification et sortie obtenue (sur ton
+
+    poste, avec le livre d’or du cours). Puis le plan de renommage, la migration et le diff de
+
+    la première version. Enfin la procédure de restauration et sa sortie complète.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: incident-diagnosis
+      description: Remonte de chaque symptôme à sa cause à partir des journaux et de la configuration.
+      maxScore: 3
+    - id: minimal-fixes
+      description: Corrige de façon ciblée et vérifie chaque correction.
+      maxScore: 3
+    - id: compatible-migrations
+      description: Planifie un changement de schéma compatible avec le retour arrière.
+      maxScore: 3
+    - id: restore-test
+      description: Prouve que les sauvegardes sont restaurables.
+      maxScore: 2
