@@ -228,7 +228,7 @@
 
 - id: typescript-basics
   domain: javascript
-  status: draft
+  status: published
   title: 'TypeScript : typer son JavaScript'
   description: Décrire la forme des données pour que l’éditeur et le compilateur trouvent les erreurs.
   estimatedHours: 8

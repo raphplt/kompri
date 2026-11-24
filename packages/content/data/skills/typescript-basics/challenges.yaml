@@ -202,12 +202,12 @@
     \ tsc` en mode strict **sans aucune erreur**, et l’équipe en conclut qu’il est\ncorrect. Les commandes\
     \ arrivent d’une API sous forme de texte JSON. Règles métier : un\ncoupon commençant par `VIP` donne\
     \ 10 % de remise ; une commande peut ne pas avoir de\ncoupon ; une commande annulée doit être affichée\
-    \ « Annulée » ; une commande n’est\nexpédiée qu’une fois ; l’adresse e-mail du client ne doit jamais\
-    \ apparaître dans les\ndonnées publiques ; seuls le statut, le coupon et la date d’expédition peuvent\
-    \ être\nmodifiés après création.\n\n```ts\n// orders.ts — module de gestion des commandes proposé\
-    \ par un assistant\n\nexport type OrderStatus = 'pending' | 'paid' | 'shipped' | 'cancelled';\n\n\
-    export interface OrderItem {\n  sku: string;\n  unitPriceCents: number;\n  quantity: number;\n}\n\n\
-    export interface Order {\n  id: number;\n  customerEmail: string;\n  items: OrderItem[];\n  status:\
+    \ « Annulée » ; une commande non expédiée\nn’a pas de date d’expédition ; l’adresse e-mail du client\
+    \ ne doit jamais apparaître dans\nles données publiques ; seuls le statut, le coupon et la date d’expédition\
+    \ peuvent être\nmodifiés après création.\n\n```ts\n// orders.ts — module de gestion des commandes\
+    \ proposé par un assistant\n\nexport type OrderStatus = 'pending' | 'paid' | 'shipped' | 'cancelled';\n\
+    \nexport interface OrderItem {\n  sku: string;\n  unitPriceCents: number;\n  quantity: number;\n}\n\
+    \nexport interface Order {\n  id: number;\n  customerEmail: string;\n  items: OrderItem[];\n  status:\
     \ OrderStatus;\n  couponCode?: string;\n  createdAt: Date;\n  shippedAt?: Date;\n}\n\nexport type\
     \ PublicOrder = Omit<Order, 'customerEmail'>;\n\nexport function parseOrder(json: string): Order {\n\
     \  return JSON.parse(json) as Order;\n}\n\nexport function orderTotalCents(order: Order): number {\n\

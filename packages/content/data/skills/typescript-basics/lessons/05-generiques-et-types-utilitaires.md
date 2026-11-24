@@ -476,6 +476,30 @@ Si tu oublies `viewer` dans `roleLabels`, `tsc` le signale :
 in type 'Record<Role, string>'.` C’est une autre forme de vérification d’exhaustivité : ajouter
 un rôle à l’union oblige à lui donner un libellé.
 
+Les clés peuvent aussi être tirées d’un type existant, sans recopier la liste. Sur une union
+discriminée, le type indexé `Shape['kind']` (la notation `T[K]` vue avec `getProperty`) donne
+l’union des discriminants, ici `'circle' | 'rectangle'` :
+
+```ts
+type Circle = { kind: 'circle'; radius: number };
+type Rectangle = { kind: 'rectangle'; width: number; height: number };
+type Shape = Circle | Rectangle;
+
+const shapeNames: Record<Shape['kind'], string> = {
+  circle: 'Cercle',
+  rectangle: 'Rectangle',
+};
+
+console.log(shapeNames.circle);
+```
+
+```text
+Cercle
+```
+
+Ajoute `Triangle` à l’union `Shape` : `tsc` signale aussitôt que `shapeNames` n’a pas de
+propriété `triangle` (`TS2741`). La liste des sortes n’est écrite qu’à un seul endroit, l’union.
+
 Avec `Record<string, number>`, n’importe quelle clé est acceptée… et typée `number`, même
 `stock.bananes` qui vaut `undefined`. C’est le même trou que l’accès par indice dans un tableau
 (leçon 2), et `noUncheckedIndexedAccess` le referme aussi. Pour un dictionnaire dont les clés
@@ -606,7 +630,8 @@ undefined
 
 `findById(['a', 'b'], 1)` produit
 `TS2322: Type 'string' is not assignable to type '{ id: number; }'.` sur chaque élément. Un objet
-dont l’`id` est une chaîne (`{ id: '1', … }`) est refusé de la même façon.
+dont l’`id` est une chaîne (`{ id: '1', … }`) est refusé aussi, avec une erreur sur son `id` :
+`Type 'string' is not assignable to type 'number'.`
 :::
 
 ### Exercice 2 — Dériver les types d’un article

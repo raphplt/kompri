@@ -220,7 +220,8 @@ status.ts(15,46): error TS2322: Type '"deleted"' is not assignable to type 'Stat
 status.ts(16,45): error TS2820: Type '"Draft"' is not assignable to type 'Status'. Did you mean '"draft"'?
 ```
 
-(Ces deux lignes sont ajoutées à la suite du fichier précédent, d’où les numéros 15 et 16.)
+(Ces deux lignes sont ajoutées à la fin du fichier précédent, après une ligne vide, d’où les
+numéros 15 et 16.)
 
 C’est la manière la plus simple et la plus courante de remplacer un `enum` : une union de
 chaînes. Elle est effaçable (Node.js l’exécute sans problème), l’éditeur propose les valeurs

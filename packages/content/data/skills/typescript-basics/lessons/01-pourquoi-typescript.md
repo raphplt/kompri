@@ -181,9 +181,10 @@ Node.js applique le **type stripping** (« retrait des types ») : il remplace c
 par des espaces, puis exécute le JavaScript restant. Les lignes et les colonnes ne bougent pas,
 donc les messages d’erreur d’exécution pointent au bon endroit de ton fichier `.ts`.
 
-Cette fonctionnalité est activée par défaut dans Node.js 24. Les toutes premières versions 24
-affichaient un avertissement `ExperimentalWarning` à chaque exécution ; les versions à jour ne
-l’affichent plus. Les sorties de ce cours ont été obtenues avec une version 24 à jour.
+Cette fonctionnalité est activée par défaut dans Node.js 24. Les versions 24.0 à 24.2
+affichaient un avertissement `ExperimentalWarning` à chaque exécution ; il a disparu en 24.3,
+et la documentation de Node.js déclare la fonctionnalité stable depuis la 24.12. Les sorties de
+ce cours ont été obtenues avec une version 24 à jour.
 
 Mais Node.js **ne vérifie aucun type**. Essaie :
 
@@ -268,8 +269,8 @@ Note aussi que l’extension `.ts` figure dans le chemin importé : Node.js l’
 
 Taper des options sur la ligne de commande devient vite pénible. Un fichier `tsconfig.json` à la
 racine du dossier fixe la configuration une fois pour toutes. Voici celui que tu utiliseras
-pendant toute cette compétence ; il reprend les réglages que la documentation de Node.js
-recommande pour le type stripping, plus le mode strict :
+pendant toute cette compétence ; il reprend, à une option près, les réglages que la
+documentation de Node.js recommande pour le type stripping, plus le mode strict :
 
 ```json
 {
@@ -291,11 +292,14 @@ recommande pour le type stripping, plus le mode strict :
   `package.json`, les extensions obligatoires…).
 - `strict: true` : active toutes les vérifications strictes, dont `strictNullChecks` (la leçon
   3 montre son rôle) et `noImplicitAny`. **Ne travaille jamais sans** : sans elles, TypeScript
-  laisse passer une grande partie des erreurs. Les versions récentes de TypeScript l’activent
-  déjà par défaut, mais l’écrire rend la configuration explicite quelle que soit la version.
+  laisse passer une grande partie des erreurs. Depuis TypeScript 6.0, `strict` est activé par
+  défaut ; ce n’était pas le cas des versions 5.x, encore très répandues. L’écrire rend la
+  configuration explicite quelle que soit la version.
 - `noEmit: true` : `tsc` vérifie sans produire de `.js`, puisque Node.js exécute directement
   les `.ts`.
 - `allowImportingTsExtensions: true` : autorise les imports en `./types.ts`, que Node.js exige.
+  La documentation de Node.js propose à sa place `rewriteRelativeImportExtensions`, utile
+  quand `tsc` produit aussi des `.js` ; ici, rien n’est produit.
 - `erasableSyntaxOnly: true` : `tsc` refuse `enum` et les autres syntaxes non effaçables, avec
   l’erreur `TS1294: This syntax is not allowed when 'erasableSyntaxOnly' is enabled.` Tu le
   sais avant que Node.js ne plante.
@@ -312,6 +316,9 @@ Si tu donnes un nom de fichier alors qu’un `tsconfig.json` existe, `tsc` refus
 ```text
 error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.
 ```
+
+Ce refus existe depuis TypeScript 6.0. Les versions antérieures compilaient le fichier en
+ignorant le `tsconfig.json` sans prévenir, donc sans `strict`.
 
 Avec un `tsconfig.json`, lance toujours `npx tsc` seul. Supprime aussi les `greet.js` et
 `vat.js` créés plus tôt : ils ne servent plus.
@@ -459,9 +466,10 @@ externe n’est pas une validation.
 - **Utiliser `as` pour faire disparaître une erreur.** L’erreur ne disparaît pas, elle est
   reportée à l’exécution.
 - **Utiliser `process` sans configuration.** Les objets propres à Node.js, comme `process`, ne
-  sont pas connus de `tsc` sans le paquet de définitions `@types/node` :
-  `error TS2591: Cannot find name 'process'.` La compétence « TypeScript côté serveur » l’installe ;
-  les exemples de celle-ci s’en passent.
+  sont pas connus de `tsc` sans le paquet de définitions `@types/node`, déclaré dans l’option
+  `types` du `tsconfig.json` (depuis TypeScript 6.0, installer le paquet ne suffit plus) :
+  `error TS2591: Cannot find name 'process'. Do you need to install type definitions for node?…`
+  La compétence « TypeScript côté serveur » le configure ; les exemples de celle-ci s’en passent.
 
 ## Exercices
 
