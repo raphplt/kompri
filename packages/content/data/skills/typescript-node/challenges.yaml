@@ -1,0 +1,432 @@
+- id: typescript-node-sans-ia
+  family: SANS_IA
+  title: Le contrat des inscriptions
+  summary: Écrire seul un module de contrats Zod, une règle métier pure et leurs tests node:test, en TypeScript
+    strict.
+  estimatedMinutes: 60
+  instructions: "Un centre de formation propose des ateliers et veut une API d’inscription. Avant d’écrire\n\
+    les routes, l’équipe te demande, **sans IA**, le module de contrats, une règle métier et\nleurs tests.\n\
+    \nTravaille dans un projet configuré comme `bookings-api` dans le cours : `package.json` avec\n`\"\
+    type\": \"module\"`, `express`, `zod` 4, `typescript`, `@types/node@24` et `@types/express`\ninstallés,\
+    \ les scripts `typecheck` (`tsc --noEmit`) et `test` (`node --test`), et ce\n`tsconfig.json` :\n\n\
+    ```json\n{\n  \"compilerOptions\": {\n    \"target\": \"esnext\",\n    \"module\": \"nodenext\",\n\
+    \    \"types\": [\"node\"],\n    \"strict\": true,\n    \"noEmit\": true,\n    \"noUncheckedIndexedAccess\"\
+    : true,\n    \"rewriteRelativeImportExtensions\": true,\n    \"erasableSyntaxOnly\": true,\n    \"\
+    verbatimModuleSyntax\": true,\n    \"skipLibCheck\": true\n  },\n  \"include\": [\"src\", \"test\"\
+    ]\n}\n```\n\nTravail demandé :\n\n1. Dans `src/contracts/registrations.ts`, écris avec Zod 4 :\n \
+    \  - `createRegistrationSchema`, le corps d’une inscription : `workshopId` (entier\n     positif),\
+    \ `name` (2 à 60 caractères, espaces autour retirés), `email` (adresse\n     e-mail valide, avec `z.email()`),\
+    \ `seats` (entier de 1 à 4, **1 par défaut**). Toute\n     propriété inconnue est refusée ;\n   -\
+    \ `registrationSchema`, une inscription enregistrée : les mêmes champs plus un `id`\n     entier positif,\
+    \ `seats` étant alors obligatoire. Ne recopie pas les règles des champs ;\n   - `listRegistrationsQuerySchema`,\
+    \ les paramètres de `GET /api/registrations` :\n     `workshopId` obligatoire et `page` (entier à\
+    \ partir de 1, 1 par défaut), tous deux\n     reçus en texte dans l’URL ;\n   - les types `CreateRegistrationInput`,\
+    \ `Registration` et `ListRegistrationsQuery`,\n     **sans en écrire un seul à la main**.\n2. Dans\
+    \ `src/registrations/rules.ts`, écris\n   `remainingSeats(capacity: number, registrations: readonly\
+    \ Registration[], workshopId: number): number`,\n   qui renvoie le nombre de places restantes pour\
+    \ cet atelier, jamais négatif.\n3. Dans `test/registrations.test.ts`, écris au moins sept tests avec\
+    \ `node:test` et\n   `node:assert/strict`, qui couvrent : le nettoyage du nom et la place par défaut,\
+    \ le\n   refus de 5 places, le refus d’un e-mail invalide, le refus d’une propriété inconnue, la\n\
+    \   conversion des paramètres de requête, le refus d’une page vide (`page: ''`), et\n   `remainingSeats`\
+    \ (au moins un atelier qui n’est pas concerné, et le cas « complet »).\n   Pour chaque refus, vérifie\
+    \ **sur quel champ** porte l’erreur.\n\nContraintes : aucun `any`, aucun `as`, aucun `!` d’assertion\
+    \ non nulle. `npm run typecheck`\nne signale rien et `npm test` réussit.\n\nRéponds enfin en quelques\
+    \ phrases :\n\n- Pourquoi déduire les types avec `z.infer` plutôt que les écrire à côté des schémas\
+    \ ?\n- Quel est le type de `seats` dans `z.input<typeof createRegistrationSchema>` et dans\n  `z.output<typeof\
+    \ createRegistrationSchema>` ? Pourquoi sont-ils différents ?\n- Pourquoi `npm test` ne suffit-il\
+    \ pas à garantir que tes tests sont corrects, et quelle\n  commande le complète ?\n"
+  deliverable: 'Colle le contenu complet de `src/contracts/registrations.ts`, `src/registrations/rules.ts`
+
+    et `test/registrations.test.ts`, la sortie de `npm run typecheck` (vide si tout va bien),
+
+    la sortie complète de `npm test`, puis tes réponses aux trois questions.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: schemas
+      description: Écrit des schémas Zod 4 corrects et explique chaque règle, y compris la coercition
+        et les valeurs par défaut.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Schémas absents, faux, ou en syntaxe Zod 3 ; ne sait pas expliquer ce qu’ils acceptent.
+      - score: 1
+        description: Schémas en partie corrects mais oubli de la coercition, de min(1) ou du refus des
+          propriétés inconnues.
+      - score: 2
+        description: Schémas corrects ; explique strictObject, coerce et default sur des exemples.
+      - score: 3
+        description: Explique aussi les cas limites (chaîne vide devenue 0, '1e1' accepté, ordre trim
+          puis min).
+    - id: single-source
+      description: Déduit tous les types des schémas et partage les champs sans duplication.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Écrit des types à la main ou recopie les règles des champs.
+      - score: 1
+        description: Utilise z.infer mais duplique les règles entre les deux schémas.
+      - score: 2
+        description: Une seule définition par champ, types déduits ; explique le risque de divergence.
+      - score: 3
+        description: Distingue précisément z.input et z.output et sait dire où chacun est utile.
+    - id: tests
+      description: Écrit des tests node:test qui peuvent échouer et vérifient le bon comportement.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Tests absents, qui ne s’exécutent pas, ou qui ne vérifient rien.
+      - score: 1
+        description: Tests présents mais qui ne vérifient que success === false ou contiennent une assertion
+          conditionnelle.
+      - score: 2
+        description: Chaque refus vérifie le champ en erreur ; remainingSeats couvre un autre atelier
+          et le cas complet.
+      - score: 3
+        description: Justifie le choix des cas limites et montre qu’un test échoue si la règle est retirée.
+    - id: tooling
+      description: Comprend la répartition des rôles entre tsc et node --test.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Croit que node --test vérifie les types.
+      - score: 1
+        description: Sait qu’il faut tsc mais ne sait pas expliquer pourquoi ni sur quels fichiers.
+      - score: 2
+        description: Explique le retrait des types, l’inclusion de test dans tsconfig et un script qui
+          enchaîne les deux.
+- id: typescript-node-avec-ia
+  family: AVEC_IA
+  title: Le prêt de matériel
+  summary: Construire avec une IA une petite API Express 5 en TypeScript strict, validée par Zod et testée,
+    puis en défendre chaque ligne.
+  estimatedMinutes: 120
+  instructions: "Tu peux utiliser une IA autant que tu veux pour ce mini-projet. À l’oral, tu devras\n\
+    expliquer chaque ligne sans aide, prévoir le résultat de petites modifications et corriger\ntoi-même\
+    \ un comportement. Vérifie tout ce que l’IA propose : beaucoup d’exemples en ligne\nutilisent Zod\
+    \ 3 ou Express 4.\n\nUne association prête du matériel (vidéoprojecteurs, caméras, micros) à ses membres.\n\
+    Construis `loans-api`, une API en mémoire, sans base de données.\n\nConfiguration :\n\n1. Projet Node.js\
+    \ 24 en modules ES, TypeScript strict avec la configuration du cours\n   (`tsconfig.json` pour la\
+    \ vérification de `src` et `test`, `tsconfig.build.json` pour\n   compiler `src` vers `dist/` avec\
+    \ `noEmitOnError`).\n2. Scripts : `dev` (`node --watch src/server.ts`), `typecheck`, `test`, `check`\
+    \ (types puis\n   tests), `build` et `start` (`node dist/server.js`).\n\nFonctionnement :\n\n3. Un\
+    \ module `src/contracts/loans.ts` contient **tous** les schémas Zod 4 et les types\n   déduits. Matériel\
+    \ disponible : `projector` (stock 2), `camera` (stock 3), `microphone`\n   (stock 5). Un prêt a un\
+    \ `id`, un `item`, un `borrower` (2 à 60 caractères, espaces\n   retirés), une `quantity` (entier\
+    \ de 1 à 3), une `startDate` et une `endDate` (dates\n   ISO, la fin ne précède pas le début) et un\
+    \ booléen `returned`.\n4. Routes :\n   - `GET /api/loans` avec les paramètres facultatifs `item`,\
+    \ `returned` (`true` ou\n     `false`) et `limit` (1 à 50, 20 par défaut) ;\n   - `GET /api/loans/:id`\
+    \ ;\n   - `POST /api/loans` : crée un prêt non rendu ; répond **409** si la quantité demandée\n  \
+    \   dépasse le stock restant de ce matériel (stock moins les quantités des prêts non\n     rendus)\
+    \ ;\n   - `POST /api/loans/:id/return` : marque le prêt comme rendu ; 409 s’il l’était déjà.\n5. Le\
+    \ corps est validé par un **middleware réutilisable** ; la requête et les paramètres\n   de route\
+    \ sont validés dans les gestionnaires. Toute entrée invalide reçoit\n   `400 { \"error\": \"Requête\
+    \ invalide\", \"issues\": [...] }`, une ressource absente 404. Un\n   gestionnaire d’erreurs centralisé,\
+    \ typé avec `err: unknown`, produit toutes les\n   réponses d’erreur, sans jamais exposer un message\
+    \ interne.\n6. Le calcul du stock restant est une fonction pure dans un module séparé.\n7. Tests `node:test`\
+    \ : au moins un fichier pour la fonction pure et un fichier de tests de\n   routes (application neuve\
+    \ par test, port 0, statut **et** corps vérifiés, réponses\n   lues avec les schémas du contrat).\
+    \ Au moins huit tests au total.\n\nContraintes : aucun `any`, aucun `as` (sauf `as const`), aucun\
+    \ type écrit à la main pour\nune donnée qui a un schéma, aucune syntaxe Zod 3.\n"
+  deliverable: "Colle :\n\n1. l’arborescence du projet (sans `node_modules`) ;\n2. le contenu de `tsconfig.json`,\
+    \ `tsconfig.build.json`, du module de contrats, de la\n   fonction pure, du middleware de validation,\
+    \ du gestionnaire d’erreurs et des routes ;\n3. le contenu de tes fichiers de test ;\n4. la sortie\
+    \ de `npm run check`, puis celle de `npm run build` suivie de la liste des\n   fichiers de `dist/`\
+    \ ;\n5. la sortie de ces requêtes, serveur lancé avec `npm run dev` :\n   `curl -s --json '{\"item\"\
+    :\"projector\",\"borrower\":\" Ada \",\"quantity\":2,\"startDate\":\"2026-12-01\",\"endDate\":\"2026-12-03\"\
+    }' http://localhost:3000/api/loans`,\n   la même requête une seconde fois,\n   `curl -s \"http://localhost:3000/api/loans?returned=false&limit=0\"\
+    ` et\n   `curl -s --json '{\"item\":\"drone\",\"quantity\":\"2\"}' http://localhost:3000/api/loans`\
+    \ ;\n6. en quelques lignes : ce que l’IA t’a apporté, et ce que tu as dû corriger ou vérifier.\n"
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: code-ownership
+      description: Explique chaque partie de son code et de sa configuration sans aide.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne sait pas expliquer des parties importantes de son propre projet.
+      - score: 1
+        description: Explique le déroulé global mais pas les options du tsconfig ni les génériques du
+          middleware.
+      - score: 2
+        description: Explique précisément la configuration, le middleware, les schémas et le gestionnaire
+          d’erreurs.
+      - score: 3
+        description: Explique aussi les choix écartés et ce qu’il a corrigé dans les propositions de l’IA.
+    - id: runtime-validation
+      description: Distingue ce que garantissent les types et ce que garantit la validation à l’exécution.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Pense qu’annoter req.body suffit à le valider.
+      - score: 1
+        description: Valide les entrées mais ne sait pas expliquer pourquoi un type ne suffit pas.
+      - score: 2
+        description: Explique l’effacement des types, le rôle de safeParse et l’origine du type de req.body.
+      - score: 3
+        description: Traite les cas subtils (coercition des booléens et des nombres, req.query en lecture
+          seule, propriétés inconnues).
+    - id: shared-contracts
+      description: Organise schémas et types dans un module de contrats unique, importé partout.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Types dupliqués ou écrits à la main à côté des schémas.
+      - score: 1
+        description: Module de contrats présent mais quelques types recopiés ou un z.infer mal placé.
+      - score: 2
+        description: Une seule source de vérité, utilisée par les routes, les règles et les tests, avec
+          import type à bon escient.
+    - id: tests
+      description: Teste la fonction pure et les routes de façon fiable.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Tests absents ou qui ne peuvent pas échouer.
+      - score: 1
+        description: Tests présents mais dépendants les uns des autres ou ne vérifiant pas le statut.
+      - score: 2
+        description: Tests indépendants, statut et corps vérifiés, réponses validées avec les schémas.
+      - score: 3
+        description: Couvre les cas limites (stock exactement épuisé, prêt déjà rendu) et justifie chaque
+          cas.
+    - id: modification
+      description: Réalise ou décrit correctement une modification demandée pendant l’oral.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne parvient pas à modifier le comportement.
+      - score: 1
+        description: Modification partielle ou qui casse un cas existant.
+      - score: 2
+        description: Modification correcte, guidée par tsc, avec un test ou une requête de vérification.
+      - score: 3
+        description: Modification correcte, vérifiée sur plusieurs cas dont un cas limite, sans duplication
+          introduite.
+- id: typescript-node-contre-ia
+  family: CONTRE_IA
+  title: L’API de tâches qui passe tous ses tests
+  summary: Trouver et corriger les défauts d’une API Express en TypeScript générée par une IA, dont les
+    tests et tsc ne signalent rien.
+  estimatedMinutes: 90
+  instructions: "Un assistant a généré cette API de gestion de tâches. `npm run typecheck` ne signale\n\
+    **aucune erreur** et `npm test` affiche trois tests réussis : l’équipe pense pouvoir la\ndéployer.\
+    \ Règles métier :\n\n- une tâche a un titre (1 à 100 caractères), une priorité (`low`, `normal` ou\
+    \ `high`,\n  `normal` par défaut), une échéance facultative et un état `done` ;\n- `GET /api/tasks`\
+    \ trie les tâches par priorité (haute, normale, basse) ; `done=true` ou\n  `done=false` filtre selon\
+    \ l’état ; `limit` est compris entre 1 et 100 ;\n- un client ne peut modifier que le titre, la priorité,\
+    \ l’échéance et `done` ;\n- toute entrée invalide reçoit une réponse 400 claire, jamais une 500, et\
+    \ aucune réponse ne\n  révèle de détail interne ;\n- aucune requête ne doit pouvoir arrêter le serveur,\
+    \ même si l’enregistrement sur disque\n  échoue.\n\n```json\n{\n  \"name\": \"tasks-api\",\n  \"version\"\
+    : \"1.0.0\",\n  \"type\": \"module\",\n  \"scripts\": {\n    \"dev\": \"node --watch src/server.ts\"\
+    ,\n    \"typecheck\": \"tsc --noEmit\",\n    \"test\": \"node --test\"\n  },\n  \"dependencies\":\
+    \ {\n    \"express\": \"^5.3.0\",\n    \"zod\": \"^4.6.7\"\n  },\n  \"devDependencies\": {\n    \"\
+    @types/express\": \"^5.0.6\",\n    \"@types/node\": \"^24.19.2\",\n    \"typescript\": \"^7.0.2\"\n\
+    \  }\n}\n```\n\n```json\n{\n  \"compilerOptions\": {\n    \"target\": \"esnext\",\n    \"module\"\
+    : \"nodenext\",\n    \"types\": [\"node\"],\n    \"strict\": false,\n    \"noEmit\": true,\n    \"\
+    rewriteRelativeImportExtensions\": true,\n    \"erasableSyntaxOnly\": true,\n    \"verbatimModuleSyntax\"\
+    : true,\n    \"skipLibCheck\": true\n  },\n  \"include\": [\"src\"]\n}\n```\n\n```ts\n// src/types.ts\n\
+    export type Priority = 'low' | 'medium' | 'high';\n\nexport interface Task {\n  id: number;\n  title:\
+    \ string;\n  priority: Priority;\n  dueDate?: string;\n  done: boolean;\n  createdAt: string;\n}\n\
+    ```\n\n```ts\n// src/contracts.ts\nimport { z } from 'zod';\n\nexport const createTaskSchema = z.object({\n\
+    \  title: z.string().trim().min(1).max(100),\n  priority: z.enum(['low', 'normal', 'high']).default('normal'),\n\
+    \  dueDate: z.iso.date().optional(),\n});\n\nexport const updateTaskSchema = createTaskSchema.partial().extend({\n\
+    \  done: z.boolean().optional(),\n});\n\nexport const listTasksQuerySchema = z.object({\n  done: z.coerce.boolean().optional(),\n\
+    \  limit: z.coerce.number().int().max(100).default(20),\n});\n\nexport type CreateTaskInput = z.infer<typeof\
+    \ createTaskSchema>;\nexport type UpdateTaskInput = z.infer<typeof createTaskSchema>;\n```\n\n```ts\n\
+    // src/store.ts\nimport { writeFile } from 'node:fs/promises';\nimport type { UpdateTaskInput } from\
+    \ './contracts.ts';\nimport type { Priority, Task } from './types.ts';\n\nconst tasks: Task[] = [];\n\
+    let nextId = 1;\n\nconst priorityRank: Record<Priority, number> = { high: 0, medium: 1, low: 2 };\n\
+    \n// Sauvegarde une copie des tâches pour les retrouver au prochain démarrage\nasync function persist():\
+    \ Promise<void> {\n  const file = process.env.DATA_FILE ?? 'data/tasks.json';\n  await writeFile(file,\
+    \ JSON.stringify(tasks, null, 2));\n}\n\nexport function listTasks(filters: { done?: boolean; limit:\
+    \ number }): Task[] {\n  return tasks\n    .filter((task) => filters.done === undefined || task.done\
+    \ === filters.done)\n    .sort((a, b) => priorityRank[a.priority] - priorityRank[b.priority])\n  \
+    \  .slice(0, filters.limit);\n}\n\nexport function getTask(id) {\n  return tasks.find((task) => task.id\
+    \ === id);\n}\n\nexport async function addTask(input: Omit<Task, 'id' | 'done' | 'createdAt'>): Promise<Task>\
+    \ {\n  const task: Task = { id: nextId++, done: false, createdAt: new Date().toISOString(), ...input\
+    \ };\n  tasks.push(task);\n  await persist();\n  return task;\n}\n\nexport async function updateTask(id:\
+    \ number, changes: UpdateTaskInput): Promise<Task | undefined> {\n  const task = tasks.find((item)\
+    \ => item.id === id);\n  if (!task) return undefined;\n  Object.assign(task, changes);\n  await persist();\n\
+    \  return task;\n}\n\nexport async function removeTask(id: number): Promise<boolean> {\n  const index\
+    \ = tasks.findIndex((item) => item.id === id);\n  if (index === -1) return false;\n  tasks.splice(index,\
+    \ 1);\n  await persist();\n  return true;\n}\n```\n\n```ts\n// src/app.ts\nimport express from 'express';\n\
+    import type { ErrorRequestHandler, Request } from 'express';\nimport { createTaskSchema, listTasksQuerySchema\
+    \ } from './contracts.ts';\nimport type { UpdateTaskInput } from './contracts.ts';\nimport { addTask,\
+    \ getTask, listTasks, removeTask, updateTask } from './store.ts';\nimport type { Task } from './types.ts';\n\
+    \nexport const app = express();\napp.use(express.json());\n\napp.get('/api/tasks', (req, res) => {\n\
+    \  const filters = listTasksQuerySchema.parse(req.query);\n  res.json(listTasks(filters));\n});\n\n\
+    app.get('/api/tasks/:id', (req, res) => {\n  const task = getTask(req.params.id);\n  if (!task) {\n\
+    \    res.status(404).json({ error: 'Tâche introuvable' });\n    return;\n  }\n  res.json(task);\n\
+    });\n\napp.post('/api/tasks', async (req, res) => {\n  const input = createTaskSchema.parse(req.body);\n\
+    \  const task = await addTask(input as Omit<Task, 'id' | 'done' | 'createdAt'>);\n  res.status(201).json(task);\n\
+    });\n\napp.patch('/api/tasks/:id', async (req: Request<{ id: string }, Task, UpdateTaskInput>, res)\
+    \ => {\n  const task = await updateTask(Number(req.params.id), req.body);\n  if (!task) {\n    res.status(404).json({\
+    \ error: 'Tâche introuvable' } as any);\n    return;\n  }\n  res.json(task);\n});\n\napp.delete('/api/tasks/:id',\
+    \ (req, res) => {\n  removeTask(Number(req.params.id)).then((removed) => {\n    res.sendStatus(removed\
+    \ ? 204 : 404);\n  });\n});\n\nconst errorHandler: ErrorRequestHandler = (err, req, res, next) =>\
+    \ {\n  console.error(err);\n  res.status(err.status || 500).json({ error: err.message });\n};\napp.use(errorHandler);\n\
+    ```\n\n```ts\n// src/server.ts\nimport { app } from './app.ts';\n\nconst port = Number(process.env.PORT\
+    \ ?? 3000);\napp.listen(port, () => console.log(`API prête sur http://localhost:${port}`));\n```\n\
+    \n```ts\n// test/tasks.test.ts\nimport { after, before, describe, it } from 'node:test';\nimport assert\
+    \ from 'node:assert/strict';\nimport type { AddressInfo } from 'node:net';\nimport { app } from '../src/app.ts';\n\
+    import type { Task } from '../src/types.ts';\n\ndescribe('API des tâches', () => {\n  let baseUrl:\
+    \ string;\n  const server = app.listen(0);\n\n  before(() => {\n    baseUrl = `http://localhost:${(server.address()\
+    \ as AddressInfo).port}/api/tasks`;\n  });\n\n  after(() => server.close());\n\n  it('crée une tâche',\
+    \ async () => {\n    const response = await fetch(baseUrl, {\n      method: 'POST',\n      headers:\
+    \ { 'Content-Type': 'application/json' },\n      body: JSON.stringify({ title: 'Écrire le rapport',\
+    \ priority: 'high' }),\n    });\n    assert.equal(response.status, 201);\n  });\n\n  it('refuse un\
+    \ titre vide', async () => {\n    const response = await fetch(baseUrl, {\n      method: 'POST',\n\
+    \      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify({ title: '' }),\n\
+    \    });\n    assert.ok(response.status >= 400);\n  });\n\n  it('marque une tâche comme faite', async\
+    \ () => {\n    const response = await fetch(`${baseUrl}/1`, {\n      method: 'PATCH',\n      headers:\
+    \ { 'Content-Type': 'application/json' },\n      body: JSON.stringify({ done: true }),\n    });\n\
+    \    const task = (await response.json()) as Task;\n    if (task.done) {\n      assert.equal(task.done,\
+    \ true);\n    }\n  });\n});\n```\n\nTravail demandé :\n\n1. Installe le projet et crée le dossier\
+    \ `data/`, où le serveur et les tests enregistrent\n   les tâches, puis lance-le. Envoie des requêtes\
+    \ qui mettent les règles métier à l’épreuve : entrées invalides, tri,\n   filtres, modification, suppression,\
+    \ et échec de l’enregistrement (par exemple\n   `DATA_FILE=absent/tasks.json`).\n2. Liste chaque défaut\
+    \ trouvé : le fichier et l’extrait concerné, le symptôme observé ou\n   possible, la cause précise,\
+    \ la gravité, et la requête ou l’entrée qui le révèle.\n3. Corrige le projet en modifiant le moins\
+    \ de code possible. Les tests doivent être\n   corrigés eux aussi : un test qui ne peut pas échouer\
+    \ est un défaut.\n4. Explique pourquoi ni `tsc` ni les tests n’avaient rien signalé.\n"
+  deliverable: 'Colle ta liste de défauts (fichier, extrait, symptôme, cause, gravité, requête
+
+    révélatrice), puis le contenu complet des fichiers modifiés, la sortie de
+
+    `npm run typecheck` et de `npm test` après correction, et ton explication du silence de
+
+    `tsc` et des tests.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: defects-found
+      description: Identifie les défauts réels, y compris ceux qui ne se manifestent qu’avec certaines
+        entrées ou en cas de panne.
+      maxScore: 3
+    - id: root-cause
+      description: Explique la cause technique de chaque défaut et pourquoi tsc et les tests ne l’ont
+        pas vu.
+      maxScore: 3
+    - id: fix-quality
+      description: Corrige de façon ciblée, avec une source de vérité unique et une validation à l’exécution.
+      maxScore: 3
+    - id: tests
+      description: Rend les tests capables d’échouer et les fait vérifier par tsc.
+      maxScore: 2
+- id: typescript-node-apres-ia
+  family: APRES_IA
+  title: Les ateliers complets
+  summary: Corriger un bug et faire évoluer une API Express en TypeScript existante sans la régénérer,
+    en supprimant au passage une duplication de types.
+  estimatedMinutes: 75
+  instructions: "Cette API d’ateliers fonctionne et ses trois tests passent. Tu dois la faire évoluer\
+    \ **en\nmodifiant le moins de code possible**, sans la régénérer. Elle utilise la même\nconfiguration\
+    \ que le cours : le `tsconfig.json` strict de `bookings-api` (qui inclut `src`\net `test`), Node.js\
+    \ 24, Express 5, Zod 4, et les scripts `typecheck`, `test` et `check`.\n\n```ts\n// src/types.ts\n\
+    export type Workshop = {\n  id: number;\n  title: string;\n  date: string;\n  capacity: number;\n\
+    \  registered: number;\n};\n\nexport type CreateWorkshopInput = Omit<Workshop, 'id' | 'registered'>;\n\
+    ```\n\n```ts\n// src/contracts.ts\nimport { z } from 'zod';\n\nexport const createWorkshopSchema =\
+    \ z.strictObject({\n  title: z.string().trim().min(3).max(80),\n  date: z.iso.date(),\n  capacity:\
+    \ z.number().int().min(1).max(30),\n});\n\nexport const listWorkshopsQuerySchema = z.object({\n  available:\
+    \ z.coerce.boolean().optional(),\n});\n\nexport const workshopIdParamsSchema = z.object({\n  id: z.coerce.number().int().positive(),\n\
+    });\n```\n\n```ts\n// src/http.ts\nimport type { NextFunction, Request, RequestHandler, Response }\
+    \ from 'express';\nimport type { z } from 'zod';\n\nexport class HttpError extends Error {\n  readonly\
+    \ status: number;\n\n  constructor(status: number, message: string) {\n    super(message);\n    this.status\
+    \ = status;\n  }\n}\n\nexport function parseInput<Schema extends z.ZodType>(schema: Schema, value:\
+    \ unknown): z.output<Schema> {\n  const result = schema.safeParse(value);\n  if (!result.success)\
+    \ {\n    throw new HttpError(400, formatIssues(result.error));\n  }\n  return result.data;\n}\n\n\
+    export function validateBody<Schema extends z.ZodType>(\n  schema: Schema,\n): RequestHandler<Record<string,\
+    \ string>, unknown, z.output<Schema>> {\n  return (req, res, next) => {\n    req.body = parseInput(schema,\
+    \ req.body);\n    next();\n  };\n}\n\nfunction formatIssues(error: z.ZodError): string {\n  return\
+    \ error.issues.map((issue) => `${issue.path.join('.')} : ${issue.message}`).join(' ; ');\n}\n\nexport\
+    \ function errorHandler(err: unknown, req: Request, res: Response, next: NextFunction): void {\n \
+    \ if (err instanceof HttpError) {\n    res.status(err.status).json({ error: err.message });\n    return;\n\
+    \  }\n  console.error(err);\n  res.status(500).json({ error: 'Erreur interne du serveur' });\n}\n\
+    ```\n\n```ts\n// src/routes.ts\nimport { Router } from 'express';\nimport type { Response } from 'express';\n\
+    import { createWorkshopSchema, listWorkshopsQuerySchema, workshopIdParamsSchema } from './contracts.ts';\n\
+    import { HttpError, parseInput, validateBody } from './http.ts';\nimport type { Workshop } from './types.ts';\n\
+    \nexport function createWorkshopsRouter(workshops: Workshop[]): Router {\n  const router = Router();\n\
+    \  let nextId = workshops.length + 1;\n\n  router.get('/', (req, res: Response<Workshop[]>) => {\n\
+    \    const { available } = parseInput(listWorkshopsQuerySchema, req.query);\n    const result = workshops.filter(\n\
+    \      (workshop) => available === undefined || (workshop.registered < workshop.capacity) === available,\n\
+    \    );\n    res.json(result);\n  });\n\n  router.post('/', validateBody(createWorkshopSchema), (req,\
+    \ res: Response<Workshop>) => {\n    const workshop: Workshop = { id: nextId, registered: 0, ...req.body\
+    \ };\n    nextId += 1;\n    workshops.push(workshop);\n    res.status(201).json(workshop);\n  });\n\
+    \n  router.patch('/:id', (req, res: Response<Workshop>) => {\n    const { id } = parseInput(workshopIdParamsSchema,\
+    \ req.params);\n    const workshop = workshops.find((item) => item.id === id);\n    if (workshop ===\
+    \ undefined) {\n      throw new HttpError(404, `Atelier ${id} introuvable`);\n    }\n    Object.assign(workshop,\
+    \ req.body as Partial<Workshop>);\n    res.json(workshop);\n  });\n\n  return router;\n}\n```\n\n\
+    ```ts\n// src/app.ts\nimport express from 'express';\nimport type { Express } from 'express';\nimport\
+    \ { errorHandler } from './http.ts';\nimport { createWorkshopsRouter } from './routes.ts';\nimport\
+    \ type { Workshop } from './types.ts';\n\nexport function createApp(workshops: Workshop[] = []): Express\
+    \ {\n  const app = express();\n  app.use(express.json());\n  app.use('/api/workshops', createWorkshopsRouter(workshops));\n\
+    \  app.use(errorHandler);\n  return app;\n}\n```\n\n```ts\n// src/server.ts\nimport { createApp }\
+    \ from './app.ts';\n\nconst app = createApp([\n  { id: 1, title: 'Découvrir Git', date: '2026-12-05',\
+    \ capacity: 12, registered: 12 },\n  { id: 2, title: 'Premiers pas en SQL', date: '2026-12-12', capacity:\
+    \ 10, registered: 4 },\n]);\nconst port = Number(process.env.PORT ?? 3000);\napp.listen(port, () =>\
+    \ console.log(`API prête sur http://localhost:${port}`));\n```\n\n```ts\n// test/workshops.test.ts\n\
+    import { afterEach, beforeEach, describe, it } from 'node:test';\nimport assert from 'node:assert/strict';\n\
+    import { once } from 'node:events';\nimport type { Server } from 'node:http';\nimport { createApp\
+    \ } from '../src/app.ts';\n\ndescribe('API /api/workshops', () => {\n  let server: Server;\n  let\
+    \ baseUrl: string;\n\n  beforeEach(async () => {\n    server = createApp([\n      { id: 1, title:\
+    \ 'Découvrir Git', date: '2026-12-05', capacity: 12, registered: 12 },\n      { id: 2, title: 'Premiers\
+    \ pas en SQL', date: '2026-12-12', capacity: 10, registered: 4 },\n    ]).listen(0, '127.0.0.1');\n\
+    \    await once(server, 'listening');\n    const address = server.address();\n    if (address ===\
+    \ null || typeof address === 'string') {\n      throw new Error('Adresse inattendue');\n    }\n  \
+    \  baseUrl = `http://127.0.0.1:${address.port}/api/workshops`;\n  });\n\n  afterEach(() => {\n   \
+    \ server.close();\n  });\n\n  it('GET ?available=true ne renvoie que les ateliers avec des places',\
+    \ async () => {\n    const response = await fetch(`${baseUrl}?available=true`);\n    assert.equal(response.status,\
+    \ 200);\n    const body: unknown = await response.json();\n    assert.deepEqual(body, [\n      { id:\
+    \ 2, title: 'Premiers pas en SQL', date: '2026-12-12', capacity: 10, registered: 4 },\n    ]);\n \
+    \ });\n\n  it('POST crée un atelier et répond 201', async () => {\n    const response = await fetch(baseUrl,\
+    \ {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify({\
+    \ title: ' Tests avec node:test ', date: '2026-12-19', capacity: 8 }),\n    });\n    assert.equal(response.status,\
+    \ 201);\n    assert.deepEqual(await response.json(), {\n      id: 3,\n      registered: 0,\n     \
+    \ title: 'Tests avec node:test',\n      date: '2026-12-19',\n      capacity: 8,\n    });\n  });\n\n\
+    \  it('POST refuse une capacité de 0 avec 400', async () => {\n    const response = await fetch(baseUrl,\
+    \ {\n      method: 'POST',\n      headers: { 'Content-Type': 'application/json' },\n      body: JSON.stringify({\
+    \ title: 'Atelier vide', date: '2026-12-19', capacity: 0 }),\n    });\n    assert.equal(response.status,\
+    \ 400);\n  });\n});\n```\n\nDemandes de l’équipe :\n\n1. **Bug signalé** : la page « ateliers complets\
+    \ » appelle\n   `GET /api/workshops?available=false` et affiche… les ateliers qui ont encore des\n\
+    \   places. Trouve la cause, corrige-la, et ajoute le test qui l’aurait détecté.\n2. **Évolution**\
+    \ : chaque atelier a désormais un niveau, `beginner`, `intermediate` ou\n   `advanced`, obligatoire\
+    \ à la création et filtrable avec `GET /api/workshops?level=…`.\n   Le type `Workshop` existe aujourd’hui\
+    \ en double (à la main dans `types.ts`, implicitement\n   dans le schéma) : fais en sorte qu’il n’y\
+    \ ait plus qu’**une** définition, dont les types\n   sont déduits, avant d’ajouter le champ.\n3. **Sécurité**\
+    \ : la route `PATCH` accepte n’importe quoi (essaie\n   `{\"registered\":99,\"capacity\":\"beaucoup\"\
+    ,\"id\":7}`). Valide son corps : seuls `title`,\n   `date`, `capacity` et `level` sont modifiables,\
+    \ chacun avec les règles de la création.\n4. Ajoute des tests pour le filtre `level`, le refus d’un\
+    \ atelier sans niveau et le refus\n   d’un `PATCH` sur `registered`. Les tests existants doivent continuer\
+    \ à passer (adapte\n   seulement leurs données).\n"
+  deliverable: 'Colle les fichiers modifiés (en entier), la liste des lignes modifiées ou supprimées avec
+
+    la raison de chaque changement, la sortie de `npm run typecheck` juste après l’ajout du
+
+    niveau au contrat (avant d’adapter les autres fichiers), puis la sortie finale de
+
+    `npm run check`.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: bug-diagnosis
+      description: Explique la cause du bug par la coercition booléenne et le corrige avec un test qui
+        le prouve.
+      maxScore: 3
+    - id: single-source
+      description: Supprime la duplication de types et fait évoluer le contrat en se laissant guider par
+        tsc.
+      maxScore: 3
+    - id: patch-validation
+      description: Valide le PATCH sans affectation de masse et justifie le schéma choisi.
+      maxScore: 2
+    - id: minimal-change
+      description: Fait évoluer le code existant de façon ciblée et vérifiée.
+      maxScore: 2
