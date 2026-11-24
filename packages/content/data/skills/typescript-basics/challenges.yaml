@@ -1,0 +1,325 @@
+- id: typescript-basics-sans-ia
+  family: SANS_IA
+  title: Le catalogue de la médiathèque
+  summary: Modéliser un catalogue avec une union discriminée et écrire des fonctions typées, exhaustives
+    et sûres face à l’absence.
+  estimatedMinutes: 50
+  instructions: "Une médiathèque prête des livres, des DVD et des jeux de société. Écris seul, sans IA,\n\
+    un fichier `media.ts` en TypeScript strict. Travaille dans un dossier contenant un\n`package.json`\
+    \ avec `\"type\": \"module\"`, TypeScript installé en dépendance de\ndéveloppement, et ce `tsconfig.json`\
+    \ :\n\n```json\n{\n  \"compilerOptions\": {\n    \"target\": \"esnext\",\n    \"module\": \"nodenext\"\
+    ,\n    \"strict\": true,\n    \"noEmit\": true,\n    \"allowImportingTsExtensions\": true,\n    \"\
+    erasableSyntaxOnly\": true,\n    \"verbatimModuleSyntax\": true\n  }\n}\n```\n\nRègles de gestion\
+    \ :\n\n- un **livre** a un titre, un auteur et un nombre de pages ; il se prête 21 jours ;\n- un **DVD**\
+    \ a un titre et une durée en minutes ; il se prête 7 jours ;\n- un **jeu** a un titre et un âge minimum\
+    \ ; il se prête 14 jours, et seulement à une\n  personne dont l’âge est connu et au moins égal à l’âge\
+    \ minimum.\n\nTravail demandé :\n\n1. Écris les types `Book`, `Dvd`, `Game` et `Media` (l’union des\
+    \ trois) sous la forme\n   d’une **union discriminée** par une propriété `kind`.\n2. Écris `loanDays(media:\
+    \ Media): number` et `describe(media: Media): string` avec un\n   `switch` sur `kind`. Chaque `switch`\
+    \ doit être **exhaustif** : ajouter une quatrième\n   sorte de média à l’union doit provoquer une\
+    \ erreur de `tsc` dans ces fonctions.\n   `describe` produit par exemple `DVD : Le Voyage de Chihiro\
+    \ (125 min)`.\n3. Écris `findByTitle(catalog: readonly Media[], title: string)`, qui renvoie le média\n\
+    \   dont le titre correspond sans tenir compte de la casse ni des espaces autour, ou\n   `undefined`.\
+    \ Choisis et écris toi-même le type de retour.\n4. Écris `canBorrow(media: Media, borrowerAge: number\
+    \ | undefined): boolean`.\n5. Teste avec ce catalogue, en affichant chaque média avec sa durée de\
+    \ prêt, puis le\n   résultat de `canBorrow` pour le jeu trouvé avec `findByTitle(catalog, ' les aventuriers\
+    \ du rail ')`\n   et un emprunteur de 7 ans, puis le résultat de `findByTitle(catalog, 'Dune')`.\n\
+    \n```ts\nconst catalog: Media[] = [\n  { kind: 'book', title: 'Le Petit Prince', author: 'Antoine\
+    \ de Saint-Exupéry', pages: 96 },\n  { kind: 'dvd', title: 'Le Voyage de Chihiro', durationMinutes:\
+    \ 125 },\n  { kind: 'game', title: 'Les Aventuriers du Rail', minAge: 8 },\n];\n```\n\nContraintes\
+    \ : aucun `any`, aucun `as`, aucun `!` d’assertion non nulle. `npx tsc` ne doit\nafficher aucune erreur\
+    \ et `node media.ts` doit s’exécuter.\n\nRéponds enfin en quelques phrases à ces trois questions :\n\
+    \n- Que se passerait-il, à la compilation puis à l’exécution, si l’on ajoutait\n  `type Magazine =\
+    \ { kind: 'magazine'; title: string; issue: number }` à l’union ?\n- Pourquoi `findByTitle` ne peut-elle\
+    \ pas renvoyer simplement `Media` ?\n- Si le catalogue était lu avec `JSON.parse` depuis un fichier,\
+    \ en quoi l’annotation\n  `const catalog: Media[] = JSON.parse(text)` serait-elle trompeuse ?\n"
+  deliverable: 'Colle le contenu complet de `media.ts`, la sortie de `npx tsc` (vide si tout va bien),
+
+    la sortie exacte de `node media.ts`, puis tes réponses aux trois questions.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: modeling
+      description: Modélise le catalogue par une union discriminée et justifie ses choix de types.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Pas d’union discriminée, ou propriétés mélangées dans un seul type avec des optionnels
+          partout.
+      - score: 1
+        description: Union présente mais discriminant mal typé (string au lieu d’un littéral) ou incohérent.
+      - score: 2
+        description: Union discriminée correcte, explique pourquoi chaque variante a son propre littéral
+          kind.
+      - score: 3
+        description: Explique aussi pourquoi cette modélisation rend impossibles des objets incohérents
+          (un DVD avec un nombre de pages).
+    - id: narrowing-exhaustiveness
+      description: Rétrécit correctement et garantit l’exhaustivité des switch.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Accède à des propriétés sans rétrécissement ou utilise as pour faire taire tsc.
+      - score: 1
+        description: Switch corrects mais non exhaustifs, ou default silencieux qui masque un oubli.
+      - score: 2
+        description: Exhaustivité garantie par never et explication du rôle de never.
+      - score: 3
+        description: Prévoit l’erreur exacte produite par l’ajout d’une variante et le comportement à
+          l’exécution d’une valeur inattendue.
+    - id: absence-handling
+      description: Traite les valeurs absentes avec strictNullChecks sans assertion.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Utilise ! ou ignore le cas undefined.
+      - score: 1
+        description: Gère undefined mais par une valeur de vérité (if (!age)) sans voir le piège.
+      - score: 2
+        description: Type de retour T | undefined explicite, test === undefined justifié, appelant qui
+          traite l’absence.
+    - id: runtime-limits
+      description: Distingue ce que tsc vérifie de ce qui arrive à l’exécution.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Pense que l’annotation Media[] sur JSON.parse vérifie les données.
+      - score: 1
+        description: Sait que JSON.parse renvoie any sans proposer de solution.
+      - score: 2
+        description: Explique l’effacement des types et propose unknown avec une garde de type.
+- id: typescript-basics-avec-ia
+  family: AVEC_IA
+  title: Le relevé de dépenses
+  summary: Construire avec une IA un module qui valide des données JSON inconnues, puis les regroupe avec
+    un générique et des types utilitaires.
+  estimatedMinutes: 120
+  instructions: "Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras expliquer chaque type\n\
+    et chaque contrôle sans aide, prévoir l’effet de petites modifications et corriger\ntoi-même un comportement.\n\
+    \nUne application de budget exporte les dépenses d’un mois en JSON. Certaines lignes sont\nabîmées.\
+    \ Écris un fichier `expenses.ts`, exécuté avec `node expenses.ts` et vérifié par\n`npx tsc` avec ce\
+    \ `tsconfig.json` (dans un dossier dont le `package.json` contient\n`\"type\": \"module\"`) :\n\n\
+    ```json\n{\n  \"compilerOptions\": {\n    \"target\": \"esnext\",\n    \"module\": \"nodenext\",\n\
+    \    \"strict\": true,\n    \"noEmit\": true,\n    \"allowImportingTsExtensions\": true,\n    \"erasableSyntaxOnly\"\
+    : true,\n    \"verbatimModuleSyntax\": true\n  }\n}\n```\n\nDonnées, à recopier telles quelles en\
+    \ haut du fichier :\n\n```ts\nconst RAW_EXPENSES = `[\n  { \"id\": 1, \"label\": \"Courses\", \"amountCents\"\
+    : 6420, \"category\": \"food\", \"date\": \"2026-03-02\" },\n  { \"id\": 2, \"label\": \"Pass Navigo\"\
+    , \"amountCents\": 8820, \"category\": \"transport\", \"date\": \"2026-03-01\" },\n  { \"id\": 3,\
+    \ \"label\": \"Cinéma\", \"amountCents\": 1150, \"category\": \"leisure\", \"date\": \"2026-03-07\"\
+    , \"note\": \"avec Léa\" },\n  { \"id\": 4, \"label\": \"Boulangerie\", \"amountCents\": \"3,20\"\
+    , \"category\": \"food\", \"date\": \"2026-03-08\" },\n  { \"id\": 5, \"label\": \"Loyer\", \"amountCents\"\
+    : 72000, \"category\": \"housing\", \"date\": \"2026-03-05\" },\n  { \"id\": 6, \"label\": \"Restaurant\"\
+    , \"amountCents\": 3800, \"category\": \"restaurant\", \"date\": \"2026-03-09\" },\n  { \"id\": 7,\
+    \ \"label\": \"Marché\", \"amountCents\": 2310, \"category\": \"food\", \"date\": \"2026-03-14\" },\n\
+    \  { \"id\": 8, \"label\": \"Vélo\", \"amountCents\": 0, \"category\": \"transport\", \"date\": \"\
+    2026-03-15\", \"note\": \"réparation offerte\" },\n  null\n]`;\n```\n\nExigences :\n\n1. Un type `Category`\
+    \ qui n’admet que `food`, `transport`, `housing` et `leisure`, et un\n   type `Expense` : `id` (nombre),\
+    \ `label` (texte), `amountCents` (entier positif ou nul,\n   en centimes), `category`, `date` (texte),\
+    \ `note` facultative.\n2. `parseExpenses(text: string): { valid: Expense[]; rejected: number }`. Le\
+    \ résultat de\n   `JSON.parse` est traité comme `unknown` ; chaque ligne est contrôlée par une garde\
+    \ de\n   type `isExpense(value: unknown): value is Expense` qui vérifie **toutes** les\n   propriétés,\
+    \ y compris que la catégorie fait partie des quatre valeurs permises. Une\n   ligne invalide est comptée\
+    \ dans `rejected`, sans arrêter le traitement.\n3. Une fonction générique\n   `groupBy<T, K extends\
+    \ string>(items: readonly T[], keyOf: (item: T) => K): Partial<Record<K, T[]>>`\n   qui regroupe des\
+    \ éléments quelconques selon une clé calculée.\n4. `totalsByCategory(expenses: readonly Expense[]):\
+    \ Record<Category, number>` qui renvoie\n   le total en centimes de **chaque** catégorie, y compris\
+    \ celles sans dépense (0).\n5. Un affichage : nombre de lignes valides et rejetées, libellés des dépenses\
+    \ de la\n   catégorie `food` obtenus avec `groupBy`, total par catégorie en euros avec deux\n   décimales,\
+    \ total général.\n\nContraintes : aucun `any` (ni écrit, ni implicite), aucun `as` (sauf `as const`),\
+    \ aucun\n`!` d’assertion non nulle, aucun `enum`. `npx tsc` ne doit afficher aucune erreur.\n\nConseil\
+    \ : demande à l’IA de t’expliquer pourquoi `Object.keys` renvoie un `string[]` et\nnon un tableau\
+    \ de clés précises, puis vérifie-le toi-même avec `tsc`.\n"
+  deliverable: 'Colle le code complet de `expenses.ts`, la sortie de `npx tsc` et la sortie exacte de
+
+    `node expenses.ts`. Ajoute ensuite une dizaine de lignes : ce que l’IA t’a proposé, ce
+
+    que tu as dû corriger ou refuser (et pourquoi), et la liste des lignes rejetées avec la
+
+    raison de chaque rejet.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: code-ownership
+      description: Explique chaque type et chaque contrôle de son code sans aide.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne sait pas expliquer des parties importantes de son propre code.
+      - score: 1
+        description: Explique le déroulé global mais pas les types ni les gardes.
+      - score: 2
+        description: Explique précisément chaque type, chaque contrôle et le rétrécissement obtenu.
+      - score: 3
+        description: Explique aussi ce qu’il a refusé dans les propositions de l’IA et pourquoi.
+    - id: runtime-validation
+      description: Valide des données inconnues avec unknown et une garde complète.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Utilise as, any ou un générique de retour pour typer le JSON.
+      - score: 1
+        description: Utilise unknown mais la garde oublie des propriétés ou la catégorie.
+      - score: 2
+        description: Garde complète, rejets corrects et explication de typeof null et de in.
+      - score: 3
+        description: Explique aussi qu’une garde peut mentir et comment il a vérifié la sienne sur les
+          lignes abîmées.
+    - id: generics-utilities
+      description: Comprend le générique groupBy et les types utilitaires utilisés.
+      maxScore: 3
+      levels:
+      - score: 0
+        description: Ne sait pas ce que représentent T et K ni pourquoi Partial et Record sont là.
+      - score: 1
+        description: Signature correcte mais explication confuse de l’inférence de T et K.
+      - score: 2
+        description: Explique l’inférence, la contrainte K extends string, Partial et Record<Category,
+          number>.
+      - score: 3
+        description: Prévoit correctement le type produit par un autre appel de groupBy et ses conséquences.
+    - id: modification
+      description: Réalise ou décrit correctement une modification demandée à l’oral.
+      maxScore: 2
+      levels:
+      - score: 0
+        description: Ne parvient pas à modifier le comportement.
+      - score: 1
+        description: Modification partielle, ou oubli d’un endroit que tsc ne signale pas.
+      - score: 2
+        description: Modification complète, en s’appuyant sur les erreurs de tsc et une vérification à
+          l’exécution.
+- id: typescript-basics-contre-ia
+  family: CONTRE_IA
+  title: Les commandes qui compilent trop bien
+  summary: Trouver et corriger les défauts d’un module TypeScript généré qui passe tsc sans erreur mais
+    ment sur ses données.
+  estimatedMinutes: 60
+  instructions: "Un assistant a généré ce module de gestion des commandes d’une boutique. Il passe\n`npx\
+    \ tsc` en mode strict **sans aucune erreur**, et l’équipe en conclut qu’il est\ncorrect. Les commandes\
+    \ arrivent d’une API sous forme de texte JSON. Règles métier : un\ncoupon commençant par `VIP` donne\
+    \ 10 % de remise ; une commande peut ne pas avoir de\ncoupon ; une commande annulée doit être affichée\
+    \ « Annulée » ; une commande n’est\nexpédiée qu’une fois ; l’adresse e-mail du client ne doit jamais\
+    \ apparaître dans les\ndonnées publiques ; seuls le statut, le coupon et la date d’expédition peuvent\
+    \ être\nmodifiés après création.\n\n```ts\n// orders.ts — module de gestion des commandes proposé\
+    \ par un assistant\n\nexport type OrderStatus = 'pending' | 'paid' | 'shipped' | 'cancelled';\n\n\
+    export interface OrderItem {\n  sku: string;\n  unitPriceCents: number;\n  quantity: number;\n}\n\n\
+    export interface Order {\n  id: number;\n  customerEmail: string;\n  items: OrderItem[];\n  status:\
+    \ OrderStatus;\n  couponCode?: string;\n  createdAt: Date;\n  shippedAt?: Date;\n}\n\nexport type\
+    \ PublicOrder = Omit<Order, 'customerEmail'>;\n\nexport function parseOrder(json: string): Order {\n\
+    \  return JSON.parse(json) as Order;\n}\n\nexport function orderTotalCents(order: Order): number {\n\
+    \  return order.items.reduce((total, item: any) => total + item.price * item.quantity, 0);\n}\n\n\
+    export function discountRate(order: Order): number {\n  return order.couponCode!.startsWith('VIP')\
+    \ ? 0.1 : 0;\n}\n\nexport function statusLabel(status: OrderStatus): string {\n  switch (status) {\n\
+    \    case 'pending':\n      return 'En attente de paiement';\n    case 'paid':\n      return 'Payée';\n\
+    \    case 'shipped':\n      return 'Expédiée';\n    default:\n      return 'Statut inconnu';\n  }\n\
+    }\n\nexport function shippingDays(order: Order): number {\n  const elapsed = order.shippedAt!.getTime()\
+    \ - order.createdAt.getTime();\n  return Math.round(elapsed / (24 * 60 * 60 * 1000));\n}\n\nexport\
+    \ function updateOrder(order: Order, changes: Partial<Order>): Order {\n  return { ...order, ...changes\
+    \ };\n}\n\nexport function toPublicOrder(order: Order): PublicOrder {\n  return order;\n}\n```\n\n\
+    Exemple de texte reçu de l’API :\n\n```json\n{\"id\":42,\"customerEmail\":\"ada@example.com\",\"status\"\
+    :\"shipped\",\"createdAt\":\"2026-03-01T10:00:00.000Z\",\"shippedAt\":\"2026-03-03T09:00:00.000Z\"\
+    ,\"items\":[{\"sku\":\"KB-01\",\"unitPriceCents\":4990,\"quantity\":2}]}\n```\n\nTravail demandé :\n\
+    \n1. Écris un petit script `demo.ts` qui importe ces fonctions, les appelle sur cette\n   commande\
+    \ et sur une commande sans coupon ni date d’expédition, et observe ce qui se\n   passe réellement\
+    \ avec `node demo.ts`.\n2. Liste chaque défaut : la fonction, le comportement observé ou possible,\
+    \ la cause\n   précise (quelle construction TypeScript a permis au défaut de passer `tsc`) et sa\n\
+    \   gravité.\n3. Propose une version corrigée de `orders.ts` qui passe `npx tsc` en mode strict, sans\n\
+    \   `any`, sans `as` (sauf `as const`) et sans `!`. `parseOrder` doit rejeter un texte qui\n   ne\
+    \ décrit pas une commande valide et produire de vraies dates.\n4. Pour chaque correction, donne l’entrée\
+    \ ou l’appel qui aurait révélé le défaut.\n\nLe `tsconfig.json` est celui de la compétence (`strict`,\
+    \ `noEmit`,\n`allowImportingTsExtensions`, `erasableSyntaxOnly`, `verbatimModuleSyntax`, `module`\
+    \ et\n`target` réglés pour Node.js), dans un dossier dont le `package.json` contient\n`\"type\": \"\
+    module\"`.\n"
+  deliverable: 'Colle `demo.ts` et sa sortie, ta liste de défauts (fonction, symptôme, cause, gravité),
+
+    puis le fichier `orders.ts` corrigé complet et la sortie de `npx tsc`.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: defects-found
+      description: Identifie les défauts réels, y compris ceux qui ne se manifestent qu’avec certaines
+        données.
+      maxScore: 3
+    - id: root-cause
+      description: Explique pourquoi chaque défaut a passé tsc.
+      maxScore: 3
+    - id: fix-quality
+      description: Propose des corrections justes, sans assertion, vérifiées par des entrées précises.
+      maxScore: 3
+- id: typescript-basics-apres-ia
+  family: APRES_IA
+  title: La billetterie du festival
+  summary: Faire évoluer un module TypeScript existant, ajouter une variante sans rien oublier et remplacer
+    un any par une validation.
+  estimatedMinutes: 75
+  instructions: "Ce module gère la billetterie d’un festival. Il passe `npx tsc` en mode strict, il est\n\
+    utilisé tous les jours : fais-le évoluer **en modifiant le moins de lignes possible**,\nsans le régénérer.\n\
+    \n```ts\n// tickets.ts — billetterie du festival, en production depuis le printemps\n\ntype StandardTicket\
+    \ = { kind: 'standard'; holder: string; priceCents: number };\ntype StudentTicket = { kind: 'student';\
+    \ holder: string; priceCents: number; studentId: string };\ntype VipTicket = { kind: 'vip'; holder:\
+    \ string; priceCents: number; lounge: boolean };\n\nexport type Ticket = StandardTicket | StudentTicket\
+    \ | VipTicket;\n\nexport type Workshop = {\n  title: string;\n  capacity?: number; // absent : jauge\
+    \ par défaut\n  sold: number;\n};\n\nconst DEFAULT_CAPACITY = 30;\n\nconst kindLabels: Record<string,\
+    \ string> = {\n  standard: 'Standard',\n  student: 'Étudiant',\n  vip: 'VIP',\n};\n\nexport function\
+    \ ticketLabel(ticket: Ticket): string {\n  switch (ticket.kind) {\n    case 'standard':\n      return\
+    \ `${kindLabels.standard} — ${ticket.holder}`;\n    case 'student':\n      return `${kindLabels.student}\
+    \ (${ticket.studentId}) — ${ticket.holder}`;\n    case 'vip':\n      return `${kindLabels.vip}${ticket.lounge\
+    \ ? ' + salon' : ''} — ${ticket.holder}`;\n  }\n}\n\nexport function printBadge(ticket: Ticket): void\
+    \ {\n  switch (ticket.kind) {\n    case 'vip':\n      console.log(`[BADGE OR] ${ticket.holder}`);\n\
+    \      break;\n    case 'standard':\n    case 'student':\n      console.log(`[BADGE] ${ticket.holder}`);\n\
+    \      break;\n  }\n}\n\nexport function remainingSeats(workshop: Workshop): number {\n  const capacity\
+    \ = workshop.capacity || DEFAULT_CAPACITY;\n  return Math.max(capacity - workshop.sold, 0);\n}\n\n\
+    export function loadTickets(json: string): Ticket[] {\n  const data: any = JSON.parse(json);\n  return\
+    \ data.tickets;\n}\n\nexport function totalRevenueCents(tickets: Ticket[]): number {\n  return tickets.reduce((total,\
+    \ ticket) => total + ticket.priceCents, 0);\n}\n```\n\nScript d’utilisation actuel, `main.ts` :\n\n\
+    ```ts\nimport { loadTickets, printBadge, remainingSeats, ticketLabel, totalRevenueCents } from './tickets.ts';\n\
+    import type { Workshop } from './tickets.ts';\n\nconst tickets = loadTickets(`{\n  \"tickets\": [\n\
+    \    { \"kind\": \"standard\", \"holder\": \"Ada\", \"priceCents\": 4500 },\n    { \"kind\": \"student\"\
+    , \"holder\": \"Alan\", \"priceCents\": 2500, \"studentId\": \"E-2291\" },\n    { \"kind\": \"vip\"\
+    , \"holder\": \"Grace\", \"priceCents\": 12000, \"lounge\": true }\n  ]\n}`);\n\nfor (const ticket\
+    \ of tickets) {\n  console.log(ticketLabel(ticket));\n  printBadge(ticket);\n}\nconsole.log(`Recette\
+    \ : ${(totalRevenueCents(tickets) / 100).toFixed(2)} €`);\n\nconst workshops: Workshop[] = [\n  {\
+    \ title: 'Sérigraphie', capacity: 12, sold: 9 },\n  { title: 'Fresque collective', sold: 4 },\n  {\
+    \ title: 'Atelier annulé', capacity: 0, sold: 0 },\n];\nfor (const workshop of workshops) {\n  console.log(`${workshop.title}\
+    \ : ${remainingSeats(workshop)} place(s)`);\n}\n```\n\nDemandes de l’équipe :\n\n1. **Bug** : l’atelier\
+    \ annulé, dont la jauge a été mise à 0, affiche 30 places\n   disponibles. Corrige et explique la\
+    \ cause.\n2. **Nouveau billet de groupe** : `{ kind: 'group'; holder: string; priceCents: number;\
+    \ size: number }`,\n   libellé « Groupe de 12 — Lycée Jean-Moulin », un badge\n   `[BADGE] Lycée Jean-Moulin\
+    \ (groupe de 12)`. Fais en sorte que l’ajout d’une future\n   sorte de billet provoque une erreur\
+    \ de `tsc` **dans toutes les fonctions** qui\n   traitent les sortes de billets.\n3. **Libellés**\
+    \ : le type de `kindLabels` doit obliger à fournir un libellé pour chaque\n   sorte de billet existante,\
+    \ sans répéter la liste des sortes.\n4. **Chargement sûr** : `loadTickets` doit renvoyer `{ tickets:\
+    \ Ticket[]; rejected: number }`,\n   ignorer et compter les billets invalides (sorte inconnue, propriété\
+    \ manquante ou du\n   mauvais type), et lever une erreur si le texte n’a pas de tableau `tickets`.\
+    \ Pas de\n   `any`, pas de `as`, pas de `!`.\n\nAdapte `main.ts` en conséquence et ajoute un billet\
+    \ de groupe et un billet invalide aux\ndonnées de test.\n"
+  deliverable: 'Colle `tickets.ts` et `main.ts` modifiés, la sortie de `npx tsc` et de `node main.ts`,
+
+    puis la liste des lignes modifiées ou ajoutées avec la raison de chaque changement. Indique
+
+    en particulier ce que `tsc` a signalé (ou non) juste après l’ajout de la variante `group`
+
+    à l’union, avant toute autre modification.
+
+    '
+  rubric:
+    passRatio: 0.7
+    criteria:
+    - id: bug-diagnosis
+      description: Explique la cause du bug de jauge et la corrige proprement.
+      maxScore: 2
+    - id: exhaustive-evolution
+      description: Ajoute la variante sans oubli et rend tous les switch exhaustifs.
+      maxScore: 3
+    - id: safe-loading
+      description: Remplace any par unknown et une garde de type complète.
+      maxScore: 3
+    - id: minimal-change
+      description: Fait évoluer le code existant de façon ciblée et vérifiée.
+      maxScore: 2
