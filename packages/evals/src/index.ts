@@ -84,15 +84,30 @@ export async function evaluate(
           (sum, criterion) => sum + criterion.meanAbsoluteError,
           0,
         ) / criteria.length,
+      expectedVerdict: expected.verdict,
+      /** Runs that validated the skill: above zero on a FAILED reference is a false pass. */
+      passedRuns: grades.filter((grade) => grade.verdict === 'PASSED').length,
       verdictAgreement:
         grades.filter((grade) => grade.verdict === expected.verdict).length /
         runs,
       stableVerdict: new Set(grades.map((grade) => grade.verdict)).size === 1,
     });
   }
+  const failing = cases.filter((item) => item.expectedVerdict === 'FAILED');
+  const passing = cases.filter((item) => item.expectedVerdict === 'PASSED');
   return {
     model: client.model,
     runs,
+    /** Validations granted where the reference fails: the costliest error. */
+    falsePasses: failing.reduce((sum, item) => sum + item.passedRuns, 0),
+    /** Refusals where the reference passes. */
+    falseFails: passing.reduce(
+      (sum, item) => sum + (runs - item.passedRuns),
+      0,
+    ),
+    verdictAccuracy:
+      cases.reduce((sum, item) => sum + item.verdictAgreement, 0) /
+      cases.length,
     cases,
     meanAbsoluteError:
       cases.reduce((sum, item) => sum + item.meanAbsoluteError, 0) /
