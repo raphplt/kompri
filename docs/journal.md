@@ -3,6 +3,25 @@
 Entrées les plus récentes en haut. Chaque entrée résume ce qui a été livré, les décisions
 prises sans attendre de validation et la suite prévue.
 
+## 26 novembre 2026 — Fiabilisation de l’examinateur
+
+- `main` avancé sur la branche de travail à la demande du porteur du projet.
+- Base de référence portée de 7 à 16 oraux : injection de consignes, réponses longues et
+  creuses, réponses courtes mais justes, absences de réponse, travail parfait mais incompris,
+  et oraux TypeScript, React, SQL et sécurité. Le rapport sépare désormais les faux positifs
+  (validation à tort, l’erreur la plus grave) des faux négatifs, et donne coût et durée.
+- Mesures réelles ([détails](evaluations.md)) : Claude Sonnet 5.5 48/48 verdicts conformes,
+  0 faux positif, 0,91 $ ; Claude Opus 5.5 95/96 sur deux passes, 0 faux positif, 2,39 $ par
+  passe. Décision : **Sonnet 5.5 en production** (aussi juste, 2,6 fois moins cher, 2,5 fois
+  plus rapide). Le mock, lui, accorde 18 validations à tort : il ne sert qu’à la plomberie.
+- Défauts trouvés par ces mesures et corrigés : l’API refusait de démarrer avec Claude sans
+  `ANTHROPIC_BASE_URL` (masqué par l’environnement de travail) ; Sonnet tronquait des notes
+  sous la limite de 16 000 jetons (effort désormais explicite, 32 000 jetons, flux) ; les
+  réponses refusées ou tronquées n’étaient pas comptées dans le budget ; une erreur passagère
+  du fournisseur faisait échouer une étape (2 nouvelles tentatives, jamais sur un refus ou un
+  dépassement de délai).
+- Prompt de revue critique externe ajouté (`docs/prompt-revue-critique.md`).
+
 ## 24 novembre 2026 — Examinateur réel, budget et nouveaux cours
 
 - Clé d’API Claude fournie par le porteur du projet ; elle est restée hors du dépôt. À

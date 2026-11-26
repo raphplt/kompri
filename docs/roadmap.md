@@ -66,8 +66,10 @@ Application :
 
 - ✅ Grilles par niveaux et notes d’examinateur exploitées par les prompts
 - ✅ Références d’évaluation par famille de défi (7 oraux, dont 4 réalistes)
-- ✅ Mesure avec un vrai modèle : Claude Opus 5.5, 7/7 verdicts conformes et stables
-  ([mesures](evaluations.md))
+- ✅ Mesure avec un vrai modèle sur 16 oraux de référence, dont des cas d’attaque :
+  Sonnet 5.5 retenu, 48/48 verdicts conformes, 0 faux positif ([mesures](evaluations.md))
+- ✅ Robustesse des appels : nouvelles tentatives, effort explicite, coût des réponses
+  inutilisables compté
 - ⏳ Relecture humaine des références
 - ✅ Plafond mensuel de dépense IA (20 $ en production, soit moins de 20 €)
 - ✅ Défenses contre l’injection de consignes et les réponses assistées : minuteur, collage
