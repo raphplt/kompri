@@ -56,6 +56,8 @@ export const presets: Record<Exclude<Provider, 'mock'>, Preset> = {
   anthropic: {
     protocol: 'anthropic',
     prefix: 'ANTHROPIC',
+    // The SDK's own default; only an explicit ANTHROPIC_BASE_URL overrides it.
+    baseUrl: 'https://api.anthropic.com',
     keyRequired: true,
   },
   ollama: {
@@ -165,6 +167,14 @@ export function createRegistry(
                 ...(config.baseUrl ? { baseUrl: config.baseUrl } : {}),
                 fallbacks:
                   env.ANTHROPIC_FALLBACKS === 'none' ? 'none' : 'default',
+                effort: parseEnvironment(
+                  z.object({
+                    ANTHROPIC_EFFORT: z
+                      .enum(['low', 'medium', 'high', 'xhigh', 'max'])
+                      .default('medium'),
+                  }),
+                  env,
+                ).ANTHROPIC_EFFORT,
               },
               transport,
             )

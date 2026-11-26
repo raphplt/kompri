@@ -1,4 +1,5 @@
 import { toStrictJsonSchema } from './schema.ts';
+import { UnusableCompletionError } from './types.ts';
 import type {
   Adapter,
   CallMetric,
@@ -99,6 +100,10 @@ export function createClient(options: {
       const output = parse(result.text);
       status = 'ok';
       return output;
+    } catch (error) {
+      // A refused or truncated completion is still billed.
+      if (error instanceof UnusableCompletionError) tokens = error.tokens;
+      throw error;
     } finally {
       report(start, tokens, status);
     }

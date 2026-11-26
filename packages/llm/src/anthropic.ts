@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
+import { UnusableCompletionError } from './types.ts';
 import type { Adapter, Request, TokenUsage } from './types.ts';
 
 export interface AnthropicConfig {
@@ -8,7 +9,10 @@ export interface AnthropicConfig {
   timeoutMs?: number;
   /** Server-side fallback on a policy refusal; "default" lets the API choose. */
   fallbacks?: 'default' | 'none';
+  /** Output ceiling, thinking included (default 32 000). */
   maxTokens?: number;
+  /** Thinking depth; set explicitly because defaults differ between models. */
+  effort?: 'low' | 'medium' | 'high' | 'xhigh' | 'max';
 }
 
 const fallbackBeta = 'server-side-fallback-2026-07-01';
@@ -55,7 +59,7 @@ export function createAnthropicAdapter(
     const { system, messages } = split(request);
     return {
       model: config.model,
-      max_tokens: config.maxTokens ?? 16_000,
+      max_tokens: config.maxTokens ?? 32_000,
       ...(system ? { system } : {}),
       messages,
       ...(config.fallbacks === 'none'
@@ -65,21 +69,29 @@ export function createAnthropicAdapter(
   };
   return {
     async complete(request, jsonSchema) {
-      const message = await client.beta.messages.create({
-        ...base(request),
-        ...(jsonSchema
-          ? {
-              output_config: {
-                format: { type: 'json_schema', schema: jsonSchema },
-              },
-            }
-          : {}),
-      });
-      // A refusal or a truncated answer is not a usable completion.
+      // Streamed so that a large output ceiling never hits an HTTP timeout.
+      const message = await client.beta.messages
+        .stream({
+          ...base(request),
+          output_config: {
+            effort: config.effort ?? 'medium',
+            ...(jsonSchema
+              ? { format: { type: 'json_schema', schema: jsonSchema } }
+              : {}),
+          },
+        })
+        .finalMessage();
+      // A refusal or a truncated answer is billed but not usable.
       if (message.stop_reason === 'refusal')
-        throw new Error('Provider refused the request');
+        throw new UnusableCompletionError(
+          'Provider refused the request',
+          tokens(message.usage),
+        );
       if (message.stop_reason === 'max_tokens')
-        throw new Error('Provider output was truncated');
+        throw new UnusableCompletionError(
+          'Provider output was truncated',
+          tokens(message.usage),
+        );
       const text = message.content
         .map((block) => (block.type === 'text' ? block.text : ''))
         .join('');
@@ -95,7 +107,10 @@ export function createAnthropicAdapter(
           yield { text: event.delta.text };
       const message = await stream.finalMessage();
       if (message.stop_reason === 'refusal')
-        throw new Error('Provider refused the request');
+        throw new UnusableCompletionError(
+          'Provider refused the request',
+          tokens(message.usage),
+        );
       yield { tokens: tokens(message.usage) };
     },
   };

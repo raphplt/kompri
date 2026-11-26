@@ -4,7 +4,9 @@ import {
   createAnthropicAdapter,
   createRegistry,
   toStrictJsonSchema,
+  UnusableCompletionError,
 } from './index.ts';
+import type { CallMetric } from './index.ts';
 
 const mockEnv = {
   LLM_EXAMINER_PROVIDER: 'mock',
@@ -49,20 +51,61 @@ const chatResponse = () =>
     { headers: { 'Content-Type': 'application/json' } },
   );
 
-const claudeMessage = (overrides: Record<string, unknown> = {}) =>
+/** A complete Claude answer, served as the event stream the SDK reads. */
+const claudeMessage = ({
+  stop_reason = 'end_turn',
+  text = '{"answer":42}',
+}: { stop_reason?: string; text?: string } = {}) =>
   new Response(
-    JSON.stringify({
-      id: 'msg_test',
-      type: 'message',
-      role: 'assistant',
-      model: 'claude-opus-5-5',
-      content: [{ type: 'text', text: '{"answer":42}' }],
-      stop_reason: 'end_turn',
-      stop_sequence: null,
-      usage: { input_tokens: 100, output_tokens: 20 },
-      ...overrides,
-    }),
-    { headers: { 'Content-Type': 'application/json' } },
+    [
+      [
+        'message_start',
+        {
+          type: 'message_start',
+          message: {
+            id: 'msg_test',
+            type: 'message',
+            role: 'assistant',
+            model: 'claude-opus-5-5',
+            content: [],
+            stop_reason: null,
+            stop_sequence: null,
+            usage: { input_tokens: 100, output_tokens: 0 },
+          },
+        },
+      ],
+      [
+        'content_block_start',
+        {
+          type: 'content_block_start',
+          index: 0,
+          content_block: { type: 'text', text: '' },
+        },
+      ],
+      [
+        'content_block_delta',
+        {
+          type: 'content_block_delta',
+          index: 0,
+          delta: { type: 'text_delta', text },
+        },
+      ],
+      ['content_block_stop', { type: 'content_block_stop', index: 0 }],
+      [
+        'message_delta',
+        {
+          type: 'message_delta',
+          delta: { stop_reason, stop_sequence: null },
+          usage: { output_tokens: 20 },
+        },
+      ],
+      ['message_stop', { type: 'message_stop' }],
+    ]
+      .map(
+        ([event, data]) => `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`,
+      )
+      .join(''),
+    { headers: { 'Content-Type': 'text/event-stream' } },
   );
 
 describe('strict JSON schema', () => {
@@ -193,22 +236,62 @@ describe('Anthropic adapter', () => {
       system: 'Rules',
       messages: [{ role: 'user', content: '{"submission":"x"}' }],
       fallbacks: 'default',
+      max_tokens: 32_000,
+      stream: true,
       output_config: {
+        effort: 'medium',
         format: { type: 'json_schema', schema: { type: 'object' } },
       },
     });
     expect(call.body).not.toHaveProperty('temperature');
+    expect(call.body).not.toHaveProperty('thinking');
   });
 
-  it('treats refusals and truncation as failures', async () => {
+  it('treats refusals and truncation as failures that keep their usage', async () => {
     for (const stop_reason of ['refusal', 'max_tokens']) {
       const { transport } = capture(() => claudeMessage({ stop_reason }));
-      await expect(
-        createAnthropicAdapter({ apiKey: 's', model: 'm' }, transport).complete(
-          request,
-        ),
-      ).rejects.toThrow();
+      const failure = await createAnthropicAdapter(
+        { apiKey: 's', model: 'm' },
+        transport,
+      )
+        .complete(request)
+        .catch((error: unknown) => error);
+      expect(failure).toBeInstanceOf(UnusableCompletionError);
+      expect((failure as UnusableCompletionError).tokens).toEqual({
+        inputTokens: 100,
+        outputTokens: 20,
+      });
     }
+  });
+
+  it('counts the spend of a truncated grading and does not retry it', async () => {
+    const { calls, transport } = capture(() =>
+      claudeMessage({ stop_reason: 'max_tokens' }),
+    );
+    const metrics: CallMetric[] = [];
+    const client = createRegistry(
+      {
+        ...mockEnv,
+        LLM_EXAMINER_PROVIDER: 'anthropic',
+        LLM_EXAMINER_MODEL: 'claude-sonnet-5-5',
+        LLM_EXAMINER_INPUT_USD_PER_MILLION: '2',
+        LLM_EXAMINER_OUTPUT_USD_PER_MILLION: '10',
+        ANTHROPIC_API_KEY: 'secret',
+        ANTHROPIC_EFFORT: 'low',
+      },
+      (m) => metrics.push(m),
+      undefined,
+      transport,
+    ).forUsage('examiner');
+    await expect(client.generateText(request)).rejects.toThrow(
+      'LLM call failed',
+    );
+    expect(calls).toHaveLength(1);
+    expect(calls[0]!.body.output_config).toEqual({ effort: 'low' });
+    expect(metrics[0]).toMatchObject({
+      status: 'error',
+      estimatedCostUsd: 0.0004,
+    });
   });
 
   it('streams text deltas and final usage', async () => {

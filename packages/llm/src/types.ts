@@ -44,3 +44,17 @@ export type MetricLogger = (metric: CallMetric) => void;
 export interface SpeechToText {}
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface TextToSpeech {}
+
+/**
+ * A completion the provider produced and billed but that cannot be used
+ * (refused or truncated). It carries the token usage so the spend stays right.
+ */
+export class UnusableCompletionError extends Error {
+  constructor(
+    message: string,
+    readonly tokens: TokenUsage | null,
+  ) {
+    super(message);
+    this.name = 'UnusableCompletionError';
+  }
+}
