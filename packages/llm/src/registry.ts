@@ -106,6 +106,12 @@ export function createRegistry(
       }),
       env,
     ).LLM_TIMEOUT_SECONDS * 1000;
+  const maxRetries = parseEnvironment(
+    z.object({
+      LLM_MAX_RETRIES: z.coerce.number().int().min(0).max(5).default(2),
+    }),
+    env,
+  ).LLM_MAX_RETRIES;
   const entries = (['examiner', 'tutor', 'content-generation'] as const).map(
     (usage) => {
       const prefix = `LLM_${usage.replaceAll('-', '_').toUpperCase()}`;
@@ -184,6 +190,7 @@ export function createRegistry(
           adapter,
           inputRate: config.inputRate,
           outputRate: config.outputRate,
+          maxRetries,
         }),
       ] as const;
     },

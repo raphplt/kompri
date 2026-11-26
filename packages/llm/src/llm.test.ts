@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
-import { createClient, createMockAdapter, createRegistry } from './index.ts';
+import {
+  createClient,
+  createMockAdapter,
+  createRegistry,
+  isRetryable,
+} from './index.ts';
 import type { CallMetric } from './index.ts';
 import { createMistralAdapter } from './openai-compatible.ts';
 const request = {
@@ -58,6 +63,60 @@ describe('LLM contracts', () => {
       }),
     ).toThrow('disabled');
   });
+  it('retries transient failures of non-streaming calls, never refusals', async () => {
+    const metrics: CallMetric[] = [];
+    const waits: number[] = [];
+    let calls = 0;
+    const failures = [
+      Object.assign(new Error('Overloaded'), { status: 529 }),
+      new Error('LLM provider HTTP 503'),
+    ];
+    const client = createClient({
+      adapter: {
+        ...createMockAdapter(),
+        complete: async () => {
+          const failure = failures[calls++];
+          if (failure) throw failure;
+          return { text: 'ok', tokens: { inputTokens: 1, outputTokens: 1 } };
+        },
+      },
+      usage: 'examiner',
+      model: 'fake',
+      inputRate: 1,
+      outputRate: 1,
+      log: (m) => metrics.push(m),
+      maxRetries: 2,
+      sleep: async (ms) => {
+        waits.push(ms);
+      },
+    });
+    expect(await client.generateText(request)).toBe('ok');
+    expect(metrics.map((m) => m.status)).toEqual(['error', 'error', 'ok']);
+    expect(waits).toEqual([1000, 3000]);
+
+    calls = 0;
+    failures.splice(0, 2, new Error('Provider refused the request'));
+    await expect(client.generateText(request)).rejects.toThrow(
+      'LLM call failed',
+    );
+    expect(calls).toBe(1);
+  });
+
+  it('classifies retryable provider errors', () => {
+    const status = (code: number) =>
+      Object.assign(new Error('x'), { status: code });
+    expect(isRetryable(status(429))).toBe(true);
+    expect(isRetryable(status(500))).toBe(true);
+    expect(isRetryable(new Error('LLM provider HTTP 502'))).toBe(true);
+    expect(isRetryable(new SyntaxError('Unexpected token'))).toBe(true);
+    expect(isRetryable(status(400))).toBe(false);
+    expect(isRetryable(new Error('LLM provider HTTP 401'))).toBe(false);
+    expect(isRetryable(new Error('Provider output was truncated'))).toBe(false);
+    expect(
+      isRetryable(Object.assign(new Error('t'), { name: 'TimeoutError' })),
+    ).toBe(false);
+  });
+
   it('redacts provider failures', async () => {
     const metrics: CallMetric[] = [];
     const client = createClient({

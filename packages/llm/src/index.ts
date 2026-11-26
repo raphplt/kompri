@@ -1,5 +1,5 @@
 export * from './types.ts';
-export { createClient } from './client.ts';
+export { createClient, isRetryable } from './client.ts';
 export { createMockAdapter } from './mock.ts';
 export type { MockResponder } from './mock.ts';
 export { createRegistry, presets, providers } from './registry.ts';
