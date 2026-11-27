@@ -6,6 +6,25 @@ par le modèle configuré et compare le résultat aux notes attendues. Les réf�
 Ces mesures disent donc si le modèle s’accorde avec ces références, pas s’il est fiable au
 sens d’une évaluation humaine.
 
+## 27 novembre 2026 — Génération des questions (Sonnet 5.5)
+
+`pnpm evals:questions` (appel réel, jamais en CI) prépare un oral sur 8 références des quatre
+familles, demande la relance qui suit la première réponse de la référence, et affiche questions,
+délais et passages repris des notes d’examinateur. La réponse de la référence ne correspond pas
+à la question générée : c’est volontairement un cas de réponse hors sujet.
+
+- Délais : préparation 2,5 à 4,8 s, relance 1,6 à 3,7 s. Coût : environ 0,2 $ les 8 oraux.
+- Qualité : questions précises, ancrées dans le code soumis (lignes, variables), couvrant la
+  grille. Aucune ne reprend une réponse des notes d’examinateur ; les rares reprises de plus de
+  40 caractères sont des idées de questions, que les notes proposent à cet effet.
+- Deux défauts trouvés et corrigés dans les consignes :
+  - après une réponse hors sujet, la relance commentait la réponse (« Ta dernière réponse
+    portait sur… ») et, une fois, reposait la question précédente au lieu de la prévue, ce qui
+    faisait perdre un critère ; après correction, les 8 relances posent la question prévue ;
+  - les questions empilaient souvent trois ou quatre demandes, trop pour quatre minutes ;
+    avec une consigne d’intention unique et un contre-exemple, il reste 3 questions sur 24 qui
+    ajoutent une demande sans lien.
+
 ## 26 novembre 2026 — 16 références, Sonnet 5.5 contre Opus 5.5
 
 Base élargie à 16 oraux (7 initiaux et 9 nouveaux) : injection de consignes, réponses longues

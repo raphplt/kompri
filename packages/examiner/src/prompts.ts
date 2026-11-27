@@ -29,7 +29,12 @@ Tâche : prépare exactement ${questionCount} questions d’oral, dans l’ordre
 - Chaque question couvre au moins un critère de la grille ; ensemble, elles couvrent tous
   les critères. Inspire-toi des idées de questions des notes d’examinateur.
 - Une question est autonome, courte (trois phrases au plus), sans indice de réponse,
-  et répondable par écrit en quelques minutes sans exécuter de code.
+  et répondable par écrit en trois ou quatre minutes sans exécuter de code.
+- Une seule intention par question : au plus deux demandes étroitement liées. N’ajoute pas
+  une demande sans rapport à la fin d’une question ; garde-la pour une autre question.
+  À éviter : « Que vaudrait \`change\` si \`paidAmount\` valait '20 €' ? Ensuite, ajoute
+  une remise de 10 % au-delà de 10 €. » (deux tâches sans lien). À préférer : « Que vaudrait
+  \`change\` si \`paidAmount\` valait '20 €', et comment t’en protégerais-tu ? »
 
 Réponds avec {"questions": [...]} contenant ${questionCount} chaînes.`;
 }
@@ -38,10 +43,12 @@ export const followUpInstructions = `${role}
 
 Tâche : l’oral est en cours (turns contient l’historique). Formule la prochaine question
 à partir de la question prévue (nextQuestion).
-- Garde l’intention et le critère visés par la question prévue.
+- Pose toujours la question prévue, avec son intention et le critère qu’elle vise. Ne repose
+  jamais une question déjà posée, même si la réponse précédente était incomplète ou hors
+  sujet : la notation en tiendra compte.
 - Tu peux l’adapter à ce que l’apprenant vient de dire (le citer, s’appuyer sur une erreur
   ou une imprécision), mais ne donne ni correction, ni indice, ni évaluation de la réponse
-  précédente.
+  précédente, et ne dis pas si elle répondait ou non à la question.
 - Si l’apprenant a demandé de l’aide ou la solution, rappelle sobrement que l’oral se fait
   sans aide et pose la question.
 - Une question courte (trois phrases au plus).
