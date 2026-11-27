@@ -50,7 +50,12 @@ import { assertBudget } from './spend.ts';
 
 /** Network latency allowance after the displayed deadline. */
 export const graceSeconds = 15;
-export const maxGradingTries = 3;
+/** Grading calls per grading request. */
+export const maxGradingTries = 2;
+/** Grading requests per oral; beyond, only a human review can decide. */
+export const maxGradingRequests = 3;
+/** Upper bound of one model step (call, retries); a crashed step frees the oral after it. */
+export const leaseSeconds = 300;
 const planSchema = z.object({ questions: z.array(z.string()).min(1) });
 const uuidSchema = z.uuid();
 const startOralSchema = z
@@ -258,19 +263,56 @@ export class LearningService {
           'Validate the prerequisite skills or take a placement oral',
         );
     }
-    const active = await this.db.oralSession.findFirst({
-      where: { userId: user.id, status: 'ACTIVE' },
-      select: { id: true },
-    });
-    if (active)
-      throw conflict('oral_in_progress', `Oral ${active.id} is in progress`);
-    await this.assertQuota(this.db, user.id);
-
     const snapshot = attempt.challengeSnapshot as Record<string, unknown>;
     const challenge = challengeSchema.parse(snapshot);
     const rubric = rubricSchema.parse(snapshot.rubric);
     const startedAt = this.now();
-    await assertBudget(this.db, this.settings, startedAt);
+    // Reserve the oral before any paid call: one oral per learner, quota and
+    // budget are checked and consumed under locks, then the model prepares it.
+    let sessionId: string;
+    try {
+      sessionId = await this.db.$transaction(async (tx) => {
+        await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${user.id}))`;
+        await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext('kompri:llm-budget'))`;
+        // A preparation interrupted by a crash leaves an oral without plan.
+        await tx.$executeRaw`DELETE FROM "OralSession" WHERE "userId" = ${user.id} AND "status" = 'ACTIVE' AND "plan" IS NULL AND "busyUntil" < ${startedAt}`;
+        const active = await tx.oralSession.findFirst({
+          where: { userId: user.id, status: 'ACTIVE' },
+          select: { id: true },
+        });
+        if (active)
+          throw conflict(
+            'oral_in_progress',
+            `Oral ${active.id} is in progress`,
+          );
+        await this.assertQuota(tx, user.id);
+        await assertBudget(tx, this.settings, startedAt, 'oral');
+        const created = await tx.oralSession.create({
+          data: {
+            userId: user.id,
+            attemptId: attempt.id,
+            model: this.examiner.client.model,
+            provider: this.examiner.provider,
+            rubricSnapshot: rubric,
+            status: 'ACTIVE',
+            startedAt,
+            busyUntil: new Date(startedAt.getTime() + leaseSeconds * 1000),
+          },
+        });
+        await tx.oralUsage.create({
+          data: {
+            userId: user.id,
+            sessionId: created.id,
+            consumedAt: startedAt,
+          },
+        });
+        return created.id;
+      });
+    } catch (error) {
+      if (isUniqueViolation(error))
+        throw conflict('oral_in_progress', 'Another oral is in progress');
+      throw error;
+    }
     let state: OralState;
     try {
       state = await prepareOral(
@@ -284,54 +326,60 @@ export class LearningService {
         this.examiner.client,
       );
     } catch {
+      // Nothing was asked: the reservation and its quota are given back.
+      await this.db.oralSession
+        .delete({ where: { id: sessionId } })
+        .catch(() => undefined);
       throw new ApiException(
         HttpStatus.SERVICE_UNAVAILABLE,
         'examiner_unavailable',
         'The examiner could not prepare the oral, please retry',
       );
     }
-    try {
-      const session = await this.db.$transaction(async (tx) => {
-        // Serialize quota reservations of one learner across concurrent requests.
-        await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${user.id}))`;
-        await this.assertQuota(tx, user.id);
-        const created = await tx.oralSession.create({
-          data: {
-            userId: user.id,
-            attemptId: attempt.id,
-            model: state.model,
-            provider: this.examiner.provider,
-            rubricSnapshot: rubric,
-            plan: { questions: state.questions },
-            status: 'ACTIVE',
-            startedAt,
-            questionDeadline: this.deadlineFrom(startedAt),
-            turns: {
-              create: {
-                sequence: 0,
-                speaker: 'EXAMINER',
-                text: state.turns[0]!.text,
-                model: state.model,
-                createdAt: startedAt,
-              },
-            },
-          },
-        });
-        await tx.oralUsage.create({
-          data: {
-            userId: user.id,
-            sessionId: created.id,
-            consumedAt: startedAt,
-          },
-        });
-        return created;
-      });
-      return this.view(user, session.id);
-    } catch (error) {
-      if (isUniqueViolation(error))
-        throw conflict('oral_in_progress', 'Another oral is in progress');
-      throw error;
-    }
+    // The answer time starts once the question exists, not before the call.
+    const askedAt = this.now();
+    await this.db.$transaction([
+      this.db.oralSession.update({
+        where: { id: sessionId },
+        data: {
+          plan: { questions: state.questions },
+          questionDeadline: this.deadlineFrom(askedAt),
+          busyUntil: null,
+        },
+      }),
+      this.db.oralTurn.create({
+        data: {
+          sessionId,
+          sequence: 0,
+          speaker: 'EXAMINER',
+          text: state.turns[0]!.text,
+          model: this.examiner.client.model,
+          createdAt: askedAt,
+        },
+      }),
+    ]);
+    return this.view(user, sessionId);
+  }
+
+  /** Takes the oral's lease or refuses: one model step at a time per oral. */
+  private async acquire(sessionId: string, userId: string) {
+    const now = this.now();
+    const { count } = await this.db.oralSession.updateMany({
+      where: {
+        id: sessionId,
+        userId,
+        OR: [{ busyUntil: null }, { busyUntil: { lt: now } }],
+      },
+      data: { busyUntil: new Date(now.getTime() + leaseSeconds * 1000) },
+    });
+    if (!count)
+      throw conflict('oral_busy', 'This oral is already being processed');
+  }
+
+  private async release(sessionId: string) {
+    await this.db.oralSession
+      .update({ where: { id: sessionId }, data: { busyUntil: null } })
+      .catch(() => undefined);
   }
 
   private async assertQuota(
@@ -394,6 +442,8 @@ export class LearningService {
 
   async view(user: AuthenticatedUser, rawId: string) {
     const session = await this.loadSession(user, rawId);
+    if (!session.plan)
+      throw conflict('oral_preparing', 'The examiner is preparing this oral');
     const snapshot = challengeSchema.parse(session.attempt.challengeSnapshot);
     const rubric = rubricSchema.parse(session.rubricSnapshot);
     const questions = planSchema.parse(session.plan).questions;
@@ -448,40 +498,50 @@ export class LearningService {
 
   async answer(user: AuthenticatedUser, rawId: string, input: unknown) {
     const { text, signals } = parseInput(answerRequestSchema, input);
-    const session = await this.loadSession(user, rawId);
-    if (session.status !== 'ACTIVE')
+    const initial = await this.loadSession(user, rawId);
+    if (initial.status !== 'ACTIVE' || !initial.plan)
       throw conflict('oral_closed', 'This oral is no longer in progress');
-    const now = this.now();
-    const late =
-      !session.questionDeadline ||
-      now.getTime() > session.questionDeadline.getTime() + graceSeconds * 1000;
-    const state = this.toState(session);
-    let next: OralState;
+    await this.acquire(initial.id, user.id);
     try {
-      next =
-        late || !text.trim()
-          ? await this.skipQuestion(state, now)
-          : await answerOral(
-              state,
-              text,
-              now.toISOString(),
-              this.examiner.client,
-            );
-    } catch (error) {
-      if (error instanceof Error && error.message.includes('switch model'))
-        throw conflict(
-          'examiner_changed',
-          'The examiner model changed during this oral',
+      // Reloaded under the lease: a concurrent answer may have moved the oral.
+      const session = await this.loadSession(user, rawId);
+      if (session.status !== 'ACTIVE')
+        throw conflict('oral_closed', 'This oral is no longer in progress');
+      const now = this.now();
+      const state = this.toState(session);
+      if (state.status === 'ready') {
+        // Every answer is in but grading did not finish (crash): grade now.
+        await this.grade(session.id, state, now);
+        return this.view(user, session.id);
+      }
+      const late =
+        !session.questionDeadline ||
+        now.getTime() >
+          session.questionDeadline.getTime() + graceSeconds * 1000;
+      let next: OralState;
+      try {
+        next =
+          late || !text.trim()
+            ? await this.skipQuestion(state, now)
+            : await answerOral(
+                state,
+                text,
+                now.toISOString(),
+                this.examiner.client,
+              );
+      } catch {
+        throw new ApiException(
+          HttpStatus.SERVICE_UNAVAILABLE,
+          'examiner_unavailable',
+          'The examiner is unavailable, please resend your answer',
         );
-      throw new ApiException(
-        HttpStatus.SERVICE_UNAVAILABLE,
-        'examiner_unavailable',
-        'The examiner is unavailable, please resend your answer',
-      );
+      }
+      await this.persistTurns(session, next, signals);
+      if (next.status === 'ready') await this.grade(session.id, next, now);
+    } finally {
+      await this.release(initial.id);
     }
-    await this.persistTurns(session, next, now, signals);
-    if (next.status === 'ready') await this.grade(session.id, next, now);
-    return this.view(user, session.id);
+    return this.view(user, initial.id);
   }
 
   /** An empty or late answer is recorded as unanswered and the oral moves on. */
@@ -503,9 +563,10 @@ export class LearningService {
   private async persistTurns(
     session: SessionWithContext,
     next: OralState,
-    now: Date,
     signals?: AnswerSignals,
   ) {
+    // The next answer time starts now, after the model call.
+    const askedAt = this.now();
     const added = next.turns.slice(session.turns.length);
     try {
       await this.db.$transaction(async (tx) => {
@@ -515,7 +576,8 @@ export class LearningService {
             sequence: session.turns.length + index,
             speaker: turn.speaker === 'examiner' ? 'EXAMINER' : 'LEARNER',
             text: turn.text,
-            model: turn.speaker === 'examiner' ? session.model : null,
+            model:
+              turn.speaker === 'examiner' ? this.examiner.client.model : null,
             createdAt: new Date(turn.at),
             ...(turn.speaker === 'learner' && signals ? { signals } : {}),
           })),
@@ -524,7 +586,7 @@ export class LearningService {
           where: { id: session.id },
           data: {
             questionDeadline:
-              next.status === 'active' ? this.deadlineFrom(now) : null,
+              next.status === 'active' ? this.deadlineFrom(askedAt) : null,
           },
         });
       });
@@ -551,8 +613,8 @@ export class LearningService {
       include: { attempt: { select: { challengeSnapshot: true } } },
     });
     if (!grade) {
-      await this.db.oralSession.update({
-        where: { id: sessionId },
+      await this.db.oralSession.updateMany({
+        where: { id: sessionId, status: { in: ['ACTIVE', 'GRADING_FAILED'] } },
         data: {
           status: 'GRADING_FAILED',
           gradingAttempts: { increment: tries },
@@ -566,8 +628,9 @@ export class LearningService {
       session.attempt.challengeSnapshot,
     ).skillId;
     await this.db.$transaction(async (tx) => {
-      await tx.oralSession.update({
-        where: { id: sessionId },
+      // Only an oral still waiting for its grade can receive one.
+      const { count } = await tx.oralSession.updateMany({
+        where: { id: sessionId, status: { in: ['ACTIVE', 'GRADING_FAILED'] } },
         data: {
           status: 'COMPLETED',
           verdict: grade.verdict,
@@ -578,7 +641,7 @@ export class LearningService {
           endedAt: session.endedAt ?? now,
         },
       });
-      if (grade.verdict === 'PASSED')
+      if (count && grade.verdict === 'PASSED')
         await tx.validation.create({
           data: {
             userId: session.userId,
@@ -596,25 +659,59 @@ export class LearningService {
   }
 
   async abandon(user: AuthenticatedUser, rawId: string) {
-    const session = await this.loadSession(user, rawId);
-    if (session.status !== 'ACTIVE')
+    const initial = await this.loadSession(user, rawId);
+    if (initial.status !== 'ACTIVE')
       throw conflict('oral_closed', 'This oral is no longer in progress');
-    const now = this.now();
-    const next = abandonOral(this.toState(session), now.toISOString());
-    await this.persistTurns(session, next, now);
-    await this.grade(session.id, next, now);
-    return this.view(user, session.id);
+    if (!initial.plan)
+      throw conflict('oral_preparing', 'The examiner is preparing this oral');
+    await this.acquire(initial.id, user.id);
+    try {
+      const session = await this.loadSession(user, rawId);
+      if (session.status !== 'ACTIVE')
+        throw conflict('oral_closed', 'This oral is no longer in progress');
+      const now = this.now();
+      const state = this.toState(session);
+      // Already complete (grading interrupted): grade as is.
+      const next =
+        state.status === 'ready'
+          ? state
+          : abandonOral(state, now.toISOString());
+      if (next !== state) await this.persistTurns(session, next);
+      await this.grade(session.id, next, now);
+    } finally {
+      await this.release(initial.id);
+    }
+    return this.view(user, initial.id);
   }
 
   async retryGrading(user: AuthenticatedUser, rawId: string) {
-    const session = await this.loadSession(user, rawId);
-    if (session.status !== 'GRADING_FAILED' || !session.plan)
+    const initial = await this.loadSession(user, rawId);
+    const waiting =
+      initial.status === 'GRADING_FAILED' ||
+      (initial.status === 'ACTIVE' &&
+        !!initial.plan &&
+        this.toState(initial).status === 'ready');
+    if (!waiting || !initial.plan)
       throw conflict('not_retryable', 'This oral does not need grading');
-    const state = this.toState(session);
-    if (state.status !== 'ready')
-      throw conflict('not_retryable', 'This oral is incomplete');
-    await this.grade(session.id, state, this.now());
-    return this.view(user, session.id);
+    if (initial.gradingAttempts >= maxGradingRequests * maxGradingTries)
+      throw conflict(
+        'grading_limit',
+        'Grading failed too often; ask for a human review',
+      );
+    await this.acquire(initial.id, user.id);
+    try {
+      const session = await this.loadSession(user, rawId);
+      const state = this.toState(session);
+      if (
+        state.status !== 'ready' ||
+        !['GRADING_FAILED', 'ACTIVE'].includes(session.status)
+      )
+        throw conflict('not_retryable', 'This oral does not need grading');
+      await this.grade(session.id, state, this.now());
+    } finally {
+      await this.release(initial.id);
+    }
+    return this.view(user, initial.id);
   }
 }
 

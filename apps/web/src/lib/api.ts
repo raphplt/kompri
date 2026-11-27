@@ -27,7 +27,9 @@ export async function api<T>(
     response = await fetch(`${baseUrl()}${path}`, {
       method: options.method ?? (options.body === undefined ? 'GET' : 'POST'),
       cache: 'no-store',
-      signal: AbortSignal.timeout(90_000),
+      // Above the longest oral step: a follow-up, then two gradings of at most
+      // LLM_TIMEOUT_SECONDS (60 s recommended) each.
+      signal: AbortSignal.timeout(180_000),
       headers: {
         ...(options.body === undefined
           ? {}

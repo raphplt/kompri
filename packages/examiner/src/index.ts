@@ -162,8 +162,6 @@ export async function answerOral(
   client: LlmClient,
 ): Promise<OralState> {
   if (state.status !== 'active') throw new Error('Oral is already complete');
-  if (client.model !== state.model)
-    throw new Error('Cannot switch model during an oral');
   const turn = turnSchema.parse({ speaker: 'learner', text: answer, at });
   if (Date.parse(turn.at) < Date.parse(state.turns.at(-1)!.at))
     throw new Error('Turn timestamp precedes previous turn');
@@ -209,8 +207,6 @@ export async function gradeOral(
 ): Promise<Grade> {
   if (state.status !== 'ready')
     throw new Error('Cannot grade an unfinished oral');
-  if (client.model !== state.model)
-    throw new Error('Cannot switch model during an oral');
   const output = await client.generateStructured(
     request('grade', gradeInstructions, {
       challenge: state.challenge,

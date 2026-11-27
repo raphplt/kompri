@@ -51,6 +51,8 @@ export const apiEnvSchema = databaseEnvSchema.extend({
     .positive()
     .max(1_000_000)
     .optional(),
+  /** Spend reserved for each oral in progress when checking the budget. */
+  LLM_ORAL_RESERVE_USD: z.coerce.number().positive().max(100).default(0.1),
   INACTIVE_ACCOUNT_DAYS: z.coerce.number().int().min(60).max(3650).optional(),
   MAIL_TRANSPORT: z.enum(['log', 'smtp']).default('log'),
   SMTP_URL: z

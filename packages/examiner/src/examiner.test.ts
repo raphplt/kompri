@@ -134,6 +134,24 @@ it('asks the model for exactly one score per criterion, keyed by id', async () =
   ).toBe(false);
 });
 
+it('continues and grades an oral after the examiner model changed', async () => {
+  const content = await loadContent();
+  const first = createExaminerMock();
+  const second: LlmClient = { ...createExaminerMock(), model: 'other-model' };
+  let state = await prepareOral(
+    { ...pick(content), submission: 'a + b', at: '2026-01-01T10:00:00Z' },
+    first,
+  );
+  for (let i = 0; i < state.questions.length; i++)
+    state = await answerOral(
+      state,
+      'Je ne sais pas.',
+      '2026-01-01T10:01:00Z',
+      second,
+    );
+  expect((await gradeOral(state, second)).verdict).toBe('FAILED');
+});
+
 it('compares timestamps by instant, including fractional seconds', async () => {
   const content = await loadContent();
   const client = createExaminerMock();

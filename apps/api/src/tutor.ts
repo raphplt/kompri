@@ -115,7 +115,7 @@ export class TutorService {
         })
       : null;
     if (body.lessonSlug && !lesson) throw notFound('Lesson');
-    await assertBudget(this.db, this.settings, this.now());
+    await assertBudget(this.db, this.settings, this.now(), 'tutor');
     await this.db.tutorUsage.create({
       data: { userId: user.id, consumedAt: this.now() },
     });

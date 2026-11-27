@@ -38,26 +38,37 @@ export function spendLogger(
   };
 }
 
-export async function monthlySpend(db: PrismaClient, now: Date) {
+type SpendDb = Pick<PrismaClient, 'llmMonthlySpend' | 'oralSession'>;
+
+export async function monthlySpend(db: SpendDb, now: Date) {
   const row = await db.llmMonthlySpend.findUnique({
     where: { month: monthOf(now) },
   });
   return row ? Number(row.costUsd) : 0;
 }
 
+/** Estimated cost reserved for one tutor message. */
+export const tutorReserveUsd = 0.01;
+
 /**
- * Refuses new model work once the month's budget is spent. It guards the start
- * of an oral and each tutor message: an oral already started always finishes,
- * so the overshoot is bounded by the orals in progress.
+ * Refuses new model work when the month's spend, plus a reserve for every
+ * oral in progress and for the new work, would exceed the budget. Orals in
+ * progress always finish: their reserve keeps room for them. Starting an oral
+ * calls it under a global lock, in the transaction that creates the oral, so
+ * concurrent starts cannot all pass on the same remaining budget.
  */
 export async function assertBudget(
-  db: PrismaClient,
-  settings: Pick<Settings, 'LLM_MONTHLY_BUDGET_USD'>,
+  db: SpendDb,
+  settings: Pick<Settings, 'LLM_MONTHLY_BUDGET_USD' | 'LLM_ORAL_RESERVE_USD'>,
   now: Date,
+  work: 'oral' | 'tutor',
 ) {
   const budget = settings.LLM_MONTHLY_BUDGET_USD;
   if (budget === undefined) return;
-  if ((await monthlySpend(db, now)) >= budget)
+  const reserve = settings.LLM_ORAL_RESERVE_USD;
+  const active = await db.oralSession.count({ where: { status: 'ACTIVE' } });
+  const committed = (await monthlySpend(db, now)) + active * reserve;
+  if (committed + (work === 'oral' ? reserve : tutorReserveUsd) > budget)
     throw new ApiException(
       HttpStatus.SERVICE_UNAVAILABLE,
       'llm_budget_exhausted',

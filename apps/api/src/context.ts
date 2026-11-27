@@ -23,6 +23,7 @@ export type Settings = Pick<
   | 'REVIEW_WINDOW_DAYS'
   | 'REMINDER_DAYS'
   | 'LLM_MONTHLY_BUDGET_USD'
+  | 'LLM_ORAL_RESERVE_USD'
 >;
 export const defaultSettings: Settings = {
   ORAL_QUESTION_COUNT: 3,
@@ -37,6 +38,7 @@ export const defaultSettings: Settings = {
   REQUIRE_EMAIL_VERIFICATION: true,
   REVIEW_WINDOW_DAYS: 30,
   REMINDER_DAYS: 14,
+  LLM_ORAL_RESERVE_USD: 0.1,
 };
 
 export interface Examiner {

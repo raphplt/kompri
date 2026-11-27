@@ -201,6 +201,8 @@ model OralSession {
   grade            Json?
   gradedAt         DateTime?      @db.Timestamptz(3)
   gradingAttempts  Int            @default(0)
+  /// Lease held while a model call runs for this oral; one call at a time.
+  busyUntil        DateTime?      @db.Timestamptz(3)
   startedAt        DateTime       @default(now()) @db.Timestamptz(3)
   endedAt          DateTime?      @db.Timestamptz(3)
   user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)

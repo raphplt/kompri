@@ -300,6 +300,12 @@ export const fr = {
     answer_conflict: 'Cette question a déjà reçu une réponse.',
     examiner_changed:
       'L’examinateur a changé pendant l’oral. Contacte le support.',
+    oral_busy:
+      'Ta réponse précédente est encore en cours de traitement. Patiente quelques secondes.',
+    oral_preparing:
+      'L’examinateur prépare encore cet oral. Recharge la page dans quelques secondes.',
+    grading_limit:
+      'La notation a échoué trop de fois. Demande un réexamen : une personne notera ton oral.',
     session_expired: 'Ta session a expiré : reconnecte-toi.',
     email_unverified:
       'Confirme d’abord ton adresse e-mail : le lien t’a été envoyé à l’inscription.',

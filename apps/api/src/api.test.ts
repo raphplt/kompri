@@ -15,11 +15,31 @@ import { createApi, developmentResponder } from './app.ts';
 import type { Mail } from './mailer.ts';
 import { runDailyTasks } from './daily.ts';
 import { createClient, createMockAdapter } from '@kompri/llm';
+import type { LlmClient } from '@kompri/llm';
 import { nextLesson, skillStates } from './progress.ts';
 import { excerptParts } from './search.ts';
 import { monthOf, recordSpend } from './spend.ts';
 
 const db = createDatabase();
+/**
+ * The examiner mock, instrumented: counts model calls and can simulate
+ * latency (the fake clock advances during the call) or a stalled call.
+ */
+const examinerControl = {
+  calls: 0,
+  latencySeconds: 0,
+  gate: null as Promise<void> | null,
+};
+const baseExaminer = createExaminerMock();
+const examinerClient: LlmClient = {
+  ...baseExaminer,
+  async generateStructured(request, schema) {
+    examinerControl.calls++;
+    if (examinerControl.gate) await examinerControl.gate;
+    advance(examinerControl.latencySeconds);
+    return baseExaminer.generateStructured(request, schema);
+  },
+};
 let now = new Date('2030-01-01T10:00:00Z');
 const advance = (seconds: number) => {
   now = new Date(now.getTime() + seconds * 1000);
@@ -95,7 +115,7 @@ beforeAll(async () => {
   });
   app = await createApi({
     db: createDatabase(),
-    examiner: { provider: 'mock', client: createExaminerMock() },
+    examiner: { provider: 'mock', client: examinerClient },
     mailer: {
       send: async (mail) => {
         mails.push(mail);
@@ -276,6 +296,200 @@ describe('accounts', () => {
     expect(await db.user.count({ where: { id: user.id } })).toBe(0);
     expect(await db.attempt.count({ where: { userId: user.id } })).toBe(0);
     expect(await db.authSession.count({ where: { userId: user.id } })).toBe(0);
+  });
+});
+
+async function newAttempt(token: string) {
+  return z
+    .object({ id: z.string() })
+    .parse(
+      (await call('/attempts', { token, body: { challengeId, work: 'x' } }))
+        .body,
+    ).id;
+}
+
+describe('oral concurrency and recovery', () => {
+  it('runs one model step at a time per oral, whatever the parallel requests', async () => {
+    const user = await register();
+    const attemptId = await newAttempt(user.token);
+    // Parallel starts of the same learner: one oral, one model call, one quota.
+    examinerControl.calls = 0;
+    const starts = await Promise.all(
+      Array.from({ length: 6 }, () =>
+        call(`/attempts/${attemptId}/oral`, {
+          method: 'POST',
+          token: user.token,
+        }),
+      ),
+    );
+    expect(starts.filter((r) => r.status === 201)).toHaveLength(1);
+    expect(starts.every((r) => [201, 409].includes(r.status))).toBe(true);
+    expect(examinerControl.calls).toBe(1);
+    const oral = oralViewSchema.parse(
+      starts.find((r) => r.status === 201)!.body,
+    );
+    expect(await db.oralUsage.count({ where: { userId: user.id } })).toBe(1);
+
+    // Parallel answers to the same question: one follow-up, one stored turn.
+    let release!: () => void;
+    examinerControl.calls = 0;
+    examinerControl.gate = new Promise((resolve) => (release = resolve));
+    const answers = Promise.all(
+      Array.from({ length: 8 }, () =>
+        call(`/orals/${oral.id}/answers`, {
+          token: user.token,
+          body: { text: long },
+        }),
+      ),
+    );
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    release();
+    examinerControl.gate = null;
+    const results = await answers;
+    expect(results.filter((r) => r.status === 200)).toHaveLength(1);
+    expect(
+      results
+        .filter((r) => r.status !== 200)
+        .every((r) => (r.body as { code: string }).code === 'oral_busy'),
+    ).toBe(true);
+    expect(examinerControl.calls).toBe(1);
+    expect(
+      await db.oralTurn.count({
+        where: { sessionId: oral.id, speaker: 'LEARNER' },
+      }),
+    ).toBe(1);
+    await call(`/orals/${oral.id}/abandon`, {
+      method: 'POST',
+      token: user.token,
+    });
+  });
+
+  it('starts the answer time once the question exists, after the model call', async () => {
+    const user = await register();
+    const attemptId = await newAttempt(user.token);
+    examinerControl.latencySeconds = 20;
+    try {
+      let oral = oralViewSchema.parse(
+        (
+          await call(`/attempts/${attemptId}/oral`, {
+            method: 'POST',
+            token: user.token,
+          })
+        ).body,
+      );
+      expect(Date.parse(oral.deadline!) - Date.parse(oral.serverTime)).toBe(
+        60_000,
+      );
+      oral = oralViewSchema.parse(
+        (
+          await call(`/orals/${oral.id}/answers`, {
+            token: user.token,
+            body: { text: long },
+          })
+        ).body,
+      );
+      expect(Date.parse(oral.deadline!) - Date.parse(oral.serverTime)).toBe(
+        60_000,
+      );
+      await call(`/orals/${oral.id}/abandon`, {
+        method: 'POST',
+        token: user.token,
+      });
+    } finally {
+      examinerControl.latencySeconds = 0;
+    }
+  });
+
+  it('recovers an oral whose grading was interrupted, and grades it once', async () => {
+    const user = await register();
+    const attemptId = await newAttempt(user.token);
+    const oral = oralViewSchema.parse(
+      (
+        await call(`/attempts/${attemptId}/oral`, {
+          method: 'POST',
+          token: user.token,
+        })
+      ).body,
+    );
+    // Simulate a crash after the last answer was stored, before grading.
+    const questions = z
+      .object({ questions: z.array(z.string()) })
+      .parse(
+        (await db.oralSession.findUniqueOrThrow({ where: { id: oral.id } }))
+          .plan,
+      ).questions;
+    for (let i = 0; i < questions.length; i++) {
+      const sequence = await db.oralTurn.count({
+        where: { sessionId: oral.id },
+      });
+      if (i > 0)
+        await db.oralTurn.create({
+          data: {
+            sessionId: oral.id,
+            sequence,
+            speaker: 'EXAMINER',
+            text: questions[i]!,
+            createdAt: now,
+          },
+        });
+      await db.oralTurn.create({
+        data: {
+          sessionId: oral.id,
+          sequence: sequence + (i > 0 ? 1 : 0),
+          speaker: 'LEARNER',
+          text: long,
+          createdAt: now,
+        },
+      });
+    }
+    await db.oralSession.update({
+      where: { id: oral.id },
+      data: { busyUntil: new Date(now.getTime() - 1000) },
+    });
+    const [first, second] = await Promise.all([
+      call(`/orals/${oral.id}/grade`, { method: 'POST', token: user.token }),
+      call(`/orals/${oral.id}/abandon`, { method: 'POST', token: user.token }),
+    ]);
+    expect([first.status, second.status].sort()).toEqual([200, 409]);
+    const done = oralViewSchema.parse(
+      (await call(`/orals/${oral.id}`, { token: user.token })).body,
+    );
+    expect(done.status).toBe('completed');
+    expect(done.result?.verdict).toBe('PASSED');
+    expect(
+      await db.validation.count({ where: { oralSessionId: oral.id } }),
+    ).toBe(1);
+  });
+
+  it('keeps room in the budget for the orals in progress', async () => {
+    const user = await register();
+    const other = await register('Bob');
+    const month = monthOf(now);
+    // 5 USD budget, 0.10 reserved per oral in progress (other tests included):
+    // room for exactly one more oral.
+    const active = await db.oralSession.count({ where: { status: 'ACTIVE' } });
+    await db.llmMonthlySpend.create({
+      data: { month, costUsd: 5 - 0.1 * (active + 1) - 0.05, calls: 1 },
+    });
+    try {
+      const first = await call(
+        `/attempts/${await newAttempt(user.token)}/oral`,
+        { method: 'POST', token: user.token },
+      );
+      expect(first.status).toBe(201);
+      const refused = await call(
+        `/attempts/${await newAttempt(other.token)}/oral`,
+        { method: 'POST', token: other.token },
+      );
+      expect(refused.status).toBe(503);
+      expect(refused.body).toMatchObject({ code: 'llm_budget_exhausted' });
+      await call(`/orals/${oralViewSchema.parse(first.body).id}/abandon`, {
+        method: 'POST',
+        token: user.token,
+      });
+    } finally {
+      await db.llmMonthlySpend.delete({ where: { month } });
+    }
   });
 });
 
