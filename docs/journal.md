@@ -3,6 +3,20 @@
 Entrées les plus récentes en haut. Chaque entrée résume ce qui a été livré, les décisions
 prises sans attendre de validation et la suite prévue.
 
+## 27 novembre 2026 (suite) — Clés de correction retirées du dépôt public
+
+- Le dépôt reste public à la demande du porteur du projet. Les notes d’examinateur des 120
+  défis, les niveaux des grilles `CONTRE_IA` et `APRES_IA` et 13 oraux de référence réalistes
+  sont désormais chiffrés (AES-256-GCM, `KOMPRI_CONTENT_KEY`) ; seules les copies chiffrées sont
+  commitées. Voir la fin de `docs/content-guide.md`.
+- L’historique Git a été réécrit (git filter-repo) pour les retirer de tous les anciens
+  commits, puis `main` et la branche de travail ont été poussées en force, au même commit.
+  Vérification : 77 commits, 111 fichiers YAML, aucune note ni niveau de défaut restant.
+- Limites : ces éléments ont été publics environ six jours ; une copie faite entre-temps reste
+  hors de portée, et GitHub peut garder les anciens commits consultables par leur empreinte
+  jusqu’à son nettoyage (une demande au support GitHub l’accélère). Les clones existants
+  doivent être refaits.
+
 ## 27 novembre 2026 — Audit externe et correctifs
 
 - Un agent sans contexte a audité le projet avec `docs/prompt-revue-critique.md`. Verdict :
