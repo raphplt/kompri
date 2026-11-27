@@ -215,37 +215,56 @@ export class AuthService {
     const { email, password } = parseInput(loginRequestSchema, input);
     const user = await this.db.user.findUnique({ where: { email } });
     const now = this.now();
-    if (user?.lockedUntil && user.lockedUntil > now)
-      throw new ApiException(
-        HttpStatus.TOO_MANY_REQUESTS,
-        'account_locked',
-        'Too many failed attempts, try again later',
-      );
+    const refused = () =>
+      // A locked account answers like a wrong password: no enumeration.
+      unauthorized('invalid_credentials', 'Invalid email or password');
+    if (user) {
+      // Count the attempt before the costly check, atomically: parallel
+      // requests cannot all pass on the same counter value.
+      const [claim] = await this.db.$queryRaw<{ failures: number }[]>`
+        UPDATE "User" SET "failedLoginCount" = "failedLoginCount" + 1
+        WHERE "id" = ${user.id}
+          AND ("lockedUntil" IS NULL OR "lockedUntil" <= ${now})
+        RETURNING "failedLoginCount" AS failures`;
+      if (!claim) {
+        await verifyPassword(password, dummyHash);
+        throw refused();
+      }
+      if (claim.failures > maxFailedLogins) {
+        await this.lock(user.id, now);
+        await verifyPassword(password, dummyHash);
+        throw refused();
+      }
+    }
     const valid = await verifyPassword(
       password,
       user?.passwordHash ?? dummyHash,
     );
     if (!user || !user.passwordHash || !valid) {
       if (user) {
-        const failures = user.failedLoginCount + 1;
-        await this.db.user.update({
+        const { failedLoginCount } = await this.db.user.findUniqueOrThrow({
           where: { id: user.id },
-          data:
-            failures >= maxFailedLogins
-              ? {
-                  failedLoginCount: 0,
-                  lockedUntil: new Date(now.getTime() + lockMinutes * 60_000),
-                }
-              : { failedLoginCount: failures },
+          select: { failedLoginCount: true },
         });
+        if (failedLoginCount >= maxFailedLogins) await this.lock(user.id, now);
       }
-      throw unauthorized('invalid_credentials', 'Invalid email or password');
+      throw refused();
     }
     await this.db.user.update({
       where: { id: user.id },
       data: { failedLoginCount: 0, lockedUntil: null },
     });
     return this.openSession(user);
+  }
+
+  private async lock(userId: string, now: Date) {
+    await this.db.user.update({
+      where: { id: userId },
+      data: {
+        failedLoginCount: 0,
+        lockedUntil: new Date(now.getTime() + lockMinutes * 60_000),
+      },
+    });
   }
 
   async authenticate(token: string): Promise<AuthenticatedUser | null> {

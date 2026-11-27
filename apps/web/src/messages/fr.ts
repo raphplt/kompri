@@ -258,7 +258,11 @@ export const fr = {
     consent:
       'En créant un compte, tu acceptes les conditions d’utilisation et le traitement de tes travaux et oraux pour t’évaluer, comme décrit dans la politique de confidentialité.',
     errors: {
-      invalid_credentials: 'Adresse e-mail ou mot de passe incorrect.',
+      invalid_credentials:
+        'Adresse e-mail ou mot de passe incorrect. Après cinq échecs, la connexion au compte est suspendue quinze minutes.',
+      rate_limited:
+        'Trop de tentatives depuis ta connexion. Réessaie dans quelques minutes.',
+      busy: 'Le service est momentanément très sollicité. Réessaie dans un instant.',
       account_locked:
         'Trop de tentatives échouées. Réessaie dans quelques minutes.',
       email_taken: 'Un compte existe déjà avec cette adresse.',

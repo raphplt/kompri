@@ -64,7 +64,7 @@ test('a wrong password is refused without revealing the account', async ({
   await page.getByLabel('Adresse e-mail').fill('personne@example.invalid');
   await page.getByLabel('Mot de passe').fill('mauvais mot de passe');
   await page.getByRole('button', { name: 'Se connecter' }).click();
-  await expect(page.locator('form').getByRole('alert')).toHaveText(
+  await expect(page.locator('form').getByRole('alert')).toContainText(
     'Adresse e-mail ou mot de passe incorrect.',
   );
 });

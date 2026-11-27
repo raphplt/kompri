@@ -51,9 +51,16 @@ const created: string[] = [];
 const mails: Mail[] = [];
 let previousStatus: 'DRAFT' | 'PUBLISHED' = 'DRAFT';
 
+/** A distinct visitor address per call unless a test sets one (rate limits). */
+const randomAddress = () =>
+  `198.51.100.${Math.floor(Math.random() * 250)}-${crypto.randomUUID()}`.slice(
+    0,
+    60,
+  );
+
 async function call(
   path: string,
-  init: { method?: string; token?: string; body?: unknown } = {},
+  init: { method?: string; token?: string; body?: unknown; ip?: string } = {},
 ) {
   const response = await fetch(`${base}${path}`, {
     method: init.method ?? (init.body === undefined ? 'GET' : 'POST'),
@@ -62,6 +69,7 @@ async function call(
         ? {}
         : { 'Content-Type': 'application/json' }),
       ...(init.token ? { Authorization: `Bearer ${init.token}` } : {}),
+      'X-Kompri-Client-IP': init.ip ?? randomAddress(),
     },
     body: init.body === undefined ? undefined : JSON.stringify(init.body),
   });
@@ -243,13 +251,12 @@ describe('accounts', () => {
           })
         ).status,
       ).toBe(401);
-    expect(
-      (
-        await call('/auth/login', {
-          body: { email: user.email, password: 'correct horse battery' },
-        })
-      ).status,
-    ).toBe(429);
+    // Locked: even the right password is refused, exactly like a wrong one.
+    const locked = await call('/auth/login', {
+      body: { email: user.email, password: 'correct horse battery' },
+    });
+    expect(locked.status).toBe(401);
+    expect(locked.body).toMatchObject({ code: 'invalid_credentials' });
     advance(16 * 60);
     const login = await call('/auth/login', {
       body: { email: user.email, password: 'correct horse battery' },
@@ -266,6 +273,51 @@ describe('accounts', () => {
     expect(unknown.status).toBe(401);
     expect(unknown.text).not.toContain('nobody');
   });
+
+  it('locks after five failures even when the attempts arrive in parallel', async () => {
+    const user = await register();
+    const attempts = await Promise.all(
+      Array.from({ length: 12 }, (_, i) =>
+        call('/auth/login', {
+          body: {
+            email: user.email,
+            password: i === 11 ? 'correct horse battery' : 'wrong password!',
+          },
+        }),
+      ),
+    );
+    // At most five passwords were actually checked, and none opened a session.
+    expect(attempts.every((r) => r.status === 401)).toBe(true);
+    const stored = await db.user.findUniqueOrThrow({ where: { id: user.id } });
+    expect(stored.lockedUntil).not.toBeNull();
+  });
+
+  it('limits logins and sign-ups per visitor address', async () => {
+    const ip = `203.0.113.${Math.floor(Math.random() * 250)}`;
+    const statuses: number[] = [];
+    for (let i = 0; i < 22; i++)
+      statuses.push(
+        (
+          await call('/auth/login', {
+            ip,
+            body: {
+              email: 'nobody@example.invalid',
+              password: 'whatever pass',
+            },
+          })
+        ).status,
+      );
+    expect(statuses.slice(0, 20).every((s) => s === 401)).toBe(true);
+    expect(statuses.slice(20)).toEqual([429, 429]);
+    // Another address is not affected.
+    expect(
+      (
+        await call('/auth/login', {
+          body: { email: 'nobody@example.invalid', password: 'whatever pass' },
+        })
+      ).status,
+    ).toBe(401);
+  }, 30_000);
 
   it('exports and deletes the account with every personal row', async () => {
     const user = await register();

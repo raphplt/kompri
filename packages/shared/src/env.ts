@@ -45,6 +45,12 @@ export const apiEnvSchema = databaseEnvSchema.extend({
     .transform((value) => value === 'true'),
   REVIEW_WINDOW_DAYS: positiveInteger(30, 365),
   REMINDER_DAYS: positiveInteger(14, 365),
+  /** Per visitor address: logins (and reset or verification links) per 15 min. */
+  AUTH_LOGIN_LIMIT: positiveInteger(20, 10_000),
+  /** Per visitor address: sign-ups per hour. */
+  AUTH_SIGNUP_LIMIT: positiveInteger(10, 10_000),
+  /** Per visitor address: reset or verification e-mails per hour. */
+  AUTH_MAIL_LIMIT: positiveInteger(10, 10_000),
   /** Monthly cap on estimated LLM spend; unset means no cap. */
   LLM_MONTHLY_BUDGET_USD: z.coerce
     .number()

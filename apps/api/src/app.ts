@@ -36,6 +36,7 @@ import type { Mailer } from './mailer.ts';
 import type { Clock, Examiner, Settings } from './context.ts';
 import { ErrorFilter } from './errors.ts';
 import { spendLogger } from './spend.ts';
+import { authRateLimits } from './rate-limit.ts';
 import { LearningController, LearningService } from './learning.ts';
 import { ProgressController } from './progress.ts';
 import { SearchController } from './search.ts';
@@ -194,6 +195,12 @@ export async function createApi(
   // Submissions reach 100 000 characters; UTF-8 needs room beyond Express defaults.
   app.useBodyParser('json', { limit: '512kb' });
   app.useGlobalFilters(new ErrorFilter());
+  app.use(
+    authRateLimits(
+      { ...defaultSettings, ...options.settings },
+      options.clock ?? (() => new Date()),
+    ),
+  );
   if (process.env.NODE_ENV !== 'test') app.use(requestLog);
   app.enableShutdownHooks();
   const document = SwaggerModule.createDocument(

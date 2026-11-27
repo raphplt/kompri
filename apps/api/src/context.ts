@@ -24,6 +24,9 @@ export type Settings = Pick<
   | 'REMINDER_DAYS'
   | 'LLM_MONTHLY_BUDGET_USD'
   | 'LLM_ORAL_RESERVE_USD'
+  | 'AUTH_LOGIN_LIMIT'
+  | 'AUTH_SIGNUP_LIMIT'
+  | 'AUTH_MAIL_LIMIT'
 >;
 export const defaultSettings: Settings = {
   ORAL_QUESTION_COUNT: 3,
@@ -39,6 +42,9 @@ export const defaultSettings: Settings = {
   REVIEW_WINDOW_DAYS: 30,
   REMINDER_DAYS: 14,
   LLM_ORAL_RESERVE_USD: 0.1,
+  AUTH_LOGIN_LIMIT: 20,
+  AUTH_SIGNUP_LIMIT: 10,
+  AUTH_MAIL_LIMIT: 10,
 };
 
 export interface Examiner {

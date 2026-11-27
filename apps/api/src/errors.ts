@@ -57,9 +57,33 @@ export class ErrorFilter implements ExceptionFilter {
       response.status(status).json({ statusCode: status, code, message });
       return;
     }
-    // Never echo internal errors: they may contain SQL, provider or personal data.
+    if (
+      exception instanceof Error &&
+      exception.name === 'PasswordHashingBusyError'
+    ) {
+      response.status(503).json({
+        statusCode: 503,
+        code: 'busy',
+        message: 'The service is busy, try again shortly',
+      });
+      return;
+    }
+    // Never echo internal errors to the client: they may contain SQL, provider
+    // or personal data. The log keeps the route and the stack, never the input.
+    const request = host
+      .switchToHttp()
+      .getRequest<{ method?: string; route?: { path?: string } }>();
     this.logger.error(
-      exception instanceof Error ? exception.name : 'Unknown error',
+      JSON.stringify({
+        msg: 'internal_error',
+        method: request?.method,
+        route: request?.route?.path ?? 'unmatched',
+        error: exception instanceof Error ? exception.name : 'Unknown error',
+        stack:
+          exception instanceof Error
+            ? exception.stack?.split('\n').slice(1, 6).join('\n')
+            : undefined,
+      }),
     );
     response.status(500).json({
       statusCode: 500,

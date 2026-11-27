@@ -17,6 +17,13 @@ Internet ──HTTPS──> proxy inverse (Caddy, nginx…) ──> web :3000 (N
   TLS et le publie. L’API et PostgreSQL ne sont jamais exposés.
 - Le navigateur ne parle qu’au serveur web : les actions serveur transmettent le jeton de
   session à l’API. Le cookie `kompri_session` est `HttpOnly`, `SameSite=Lax` et `Secure`.
+- Les routes de connexion, d’inscription et d’envoi d’e-mails sont limitées par adresse de
+  visiteur (`AUTH_LOGIN_LIMIT`, `AUTH_SIGNUP_LIMIT`, `AUTH_MAIL_LIMIT`). Le serveur web transmet
+  à l’API l’adresse que le proxy HTTPS place dans `X-Forwarded-For` : servez donc toujours le
+  site derrière le proxy fourni (Caddy remplace cet en-tête s’il vient du client). Sans proxy,
+  toutes les requêtes portent l’adresse du serveur web et les limites s’appliquent au site
+  entier. L’API ne doit jamais être exposée directement, puisqu’elle fait confiance à cet
+  en-tête. Les compteurs vivent en mémoire d’un seul processus d’API.
 - Avec un PostgreSQL géré plutôt que le conteneur fourni, l’extension `unaccent` doit être
   disponible (c’est le cas chez les principaux hébergeurs) : la migration `lesson_search`
   la crée pour la recherche dans les cours.

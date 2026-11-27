@@ -1,3 +1,4 @@
+import { headers } from 'next/headers';
 import { apiErrorSchema, z } from '@kompri/shared';
 import { parseEnvironment, webEnvSchema } from '@kompri/shared/env';
 
@@ -14,6 +15,24 @@ export class ApiRequestError extends Error {
 const baseUrl = () => parseEnvironment(webEnvSchema, process.env).API_URL;
 
 /**
+ * The visitor's address as the HTTPS proxy reports it, forwarded so that the
+ * API can rate-limit per visitor. Caddy ignores X-Forwarded-For sent by the
+ * client and sets it to the connecting address.
+ */
+async function visitorAddress(): Promise<string | null> {
+  try {
+    const incoming = await headers();
+    return (
+      incoming.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      incoming.get('x-real-ip') ||
+      null
+    );
+  } catch {
+    return null; // Outside a request (build, sitemap generation).
+  }
+}
+
+/**
  * Server-side call to the API. Browsers never reach the API directly: the web
  * server forwards the session token kept in an HttpOnly cookie.
  */
@@ -23,6 +42,7 @@ export async function api<T>(
   options: { method?: string; body?: unknown; token?: string | null } = {},
 ): Promise<T> {
   let response: Response;
+  const visitor = await visitorAddress();
   try {
     response = await fetch(`${baseUrl()}${path}`, {
       method: options.method ?? (options.body === undefined ? 'GET' : 'POST'),
@@ -35,6 +55,7 @@ export async function api<T>(
           ? {}
           : { 'Content-Type': 'application/json' }),
         ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
+        ...(visitor ? { 'X-Kompri-Client-IP': visitor } : {}),
       },
       body:
         options.body === undefined ? undefined : JSON.stringify(options.body),
