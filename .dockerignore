@@ -9,3 +9,5 @@
 !.env.example
 packages/db/src/generated
 backups
+packages/content/private
+packages/evals/private

@@ -1,221 +1,290 @@
 - id: js-basics-sans-ia
   family: SANS_IA
   title: Le ticket de caisse
-  summary: Calculer et afficher un ticket de caisse avec des variables, des opérateurs et des gabarits
-    de chaînes.
+  summary: Calculer et afficher un ticket de caisse avec des variables, des opérateurs et des gabarits de chaînes.
   estimatedMinutes: 40
-  instructions: "Une boulangerie veut afficher un ticket de caisse dans le terminal. Écris un script\n\
-    `receipt.js`, sans déclarer de fonction ni écrire de boucle, que tu exécutes avec\n`node receipt.js`.\n\
-    \nDonnées de départ, à recopier telles quelles en haut du fichier :\n\n```js\nconst shopName = 'Boulangerie\
-    \ du Port';\nconst breadPrice = 1.3; // prix unitaire en euros, TTC\nconst breadQuantity = 3;\nconst\
-    \ croissantPrice = 1.15;\nconst croissantQuantity = 4;\nconst loyaltyCard = true; // la carte fidélité\
-    \ donne 5 % de remise\nconst paidAmount = '20'; // montant tendu par le client, saisi en texte\n```\n\
-    \nTravail demandé :\n\n1. Calcule le sous-total de chaque ligne et le total avant remise.\n2. Calcule\
-    \ la remise fidélité (5 % du total si `loyaltyCard` vaut `true`, sinon 0)\n   et le total à payer.\
-    \ Utilise uniquement des opérateurs, pas de `if`.\n3. Convertis explicitement `paidAmount` en nombre\
-    \ et calcule la monnaie à rendre.\n4. Affiche un ticket lisible avec des gabarits de chaînes. Tous\
-    \ les montants\n   apparaissent avec exactement deux décimales.\n5. Ajoute en dernière ligne `Paiement\
-    \ suffisant : true` ou `false`, calculé par une\n   comparaison entre deux nombres : le montant tendu\
-    \ converti et le total à payer.\n\nContraintes : `const` par défaut, `let` seulement si une valeur\
-    \ change vraiment,\naucune comparaison avec `==`.\n"
-  deliverable: 'Colle le contenu complet de `receipt.js`, puis la sortie exacte affichée par
+  instructions: |
+    Une boulangerie veut afficher un ticket de caisse dans le terminal. Écris un script
+    `receipt.js`, sans déclarer de fonction ni écrire de boucle, que tu exécutes avec
+    `node receipt.js`.
 
+    Données de départ, à recopier telles quelles en haut du fichier :
+
+    ```js
+    const shopName = 'Boulangerie du Port';
+    const breadPrice = 1.3; // prix unitaire en euros, TTC
+    const breadQuantity = 3;
+    const croissantPrice = 1.15;
+    const croissantQuantity = 4;
+    const loyaltyCard = true; // la carte fidélité donne 5 % de remise
+    const paidAmount = '20'; // montant tendu par le client, saisi en texte
+    ```
+
+    Travail demandé :
+
+    1. Calcule le sous-total de chaque ligne et le total avant remise.
+    2. Calcule la remise fidélité (5 % du total si `loyaltyCard` vaut `true`, sinon 0)
+       et le total à payer. Utilise uniquement des opérateurs, pas de `if`.
+    3. Convertis explicitement `paidAmount` en nombre et calcule la monnaie à rendre.
+    4. Affiche un ticket lisible avec des gabarits de chaînes. Tous les montants
+       apparaissent avec exactement deux décimales.
+    5. Ajoute en dernière ligne `Paiement suffisant : true` ou `false`, calculé par une
+       comparaison entre deux nombres : le montant tendu converti et le total à payer.
+
+    Contraintes : `const` par défaut, `let` seulement si une valeur change vraiment,
+    aucune comparaison avec `==`.
+  deliverable: |
+    Colle le contenu complet de `receipt.js`, puis la sortie exacte affichée par
     `node receipt.js`. Ajoute deux ou trois phrases expliquant comment tu as obtenu la
-
     remise sans `if`.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: types-conversions
-      description: Explique les types manipulés et les conversions explicites ou implicites.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne distingue pas nombre et chaîne, ou ne sait pas pourquoi paidAmount doit être converti.
-      - score: 1
-        description: Sait qu’il faut convertir mais ne justifie pas, ou confond Number et toFixed.
-      - score: 2
-        description: Justifie la conversion explicite et explique la conversion de true en 1.
-      - score: 3
-        description: Explique aussi les cas limites (NaN avec une saisie invalide, toFixed qui renvoie
-          une chaîne).
-    - id: operators
-      description: Utilise et explique les opérateurs arithmétiques, logiques et de comparaison stricte.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Utilise == ou ne sait pas expliquer ses comparaisons.
-      - score: 1
-        description: Calculs corrects mais explication confuse de la remise sans if.
-      - score: 2
-        description: Explique clairement le calcul de la remise et la comparaison du paiement, sans conversion
-          implicite.
-      - score: 3
-        description: Propose une variante correcte et discute ses avantages (lisibilité, robustesse).
-    - id: numbers-precision
-      description: Comprend la précision des nombres à virgule et l’arrondi à l’affichage.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Ignore le problème ou pense que JavaScript calcule exactement en décimal.
-      - score: 1
-        description: Sait que des écarts existent sans pouvoir expliquer où arrondir.
-      - score: 2
-        description: Explique la virgule flottante binaire et pourquoi arrondir seulement à l’affichage
-          ou travailler en centimes.
-    - id: variables
-      description: Justifie le choix entre const et let et nomme clairement ses variables.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Ne sait pas pourquoi const ou let a été utilisé.
-      - score: 1
-        description: Choix corrects mais justification partielle.
-      - score: 2
-        description: Explique la réaffectation, la portée de bloc et l’intérêt de const par défaut.
+      - id: types-conversions
+        description: Explique les types manipulés et les conversions explicites ou implicites.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne distingue pas nombre et chaîne, ou ne sait pas pourquoi paidAmount doit être converti.
+          - score: 1
+            description: Sait qu’il faut convertir mais ne justifie pas, ou confond Number et toFixed.
+          - score: 2
+            description: Justifie la conversion explicite et explique la conversion de true en 1.
+          - score: 3
+            description: Explique aussi les cas limites (NaN avec une saisie invalide, toFixed qui renvoie une chaîne).
+      - id: operators
+        description: Utilise et explique les opérateurs arithmétiques, logiques et de comparaison stricte.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Utilise == ou ne sait pas expliquer ses comparaisons.
+          - score: 1
+            description: Calculs corrects mais explication confuse de la remise sans if.
+          - score: 2
+            description: Explique clairement le calcul de la remise et la comparaison du paiement, sans conversion implicite.
+          - score: 3
+            description: Propose une variante correcte et discute ses avantages (lisibilité, robustesse).
+      - id: numbers-precision
+        description: Comprend la précision des nombres à virgule et l’arrondi à l’affichage.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Ignore le problème ou pense que JavaScript calcule exactement en décimal.
+          - score: 1
+            description: Sait que des écarts existent sans pouvoir expliquer où arrondir.
+          - score: 2
+            description: Explique la virgule flottante binaire et pourquoi arrondir seulement à l’affichage ou travailler en centimes.
+      - id: variables
+        description: Justifie le choix entre const et let et nomme clairement ses variables.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Ne sait pas pourquoi const ou let a été utilisé.
+          - score: 1
+            description: Choix corrects mais justification partielle.
+          - score: 2
+            description: Explique la réaffectation, la portée de bloc et l’intérêt de const par défaut.
+
 - id: js-basics-avec-ia
   family: AVEC_IA
   title: Le convertisseur d’unités
   summary: Construire avec une IA un convertisseur en ligne de commande, puis en défendre chaque ligne.
   estimatedMinutes: 90
-  instructions: "Tu peux utiliser une IA autant que tu veux pour ce mini-projet. À l’oral, tu devras\n\
-    expliquer chaque ligne sans aide, prévoir le résultat de petites modifications et\ncorriger toi-même\
-    \ un comportement.\n\nObjectif : un script `convert.js` qui convertit une température donnée en ligne\
-    \ de\ncommande. Exemple d’utilisation :\n\n```bash\nnode convert.js 21.5\n```\n\nSortie attendue (format\
-    \ libre mais lisible) :\n\n```text\n21.5 °C = 70.7 °F = 294.65 K\n```\n\nExigences :\n\n1. La valeur\
-    \ est lue avec `process.argv[2]`, qui est toujours une chaîne ou\n   `undefined`. Explique dans un\
-    \ commentaire ce que contient `process.argv`.\n2. La chaîne est convertie explicitement en nombre.\
-    \ Si la conversion échoue\n   (valeur absente, `abc`, `12px`), le script affiche un message d’erreur\
-    \ clair en\n   français et se termine avec `process.exitCode = 1`.\n3. Les conversions utilisent les\
-    \ formules exactes : °F = °C × 9/5 + 32 et\n   K = °C + 273,15. Les résultats sont arrondis à deux\
-    \ décimales au plus pour\n   l’affichage.\n4. Une température inférieure au zéro absolu (−273,15 °C)\
-    \ est refusée avec un\n   message explicite.\n5. Pas de fonction déclarée, pas de bibliothèque : variables,\
-    \ opérateurs,\n   conditions simples et gabarits de chaînes suffisent.\n\nConseil : demande à l’IA\
-    \ de t’expliquer chaque différence entre `Number()`,\n`parseFloat()` et le `+` unaire, puis vérifie\
-    \ par toi-même dans le terminal.\n"
-  deliverable: 'Colle le code complet de `convert.js`, la sortie de ces quatre commandes :
+  instructions: |
+    Tu peux utiliser une IA autant que tu veux pour ce mini-projet. À l’oral, tu devras
+    expliquer chaque ligne sans aide, prévoir le résultat de petites modifications et
+    corriger toi-même un comportement.
 
+    Objectif : un script `convert.js` qui convertit une température donnée en ligne de
+    commande. Exemple d’utilisation :
+
+    ```bash
+    node convert.js 21.5
+    ```
+
+    Sortie attendue (format libre mais lisible) :
+
+    ```text
+    21.5 °C = 70.7 °F = 294.65 K
+    ```
+
+    Exigences :
+
+    1. La valeur est lue avec `process.argv[2]`, qui est toujours une chaîne ou
+       `undefined`. Explique dans un commentaire ce que contient `process.argv`.
+    2. La chaîne est convertie explicitement en nombre. Si la conversion échoue
+       (valeur absente, `abc`, `12px`), le script affiche un message d’erreur clair en
+       français et se termine avec `process.exitCode = 1`.
+    3. Les conversions utilisent les formules exactes : °F = °C × 9/5 + 32 et
+       K = °C + 273,15. Les résultats sont arrondis à deux décimales au plus pour
+       l’affichage.
+    4. Une température inférieure au zéro absolu (−273,15 °C) est refusée avec un
+       message explicite.
+    5. Pas de fonction déclarée, pas de bibliothèque : variables, opérateurs,
+       conditions simples et gabarits de chaînes suffisent.
+
+    Conseil : demande à l’IA de t’expliquer chaque différence entre `Number()`,
+    `parseFloat()` et le `+` unaire, puis vérifie par toi-même dans le terminal.
+  deliverable: |
+    Colle le code complet de `convert.js`, la sortie de ces quatre commandes :
     `node convert.js 21.5`, `node convert.js`, `node convert.js 12px`,
-
     `node convert.js -300`, puis indique en quelques lignes ce que l’IA t’a apporté et
-
     ce que tu as dû corriger ou vérifier.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: code-ownership
-      description: Explique chaque partie de son code sans hésitation ni lecture d’une aide.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas expliquer des lignes importantes de son propre code.
-      - score: 1
-        description: Explique le déroulé global mais pas le détail des conversions.
-      - score: 2
-        description: Explique précisément chaque instruction et son effet.
-      - score: 3
-        description: Explique aussi les choix écartés et ce qu’il a dû corriger dans la proposition de
-          l’IA.
-    - id: input-validation
-      description: Raisonne correctement sur les entrées invalides et NaN.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas ce que produit une entrée invalide.
-      - score: 1
-        description: Connaît NaN mais teste mal sa présence ou ignore les cas absents.
-      - score: 2
-        description: Justifie Number et Number.isNaN, et couvre absence et texte invalide.
-      - score: 3
-        description: Identifie aussi les cas subtils (chaîne vide, notation 1e2, espaces).
-    - id: modification
-      description: Réalise ou décrit correctement une modification demandée pendant l’oral.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne parvient pas à modifier le comportement.
-      - score: 1
-        description: Modification partielle ou qui casse un cas existant.
-      - score: 2
-        description: Modification correcte avec un exemple de vérification.
-      - score: 3
-        description: Modification correcte, vérifiée sur plusieurs cas dont un cas limite.
+      - id: code-ownership
+        description: Explique chaque partie de son code sans hésitation ni lecture d’une aide.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas expliquer des lignes importantes de son propre code.
+          - score: 1
+            description: Explique le déroulé global mais pas le détail des conversions.
+          - score: 2
+            description: Explique précisément chaque instruction et son effet.
+          - score: 3
+            description: Explique aussi les choix écartés et ce qu’il a dû corriger dans la proposition de l’IA.
+      - id: input-validation
+        description: Raisonne correctement sur les entrées invalides et NaN.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas ce que produit une entrée invalide.
+          - score: 1
+            description: Connaît NaN mais teste mal sa présence ou ignore les cas absents.
+          - score: 2
+            description: Justifie Number et Number.isNaN, et couvre absence et texte invalide.
+          - score: 3
+            description: Identifie aussi les cas subtils (chaîne vide, notation 1e2, espaces).
+      - id: modification
+        description: Réalise ou décrit correctement une modification demandée pendant l’oral.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne parvient pas à modifier le comportement.
+          - score: 1
+            description: Modification partielle ou qui casse un cas existant.
+          - score: 2
+            description: Modification correcte avec un exemple de vérification.
+          - score: 3
+            description: Modification correcte, vérifiée sur plusieurs cas dont un cas limite.
+
 - id: js-basics-contre-ia
   family: CONTRE_IA
   title: Le panier qui calcule faux
   summary: Trouver et corriger les erreurs de types et d’opérateurs d’un script généré.
   estimatedMinutes: 45
-  instructions: "Un assistant a généré ce script de calcul de panier pour une boutique en ligne. Les\n\
-    règles métier sont les suivantes : le prix et la quantité arrivent sous forme de\ntexte depuis un\
-    \ formulaire ; la livraison coûte 4,50 € et devient gratuite **à\npartir de** 50 € d’achat ; une remise\
-    \ de 10 % s’applique toujours sur le total ; un\ncoupon vide signifie « aucun coupon ».\n\n```js\n\
-    // Calcul du panier — proposé par un assistant\nconst priceInput = '19.99'; // valeur lue depuis un\
-    \ formulaire\nconst quantityInput = '3';\nconst shippingCost = 4.5;\nconst freeShippingThreshold =\
-    \ 50;\n\nconst subtotal = priceInput * quantityInput;\nconst total = subtotal + shippingCost;\n\n\
-    if (subtotal > freeShippingThreshold) {\n  total = subtotal;\n}\n\nconst couponInput = '';\nif (couponInput\
-    \ == 0) {\n  console.log('Aucun coupon saisi');\n}\n\nconst discountRate = 0.1;\nconst discounted\
-    \ = total - total * discountRate;\nconsole.log('Total à payer : ' + discounted + ' €');\nconsole.log('Économie\
-    \ réalisée : ' + total - discounted + ' €');\n```\n\nTravail demandé :\n\n1. Exécute le script et\
-    \ décris ce qui se passe réellement.\n2. Liste chaque défaut que tu trouves : la ligne, le comportement\
-    \ observé ou\n   possible, la cause précise et sa gravité.\n3. Propose une version corrigée qui respecte\
-    \ les règles métier, avec des montants\n   affichés à deux décimales.\n4. Pour chaque correction,\
-    \ donne une valeur d’entrée qui aurait révélé le défaut.\n"
-  deliverable: 'Colle ta liste de défauts (ligne, symptôme, cause, gravité), puis le script corrigé
+  instructions: |
+    Un assistant a généré ce script de calcul de panier pour une boutique en ligne. Les
+    règles métier sont les suivantes : le prix et la quantité arrivent sous forme de
+    texte depuis un formulaire ; la livraison coûte 4,50 € et devient gratuite **à
+    partir de** 50 € d’achat ; une remise de 10 % s’applique toujours sur le total ; un
+    coupon vide signifie « aucun coupon ».
 
+    ```js
+    // Calcul du panier — proposé par un assistant
+    const priceInput = '19.99'; // valeur lue depuis un formulaire
+    const quantityInput = '3';
+    const shippingCost = 4.5;
+    const freeShippingThreshold = 50;
+
+    const subtotal = priceInput * quantityInput;
+    const total = subtotal + shippingCost;
+
+    if (subtotal > freeShippingThreshold) {
+      total = subtotal;
+    }
+
+    const couponInput = '';
+    if (couponInput == 0) {
+      console.log('Aucun coupon saisi');
+    }
+
+    const discountRate = 0.1;
+    const discounted = total - total * discountRate;
+    console.log('Total à payer : ' + discounted + ' €');
+    console.log('Économie réalisée : ' + total - discounted + ' €');
+    ```
+
+    Travail demandé :
+
+    1. Exécute le script et décris ce qui se passe réellement.
+    2. Liste chaque défaut que tu trouves : la ligne, le comportement observé ou
+       possible, la cause précise et sa gravité.
+    3. Propose une version corrigée qui respecte les règles métier, avec des montants
+       affichés à deux décimales.
+    4. Pour chaque correction, donne une valeur d’entrée qui aurait révélé le défaut.
+  deliverable: |
+    Colle ta liste de défauts (ligne, symptôme, cause, gravité), puis le script corrigé
     complet et sa sortie.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: defects-found
-      description: Identifie les défauts réels, y compris ceux qui ne se manifestent pas à chaque exécution.
-      maxScore: 3
-    - id: root-cause
-      description: Explique la cause technique de chaque défaut, pas seulement le symptôme.
-      maxScore: 3
-    - id: fix-quality
-      description: Propose des corrections justes, minimales et vérifiées par des cas de test.
-      maxScore: 3
+      - id: defects-found
+        description: Identifie les défauts réels, y compris ceux qui ne se manifestent pas à chaque exécution.
+        maxScore: 3
+      - id: root-cause
+        description: Explique la cause technique de chaque défaut, pas seulement le symptôme.
+        maxScore: 3
+      - id: fix-quality
+        description: Propose des corrections justes, minimales et vérifiées par des cas de test.
+        maxScore: 3
+
 - id: js-basics-apres-ia
   family: APRES_IA
   title: L’étiquette produit
   summary: Faire évoluer et dépanner un script existant sans le réécrire entièrement.
   estimatedMinutes: 50
-  instructions: "Ce script imprime l’étiquette d’un produit dans le terminal. Il fonctionne et il\nest\
-    \ utilisé tous les jours : tu dois le faire évoluer **en modifiant le moins de\nlignes possible**,\
-    \ sans le régénérer.\n\n```js\nconst productName = 'Théière en fonte';\nconst reference = 'th-0042';\n\
-    const priceExcludingTax = 32.5;\nconst vatRate = 0.2;\nconst stock = 0;\nconst isOnSale = false;\n\
-    \nconst priceIncludingTax = priceExcludingTax + priceExcludingTax * vatRate;\nconst stockLabel = stock\
-    \ || 'inconnu';\n\nconsole.log('==============================');\nconsole.log(productName);\nconsole.log('Réf.\
-    \ ' + reference);\nconsole.log('Prix : ' + priceIncludingTax + ' €');\nconsole.log('Stock : ' + stockLabel);\n\
-    console.log('==============================');\n```\n\nDemandes de l’équipe :\n\n1. **Bug** : quand\
-    \ le stock vaut 0, l’étiquette affiche « Stock : inconnu » au lieu\n   de « Stock : 0 ». Corrige-le\
-    \ et explique la cause.\n2. La référence doit s’afficher en majuscules (`TH-0042`) sans modifier la\
-    \ donnée\n   d’origine.\n3. Le prix doit s’afficher au format français avec deux décimales et une\
-    \ virgule :\n   `Prix : 39,00 €`.\n4. Si `isOnSale` vaut `true`, une ligne `PROMO -15 %` s’ajoute\
-    \ sous le prix et le\n   prix affiché devient le prix remisé. Teste les deux valeurs.\n5. Le nom du\
-    \ produit doit être centré dans une ligne de 30 caractères, en\n   utilisant les méthodes de chaînes.\n"
-  deliverable: 'Colle le script modifié, la sortie pour `isOnSale = false` puis pour
+  instructions: |
+    Ce script imprime l’étiquette d’un produit dans le terminal. Il fonctionne et il
+    est utilisé tous les jours : tu dois le faire évoluer **en modifiant le moins de
+    lignes possible**, sans le régénérer.
 
+    ```js
+    const productName = 'Théière en fonte';
+    const reference = 'th-0042';
+    const priceExcludingTax = 32.5;
+    const vatRate = 0.2;
+    const stock = 0;
+    const isOnSale = false;
+
+    const priceIncludingTax = priceExcludingTax + priceExcludingTax * vatRate;
+    const stockLabel = stock || 'inconnu';
+
+    console.log('==============================');
+    console.log(productName);
+    console.log('Réf. ' + reference);
+    console.log('Prix : ' + priceIncludingTax + ' €');
+    console.log('Stock : ' + stockLabel);
+    console.log('==============================');
+    ```
+
+    Demandes de l’équipe :
+
+    1. **Bug** : quand le stock vaut 0, l’étiquette affiche « Stock : inconnu » au lieu
+       de « Stock : 0 ». Corrige-le et explique la cause.
+    2. La référence doit s’afficher en majuscules (`TH-0042`) sans modifier la donnée
+       d’origine.
+    3. Le prix doit s’afficher au format français avec deux décimales et une virgule :
+       `Prix : 39,00 €`.
+    4. Si `isOnSale` vaut `true`, une ligne `PROMO -15 %` s’ajoute sous le prix et le
+       prix affiché devient le prix remisé. Teste les deux valeurs.
+    5. Le nom du produit doit être centré dans une ligne de 30 caractères, en
+       utilisant les méthodes de chaînes.
+  deliverable: |
+    Colle le script modifié, la sortie pour `isOnSale = false` puis pour
     `isOnSale = true`, et une liste des lignes modifiées ou ajoutées avec la raison de
-
     chaque changement.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: bug-diagnosis
-      description: Explique la cause du bug à partir des valeurs falsy et la corrige proprement.
-      maxScore: 3
-    - id: string-methods
-      description: Utilise et explique les méthodes de chaînes et l’immutabilité des chaînes.
-      maxScore: 3
-    - id: minimal-change
-      description: Fait évoluer le code existant de façon ciblée et vérifiée.
-      maxScore: 2
+      - id: bug-diagnosis
+        description: Explique la cause du bug à partir des valeurs falsy et la corrige proprement.
+        maxScore: 3
+      - id: string-methods
+        description: Utilise et explique les méthodes de chaînes et l’immutabilité des chaînes.
+        maxScore: 3
+      - id: minimal-change
+        description: Fait évoluer le code existant de façon ciblée et vérifiée.
+        maxScore: 2

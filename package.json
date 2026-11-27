@@ -21,7 +21,9 @@
     "db:migrate": "pnpm --filter @kompri/db migrate",
     "db:seed": "pnpm --filter @kompri/db seed",
     "e2e": "playwright test",
-    "evals:questions": "pnpm --filter @kompri/evals questions:live"
+    "evals:questions": "pnpm --filter @kompri/evals questions:live",
+    "content:lock": "pnpm --filter @kompri/content lock",
+    "content:unlock": "pnpm --filter @kompri/content unlock"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",

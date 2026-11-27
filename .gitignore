@@ -14,3 +14,7 @@ apps/web/AGENTS.md
 test-results/
 playwright-report/
 /backups/
+
+# Answer keys in plaintext: only their encrypted form is committed.
+packages/content/private/
+packages/evals/private/

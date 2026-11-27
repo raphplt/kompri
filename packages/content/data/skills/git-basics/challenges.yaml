@@ -1,324 +1,539 @@
 - id: git-basics-sans-ia
   family: SANS_IA
   title: Le carnet du club de lecture
-  summary: Créer un dépôt, faire des commits atomiques, résoudre un conflit et annuler proprement, sans
-    aide.
+  summary: Créer un dépôt, faire des commits atomiques, résoudre un conflit et annuler proprement, sans aide.
   estimatedMinutes: 55
-  instructions: "Un club de lecture veut garder l’historique de sa liste de livres. Tu travailles seul,\n\
-    dans ton terminal, sans IA ni recherche en ligne. Les messages de commit sont à ta\ncharge : ils doivent\
-    \ être utiles.\n\n1. Crée un dossier `club-lecture`, initialise un dépôt Git et vérifie que ta branche\n\
-    \   s’appelle `main`.\n2. Crée un fichier `.gitignore` qui ignore le dossier `brouillons/` et tous\
-    \ les\n   fichiers `*.tmp`. Crée `livres.md` avec exactement ce contenu (la faute « Camu » est\n \
-    \  volontaire) :\n\n   ```text\n   # Livres du club\n\n   - L'Étranger, Albert Camu\n   - Les Misérables,\
-    \ Victor Hugo\n   - Le Petit Prince, Antoine de Saint-Exupéry\n   ```\n\n   Enregistre ces deux fichiers\
-    \ en **deux commits** distincts.\n3. Modifie `livres.md` en une seule fois : corrige « Camu » en «\
-    \ Camus » **et** ajoute\n   à la fin la ligne `- La Peste, Albert Camus`. Enregistre ces deux changements\
-    \ en\n   **deux commits** séparés (correction d’abord), sans retoucher le fichier entre les\n   deux.\
-    \ Juste avant le premier de ces deux commits, copie la sortie de\n   `git status --short`.\n4. Crée\
-    \ une branche `avis` depuis `main`. Sur `avis`, remplace la ligne des Misérables\n   par `- Les Misérables,\
-    \ Victor Hugo (coup de cœur)` et commite. Reviens sur `main`\n   et remplace la même ligne par `-\
-    \ Les Misérables, Victor Hugo (1862)`, puis commite.\n   Fusionne `avis` dans `main` ; résous le conflit\
-    \ pour obtenir\n   `- Les Misérables, Victor Hugo (1862, coup de cœur)`.\n5. On considère que le commit\
-    \ qui a ajouté « La Peste » a déjà été partagé avec le club,\n   et que le club ne veut finalement\
-    \ pas de ce livre. Annule ce commit de la façon\n   adaptée à cette situation.\n6. Ajoute n’importe\
-    \ quel texte à la fin de `livres.md`, sans l’indexer, puis\n   fais disparaître cette modification\
-    \ avec la commande adaptée. Crée ensuite un fichier\n   `brouillons/idees.txt` et vérifie qu’il n’apparaît\
-    \ pas dans `git status`.\n\nRéponds enfin, en quelques phrases chacune :\n\n- a) Que signifiait chaque\
-    \ colonne de la sortie de `git status --short` copiée à\n  l’étape 3 ?\n- b) Pourquoi la fusion de\
-    \ l’étape 4 a-t-elle produit un conflit, et qu’aurait fait Git\n  si `avis` avait modifié une autre\
-    \ ligne ?\n- c) Pourquoi avoir choisi cette commande à l’étape 5 plutôt que `git reset` ?\n- d) Quelle\
-    \ différence entre la commande de l’étape 6 et la même commande avec\n  l’option `--staged` ?\n"
-  deliverable: 'Colle, dans l’ordre : la liste des commandes Git que tu as tapées (ton historique de
+  instructions: |
+    Un club de lecture veut garder l’historique de sa liste de livres. Tu travailles seul,
+    dans ton terminal, sans IA ni recherche en ligne. Les messages de commit sont à ta
+    charge : ils doivent être utiles.
 
+    1. Crée un dossier `club-lecture`, initialise un dépôt Git et vérifie que ta branche
+       s’appelle `main`.
+    2. Crée un fichier `.gitignore` qui ignore le dossier `brouillons/` et tous les
+       fichiers `*.tmp`. Crée `livres.md` avec exactement ce contenu (la faute « Camu » est
+       volontaire) :
+
+       ```text
+       # Livres du club
+
+       - L'Étranger, Albert Camu
+       - Les Misérables, Victor Hugo
+       - Le Petit Prince, Antoine de Saint-Exupéry
+       ```
+
+       Enregistre ces deux fichiers en **deux commits** distincts.
+    3. Modifie `livres.md` en une seule fois : corrige « Camu » en « Camus » **et** ajoute
+       à la fin la ligne `- La Peste, Albert Camus`. Enregistre ces deux changements en
+       **deux commits** séparés (correction d’abord), sans retoucher le fichier entre les
+       deux. Juste avant le premier de ces deux commits, copie la sortie de
+       `git status --short`.
+    4. Crée une branche `avis` depuis `main`. Sur `avis`, remplace la ligne des Misérables
+       par `- Les Misérables, Victor Hugo (coup de cœur)` et commite. Reviens sur `main`
+       et remplace la même ligne par `- Les Misérables, Victor Hugo (1862)`, puis commite.
+       Fusionne `avis` dans `main` ; résous le conflit pour obtenir
+       `- Les Misérables, Victor Hugo (1862, coup de cœur)`.
+    5. On considère que le commit qui a ajouté « La Peste » a déjà été partagé avec le club,
+       et que le club ne veut finalement pas de ce livre. Annule ce commit de la façon
+       adaptée à cette situation.
+    6. Ajoute n’importe quel texte à la fin de `livres.md`, sans l’indexer, puis
+       fais disparaître cette modification avec la commande adaptée. Crée ensuite un fichier
+       `brouillons/idees.txt` et vérifie qu’il n’apparaît pas dans `git status`.
+
+    Réponds enfin, en quelques phrases chacune :
+
+    - a) Que signifiait chaque colonne de la sortie de `git status --short` copiée à
+      l’étape 3 ?
+    - b) Pourquoi la fusion de l’étape 4 a-t-elle produit un conflit, et qu’aurait fait Git
+      si `avis` avait modifié une autre ligne ?
+    - c) Pourquoi avoir choisi cette commande à l’étape 5 plutôt que `git reset` ?
+    - d) Quelle différence entre la commande de l’étape 6 et la même commande avec
+      l’option `--staged` ?
+  deliverable: |
+    Colle, dans l’ordre : la liste des commandes Git que tu as tapées (ton historique de
     terminal nettoyé convient), la sortie de `git status --short` de l’étape 3, la sortie
-
     finale de `git log --oneline --graph --all`, le contenu final de `livres.md` et de
-
     `.gitignore`, puis tes réponses aux questions a à d.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: git-model
-      description: Explique le répertoire de travail, l’index et les commits à partir de ses propres sorties.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas ce qu’est l’index ou confond commit et sauvegarde de fichier.
-      - score: 1
-        description: Décrit les trois zones de façon récitée sans savoir lire la sortie MM.
-      - score: 2
-        description: Interprète correctement MM et explique ce que contient le commit suivant.
-      - score: 3
-        description: Prédit sans erreur l’état après une suite de commandes proposée à l’oral.
-    - id: atomic-commits
-      description: Produit des commits atomiques aux messages utiles et sait justifier le découpage.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Commits mélangés ou messages vides de sens.
-      - score: 1
-        description: Découpage correct mais messages vagues, ou découpage obtenu sans savoir comment.
-      - score: 2
-        description: Découpage avec git add -p expliqué et messages courts à l’impératif.
-      - score: 3
-        description: Explique aussi l’intérêt du découpage pour annuler ou relire un seul changement.
-    - id: branches-conflict
-      description: Crée une branche, fusionne et résout le conflit en comprenant sa cause.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Fusion non réalisée ou marqueurs laissés dans le fichier.
-      - score: 1
-        description: Conflit résolu mais cause ou étapes (add, commit) mal expliquées.
-      - score: 2
-        description: Explique la cause du conflit, les marqueurs et les étapes de résolution.
-      - score: 3
-        description: Distingue avance rapide, fusion automatique et conflit, et connaît git merge --abort.
-    - id: undo
-      description: Choisit la bonne commande d’annulation et connaît les pertes possibles.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Utilise reset sur l’historique partagé ou ne sait pas ce que restore jette.
-      - score: 1
-        description: Commandes correctes mais justification confuse.
-      - score: 2
-        description: Justifie revert contre reset et restore contre restore --staged.
-      - score: 3
-        description: Explique aussi le reflog comme filet de sécurité et ses limites (rien pour le non
-          commité).
+      - id: git-model
+        description: Explique le répertoire de travail, l’index et les commits à partir de ses propres sorties.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas ce qu’est l’index ou confond commit et sauvegarde de fichier.
+          - score: 1
+            description: Décrit les trois zones de façon récitée sans savoir lire la sortie MM.
+          - score: 2
+            description: Interprète correctement MM et explique ce que contient le commit suivant.
+          - score: 3
+            description: Prédit sans erreur l’état après une suite de commandes proposée à l’oral.
+      - id: atomic-commits
+        description: Produit des commits atomiques aux messages utiles et sait justifier le découpage.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Commits mélangés ou messages vides de sens.
+          - score: 1
+            description: Découpage correct mais messages vagues, ou découpage obtenu sans savoir comment.
+          - score: 2
+            description: Découpage avec git add -p expliqué et messages courts à l’impératif.
+          - score: 3
+            description: Explique aussi l’intérêt du découpage pour annuler ou relire un seul changement.
+      - id: branches-conflict
+        description: Crée une branche, fusionne et résout le conflit en comprenant sa cause.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Fusion non réalisée ou marqueurs laissés dans le fichier.
+          - score: 1
+            description: Conflit résolu mais cause ou étapes (add, commit) mal expliquées.
+          - score: 2
+            description: Explique la cause du conflit, les marqueurs et les étapes de résolution.
+          - score: 3
+            description: Distingue avance rapide, fusion automatique et conflit, et connaît git merge --abort.
+      - id: undo
+        description: Choisit la bonne commande d’annulation et connaît les pertes possibles.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Utilise reset sur l’historique partagé ou ne sait pas ce que restore jette.
+          - score: 1
+            description: Commandes correctes mais justification confuse.
+          - score: 2
+            description: Justifie revert contre reset et restore contre restore --staged.
+          - score: 3
+            description: Explique aussi le reflog comme filet de sécurité et ses limites (rien pour le non commité).
+
 - id: git-basics-avec-ia
   family: AVEC_IA
   title: La répétition générale d’une équipe
-  summary: Écrire avec une IA un script qui rejoue une collaboration Git à deux, et la charte de contribution
-    qui va avec.
+  summary: Écrire avec une IA un script qui rejoue une collaboration Git à deux, et la charte de contribution qui va avec.
   estimatedMinutes: 100
-  instructions: "Ton équipe débute avec Git et veut s’entraîner sur un scénario reproductible, sans\n\
-    compte sur une plateforme. Tu peux utiliser une IA autant que tu veux ; à l’oral, tu\ndevras expliquer\
-    \ chaque commande, prévoir la sortie d’étapes modifiées et corriger\ntoi-même un comportement.\n\n\
-    Livrable 1 — un script `simulation.sh`, lancé avec `bash simulation.sh`, qui :\n\n1. crée un dossier\
-    \ de travail neuf (par exemple avec `mktemp -d`) et affiche son\n   chemin ; le script ne doit rien\
-    \ modifier en dehors de ce dossier, ni ta\n   configuration Git globale ;\n2. crée un dépôt distant\
-    \ nu `serveur.git` et deux clones, `ana` et `ben`, chacun avec\n   sa propre identité Git configurée\
-    \ **localement** ;\n3. fait publier par Ana un premier commit contenant `index.html` et un `.gitignore`\n\
-    \   adapté à un projet Node.js ;\n4. fait travailler Ana et Ben **en parallèle** sur des lignes différentes,\
-    \ puis\n   pousser Ben en premier : l’envoi d’Ana doit être refusé, le script doit le\n   détecter,\
-    \ afficher un message clair, récupérer le travail de Ben par une fusion et\n   renvoyer ;\n5. rejoue\
-    \ une demande de fusion : Ben crée une branche `ajout-contact`, la pousse ;\n   Ana la relit (affiche\
-    \ les commits et les différences par rapport à `main`), la\n   fusionne avec un commit de fusion et\
-    \ pousse ; la branche est ensuite supprimée sur\n   le distant ;\n6. affiche pour finir `git log --oneline\
-    \ --graph --all` côté Ana.\n\nLe script s’arrête à la première erreur **inattendue** ; l’envoi refusé\
-    \ de l’étape 4\nest une erreur attendue, que tu traites explicitement.\n\nLivrable 2 — un fichier\
-    \ `CONTRIBUTING.md` d’une page au plus, en français, qui fixe les\nrègles de l’équipe : nommage des\
-    \ branches, forme des messages de commit, déroulé d’une\npull request, ce qui ne doit jamais être\
-    \ commité, ce qui est interdit sur `main`.\n\nConseil : demande à l’IA de commenter chaque commande,\
-    \ puis exécute le script plusieurs\nfois et compare ce qu’il affiche avec ce que tu attendais.\n"
-  deliverable: 'Colle le contenu complet de `simulation.sh`, la sortie complète d’une exécution (tu
+  instructions: |
+    Ton équipe débute avec Git et veut s’entraîner sur un scénario reproductible, sans
+    compte sur une plateforme. Tu peux utiliser une IA autant que tu veux ; à l’oral, tu
+    devras expliquer chaque commande, prévoir la sortie d’étapes modifiées et corriger
+    toi-même un comportement.
 
+    Livrable 1 — un script `simulation.sh`, lancé avec `bash simulation.sh`, qui :
+
+    1. crée un dossier de travail neuf (par exemple avec `mktemp -d`) et affiche son
+       chemin ; le script ne doit rien modifier en dehors de ce dossier, ni ta
+       configuration Git globale ;
+    2. crée un dépôt distant nu `serveur.git` et deux clones, `ana` et `ben`, chacun avec
+       sa propre identité Git configurée **localement** ;
+    3. fait publier par Ana un premier commit contenant `index.html` et un `.gitignore`
+       adapté à un projet Node.js ;
+    4. fait travailler Ana et Ben **en parallèle** sur des lignes différentes, puis
+       pousser Ben en premier : l’envoi d’Ana doit être refusé, le script doit le
+       détecter, afficher un message clair, récupérer le travail de Ben par une fusion et
+       renvoyer ;
+    5. rejoue une demande de fusion : Ben crée une branche `ajout-contact`, la pousse ;
+       Ana la relit (affiche les commits et les différences par rapport à `main`), la
+       fusionne avec un commit de fusion et pousse ; la branche est ensuite supprimée sur
+       le distant ;
+    6. affiche pour finir `git log --oneline --graph --all` côté Ana.
+
+    Le script s’arrête à la première erreur **inattendue** ; l’envoi refusé de l’étape 4
+    est une erreur attendue, que tu traites explicitement.
+
+    Livrable 2 — un fichier `CONTRIBUTING.md` d’une page au plus, en français, qui fixe les
+    règles de l’équipe : nommage des branches, forme des messages de commit, déroulé d’une
+    pull request, ce qui ne doit jamais être commité, ce qui est interdit sur `main`.
+
+    Conseil : demande à l’IA de commenter chaque commande, puis exécute le script plusieurs
+    fois et compare ce qu’il affiche avec ce que tu attendais.
+  deliverable: |
+    Colle le contenu complet de `simulation.sh`, la sortie complète d’une exécution (tu
     peux raccourcir les lignes de progression du transfert), le contenu de
-
     `CONTRIBUTING.md`, puis quelques lignes sur ce que l’IA t’a apporté, ce qu’elle a
-
     proposé de faux ou de risqué et comment tu l’as vérifié.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: code-ownership
-      description: Explique chaque commande du script et son effet sur les dépôts, sans aide.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas expliquer des commandes importantes de son propre script.
-      - score: 1
-        description: Explique le déroulé global mais pas le rôle de fetch, origin/main ou -u.
-      - score: 2
-        description: Explique précisément chaque étape, dont le dépôt nu et les branches de suivi.
-      - score: 3
-        description: Explique aussi les choix écartés et ce qu’il a corrigé dans la proposition de l’IA.
-    - id: remote-collaboration
-      description: Raisonne correctement sur push refusé, fetch, pull et divergence.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Pense qu’un push refusé se règle en forçant.
-      - score: 1
-        description: Sait qu’il faut un pull mais ne sait pas pourquoi le push a été refusé.
-      - score: 2
-        description: Explique l’avance rapide, la divergence et le rôle du commit de fusion.
-      - score: 3
-        description: Compare fusion et rebasage au moment du pull et justifie son choix.
-    - id: pull-request
-      description: Décrit et rejoue le cycle d’une pull request.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Confond pull request et commande git pull.
-      - score: 1
-        description: Décrit le cycle sur la plateforme sans savoir le rejouer en Git.
-      - score: 2
-        description: Relie chaque étape à des commandes (branche, push, relecture deux et trois points,
-          fusion, suppression).
-    - id: modification
-      description: Réalise ou décrit correctement une modification du scénario demandée à l’oral.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne parvient pas à modifier le script.
-      - score: 1
-        description: Modification partielle ou qui casse une étape existante.
-      - score: 2
-        description: Modification correcte, vérifiée par une exécution.
-      - score: 3
-        description: Modification correcte, vérifiée, avec anticipation d’un cas limite (conflit, dépôt
-          vide).
+      - id: code-ownership
+        description: Explique chaque commande du script et son effet sur les dépôts, sans aide.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas expliquer des commandes importantes de son propre script.
+          - score: 1
+            description: Explique le déroulé global mais pas le rôle de fetch, origin/main ou -u.
+          - score: 2
+            description: Explique précisément chaque étape, dont le dépôt nu et les branches de suivi.
+          - score: 3
+            description: Explique aussi les choix écartés et ce qu’il a corrigé dans la proposition de l’IA.
+      - id: remote-collaboration
+        description: Raisonne correctement sur push refusé, fetch, pull et divergence.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Pense qu’un push refusé se règle en forçant.
+          - score: 1
+            description: Sait qu’il faut un pull mais ne sait pas pourquoi le push a été refusé.
+          - score: 2
+            description: Explique l’avance rapide, la divergence et le rôle du commit de fusion.
+          - score: 3
+            description: Compare fusion et rebasage au moment du pull et justifie son choix.
+      - id: pull-request
+        description: Décrit et rejoue le cycle d’une pull request.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Confond pull request et commande git pull.
+          - score: 1
+            description: Décrit le cycle sur la plateforme sans savoir le rejouer en Git.
+          - score: 2
+            description: Relie chaque étape à des commandes (branche, push, relecture deux et trois points, fusion, suppression).
+      - id: modification
+        description: Réalise ou décrit correctement une modification du scénario demandée à l’oral.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne parvient pas à modifier le script.
+          - score: 1
+            description: Modification partielle ou qui casse une étape existante.
+          - score: 2
+            description: Modification correcte, vérifiée par une exécution.
+          - score: 3
+            description: Modification correcte, vérifiée, avec anticipation d’un cas limite (conflit, dépôt vide).
+
 - id: git-basics-contre-ia
   family: CONTRE_IA
   title: Le script de publication en un clic
-  summary: Trouver pourquoi un script de publication généré efface le travail des collègues et publie
-    des secrets.
+  summary: Trouver pourquoi un script de publication généré efface le travail des collègues et publie des secrets.
   estimatedMinutes: 50
-  instructions: "Dans une petite équipe, Léa a demandé à un assistant « un script pour enregistrer et\n\
-    publier mon travail en une seule commande, sans me prendre la tête avec les erreurs de\npush ». Depuis\
-    \ qu’elle l’utilise, Tom se plaint que ses commits « disparaissent » du\ndépôt partagé. Voici le script\
-    \ et le `.gitignore` du projet, tous deux générés.\n\n`publier.sh`, placé à la racine du projet :\n\
-    \n```bash\n#!/usr/bin/env bash\n# publier.sh — enregistre et publie ton travail en une seule commande\n\
-    # Usage : ./publier.sh \"Message du commit\"\n\nMESSAGE=${1:-\"Mise à jour\"}\n\necho \"Ajout des\
-    \ fichiers...\"\ngit add .\n\necho \"Création du commit...\"\ngit commit -m \"$MESSAGE\"\n\necho \"\
-    Synchronisation avec le dépôt distant...\"\ngit pull origin main\n\necho \"Publication...\"\ngit push\
-    \ --force origin main\n\necho \"Terminé ! Ton travail est en ligne.\"\n```\n\n`.gitignore` :\n\n```text\n\
-    node_modules\n.env.local\n*.log\n```\n\nLe projet contient un fichier `.env` avec le mot de passe\
-    \ de la base de données. Léa\ntravaille parfois sur `main`, parfois sur des branches comme `menu`.\
-    \ Aucun réglage\n`pull.rebase` n’est configuré sur sa machine.\n\nTravail demandé :\n\n1. Reproduis\
-    \ le problème : crée un dépôt nu et deux clones (Léa et Tom). Tom pousse\n   un commit, puis Léa,\
-    \ qui a un commit local différent et un fichier `.env`, lance le\n   script. Montre ce que contient\
-    \ le dépôt distant ensuite.\n2. Liste chaque défaut du script et du `.gitignore` : la ligne, le scénario\
-    \ qui le\n   déclenche, la conséquence et sa gravité.\n3. Propose une version corrigée du script et\
-    \ du `.gitignore`. Le script doit rester\n   pratique mais ne jamais détruire le travail d’autrui\
-    \ ni publier ce qui n’a pas été\n   relu.\n4. Indique ce que l’équipe doit faire maintenant, sachant\
-    \ que le script a déjà été\n   utilisé.\n"
-  deliverable: 'Colle les commandes et sorties de ta reproduction, ta liste de défauts (ligne,
+  instructions: |
+    Dans une petite équipe, Léa a demandé à un assistant « un script pour enregistrer et
+    publier mon travail en une seule commande, sans me prendre la tête avec les erreurs de
+    push ». Depuis qu’elle l’utilise, Tom se plaint que ses commits « disparaissent » du
+    dépôt partagé. Voici le script et le `.gitignore` du projet, tous deux générés.
 
+    `publier.sh`, placé à la racine du projet :
+
+    ```bash
+    #!/usr/bin/env bash
+    # publier.sh — enregistre et publie ton travail en une seule commande
+    # Usage : ./publier.sh "Message du commit"
+
+    MESSAGE=${1:-"Mise à jour"}
+
+    echo "Ajout des fichiers..."
+    git add .
+
+    echo "Création du commit..."
+    git commit -m "$MESSAGE"
+
+    echo "Synchronisation avec le dépôt distant..."
+    git pull origin main
+
+    echo "Publication..."
+    git push --force origin main
+
+    echo "Terminé ! Ton travail est en ligne."
+    ```
+
+    `.gitignore` :
+
+    ```text
+    node_modules
+    .env.local
+    *.log
+    ```
+
+    Le projet contient un fichier `.env` avec le mot de passe de la base de données. Léa
+    travaille parfois sur `main`, parfois sur des branches comme `menu`. Aucun réglage
+    `pull.rebase` n’est configuré sur sa machine.
+
+    Travail demandé :
+
+    1. Reproduis le problème : crée un dépôt nu et deux clones (Léa et Tom). Tom pousse
+       un commit, puis Léa, qui a un commit local différent et un fichier `.env`, lance le
+       script. Montre ce que contient le dépôt distant ensuite.
+    2. Liste chaque défaut du script et du `.gitignore` : la ligne, le scénario qui le
+       déclenche, la conséquence et sa gravité.
+    3. Propose une version corrigée du script et du `.gitignore`. Le script doit rester
+       pratique mais ne jamais détruire le travail d’autrui ni publier ce qui n’a pas été
+       relu.
+    4. Indique ce que l’équipe doit faire maintenant, sachant que le script a déjà été
+       utilisé.
+  deliverable: |
+    Colle les commandes et sorties de ta reproduction, ta liste de défauts (ligne,
     scénario, conséquence, gravité), le script et le `.gitignore` corrigés, puis tes
-
     recommandations pour l’équipe.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: defects-found
-      description: Identifie les défauts réels, y compris ceux qui dépendent de la branche ou de la configuration.
-      maxScore: 3
-    - id: root-cause
-      description: Explique par le modèle de Git pourquoi les commits de Tom disparaissent.
-      maxScore: 3
-    - id: fix-quality
-      description: Propose des corrections sûres, vérifiées, et une réponse adaptée à la fuite du secret.
-      maxScore: 3
+      - id: defects-found
+        description: Identifie les défauts réels, y compris ceux qui dépendent de la branche ou de la configuration.
+        maxScore: 3
+      - id: root-cause
+        description: Explique par le modèle de Git pourquoi les commits de Tom disparaissent.
+        maxScore: 3
+      - id: fix-quality
+        description: Propose des corrections sûres, vérifiées, et une réponse adaptée à la fuite du secret.
+        maxScore: 3
+
 - id: git-basics-apres-ia
   family: APRES_IA
   title: Le dépôt de l’agenda à remettre d’aplomb
-  summary: Diagnostiquer un dépôt en désordre et le réparer sans le recréer, sans rien perdre ni publier
-    de secret.
+  summary: Diagnostiquer un dépôt en désordre et le réparer sans le recréer, sans rien perdre ni publier de secret.
   estimatedMinutes: 80
-  instructions: "Tu reprends le site d’agenda d’une association. Hier, tu as travaillé vite avec une\n\
-    IA : tes commits sont partis sur `main` au lieu d’une branche, et l’un d’eux contient\nun fichier\
-    \ sensible. L’équipe a continué de son côté. Tu dois remettre le dépôt en\nordre **sans le recréer**\
-    \ : interdit de supprimer `.git`, de recloner ou de\nréécrire des commits déjà publiés.\n\nPour obtenir\
-    \ la situation de départ, enregistre ce script sous `preparer-agenda.sh`,\npuis exécute `bash preparer-agenda.sh`\
-    \ dans un dossier de ton choix et va dans\n`atelier-agenda/projet`. Le script crée aussi un dépôt\
-    \ `equipe`, qui joue le rôle\nde tes collègues : n’y touche pas.\n\n```bash\n#!/usr/bin/env bash\n\
-    # Prépare le dépôt de l'agenda de l'association dans un dossier atelier-agenda.\n# Usage : bash preparer-agenda.sh\
-    \ (depuis le dossier où créer atelier-agenda)\nset -e\n\nif [ -e atelier-agenda ]; then\n  echo \"\
-    Le dossier atelier-agenda existe déjà : supprime-le ou change de dossier.\"\n  exit 1\nfi\n\n# Écrit\
-    \ la page d'accueil. $1 : horaire de l'AG ; $2 : texte du pied de page (facultatif)\nwrite_index()\
-    \ {\n  cat > index.html <<EOF\n<!doctype html>\n<html lang=\"fr\">\n  <head>\n    <meta charset=\"\
-    utf-8\">\n    <title>Agenda de l'association</title>\n    <link rel=\"stylesheet\" href=\"style.css\"\
-    >\n  </head>\n  <body>\n    <h1>Agenda de l'association</h1>\n    <h2>Mars</h2>\n    <ul>\n      <li\
-    \ class=\"evenement\">12 mars : atelier vélo, 18 h</li>\n      <li class=\"evenement\">26 mars : assemblée\
-    \ générale, $1</li>\n    </ul>\n    <h2>Avril</h2>\n    <ul>\n      <li class=\"evenement\">9 avril\
-    \ : sortie au marché, 10 h</li>\n    </ul>$2\n  </body>\n</html>\nEOF\n}\n\nmkdir atelier-agenda\n\
-    cd atelier-agenda\n# --initial-branch=main : le dépôt distant utilise main, quel que soit ton réglage\
-    \ Git\ngit init --quiet --bare --initial-branch=main serveur.git\n\n# --- Historique déjà publié par\
-    \ l'équipe ---\ngit init --quiet equipe\ncd equipe\ngit config user.name \"Nadia Haddad\"\ngit config\
-    \ user.email \"nadia@example.com\"\n\ncat > index.html <<'EOF'\n<!doctype html>\n<html lang=\"fr\"\
-    >\n  <head>\n    <meta charset=\"utf-8\">\n    <title>Agenda de l'association</title>\n  </head>\n\
-    \  <body>\n    <h1>Agenda de l'association</h1>\n  </body>\n</html>\nEOF\nprintf 'node_modules/\\\
-    n*.log\\n' > .gitignore\ngit add index.html .gitignore\ngit commit --quiet -m \"Ajoute la page d'accueil\
-    \ de l'agenda\"\ngit branch -M main\n\ncat > style.css <<'EOF'\nbody {\n  font-family: sans-serif;\n\
-    \  background: #ffffff;\n  color: #222222;\n}\n\n.evenement {\n  color: #222222;\n}\nEOF\ncat > index.html\
-    \ <<'EOF'\n<!doctype html>\n<html lang=\"fr\">\n  <head>\n    <meta charset=\"utf-8\">\n    <title>Agenda\
-    \ de l'association</title>\n    <link rel=\"stylesheet\" href=\"style.css\">\n  </head>\n  <body>\n\
-    \    <h1>Agenda de l'association</h1>\n  </body>\n</html>\nEOF\ngit add style.css index.html\ngit\
-    \ commit --quiet -m \"Ajoute la feuille de style\"\n\ncat > index.html <<'EOF'\n<!doctype html>\n\
-    <html lang=\"fr\">\n  <head>\n    <meta charset=\"utf-8\">\n    <title>Agenda de l'association</title>\n\
-    \    <link rel=\"stylesheet\" href=\"style.css\">\n  </head>\n  <body>\n    <h1>Agenda de l'association</h1>\n\
-    \    <h2>Mars</h2>\n    <ul>\n      <li class=\"evenement\">12 mars : atelier vélo, 18 h</li>\n  \
-    \    <li class=\"evenement\">26 mars : assemblée générale, 19 h</li>\n    </ul>\n  </body>\n</html>\n\
-    EOF\ngit commit --quiet -am \"Ajoute les événements de mars\"\n\ncat > style.css <<'EOF'\nbody {\n\
-    \  font-family: sans-serif;\n  background: #ffffff;\n  color: #1d3557;\n}\n\nh1,\nh2 {\n  color: #e63946;\n\
-    }\n\n.evenement {\n  color: #ffffff;\n}\nEOF\ngit commit --quiet -am \"Harmonise les couleurs du thème\"\
-    \n\nwrite_index \"19 h\" \"\"\ngit commit --quiet -am \"Ajoute les événements d'avril\"\ngit remote\
-    \ add origin ../serveur.git\ngit push --quiet -u origin main\ncd ..\n\n# --- Ton clone, avec le travail\
-    \ d'hier ---\ngit clone --quiet serveur.git projet\ncd projet\ngit config user.name \"Toi\"\ngit config\
-    \ user.email \"toi@example.com\"\n\ncat > inscription.html <<'EOF'\n<!doctype html>\n<html lang=\"\
-    fr\">\n  <head>\n    <meta charset=\"utf-8\">\n    <title>Inscription</title>\n  </head>\n  <body>\n\
-    \    <h1>S'inscrire à un événement</h1>\n    <form method=\"post\" action=\"/inscriptions\">\n   \
-    \   <label for=\"email\">Adresse électronique</label>\n      <input id=\"email\" name=\"email\" type=\"\
-    email\" required>\n      <button type=\"submit\">S'inscrire</button>\n    </form>\n  </body>\n</html>\n\
-    EOF\ngit add inscription.html\ngit commit --quiet -m \"Ajoute le formulaire d'inscription\"\n\nprintf\
-    \ 'SMTP_HOST=smtp.example.com\\nSMTP_PASSWORD=Velo-Marche-2026\\n' > .env\ncat > inscription.html\
-    \ <<'EOF'\n<!doctype html>\n<html lang=\"fr\">\n  <head>\n    <meta charset=\"utf-8\">\n    <title>Inscription</title>\n\
-    \  </head>\n  <body>\n    <h1>S'inscrire à un événement</h1>\n    <p>Tu recevras une confirmation\
-    \ par courriel.</p>\n    <form method=\"post\" action=\"/inscriptions\">\n      <label for=\"email\"\
-    >Adresse électronique</label>\n      <input id=\"email\" name=\"email\" type=\"email\" required>\n\
-    \      <button type=\"submit\">S'inscrire</button>\n    </form>\n  </body>\n</html>\nEOF\ngit add\
-    \ .\ngit commit --quiet -m \"Configure l'envoi des inscriptions\"\ncd ..\n\n# --- Pendant ce temps,\
-    \ l'équipe continue ---\ncd equipe\nwrite_index \"18 h 30\" \"\"\ngit commit --quiet -am \"Corrige\
-    \ l'horaire de l'assemblée générale\"\ngit push --quiet\ncd ..\n\n# --- Ton travail en cours, pas\
-    \ encore commité ---\ncd projet\nwrite_index \"19 h\" \"\n    <footer>Contact : bureau@example.org</footer>\"\
-    \ncd ..\n\necho \"Dépôt prêt : va dans atelier-agenda/projet.\"\n```\n\nAttention : les lignes du\
-    \ script entre `cat > … <<'EOF'` et `EOF` doivent être\nrecopiées exactement, et chaque `EOF` final\
-    \ doit être seul sur sa ligne, en début de\nligne. Si tu copies ce bloc depuis la page, vérifie qu’aucune\
-    \ indentation n’a été\najoutée devant ces lignes.\n\nDemandes, dans l’ordre de ton choix :\n\n1. **Diagnostic.**\
-    \ Décris précisément l’état du dépôt `projet` : ce qui n’existe qu’en\n   local, ce qui n’existe que\
-    \ sur le serveur, ce qui n’est pas commité. Indique les\n   commandes qui te l’ont appris. Méfie-toi\
-    \ de la première impression.\n2. **Remettre `main` d’aplomb.** Tes deux commits d’hier doivent se\
-    \ retrouver sur une\n   branche `inscription`, et `main` doit correspondre à celle de l’équipe, sans\
-    \ perdre\n   ton travail en cours sur le pied de page. Enregistre ensuite ce pied de page dans\n \
-    \  un commit sur `main`.\n3. **Le fichier sensible.** Aucun mot de passe ne doit être publié, ni maintenant\
-    \ ni\n   dans l’historique de la branche `inscription`. Fais en sorte que ce fichier reste\n   sur\
-    \ ton disque mais ne soit plus jamais versionné.\n4. **Le bug signalé.** Des membres signalent que\
-    \ les événements sont invisibles sur\n   la page d’accueil. Retrouve le commit responsable avec les\
-    \ outils d’inspection de\n   Git, explique la cause et corrige-la de la façon la plus adaptée à un\
-    \ commit déjà\n   publié. Publie `main`.\n5. **Proposer la branche.** Publie `inscription` comme pour\
-    \ une pull request et\n   montre ce qu’un relecteur verrait (commits et changements par rapport à\
-    \ `main`).\n"
-  deliverable: 'Colle, dans l’ordre où tu les as exécutées, les commandes utilisées avec les sorties
+  instructions: |
+    Tu reprends le site d’agenda d’une association. Hier, tu as travaillé vite avec une
+    IA : tes commits sont partis sur `main` au lieu d’une branche, et l’un d’eux contient
+    un fichier sensible. L’équipe a continué de son côté. Tu dois remettre le dépôt en
+    ordre **sans le recréer** : interdit de supprimer `.git`, de recloner ou de
+    réécrire des commits déjà publiés.
 
+    Pour obtenir la situation de départ, enregistre ce script sous `preparer-agenda.sh`,
+    puis exécute `bash preparer-agenda.sh` dans un dossier de ton choix et va dans
+    `atelier-agenda/projet`. Le script crée aussi un dépôt `equipe`, qui joue le rôle
+    de tes collègues : n’y touche pas.
+
+    ```bash
+    #!/usr/bin/env bash
+    # Prépare le dépôt de l'agenda de l'association dans un dossier atelier-agenda.
+    # Usage : bash preparer-agenda.sh (depuis le dossier où créer atelier-agenda)
+    set -e
+
+    if [ -e atelier-agenda ]; then
+      echo "Le dossier atelier-agenda existe déjà : supprime-le ou change de dossier."
+      exit 1
+    fi
+
+    # Écrit la page d'accueil. $1 : horaire de l'AG ; $2 : texte du pied de page (facultatif)
+    write_index() {
+      cat > index.html <<EOF
+    <!doctype html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8">
+        <title>Agenda de l'association</title>
+        <link rel="stylesheet" href="style.css">
+      </head>
+      <body>
+        <h1>Agenda de l'association</h1>
+        <h2>Mars</h2>
+        <ul>
+          <li class="evenement">12 mars : atelier vélo, 18 h</li>
+          <li class="evenement">26 mars : assemblée générale, $1</li>
+        </ul>
+        <h2>Avril</h2>
+        <ul>
+          <li class="evenement">9 avril : sortie au marché, 10 h</li>
+        </ul>$2
+      </body>
+    </html>
+    EOF
+    }
+
+    mkdir atelier-agenda
+    cd atelier-agenda
+    # --initial-branch=main : le dépôt distant utilise main, quel que soit ton réglage Git
+    git init --quiet --bare --initial-branch=main serveur.git
+
+    # --- Historique déjà publié par l'équipe ---
+    git init --quiet equipe
+    cd equipe
+    git config user.name "Nadia Haddad"
+    git config user.email "nadia@example.com"
+
+    cat > index.html <<'EOF'
+    <!doctype html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8">
+        <title>Agenda de l'association</title>
+      </head>
+      <body>
+        <h1>Agenda de l'association</h1>
+      </body>
+    </html>
+    EOF
+    printf 'node_modules/\n*.log\n' > .gitignore
+    git add index.html .gitignore
+    git commit --quiet -m "Ajoute la page d'accueil de l'agenda"
+    git branch -M main
+
+    cat > style.css <<'EOF'
+    body {
+      font-family: sans-serif;
+      background: #ffffff;
+      color: #222222;
+    }
+
+    .evenement {
+      color: #222222;
+    }
+    EOF
+    cat > index.html <<'EOF'
+    <!doctype html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8">
+        <title>Agenda de l'association</title>
+        <link rel="stylesheet" href="style.css">
+      </head>
+      <body>
+        <h1>Agenda de l'association</h1>
+      </body>
+    </html>
+    EOF
+    git add style.css index.html
+    git commit --quiet -m "Ajoute la feuille de style"
+
+    cat > index.html <<'EOF'
+    <!doctype html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8">
+        <title>Agenda de l'association</title>
+        <link rel="stylesheet" href="style.css">
+      </head>
+      <body>
+        <h1>Agenda de l'association</h1>
+        <h2>Mars</h2>
+        <ul>
+          <li class="evenement">12 mars : atelier vélo, 18 h</li>
+          <li class="evenement">26 mars : assemblée générale, 19 h</li>
+        </ul>
+      </body>
+    </html>
+    EOF
+    git commit --quiet -am "Ajoute les événements de mars"
+
+    cat > style.css <<'EOF'
+    body {
+      font-family: sans-serif;
+      background: #ffffff;
+      color: #1d3557;
+    }
+
+    h1,
+    h2 {
+      color: #e63946;
+    }
+
+    .evenement {
+      color: #ffffff;
+    }
+    EOF
+    git commit --quiet -am "Harmonise les couleurs du thème"
+
+    write_index "19 h" ""
+    git commit --quiet -am "Ajoute les événements d'avril"
+    git remote add origin ../serveur.git
+    git push --quiet -u origin main
+    cd ..
+
+    # --- Ton clone, avec le travail d'hier ---
+    git clone --quiet serveur.git projet
+    cd projet
+    git config user.name "Toi"
+    git config user.email "toi@example.com"
+
+    cat > inscription.html <<'EOF'
+    <!doctype html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8">
+        <title>Inscription</title>
+      </head>
+      <body>
+        <h1>S'inscrire à un événement</h1>
+        <form method="post" action="/inscriptions">
+          <label for="email">Adresse électronique</label>
+          <input id="email" name="email" type="email" required>
+          <button type="submit">S'inscrire</button>
+        </form>
+      </body>
+    </html>
+    EOF
+    git add inscription.html
+    git commit --quiet -m "Ajoute le formulaire d'inscription"
+
+    printf 'SMTP_HOST=smtp.example.com\nSMTP_PASSWORD=Velo-Marche-2026\n' > .env
+    cat > inscription.html <<'EOF'
+    <!doctype html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8">
+        <title>Inscription</title>
+      </head>
+      <body>
+        <h1>S'inscrire à un événement</h1>
+        <p>Tu recevras une confirmation par courriel.</p>
+        <form method="post" action="/inscriptions">
+          <label for="email">Adresse électronique</label>
+          <input id="email" name="email" type="email" required>
+          <button type="submit">S'inscrire</button>
+        </form>
+      </body>
+    </html>
+    EOF
+    git add .
+    git commit --quiet -m "Configure l'envoi des inscriptions"
+    cd ..
+
+    # --- Pendant ce temps, l'équipe continue ---
+    cd equipe
+    write_index "18 h 30" ""
+    git commit --quiet -am "Corrige l'horaire de l'assemblée générale"
+    git push --quiet
+    cd ..
+
+    # --- Ton travail en cours, pas encore commité ---
+    cd projet
+    write_index "19 h" "
+        <footer>Contact : bureau@example.org</footer>"
+    cd ..
+
+    echo "Dépôt prêt : va dans atelier-agenda/projet."
+    ```
+
+    Attention : les lignes du script entre `cat > … <<'EOF'` et `EOF` doivent être
+    recopiées exactement, et chaque `EOF` final doit être seul sur sa ligne, en début de
+    ligne. Si tu copies ce bloc depuis la page, vérifie qu’aucune indentation n’a été
+    ajoutée devant ces lignes.
+
+    Demandes, dans l’ordre de ton choix :
+
+    1. **Diagnostic.** Décris précisément l’état du dépôt `projet` : ce qui n’existe qu’en
+       local, ce qui n’existe que sur le serveur, ce qui n’est pas commité. Indique les
+       commandes qui te l’ont appris. Méfie-toi de la première impression.
+    2. **Remettre `main` d’aplomb.** Tes deux commits d’hier doivent se retrouver sur une
+       branche `inscription`, et `main` doit correspondre à celle de l’équipe, sans perdre
+       ton travail en cours sur le pied de page. Enregistre ensuite ce pied de page dans
+       un commit sur `main`.
+    3. **Le fichier sensible.** Aucun mot de passe ne doit être publié, ni maintenant ni
+       dans l’historique de la branche `inscription`. Fais en sorte que ce fichier reste
+       sur ton disque mais ne soit plus jamais versionné.
+    4. **Le bug signalé.** Des membres signalent que les événements sont invisibles sur
+       la page d’accueil. Retrouve le commit responsable avec les outils d’inspection de
+       Git, explique la cause et corrige-la de la façon la plus adaptée à un commit déjà
+       publié. Publie `main`.
+    5. **Proposer la branche.** Publie `inscription` comme pour une pull request et
+       montre ce qu’un relecteur verrait (commits et changements par rapport à `main`).
+  deliverable: |
+    Colle, dans l’ordre où tu les as exécutées, les commandes utilisées avec les sorties
     utiles (au minimum `git status` et `git log --oneline --graph --all` avant et après
-
     tes réparations), la justification de chaque étape en une ou deux phrases, puis la sortie
-
     de `git log --oneline --all -- .env` à la fin.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: diagnosis
-      description: Établit un diagnostic exact de l’état local, distant et non commité.
-      maxScore: 3
-    - id: safe-repair
-      description: Répare l’historique sans perte ni réécriture d’historique publié.
-      maxScore: 3
-    - id: secret-handling
-      description: Traite le fichier sensible correctement et sait quand un secret est compromis.
-      maxScore: 2
-    - id: bug-hunt
-      description: Retrouve l’origine du bug dans l’historique et choisit une correction adaptée.
-      maxScore: 3
+      - id: diagnosis
+        description: Établit un diagnostic exact de l’état local, distant et non commité.
+        maxScore: 3
+      - id: safe-repair
+        description: Répare l’historique sans perte ni réécriture d’historique publié.
+        maxScore: 3
+      - id: secret-handling
+        description: Traite le fichier sensible correctement et sait quand un secret est compromis.
+        maxScore: 2
+      - id: bug-hunt
+        description: Retrouve l’origine du bug dans l’historique et choisit une correction adaptée.
+        maxScore: 3

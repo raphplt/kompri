@@ -3,303 +3,440 @@
   title: La page du vide-grenier
   summary: Écrire de zéro une page complète, valide et structurée à partir d’un contenu brut.
   estimatedMinutes: 60
-  instructions: "Le comité des fêtes du quartier des Tilleuls organise un vide-grenier. Il te confie\n\
-    le contenu brut de sa page et te demande d’écrire le fichier `index.html`, **sans IA\net sans copier\
-    \ un modèle**. Pas de CSS ni de JavaScript : seul le HTML compte.\n\nContenu à baliser, dans cet ordre\
-    \ :\n\n```text\nNom du site : Comité des fêtes des Tilleuls\nMenu : Accueil (/), Vide-grenier (/vide-grenier.html,\
-    \ page actuelle), Contact (/contact.html)\n\nVide-grenier de printemps\nDimanche 12 avril 2026, de\
-    \ 8 h à 17 h, place des Tilleuls.\n[photo : affiche.jpg, 600 × 850 pixels ; elle montre l’affiche\
-    \ de l’événement, dont\ntout le texte est déjà repris dans la page]\n\nTarifs des emplacements\n \
-    \ Emplacement   | Habitant du quartier | Extérieur\n  2 mètres      | 8 €                  | 12 €\n\
-    \  4 mètres      | 14 €                 | 20 €\n\nPour réserver\n  Il faut apporter, dans n’importe\
-    \ quel ordre : une pièce d’identité, un justificatif\n  de domicile, le règlement signé.\n  Étapes,\
-    \ dans l’ordre : 1. Télécharger le règlement (fichier reglement.pdf).\n  2. Le signer. 3. Le déposer\
-    \ à la mairie annexe avant le 1er avril.\n  Attention : aucune réservation par téléphone.\n\nÀ lire\
-    \ aussi (encadré annexe) : la recette de la buvette sert à financer la fête de\nl’été.\n\nPied de\
-    \ page : Comité des fêtes des Tilleuls, association loi 1901.\n```\n\nExigences :\n\n1. Un document\
-    \ complet : DOCTYPE, langue, encodage, zone d’affichage mobile, titre\n   de page pertinent.\n2. Les\
-    \ repères de page : en-tête du site, navigation principale, contenu principal,\n   pied de page. L’encadré\
-    \ annexe a l’élément adapté.\n3. Un plan de titres cohérent, des listes adaptées (ordonnée ou non\
-    \ selon le sens),\n   un lien explicite vers le règlement, un `alt` justifié pour l’affiche.\n4. Le\
-    \ tableau des tarifs est un vrai tableau de données : légende, en-têtes de lignes\n   et de colonnes.\n\
-    5. Le document ne doit produire **aucune erreur** au validateur du W3C\n   (`https://validator.w3.org/nu/`,\
-    \ onglet de saisie directe).\n"
-  deliverable: 'Colle le code complet de `index.html`, puis le résultat du validateur (copie des
+  instructions: |
+    Le comité des fêtes du quartier des Tilleuls organise un vide-grenier. Il te confie
+    le contenu brut de sa page et te demande d’écrire le fichier `index.html`, **sans IA
+    et sans copier un modèle**. Pas de CSS ni de JavaScript : seul le HTML compte.
 
+    Contenu à baliser, dans cet ordre :
+
+    ```text
+    Nom du site : Comité des fêtes des Tilleuls
+    Menu : Accueil (/), Vide-grenier (/vide-grenier.html, page actuelle), Contact (/contact.html)
+
+    Vide-grenier de printemps
+    Dimanche 12 avril 2026, de 8 h à 17 h, place des Tilleuls.
+    [photo : affiche.jpg, 600 × 850 pixels ; elle montre l’affiche de l’événement, dont
+    tout le texte est déjà repris dans la page]
+
+    Tarifs des emplacements
+      Emplacement   | Habitant du quartier | Extérieur
+      2 mètres      | 8 €                  | 12 €
+      4 mètres      | 14 €                 | 20 €
+
+    Pour réserver
+      Il faut apporter, dans n’importe quel ordre : une pièce d’identité, un justificatif
+      de domicile, le règlement signé.
+      Étapes, dans l’ordre : 1. Télécharger le règlement (fichier reglement.pdf).
+      2. Le signer. 3. Le déposer à la mairie annexe avant le 1er avril.
+      Attention : aucune réservation par téléphone.
+
+    À lire aussi (encadré annexe) : la recette de la buvette sert à financer la fête de
+    l’été.
+
+    Pied de page : Comité des fêtes des Tilleuls, association loi 1901.
+    ```
+
+    Exigences :
+
+    1. Un document complet : DOCTYPE, langue, encodage, zone d’affichage mobile, titre
+       de page pertinent.
+    2. Les repères de page : en-tête du site, navigation principale, contenu principal,
+       pied de page. L’encadré annexe a l’élément adapté.
+    3. Un plan de titres cohérent, des listes adaptées (ordonnée ou non selon le sens),
+       un lien explicite vers le règlement, un `alt` justifié pour l’affiche.
+    4. Le tableau des tarifs est un vrai tableau de données : légende, en-têtes de lignes
+       et de colonnes.
+    5. Le document ne doit produire **aucune erreur** au validateur du W3C
+       (`https://validator.w3.org/nu/`, onglet de saisie directe).
+  deliverable: |
+    Colle le code complet de `index.html`, puis le résultat du validateur (copie des
     messages, ou la phrase indiquant qu’il n’y a aucune erreur). Termine par trois à cinq
-
     phrases qui justifient : ton choix de `alt` pour l’affiche, l’élément choisi pour
-
     l’encadré annexe, et la façon dont un lecteur d’écran lira une cellule du tableau.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: document-skeleton
-      description: Écrit un squelette complet et explique le rôle de chaque ligne.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Squelette incomplet (DOCTYPE, encodage ou langue absents) et rôle des lignes inconnu.
-      - score: 1
-        description: Squelette complet mais explications vagues ou erronées (par exemple, « le DOCTYPE
-          sert au référencement »).
-      - score: 2
-        description: Squelette complet, explique le mode standard, l’encodage UTF-8, l’attribut lang et
-          le title.
-      - score: 3
-        description: Explique aussi les conséquences concrètes d’un oubli (mode quirks, caractères corrompus,
-          prononciation, titre d’onglet).
-    - id: element-choice
-      description: Choisit titres, listes, liens et alternatives d’images d’après le sens.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Balisage guidé par l’apparence (titres choisis pour leur taille, fausses listes).
-      - score: 1
-        description: Quelques bons choix mais plan de titres incohérent ou alt non justifié.
-      - score: 2
-        description: Plan de titres cohérent, ul et ol justifiés, lien explicite, alt défendu.
-      - score: 3
-        description: Justifie aussi les alternatives écartées (strong ou b, alt vide ou descriptif).
-    - id: page-structure
-      description: Structure la page avec les éléments de section et explique les repères.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Page en div ou éléments de section utilisés au hasard.
-      - score: 1
-        description: Éléments présents mais rôle mal expliqué ou main mal placé.
-      - score: 2
-        description: header, nav, main, aside et footer corrects et expliqués comme repères.
-      - score: 3
-        description: Explique pourquoi un header dans un article n’est pas un repère et quand nommer une
-          nav.
-    - id: data-table
-      description: Balise et explique un tableau de données accessible.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Pas de th ni de caption, ou tableau mal construit.
-      - score: 1
-        description: th présents mais sans scope ou sans légende.
-      - score: 2
-        description: caption, th et scope corrects ; explique la lecture d’une cellule.
-      - score: 3
-        description: Modifie correctement le tableau à l’oral (colonne ajoutée, en-têtes à jour).
-    - id: validation
-      description: Valide son document et sait interpréter les messages du validateur.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: N’a pas validé ou ne comprend pas les messages.
-      - score: 1
-        description: Document validé sans erreur mais incapable d’expliquer ce que le validateur ne vérifie
-          pas.
-      - score: 2
-        description: Validé sans erreur et distingue validité et accessibilité avec un exemple.
+      - id: document-skeleton
+        description: Écrit un squelette complet et explique le rôle de chaque ligne.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Squelette incomplet (DOCTYPE, encodage ou langue absents) et rôle des lignes inconnu.
+          - score: 1
+            description: Squelette complet mais explications vagues ou erronées (par exemple, « le DOCTYPE sert au référencement »).
+          - score: 2
+            description: Squelette complet, explique le mode standard, l’encodage UTF-8, l’attribut lang et le title.
+          - score: 3
+            description: Explique aussi les conséquences concrètes d’un oubli (mode quirks, caractères corrompus, prononciation, titre d’onglet).
+      - id: element-choice
+        description: Choisit titres, listes, liens et alternatives d’images d’après le sens.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Balisage guidé par l’apparence (titres choisis pour leur taille, fausses listes).
+          - score: 1
+            description: Quelques bons choix mais plan de titres incohérent ou alt non justifié.
+          - score: 2
+            description: Plan de titres cohérent, ul et ol justifiés, lien explicite, alt défendu.
+          - score: 3
+            description: Justifie aussi les alternatives écartées (strong ou b, alt vide ou descriptif).
+      - id: page-structure
+        description: Structure la page avec les éléments de section et explique les repères.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Page en div ou éléments de section utilisés au hasard.
+          - score: 1
+            description: Éléments présents mais rôle mal expliqué ou main mal placé.
+          - score: 2
+            description: header, nav, main, aside et footer corrects et expliqués comme repères.
+          - score: 3
+            description: Explique pourquoi un header dans un article n’est pas un repère et quand nommer une nav.
+      - id: data-table
+        description: Balise et explique un tableau de données accessible.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Pas de th ni de caption, ou tableau mal construit.
+          - score: 1
+            description: th présents mais sans scope ou sans légende.
+          - score: 2
+            description: caption, th et scope corrects ; explique la lecture d’une cellule.
+          - score: 3
+            description: Modifie correctement le tableau à l’oral (colonne ajoutée, en-têtes à jour).
+      - id: validation
+        description: Valide son document et sait interpréter les messages du validateur.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: N’a pas validé ou ne comprend pas les messages.
+          - score: 1
+            description: Document validé sans erreur mais incapable d’expliquer ce que le validateur ne vérifie pas.
+          - score: 2
+            description: Validé sans erreur et distingue validité et accessibilité avec un exemple.
+
 - id: html-semantics-avec-ia
   family: AVEC_IA
   title: Le mini-site de l’atelier
-  summary: Construire avec une IA un site de deux pages, puis l’auditer, le corriger et défendre chaque
-    balise.
+  summary: Construire avec une IA un site de deux pages, puis l’auditer, le corriger et défendre chaque balise.
   estimatedMinutes: 120
-  instructions: "Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras justifier chaque\nélément\
-    \ sans aide, prévoir l’effet d’une modification et corriger toi-même un défaut.\n\nProjet : le site\
-    \ de « Fil & Aiguille », un atelier de couture fictif, en deux pages\nHTML, sans CSS ni JavaScript.\n\
-    \n1. `index.html` : présentation de l’atelier, trois cours (couture débutant,\n   retouches, patronage)\
-    \ présentés comme des contenus autonomes avec un titre, un\n   court texte et une image, un encadré\
-    \ « Le saviez-vous ? », un lien vers la page\n   des tarifs.\n2. `tarifs.html` : un tableau des tarifs\
-    \ avec au moins trois cours en lignes et\n   trois formules en colonnes (séance, trimestre, année),\
-    \ une ligne de pied avec une\n   remarque ou un total, et une liste ordonnée des étapes d’inscription.\n\
-    3. Les deux pages partagent le même en-tête avec le nom de l’atelier et une\n   navigation principale,\
-    \ et le même pied de page avec une seconde navigation\n   (mentions légales, accessibilité).\n4. Les\
-    \ deux pages passent le validateur du W3C sans erreur.\n\nDémarche imposée :\n\n- Demande d’abord\
-    \ la génération à l’IA, et **conserve sa première version**.\n- Audite cette version toi-même avec\
-    \ la liste de vérification du cours (squelette,\n  repères, titres, listes, liens, images, tableau)\
-    \ et avec le validateur.\n- Corrige, puis vérifie dans le panneau « Accessibilité » des outils de\
-    \ développement\n  les rôles des éléments principaux (repères, tableau, en-têtes de cellules).\n\n\
-    Conseil : demande à l’IA pourquoi elle a choisi `section` ou `article` pour les\ncours, puis confronte\
-    \ sa réponse aux critères de la leçon 3.\n"
-  deliverable: 'Colle le code final des deux pages, puis une liste des écarts entre la première
+  instructions: |
+    Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras justifier chaque
+    élément sans aide, prévoir l’effet d’une modification et corriger toi-même un défaut.
 
+    Projet : le site de « Fil & Aiguille », un atelier de couture fictif, en deux pages
+    HTML, sans CSS ni JavaScript.
+
+    1. `index.html` : présentation de l’atelier, trois cours (couture débutant,
+       retouches, patronage) présentés comme des contenus autonomes avec un titre, un
+       court texte et une image, un encadré « Le saviez-vous ? », un lien vers la page
+       des tarifs.
+    2. `tarifs.html` : un tableau des tarifs avec au moins trois cours en lignes et
+       trois formules en colonnes (séance, trimestre, année), une ligne de pied avec une
+       remarque ou un total, et une liste ordonnée des étapes d’inscription.
+    3. Les deux pages partagent le même en-tête avec le nom de l’atelier et une
+       navigation principale, et le même pied de page avec une seconde navigation
+       (mentions légales, accessibilité).
+    4. Les deux pages passent le validateur du W3C sans erreur.
+
+    Démarche imposée :
+
+    - Demande d’abord la génération à l’IA, et **conserve sa première version**.
+    - Audite cette version toi-même avec la liste de vérification du cours (squelette,
+      repères, titres, listes, liens, images, tableau) et avec le validateur.
+    - Corrige, puis vérifie dans le panneau « Accessibilité » des outils de développement
+      les rôles des éléments principaux (repères, tableau, en-têtes de cellules).
+
+    Conseil : demande à l’IA pourquoi elle a choisi `section` ou `article` pour les
+    cours, puis confronte sa réponse aux critères de la leçon 3.
+  deliverable: |
+    Colle le code final des deux pages, puis une liste des écarts entre la première
     version de l’IA et ta version finale : pour chaque écart, l’extrait d’origine, ta
-
     correction et la raison. Ajoute le résultat du validateur pour chaque page et deux ou
-
     trois phrases sur ce que l’IA a bien fait et sur ce que tu as dû vérifier toi-même.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: code-ownership
-      description: Explique chaque élément de son code sans aide et justifie les choix sémantiques.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas expliquer des éléments importants de ses propres pages.
-      - score: 1
-        description: Explique le rôle général des éléments mais pas les choix (article ou section, alt).
-      - score: 2
-        description: Justifie chaque choix avec les critères du cours (autonomie, thème, sens, fonction
-          de l’image).
-      - score: 3
-        description: Compare aussi avec les alternatives écartées et ce qu’elles changeraient pour l’accessibilité.
-    - id: ai-audit
-      description: Identifie et corrige les défauts de la version générée par l’IA.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Aucun écart identifié, ou version de l’IA rendue telle quelle.
-      - score: 1
-        description: Écarts superficiels seulement (mise en forme du code), défauts sémantiques manqués.
-      - score: 2
-        description: Plusieurs défauts sémantiques réels identifiés, corrigés et expliqués.
-      - score: 3
-        description: Défauts identifiés avec leur impact concret (repères, lecteurs d’écran, validateur),
-          y compris l’ARIA superflu.
-    - id: accessibility-check
-      description: Vérifie l’effet de la sémantique avec le validateur et l’arbre d’accessibilité.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: N’a pas vérifié ou ne sait pas ce qu’est l’arbre d’accessibilité.
-      - score: 1
-        description: A validé, mais ne sait pas lire les rôles dans les outils de développement.
-      - score: 2
-        description: Montre ou décrit les rôles exposés (banner, navigation, main, columnheader) et les
-          relie au code.
-    - id: modification
-      description: Réalise ou décrit correctement une modification demandée pendant l’oral.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne parvient pas à modifier la structure.
-      - score: 1
-        description: Modification partielle ou qui casse un autre point (tableau décalé, titre sauté).
-      - score: 2
-        description: Modification correcte et vérifiée.
-      - score: 3
-        description: Modification correcte, vérifiée, avec anticipation de ses effets sur l’accessibilité.
+      - id: code-ownership
+        description: Explique chaque élément de son code sans aide et justifie les choix sémantiques.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas expliquer des éléments importants de ses propres pages.
+          - score: 1
+            description: Explique le rôle général des éléments mais pas les choix (article ou section, alt).
+          - score: 2
+            description: Justifie chaque choix avec les critères du cours (autonomie, thème, sens, fonction de l’image).
+          - score: 3
+            description: Compare aussi avec les alternatives écartées et ce qu’elles changeraient pour l’accessibilité.
+      - id: ai-audit
+        description: Identifie et corrige les défauts de la version générée par l’IA.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Aucun écart identifié, ou version de l’IA rendue telle quelle.
+          - score: 1
+            description: Écarts superficiels seulement (mise en forme du code), défauts sémantiques manqués.
+          - score: 2
+            description: Plusieurs défauts sémantiques réels identifiés, corrigés et expliqués.
+          - score: 3
+            description: Défauts identifiés avec leur impact concret (repères, lecteurs d’écran, validateur), y compris l’ARIA superflu.
+      - id: accessibility-check
+        description: Vérifie l’effet de la sémantique avec le validateur et l’arbre d’accessibilité.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: N’a pas vérifié ou ne sait pas ce qu’est l’arbre d’accessibilité.
+          - score: 1
+            description: A validé, mais ne sait pas lire les rôles dans les outils de développement.
+          - score: 2
+            description: Montre ou décrit les rôles exposés (banner, navigation, main, columnheader) et les relie au code.
+      - id: modification
+        description: Réalise ou décrit correctement une modification demandée pendant l’oral.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne parvient pas à modifier la structure.
+          - score: 1
+            description: Modification partielle ou qui casse un autre point (tableau décalé, titre sauté).
+          - score: 2
+            description: Modification correcte et vérifiée.
+          - score: 3
+            description: Modification correcte, vérifiée, avec anticipation de ses effets sur l’accessibilité.
+
 - id: html-semantics-contre-ia
   family: CONTRE_IA
   title: La médiathèque mal balisée
   summary: Trouver et corriger les défauts de sémantique et de validité d’une page générée.
   estimatedMinutes: 60
-  instructions: "Un assistant a généré la page d’accueil de la médiathèque (fictive) des Tilleuls.\nElle\
-    \ s’affiche correctement dans le navigateur et l’équipe la trouve « jolie ». Ta\nmission : l’auditer,\
-    \ puis livrer une version corrigée. Le contenu textuel doit rester\nle même ; tu peux changer tout\
-    \ le balisage.\n\nInformations utiles : la page est en français ; le fichier `vague.svg` est un motif\n\
-    purement décoratif ; `plan-acces.png` est un plan qui montre l’entrée de la\nmédiathèque, côté parking,\
-    \ à droite de la pharmacie ; `logo-mediatheque.png`\ncontient le nom de la médiathèque.\n\n```html\n\
-    <!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <title>Accueil</title>\n    <meta charset=\"utf-8\"\
-    >\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <link rel=\"\
-    stylesheet\" href=\"styles.css\">\n  </head>\n  <body>\n    <div class=\"header\">\n      <a href=\"\
-    /\"><img src=\"logo-mediatheque.png\" class=\"logo\"></a>\n      <nav>\n        <a href=\"/\">Accueil</a>\
-    \ |\n        <a href=\"/catalogue.html\">Catalogue</a> |\n        <a href=\"/agenda.html\">Agenda</a>\n\
-    \      </nav>\n    </div>\n    <main>\n      <h1>Médiathèque des Tilleuls</h1>\n      <img src=\"\
-    vague.svg\" alt=\"Image décorative d’une vague bleue\">\n      <p>Bienvenue ! La médiathèque vous\
-    \ accueille gratuitement, sur simple inscription.</p>\n\n      <h3>Horaires d’ouverture</h3>\n   \
-    \   <table>\n        <tr>\n          <td><b>Jour</b></td>\n          <td><b>Matin</b></td>\n     \
-    \     <td><b>Après-midi</b></td>\n        </tr>\n        <tr>\n          <td>Mardi</td>\n        \
-    \  <td>Fermé</td>\n          <td>14 h – 18 h</td>\n        </tr>\n        <tr>\n          <td>Mercredi</td>\n\
-    \          <td>10 h – 12 h</td>\n          <td>14 h – 18 h</td>\n        </tr>\n        <tr>\n   \
-    \       <td>Samedi</td>\n          <td>10 h – 12 h</td>\n          <td>14 h – 17 h</td>\n        </tr>\n\
-    \      </table>\n\n      <h3>Pour s’inscrire</h3>\n      <p>\n        - une pièce d’identité<br>\n\
-    \        - un justificatif de domicile<br>\n        - une photo récente\n      </p>\n      <p>Le formulaire\
-    \ de pré-inscription est disponible <a href=\"inscription.pdf\">ici</a>.</p>\n\n      <div class=\"\
-    card\">\n        <div class=\"card-title\">Prochain atelier</div>\n        <p>Initiation à la généalogie,\
-    \ samedi 14 mars à 10 h.\n          <div class=\"card-footer\"><a href=\"/agenda.html\">En savoir\
-    \ plus</a></div>\n        </p>\n      </div>\n\n      <h3 id=\"acces\">Accès</h3>\n      <img src=\"\
-    plan-acces.png\" alt=\"\">\n      <p>Arrêt de bus « Les Tilleuls », lignes 4 et 12.</p>\n    </main>\n\
-    \    <div class=\"footer\">\n      <p>Médiathèque des Tilleuls — 3 place des Tilleuls</p>\n      <a\
-    \ href=\"#acces\" id=\"acces\">Plan d’accès</a>\n    </div>\n  </body>\n</html>\n```\n\nTravail demandé\
-    \ :\n\n1. Passe la page au validateur du W3C et note ce qu’il signale.\n2. Fais ton propre audit :\
-    \ liste **tous** les défauts que tu trouves, y compris ceux\n   que le validateur ne voit pas. Pour\
-    \ chacun : l’extrait concerné, le problème,\n   qui en souffre (personne utilisant un lecteur d’écran,\
-    \ navigation clavier, moteur\n   de recherche, développeur…) et la gravité selon toi.\n3. Livre la\
-    \ page corrigée, qui passe le validateur sans erreur.\n"
-  deliverable: 'Colle les messages du validateur pour la page d’origine, ta liste de défauts (un
+  instructions: |
+    Un assistant a généré la page d’accueil de la médiathèque (fictive) des Tilleuls.
+    Elle s’affiche correctement dans le navigateur et l’équipe la trouve « jolie ». Ta
+    mission : l’auditer, puis livrer une version corrigée. Le contenu textuel doit rester
+    le même ; tu peux changer tout le balisage.
 
+    Informations utiles : la page est en français ; le fichier `vague.svg` est un motif
+    purement décoratif ; `plan-acces.png` est un plan qui montre l’entrée de la
+    médiathèque, côté parking, à droite de la pharmacie ; `logo-mediatheque.png`
+    contient le nom de la médiathèque.
+
+    ```html
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <title>Accueil</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="styles.css">
+      </head>
+      <body>
+        <div class="header">
+          <a href="/"><img src="logo-mediatheque.png" class="logo"></a>
+          <nav>
+            <a href="/">Accueil</a> |
+            <a href="/catalogue.html">Catalogue</a> |
+            <a href="/agenda.html">Agenda</a>
+          </nav>
+        </div>
+        <main>
+          <h1>Médiathèque des Tilleuls</h1>
+          <img src="vague.svg" alt="Image décorative d’une vague bleue">
+          <p>Bienvenue ! La médiathèque vous accueille gratuitement, sur simple inscription.</p>
+
+          <h3>Horaires d’ouverture</h3>
+          <table>
+            <tr>
+              <td><b>Jour</b></td>
+              <td><b>Matin</b></td>
+              <td><b>Après-midi</b></td>
+            </tr>
+            <tr>
+              <td>Mardi</td>
+              <td>Fermé</td>
+              <td>14 h – 18 h</td>
+            </tr>
+            <tr>
+              <td>Mercredi</td>
+              <td>10 h – 12 h</td>
+              <td>14 h – 18 h</td>
+            </tr>
+            <tr>
+              <td>Samedi</td>
+              <td>10 h – 12 h</td>
+              <td>14 h – 17 h</td>
+            </tr>
+          </table>
+
+          <h3>Pour s’inscrire</h3>
+          <p>
+            - une pièce d’identité<br>
+            - un justificatif de domicile<br>
+            - une photo récente
+          </p>
+          <p>Le formulaire de pré-inscription est disponible <a href="inscription.pdf">ici</a>.</p>
+
+          <div class="card">
+            <div class="card-title">Prochain atelier</div>
+            <p>Initiation à la généalogie, samedi 14 mars à 10 h.
+              <div class="card-footer"><a href="/agenda.html">En savoir plus</a></div>
+            </p>
+          </div>
+
+          <h3 id="acces">Accès</h3>
+          <img src="plan-acces.png" alt="">
+          <p>Arrêt de bus « Les Tilleuls », lignes 4 et 12.</p>
+        </main>
+        <div class="footer">
+          <p>Médiathèque des Tilleuls — 3 place des Tilleuls</p>
+          <a href="#acces" id="acces">Plan d’accès</a>
+        </div>
+      </body>
+    </html>
+    ```
+
+    Travail demandé :
+
+    1. Passe la page au validateur du W3C et note ce qu’il signale.
+    2. Fais ton propre audit : liste **tous** les défauts que tu trouves, y compris ceux
+       que le validateur ne voit pas. Pour chacun : l’extrait concerné, le problème,
+       qui en souffre (personne utilisant un lecteur d’écran, navigation clavier, moteur
+       de recherche, développeur…) et la gravité selon toi.
+    3. Livre la page corrigée, qui passe le validateur sans erreur.
+  deliverable: |
+    Colle les messages du validateur pour la page d’origine, ta liste de défauts (un
     défaut par ligne ou par paragraphe, avec extrait, problème, personnes concernées et
-
     gravité), puis le code complet de la page corrigée et le résultat du validateur
-
     pour cette version.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: defect-detection
-      description: Trouve les défauts, y compris ceux que le validateur ne signale pas.
-      maxScore: 3
-    - id: impact-explanation
-      description: Explique l’impact concret de chaque défaut et le hiérarchise.
-      maxScore: 3
-    - id: corrections
-      description: Livre une page corrigée, valide et fidèle au contenu.
-      maxScore: 3
-    - id: parser-understanding
-      description: Comprend comment le navigateur traite le HTML invalide.
-      maxScore: 2
+      - id: defect-detection
+        description: Trouve les défauts, y compris ceux que le validateur ne signale pas.
+        maxScore: 3
+      - id: impact-explanation
+        description: Explique l’impact concret de chaque défaut et le hiérarchise.
+        maxScore: 3
+      - id: corrections
+        description: Livre une page corrigée, valide et fidèle au contenu.
+        maxScore: 3
+      - id: parser-understanding
+        description: Comprend comment le navigateur traite le HTML invalide.
+        maxScore: 2
+
 - id: html-semantics-apres-ia
   family: APRES_IA
   title: Le club de randonnée
   summary: Faire évoluer et dépanner une page existante par des modifications ciblées.
   estimatedMinutes: 60
-  instructions: "Le club de randonnée (fictif) Les Sentiers utilise cette page depuis un an. Elle\na été\
-    \ générée par une IA puis retouchée par plusieurs bénévoles. Tu dois la faire\névoluer **en modifiant\
-    \ le moins de lignes possible**, sans la régénérer.\n\n```html\n<!DOCTYPE html>\n<html lang=\"fr\"\
-    >\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width,\
-    \ initial-scale=1\">\n    <title>Page</title>\n  </head>\n  <body>\n    <header>\n      <p>Club de\
-    \ randonnée Les Sentiers</p>\n      <nav>\n        <ul>\n          <li><a href=\"#club\">Le club</a></li>\n\
-    \          <li><a href=\"#tarif\">Tarifs</a></li>\n          <li><a href=\"#contact\">Contact</a></li>\n\
-    \        </ul>\n      </nav>\n    </header>\n    <main>\n      <h1>Bienvenue aux Sentiers</h1>\n\n\
-    \      <section id=\"club\">\n        <h2>Le club</h2>\n        <p>Nous marchons chaque dimanche,\
-    \ par tous les temps ou presque.</p>\n      </section>\n\n      <section id=\"tarifs\">\n        <h2>Tarifs</h2>\n\
-    \        <table>\n          <thead>\n            <tr>\n              <th>Adhésion</th>\n         \
-    \     <th>Prix</th>\n            </tr>\n          </thead>\n          <tbody>\n            <tr>\n\
-    \              <td>Individuelle</td>\n              <td>30 €</td>\n            </tr>\n           \
-    \ <tr>\n              <td>Famille</td>\n              <td>50 €</td>\n            </tr>\n         \
-    \ </tbody>\n        </table>\n      </section>\n\n      <section id=\"contact\">\n        <h2>Contact</h2>\n\
-    \        <p>Écrivez-nous : <a href=\"mailto:contact@example.com\">contact@example.com</a></p>\n  \
-    \    </section>\n    </main>\n    <footer>\n      <nav>\n        <ul>\n          <li><a href=\"/mentions-legales.html\"\
-    >Mentions légales</a></li>\n          <li><a href=\"/accessibilite.html\">Accessibilité</a></li>\n\
-    \        </ul>\n      </nav>\n    </footer>\n  </body>\n</html>\n```\n\nDemandes de l’équipe :\n\n\
-    1. **Bug** : dans le menu, le lien « Tarifs » ne fait rien quand on clique dessus.\n   Trouve la cause\
-    \ et corrige-la.\n2. **Bug** : une adhérente qui utilise un lecteur d’écran signale qu’en entrant\
-    \ dans\n   le tableau des tarifs, elle n’entend pas de quoi il parle, et qu’en se déplaçant\n   sur\
-    \ « 50 € », l’en-tête de ligne « Famille » n’est pas annoncé. Corrige le\n   balisage du tableau.\n\
-    3. Elle signale aussi que son lecteur d’écran liste deux zones « navigation » sans\n   pouvoir les\
-    \ distinguer. Corrige-le.\n4. Dans les résultats de recherche, la page apparaît avec le titre « Page\
-    \ ». Donne-lui\n   un titre et une description utiles.\n5. Ajoute une section « Prochaines sorties\
-    \ », entre « Le club » et « Tarifs », avec\n   un tableau de données : 3 mai 2026, Lac de Guerlédan,\
-    \ 14 km, niveau facile ;\n   17 mai 2026, Monts d’Arrée, 21 km, niveau soutenu. Ajoute aussi un lien\
-    \ vers cette\n   section dans le menu.\n6. Sous ce tableau, ajoute ce témoignage d’un randonneur britannique,\
-    \ cité en\n   anglais : « Best Sunday walks I have ever joined. » Les lecteurs d’écran doivent le\n\
-    \   prononcer en anglais.\n\nVérifie la page avec le validateur avant et après tes modifications.\n"
-  deliverable: 'Colle la page modifiée, puis la liste des lignes modifiées ou ajoutées avec la raison
+  instructions: |
+    Le club de randonnée (fictif) Les Sentiers utilise cette page depuis un an. Elle
+    a été générée par une IA puis retouchée par plusieurs bénévoles. Tu dois la faire
+    évoluer **en modifiant le moins de lignes possible**, sans la régénérer.
 
+    ```html
+    <!DOCTYPE html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Page</title>
+      </head>
+      <body>
+        <header>
+          <p>Club de randonnée Les Sentiers</p>
+          <nav>
+            <ul>
+              <li><a href="#club">Le club</a></li>
+              <li><a href="#tarif">Tarifs</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </nav>
+        </header>
+        <main>
+          <h1>Bienvenue aux Sentiers</h1>
+
+          <section id="club">
+            <h2>Le club</h2>
+            <p>Nous marchons chaque dimanche, par tous les temps ou presque.</p>
+          </section>
+
+          <section id="tarifs">
+            <h2>Tarifs</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Adhésion</th>
+                  <th>Prix</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Individuelle</td>
+                  <td>30 €</td>
+                </tr>
+                <tr>
+                  <td>Famille</td>
+                  <td>50 €</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="contact">
+            <h2>Contact</h2>
+            <p>Écrivez-nous : <a href="mailto:contact@example.com">contact@example.com</a></p>
+          </section>
+        </main>
+        <footer>
+          <nav>
+            <ul>
+              <li><a href="/mentions-legales.html">Mentions légales</a></li>
+              <li><a href="/accessibilite.html">Accessibilité</a></li>
+            </ul>
+          </nav>
+        </footer>
+      </body>
+    </html>
+    ```
+
+    Demandes de l’équipe :
+
+    1. **Bug** : dans le menu, le lien « Tarifs » ne fait rien quand on clique dessus.
+       Trouve la cause et corrige-la.
+    2. **Bug** : une adhérente qui utilise un lecteur d’écran signale qu’en entrant dans
+       le tableau des tarifs, elle n’entend pas de quoi il parle, et qu’en se déplaçant
+       sur « 50 € », l’en-tête de ligne « Famille » n’est pas annoncé. Corrige le
+       balisage du tableau.
+    3. Elle signale aussi que son lecteur d’écran liste deux zones « navigation » sans
+       pouvoir les distinguer. Corrige-le.
+    4. Dans les résultats de recherche, la page apparaît avec le titre « Page ». Donne-lui
+       un titre et une description utiles.
+    5. Ajoute une section « Prochaines sorties », entre « Le club » et « Tarifs », avec
+       un tableau de données : 3 mai 2026, Lac de Guerlédan, 14 km, niveau facile ;
+       17 mai 2026, Monts d’Arrée, 21 km, niveau soutenu. Ajoute aussi un lien vers cette
+       section dans le menu.
+    6. Sous ce tableau, ajoute ce témoignage d’un randonneur britannique, cité en
+       anglais : « Best Sunday walks I have ever joined. » Les lecteurs d’écran doivent le
+       prononcer en anglais.
+
+    Vérifie la page avec le validateur avant et après tes modifications.
+  deliverable: |
+    Colle la page modifiée, puis la liste des lignes modifiées ou ajoutées avec la raison
     de chaque changement (numéro de la demande), et le résultat du validateur après
-
     modification. Explique en deux ou trois phrases la cause du bug n° 1.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: bug-diagnosis
-      description: Explique la cause des bugs et les corrige proprement.
-      maxScore: 3
-    - id: semantic-additions
-      description: Ajoute la section, le tableau et la citation avec le balisage adapté.
-      maxScore: 3
-    - id: minimal-change
-      description: Fait évoluer le code existant de façon ciblée et vérifiée.
-      maxScore: 2
-    - id: landmarks-and-metadata
-      description: Explique les noms de navigation et les métadonnées de la page.
-      maxScore: 2
+      - id: bug-diagnosis
+        description: Explique la cause des bugs et les corrige proprement.
+        maxScore: 3
+      - id: semantic-additions
+        description: Ajoute la section, le tableau et la citation avec le balisage adapté.
+        maxScore: 3
+      - id: minimal-change
+        description: Fait évoluer le code existant de façon ciblée et vérifiée.
+        maxScore: 2
+      - id: landmarks-and-metadata
+        description: Explique les noms de navigation et les métadonnées de la page.
+        maxScore: 2

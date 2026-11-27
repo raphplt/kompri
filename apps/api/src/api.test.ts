@@ -1005,7 +1005,12 @@ describe('human review', () => {
     const detail = await call(`/admin/reviews/${review.id}`, {
       token: admin.token,
     });
-    expect(detail.text).toContain('Points de compréhension attendus');
+    // Examiner notes reach the reviewer when the answer keys were seeded
+    // (KOMPRI_CONTENT_KEY); CI without the key seeds none.
+    const { examinerNotes } = await db.challenge.findUniqueOrThrow({
+      where: { id: challengeId },
+    });
+    expect(detail.body).toMatchObject({ examinerNotes });
     expect(
       (
         await call(`/admin/reviews/${review.id}/decision`, {

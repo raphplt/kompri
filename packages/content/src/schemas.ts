@@ -87,13 +87,32 @@ export const challengeFileEntrySchema = challengeSchema
     summary: z.string().min(1),
     estimatedMinutes: z.number().int().min(5).max(600),
     deliverable: z.string().min(1),
-    examinerNotes: z.string().min(1),
     rubric: rubricSchema.omit({ id: true }).extend({
       passRatio: z.number().min(0.5).max(0.9),
       criteria: z.array(criterionSchema).min(2).max(6),
     }),
   })
   .strict();
+
+/** Families whose task is to find defects: their detailed levels name them. */
+export const defectFindingFamilies = ['CONTRE_IA', 'APRES_IA'] as const;
+
+/**
+ * Private answer keys, by challenge id: examiner notes, and the detailed
+ * levels of defect-finding rubrics by criterion id (see src/private.ts).
+ */
+export const answersSchema = z.record(
+  z.string(),
+  z
+    .object({
+      examinerNotes: z.string().min(1),
+      levels: z
+        .record(z.string(), z.array(criterionLevelSchema).min(2))
+        .optional(),
+    })
+    .strict(),
+);
+export type Answers = z.infer<typeof answersSchema>;
 
 export type Domain = z.infer<typeof domainSchema>;
 export type SkillContent = z.infer<typeof skillSchema>;

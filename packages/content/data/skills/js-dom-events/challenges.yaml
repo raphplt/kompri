@@ -1,283 +1,442 @@
 - id: js-dom-events-sans-ia
   family: SANS_IA
   title: Le carnet de contacts
-  summary: Afficher une liste à partir de données, la filtrer en direct et gérer des favoris par délégation,
-    de façon sûre et accessible.
+  summary: Afficher une liste à partir de données, la filtrer en direct et gérer des favoris par délégation, de façon sûre et accessible.
   estimatedMinutes: 60
-  instructions: "Tu construis la page d’un carnet de contacts, sans bibliothèque. Crée `index.html` et\n\
-    `main.js` (chargé avec `type=\"module\"`), et sers la page avec le `serve.js` du cours.\n\nPage de\
-    \ départ, à compléter si besoin :\n\n```html\n<!doctype html>\n<html lang=\"fr\">\n  <head>\n    <meta\
-    \ charset=\"utf-8\" />\n    <title>Carnet de contacts</title>\n    <script type=\"module\" src=\"\
-    main.js\"></script>\n  </head>\n  <body>\n    <h1>Carnet de contacts</h1>\n    <label for=\"search\"\
-    >Rechercher un contact</label>\n    <input id=\"search\" type=\"search\" />\n    <p id=\"result-count\"\
-    \ role=\"status\"></p>\n    <ul id=\"contacts\"></ul>\n  </body>\n</html>\n```\n\nDonnées, à recopier\
-    \ en haut de `main.js` :\n\n```js\nlet contacts = [\n  { id: 'c1', name: 'Inès Martin', city: 'Lyon',\
-    \ favorite: false },\n  { id: 'c2', name: 'Hugo Bernard', city: 'Nantes', favorite: true },\n  { id:\
-    \ 'c3', name: 'Léa Petit', city: 'Lyon', favorite: false },\n  { id: 'c4', name: 'Noah Durand', city:\
-    \ 'Lille', favorite: false },\n];\n```\n\nTravail demandé :\n\n1. Affiche un `li` par contact : son\
-    \ nom, sa ville entre parenthèses et un bouton\n   « Favori ». Chaque `li` porte l’identifiant du\
-    \ contact dans un attribut `data-id`.\n2. Le bouton « Favori » indique son état avec `aria-pressed`\
-    \ (`\"true\"` ou `\"false\"`) et a\n   un nom accessible qui précise le contact concerné.\n3. Pendant\
-    \ la saisie dans le champ de recherche, la liste n’affiche que les contacts dont\n   le nom **ou**\
-    \ la ville contient le texte saisi, sans tenir compte des majuscules.\n4. Le paragraphe `#result-count`\
-    \ indique en permanence `N contact(s) affiché(s)`.\n5. Un **seul** écouteur, sur la liste, gère tous\
-    \ les boutons « Favori » : un clic inverse\n   l’état du contact dans les données (sans muter le tableau\
-    \ ni les objets), puis la\n   liste est réaffichée. Le focus reste sur le bouton du contact concerné.\n\
-    \nContraintes : aucun `innerHTML`, aucun `onclick` dans le HTML, `const` par défaut.\n"
-  deliverable: 'Colle `index.html` et `main.js` complets. Décris en quelques lignes ce que tu as vérifié
+  instructions: |
+    Tu construis la page d’un carnet de contacts, sans bibliothèque. Crée `index.html` et
+    `main.js` (chargé avec `type="module"`), et sers la page avec le `serve.js` du cours.
 
+    Page de départ, à compléter si besoin :
+
+    ```html
+    <!doctype html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8" />
+        <title>Carnet de contacts</title>
+        <script type="module" src="main.js"></script>
+      </head>
+      <body>
+        <h1>Carnet de contacts</h1>
+        <label for="search">Rechercher un contact</label>
+        <input id="search" type="search" />
+        <p id="result-count" role="status"></p>
+        <ul id="contacts"></ul>
+      </body>
+    </html>
+    ```
+
+    Données, à recopier en haut de `main.js` :
+
+    ```js
+    let contacts = [
+      { id: 'c1', name: 'Inès Martin', city: 'Lyon', favorite: false },
+      { id: 'c2', name: 'Hugo Bernard', city: 'Nantes', favorite: true },
+      { id: 'c3', name: 'Léa Petit', city: 'Lyon', favorite: false },
+      { id: 'c4', name: 'Noah Durand', city: 'Lille', favorite: false },
+    ];
+    ```
+
+    Travail demandé :
+
+    1. Affiche un `li` par contact : son nom, sa ville entre parenthèses et un bouton
+       « Favori ». Chaque `li` porte l’identifiant du contact dans un attribut `data-id`.
+    2. Le bouton « Favori » indique son état avec `aria-pressed` (`"true"` ou `"false"`) et a
+       un nom accessible qui précise le contact concerné.
+    3. Pendant la saisie dans le champ de recherche, la liste n’affiche que les contacts dont
+       le nom **ou** la ville contient le texte saisi, sans tenir compte des majuscules.
+    4. Le paragraphe `#result-count` indique en permanence `N contact(s) affiché(s)`.
+    5. Un **seul** écouteur, sur la liste, gère tous les boutons « Favori » : un clic inverse
+       l’état du contact dans les données (sans muter le tableau ni les objets), puis la
+       liste est réaffichée. Le focus reste sur le bouton du contact concerné.
+
+    Contraintes : aucun `innerHTML`, aucun `onclick` dans le HTML, `const` par défaut.
+  deliverable: |
+    Colle `index.html` et `main.js` complets. Décris en quelques lignes ce que tu as vérifié
     au clavier (Tab, Entrée, Espace) et ce qu’affiche la liste quand on cherche `LYON`.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: dom-rendering
-      description: Construit l’affichage à partir des données avec createElement et textContent, et explique
-        ce choix.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Affichage absent, ou construit avec innerHTML sans voir le problème.
-      - score: 1
-        description: Affichage correct mais ne sait pas expliquer replaceChildren ou le rôle de data-id.
-      - score: 2
-        description: Explique la fonction de création, l’insertion et pourquoi textContent protège des
-          injections.
-      - score: 3
-        description: Explique aussi le principe état puis rendu et pourquoi les données restent la source
-          de vérité.
-    - id: events-delegation
-      description: Utilise et explique les événements input et click, l’objet événement et la délégation.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas expliquer comment les clics sont reçus.
-      - score: 1
-        description: Un écouteur par bouton, ou délégation copiée sans pouvoir l’expliquer.
-      - score: 2
-        description: Explique la propagation, closest, target et pourquoi l’écouteur est enregistré une
-          seule fois.
-      - score: 3
-        description: Prévoit aussi ce qui se passerait avec un écouteur ajouté à chaque rendu ou un élément
-          intérieur au bouton.
-    - id: accessibility
-      description: Rend l’interface utilisable au clavier et compréhensible avec un lecteur d’écran.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Éléments non focalisables ou état des favoris invisible pour les technologies d’assistance.
-      - score: 1
-        description: Vrais boutons, mais aria-pressed ou le nom accessible manquent.
-      - score: 2
-        description: aria-pressed, nom accessible et région de statut corrects et expliqués.
-      - score: 3
-        description: Gère aussi le focus après le re-rendu et l’a vérifié au clavier.
-    - id: immutability
-      description: Met à jour l’état sans mutation et explique pourquoi.
-      maxScore: 1
-      levels:
-      - score: 0
-        description: Modifie directement l’objet contact ou le tableau.
-      - score: 1
-        description: Crée un nouvel état avec map et la décomposition, et sait l’expliquer.
+      - id: dom-rendering
+        description: Construit l’affichage à partir des données avec createElement et textContent, et explique ce choix.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Affichage absent, ou construit avec innerHTML sans voir le problème.
+          - score: 1
+            description: Affichage correct mais ne sait pas expliquer replaceChildren ou le rôle de data-id.
+          - score: 2
+            description: Explique la fonction de création, l’insertion et pourquoi textContent protège des injections.
+          - score: 3
+            description: Explique aussi le principe état puis rendu et pourquoi les données restent la source de vérité.
+      - id: events-delegation
+        description: Utilise et explique les événements input et click, l’objet événement et la délégation.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas expliquer comment les clics sont reçus.
+          - score: 1
+            description: Un écouteur par bouton, ou délégation copiée sans pouvoir l’expliquer.
+          - score: 2
+            description: Explique la propagation, closest, target et pourquoi l’écouteur est enregistré une seule fois.
+          - score: 3
+            description: Prévoit aussi ce qui se passerait avec un écouteur ajouté à chaque rendu ou un élément intérieur au bouton.
+      - id: accessibility
+        description: Rend l’interface utilisable au clavier et compréhensible avec un lecteur d’écran.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Éléments non focalisables ou état des favoris invisible pour les technologies d’assistance.
+          - score: 1
+            description: Vrais boutons, mais aria-pressed ou le nom accessible manquent.
+          - score: 2
+            description: aria-pressed, nom accessible et région de statut corrects et expliqués.
+          - score: 3
+            description: Gère aussi le focus après le re-rendu et l’a vérifié au clavier.
+      - id: immutability
+        description: Met à jour l’état sans mutation et explique pourquoi.
+        maxScore: 1
+        levels:
+          - score: 0
+            description: Modifie directement l’objet contact ou le tableau.
+          - score: 1
+            description: Crée un nouvel état avec map et la décomposition, et sait l’expliquer.
+
 - id: js-dom-events-avec-ia
   family: AVEC_IA
   title: Le formulaire de réservation
-  summary: Construire avec une IA un formulaire de réservation validé, accessible et sans rechargement,
-    puis en défendre chaque ligne.
+  summary: Construire avec une IA un formulaire de réservation validé, accessible et sans rechargement, puis en défendre chaque ligne.
   estimatedMinutes: 120
-  instructions: "Tu peux utiliser une IA autant que tu le souhaites. À l’oral, tu devras expliquer chaque\n\
-    ligne sans aide, utiliser ta page au clavier devant l’examinateur et la modifier.\n\nUn petit restaurant\
-    \ veut une page de réservation, en HTML et JavaScript sans\nbibliothèque (`index.html`, `main.js`\
-    \ en module, éventuellement `style.css`), servie avec\nle `serve.js` du cours.\n\nExigences :\n\n\
-    1. Un formulaire avec : nom (obligatoire), adresse e-mail (obligatoire, format vérifié),\n   date\
-    \ (obligatoire, aujourd’hui ou plus tard), nombre de personnes (entier de 1 à 8),\n   et un groupe\
-    \ de cases « Préférences » (terrasse, chaise haute, accès sans marche).\n2. L’envoi est géré par l’événement\
-    \ `submit`, sans rechargement. Les données sont lues\n   avec `FormData` et transformées en un objet\
-    \ propre (chaînes nettoyées, nombre de\n   personnes en nombre, préférences en tableau).\n3. Les erreurs\
-    \ s’affichent à côté de chaque champ, en français, sont reliées au champ\n   pour les lecteurs d’écran,\
-    \ le champ est marqué invalide, et le focus va sur le\n   premier champ en erreur. Les erreurs disparaissent\
-    \ quand le champ est corrigé.\n4. Une réservation valide s’ajoute à une liste « Mes réservations »\
-    \ affichée sous le\n   formulaire ; un message de confirmation est **annoncé** aux lecteurs d’écran\
-    \ ; le\n   formulaire est vidé et le focus revient sur le premier champ.\n5. Chaque réservation a\
-    \ un bouton « Annuler » au nom accessible explicite, géré par\n   **délégation** ; l’annulation est\
-    \ annoncée et le focus ne se perd pas.\n6. Aucune donnée saisie n’est insérée avec `innerHTML`. L’état\
-    \ des réservations est un\n   tableau mis à jour sans mutation.\n\nConseil : demande à l’IA d’expliquer\
-    \ `aria-describedby`, `aria-invalid` et\n`role=\"status\"`, puis teste ta page uniquement au clavier,\
-    \ sans souris. Saisis aussi un\nnom comme `<b>Ada</b>` pour vérifier qu’il s’affiche tel quel.\n"
-  deliverable: 'Colle tous tes fichiers. Ajoute une courte description de tes tests (clavier, erreurs,
+  instructions: |
+    Tu peux utiliser une IA autant que tu le souhaites. À l’oral, tu devras expliquer chaque
+    ligne sans aide, utiliser ta page au clavier devant l’examinateur et la modifier.
 
+    Un petit restaurant veut une page de réservation, en HTML et JavaScript sans
+    bibliothèque (`index.html`, `main.js` en module, éventuellement `style.css`), servie avec
+    le `serve.js` du cours.
+
+    Exigences :
+
+    1. Un formulaire avec : nom (obligatoire), adresse e-mail (obligatoire, format vérifié),
+       date (obligatoire, aujourd’hui ou plus tard), nombre de personnes (entier de 1 à 8),
+       et un groupe de cases « Préférences » (terrasse, chaise haute, accès sans marche).
+    2. L’envoi est géré par l’événement `submit`, sans rechargement. Les données sont lues
+       avec `FormData` et transformées en un objet propre (chaînes nettoyées, nombre de
+       personnes en nombre, préférences en tableau).
+    3. Les erreurs s’affichent à côté de chaque champ, en français, sont reliées au champ
+       pour les lecteurs d’écran, le champ est marqué invalide, et le focus va sur le
+       premier champ en erreur. Les erreurs disparaissent quand le champ est corrigé.
+    4. Une réservation valide s’ajoute à une liste « Mes réservations » affichée sous le
+       formulaire ; un message de confirmation est **annoncé** aux lecteurs d’écran ; le
+       formulaire est vidé et le focus revient sur le premier champ.
+    5. Chaque réservation a un bouton « Annuler » au nom accessible explicite, géré par
+       **délégation** ; l’annulation est annoncée et le focus ne se perd pas.
+    6. Aucune donnée saisie n’est insérée avec `innerHTML`. L’état des réservations est un
+       tableau mis à jour sans mutation.
+
+    Conseil : demande à l’IA d’expliquer `aria-describedby`, `aria-invalid` et
+    `role="status"`, puis teste ta page uniquement au clavier, sans souris. Saisis aussi un
+    nom comme `<b>Ada</b>` pour vérifier qu’il s’affiche tel quel.
+  deliverable: |
+    Colle tous tes fichiers. Ajoute une courte description de tes tests (clavier, erreurs,
     nom contenant des chevrons), puis quelques lignes sur ce que l’IA t’a apporté et ce que
-
     tu as dû corriger.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: code-ownership
-      description: Explique chaque partie de son code sans aide.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas expliquer des parties importantes de son propre code.
-      - score: 1
-        description: Explique le déroulé global mais pas la lecture des données ni la délégation.
-      - score: 2
-        description: Explique précisément submit, FormData, la validation et la délégation.
-      - score: 3
-        description: Explique aussi les choix écartés et ce qu’il a corrigé dans la proposition de l’IA.
-    - id: form-handling
-      description: Lit, nettoie et valide correctement les données du formulaire.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Données lues de façon erronée ou page qui se recharge.
-      - score: 1
-        description: Lecture correcte mais types ou cases multiples mal gérés, ou validation partielle.
-      - score: 2
-        description: Objet propre et typé, toutes les règles validées, rôle du serveur expliqué.
-      - score: 3
-        description: Traite aussi les cas limites (espaces, date du jour, nombre décimal) et les justifie.
-    - id: accessibility
-      description: Démontre une interface utilisable au clavier et compréhensible avec un lecteur d’écran.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne peut pas utiliser sa page au clavier ou les erreurs ne sont pas reliées aux champs.
-      - score: 1
-        description: Labels et boutons corrects, mais erreurs ou confirmations non annoncées.
-      - score: 2
-        description: Erreurs reliées et marquées, focus sur la première erreur, confirmation annoncée.
-      - score: 3
-        description: Gère aussi le focus après annulation et explique ce que perçoit un utilisateur de
-          lecteur d’écran.
-    - id: security
-      description: Insère les données saisies sans risque d’injection.
-      maxScore: 1
-      levels:
-      - score: 0
-        description: Utilise innerHTML avec des données saisies ou ne sait pas pourquoi c’est dangereux.
-      - score: 1
-        description: Utilise textContent ou createElement et démontre qu’un nom avec chevrons s’affiche
-          tel quel.
+      - id: code-ownership
+        description: Explique chaque partie de son code sans aide.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas expliquer des parties importantes de son propre code.
+          - score: 1
+            description: Explique le déroulé global mais pas la lecture des données ni la délégation.
+          - score: 2
+            description: Explique précisément submit, FormData, la validation et la délégation.
+          - score: 3
+            description: Explique aussi les choix écartés et ce qu’il a corrigé dans la proposition de l’IA.
+      - id: form-handling
+        description: Lit, nettoie et valide correctement les données du formulaire.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Données lues de façon erronée ou page qui se recharge.
+          - score: 1
+            description: Lecture correcte mais types ou cases multiples mal gérés, ou validation partielle.
+          - score: 2
+            description: Objet propre et typé, toutes les règles validées, rôle du serveur expliqué.
+          - score: 3
+            description: Traite aussi les cas limites (espaces, date du jour, nombre décimal) et les justifie.
+      - id: accessibility
+        description: Démontre une interface utilisable au clavier et compréhensible avec un lecteur d’écran.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne peut pas utiliser sa page au clavier ou les erreurs ne sont pas reliées aux champs.
+          - score: 1
+            description: Labels et boutons corrects, mais erreurs ou confirmations non annoncées.
+          - score: 2
+            description: Erreurs reliées et marquées, focus sur la première erreur, confirmation annoncée.
+          - score: 3
+            description: Gère aussi le focus après annulation et explique ce que perçoit un utilisateur de lecteur d’écran.
+      - id: security
+        description: Insère les données saisies sans risque d’injection.
+        maxScore: 1
+        levels:
+          - score: 0
+            description: Utilise innerHTML avec des données saisies ou ne sait pas pourquoi c’est dangereux.
+          - score: 1
+            description: Utilise textContent ou createElement et démontre qu’un nom avec chevrons s’affiche tel quel.
+
 - id: js-dom-events-contre-ia
   family: CONTRE_IA
   title: Le widget de commentaires
-  summary: Trouver et corriger les failles et bugs d’un widget de commentaires généré, du chargement du
-    script à l’accessibilité.
+  summary: Trouver et corriger les failles et bugs d’un widget de commentaires généré, du chargement du script à l’accessibilité.
   estimatedMinutes: 60
-  instructions: "Un assistant a généré ce widget de commentaires pour un blog. Il doit afficher les\n\
-    commentaires, permettre d’« aimer » un commentaire et d’en publier un nouveau (au moins\n3 caractères)\
-    \ **sans recharger la page**. Il doit être utilisable au clavier.\n\n`index.html` :\n\n```html\n<!doctype\
-    \ html>\n<html lang=\"fr\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>Commentaires</title>\n\
-    \    <link rel=\"stylesheet\" href=\"comments.css\" />\n    <script src=\"comments.js\"></script>\n\
-    \  </head>\n  <body>\n    <h1>Commentaires</h1>\n    <ul id=\"comment-list\"></ul>\n\n    <form id=\"\
-    comment-form\">\n      <label for=\"author\">Ton pseudo</label>\n      <input id=\"author\" name=\"\
-    author\" required />\n      <label for=\"message\">Ton commentaire</label>\n      <textarea id=\"\
-    message\" name=\"message\" required></textarea>\n      <button id=\"publish\" type=\"submit\">Publier</button>\n\
-    \      <p id=\"form-error\" class=\"error\"></p>\n    </form>\n  </body>\n</html>\n```\n\n`comments.css`\
-    \ :\n\n```css\n.error {\n  color: #b00020;\n}\n\n.like {\n  cursor: pointer;\n  display: inline-block;\n\
-    \  padding: 0.25rem 0.5rem;\n  border: 1px solid #888;\n}\n```\n\n`comments.js` :\n\n```js\n// comments.js\
-    \ — widget de commentaires\n\nlet comments = [\n  { id: 1, author: 'Inès', message: 'Très clair, merci\
-    \ !', likes: 2 },\n  { id: 2, author: 'Hugo', message: 'Et pour les formulaires ?', likes: 0 },\n\
-    ];\n\nconst list = document.querySelector('#comment-list');\nconst form = document.querySelector('#comment-form');\n\
-    const errorBox = document.querySelector('#form-error');\n\nfunction renderComments() {\n  list.innerHTML\
-    \ = '';\n  for (const comment of comments) {\n    list.innerHTML += `\n      <li data-id=\"${comment.id}\"\
-    >\n        <strong>${comment.author}</strong> : ${comment.message}\n        <div class=\"like\">♥\
-    \ ${comment.likes}</div>\n      </li>`;\n  }\n\n  list.addEventListener('click', (event) => {\n  \
-    \  if (event.target.classList.contains('like')) {\n      const id = event.target.closest('li').dataset.id;\n\
-    \      const comment = comments.find((item) => item.id === id);\n      comment.likes += 1;\n     \
-    \ renderComments();\n    }\n  });\n}\n\ndocument.querySelector('#publish').addEventListener('click',\
-    \ () => {\n  const author = form.elements.author.value;\n  const message = form.elements.message.value;\n\
-    \  if (message.length < 3) {\n    errorBox.textContent = 'Message trop court';\n    return;\n  }\n\
-    \  comments.push({ id: comments.length + 1, author, message, likes: 0 });\n  renderComments();\n \
-    \ form.reset();\n});\n\nrenderComments();\n```\n\nTravail demandé :\n\n1. Sers la page et décris précisément\
-    \ ce qui se passe, console ouverte.\n2. Corrige les défauts **un par un** : après chaque correction,\
-    \ note le nouveau\n   comportement observé (certains défauts n’apparaissent qu’une fois le précédent\n\
-    \   corrigé).\n3. Pour chaque défaut : élément concerné, symptôme, cause, gravité, correction.\n4.\
-    \ Livre une version corrigée complète, testée à la souris et au clavier, avec un\n   commentaire dont\
-    \ le pseudo est `<img src=x onerror=\"alert(1)\">`.\n"
-  deliverable: 'Colle ta liste de défauts dans l’ordre où tu les as découverts, puis les fichiers
+  instructions: |
+    Un assistant a généré ce widget de commentaires pour un blog. Il doit afficher les
+    commentaires, permettre d’« aimer » un commentaire et d’en publier un nouveau (au moins
+    3 caractères) **sans recharger la page**. Il doit être utilisable au clavier.
 
+    `index.html` :
+
+    ```html
+    <!doctype html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8" />
+        <title>Commentaires</title>
+        <link rel="stylesheet" href="comments.css" />
+        <script src="comments.js"></script>
+      </head>
+      <body>
+        <h1>Commentaires</h1>
+        <ul id="comment-list"></ul>
+
+        <form id="comment-form">
+          <label for="author">Ton pseudo</label>
+          <input id="author" name="author" required />
+          <label for="message">Ton commentaire</label>
+          <textarea id="message" name="message" required></textarea>
+          <button id="publish" type="submit">Publier</button>
+          <p id="form-error" class="error"></p>
+        </form>
+      </body>
+    </html>
+    ```
+
+    `comments.css` :
+
+    ```css
+    .error {
+      color: #b00020;
+    }
+
+    .like {
+      cursor: pointer;
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border: 1px solid #888;
+    }
+    ```
+
+    `comments.js` :
+
+    ```js
+    // comments.js — widget de commentaires
+
+    let comments = [
+      { id: 1, author: 'Inès', message: 'Très clair, merci !', likes: 2 },
+      { id: 2, author: 'Hugo', message: 'Et pour les formulaires ?', likes: 0 },
+    ];
+
+    const list = document.querySelector('#comment-list');
+    const form = document.querySelector('#comment-form');
+    const errorBox = document.querySelector('#form-error');
+
+    function renderComments() {
+      list.innerHTML = '';
+      for (const comment of comments) {
+        list.innerHTML += `
+          <li data-id="${comment.id}">
+            <strong>${comment.author}</strong> : ${comment.message}
+            <div class="like">♥ ${comment.likes}</div>
+          </li>`;
+      }
+
+      list.addEventListener('click', (event) => {
+        if (event.target.classList.contains('like')) {
+          const id = event.target.closest('li').dataset.id;
+          const comment = comments.find((item) => item.id === id);
+          comment.likes += 1;
+          renderComments();
+        }
+      });
+    }
+
+    document.querySelector('#publish').addEventListener('click', () => {
+      const author = form.elements.author.value;
+      const message = form.elements.message.value;
+      if (message.length < 3) {
+        errorBox.textContent = 'Message trop court';
+        return;
+      }
+      comments.push({ id: comments.length + 1, author, message, likes: 0 });
+      renderComments();
+      form.reset();
+    });
+
+    renderComments();
+    ```
+
+    Travail demandé :
+
+    1. Sers la page et décris précisément ce qui se passe, console ouverte.
+    2. Corrige les défauts **un par un** : après chaque correction, note le nouveau
+       comportement observé (certains défauts n’apparaissent qu’une fois le précédent
+       corrigé).
+    3. Pour chaque défaut : élément concerné, symptôme, cause, gravité, correction.
+    4. Livre une version corrigée complète, testée à la souris et au clavier, avec un
+       commentaire dont le pseudo est `<img src=x onerror="alert(1)">`.
+  deliverable: |
+    Colle ta liste de défauts dans l’ordre où tu les as découverts, puis les fichiers
     corrigés complets, et décris tes tests.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: defects-found
-      description: Identifie les défauts réels, y compris ceux qui n’apparaissent qu’après une première
-        correction.
-      maxScore: 3
-    - id: root-cause
-      description: Explique la cause technique de chaque défaut.
-      maxScore: 3
-    - id: fix-quality
-      description: Livre une version corrigée sûre, accessible et vérifiée.
-      maxScore: 3
+      - id: defects-found
+        description: Identifie les défauts réels, y compris ceux qui n’apparaissent qu’après une première correction.
+        maxScore: 3
+      - id: root-cause
+        description: Explique la cause technique de chaque défaut.
+        maxScore: 3
+      - id: fix-quality
+        description: Livre une version corrigée sûre, accessible et vérifiée.
+        maxScore: 3
+
 - id: js-dom-events-apres-ia
   family: APRES_IA
   title: La liste de courses
-  summary: Dépanner et faire évoluer une petite page interactive sans la réécrire, en passant à la délégation
-    et en améliorant l’accessibilité.
+  summary: Dépanner et faire évoluer une petite page interactive sans la réécrire, en passant à la délégation et en améliorant l’accessibilité.
   estimatedMinutes: 75
-  instructions: "Cette liste de courses est utilisée par une famille depuis quelques semaines. Elle a\n\
-    été écrite avec l’aide d’une IA. Tu dois corriger deux bugs et ajouter deux\nfonctionnalités **en\
-    \ modifiant le moins de lignes possible**, sans régénérer le code.\n\n`index.html` :\n\n```html\n\
-    <!doctype html>\n<html lang=\"fr\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <title>Liste de\
-    \ courses</title>\n    <link rel=\"stylesheet\" href=\"style.css\" />\n    <script type=\"module\"\
-    \ src=\"app.js\"></script>\n  </head>\n  <body>\n    <h1>Liste de courses</h1>\n    <form id=\"add-form\"\
-    >\n      <label for=\"item-name\">Article</label>\n      <input id=\"item-name\" name=\"itemName\"\
-    \ type=\"text\" autocomplete=\"off\" />\n      <button type=\"submit\">Ajouter</button>\n    </form>\n\
-    \    <p id=\"counter\"></p>\n    <ul id=\"items\">\n      <li><span>Pain</span> <button type=\"button\"\
-    \ class=\"buy\">Acheté</button> <button type=\"button\" class=\"remove\">Retirer</button></li>\n \
-    \     <li><span>Lait</span> <button type=\"button\" class=\"buy\">Acheté</button> <button type=\"\
-    button\" class=\"remove\">Retirer</button></li>\n    </ul>\n  </body>\n</html>\n```\n\n`style.css`\
-    \ :\n\n```css\n.bought span {\n  text-decoration: line-through;\n  color: #666;\n}\n```\n\n`app.js`\
-    \ :\n\n```js\nconst form = document.querySelector('#add-form');\nconst input = document.querySelector('#item-name');\n\
-    const list = document.querySelector('#items');\nconst counter = document.querySelector('#counter');\n\
-    \nfunction updateCounter() {\n  const remaining = list.querySelectorAll('li:not(.bought)').length;\n\
-    \  counter.textContent = `${remaining} article(s) à acheter`;\n}\n\nfunction createItem(name) {\n\
-    \  const li = document.createElement('li');\n  li.innerHTML = `<span>${name}</span> <button type=\"\
-    button\" class=\"buy\">Acheté</button> <button type=\"button\" class=\"remove\">Retirer</button>`;\n\
-    \  return li;\n}\n\nform.addEventListener('submit', (event) => {\n  event.preventDefault();\n  const\
-    \ name = input.value.trim();\n  if (!name) {\n    return;\n  }\n  list.append(createItem(name));\n\
-    \  input.value = '';\n  updateCounter();\n});\n\ndocument.querySelectorAll('.buy').forEach((button)\
-    \ => {\n  button.addEventListener('click', () => {\n    button.closest('li').classList.toggle('bought');\n\
-    \    updateCounter();\n  });\n});\n\ndocument.querySelectorAll('.remove').forEach((button) => {\n\
-    \  button.addEventListener('click', () => {\n    button.closest('li').remove();\n    updateCounter();\n\
-    \  });\n});\n\nupdateCounter();\n```\n\nDemandes de la famille :\n\n1. **Bug** : « Les boutons Acheté\
-    \ et Retirer marchent pour Pain et Lait, mais pas pour\n   les articles qu’on ajoute. » Corrige et\
-    \ explique la cause.\n2. **Bug** : « Quand on ajoute `Pâtes <fraîches>`, la liste affiche seulement\n\
-    \   “Pâtes”. » Corrige et explique la cause, et ce qu’elle aurait pu permettre d’autre.\n3. Ajoute\
-    \ une case à cocher « Masquer les articles achetés » au-dessus de la liste,\n   qui masque ou réaffiche\
-    \ les articles achetés, y compris ceux achetés ensuite.\n4. Le grand-père utilise un lecteur d’écran\
-    \ : le compteur doit être annoncé quand il\n   change, l’état « acheté » doit être perceptible sans\
-    \ la couleur ni le barré, et\n   après avoir retiré un article au clavier, il ne doit pas se retrouver\
-    \ en haut de la\n   page.\n"
-  deliverable: 'Colle les fichiers modifiés, la liste des lignes changées ou ajoutées avec la raison de
+  instructions: |
+    Cette liste de courses est utilisée par une famille depuis quelques semaines. Elle a
+    été écrite avec l’aide d’une IA. Tu dois corriger deux bugs et ajouter deux
+    fonctionnalités **en modifiant le moins de lignes possible**, sans régénérer le code.
 
+    `index.html` :
+
+    ```html
+    <!doctype html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8" />
+        <title>Liste de courses</title>
+        <link rel="stylesheet" href="style.css" />
+        <script type="module" src="app.js"></script>
+      </head>
+      <body>
+        <h1>Liste de courses</h1>
+        <form id="add-form">
+          <label for="item-name">Article</label>
+          <input id="item-name" name="itemName" type="text" autocomplete="off" />
+          <button type="submit">Ajouter</button>
+        </form>
+        <p id="counter"></p>
+        <ul id="items">
+          <li><span>Pain</span> <button type="button" class="buy">Acheté</button> <button type="button" class="remove">Retirer</button></li>
+          <li><span>Lait</span> <button type="button" class="buy">Acheté</button> <button type="button" class="remove">Retirer</button></li>
+        </ul>
+      </body>
+    </html>
+    ```
+
+    `style.css` :
+
+    ```css
+    .bought span {
+      text-decoration: line-through;
+      color: #666;
+    }
+    ```
+
+    `app.js` :
+
+    ```js
+    const form = document.querySelector('#add-form');
+    const input = document.querySelector('#item-name');
+    const list = document.querySelector('#items');
+    const counter = document.querySelector('#counter');
+
+    function updateCounter() {
+      const remaining = list.querySelectorAll('li:not(.bought)').length;
+      counter.textContent = `${remaining} article(s) à acheter`;
+    }
+
+    function createItem(name) {
+      const li = document.createElement('li');
+      li.innerHTML = `<span>${name}</span> <button type="button" class="buy">Acheté</button> <button type="button" class="remove">Retirer</button>`;
+      return li;
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const name = input.value.trim();
+      if (!name) {
+        return;
+      }
+      list.append(createItem(name));
+      input.value = '';
+      updateCounter();
+    });
+
+    document.querySelectorAll('.buy').forEach((button) => {
+      button.addEventListener('click', () => {
+        button.closest('li').classList.toggle('bought');
+        updateCounter();
+      });
+    });
+
+    document.querySelectorAll('.remove').forEach((button) => {
+      button.addEventListener('click', () => {
+        button.closest('li').remove();
+        updateCounter();
+      });
+    });
+
+    updateCounter();
+    ```
+
+    Demandes de la famille :
+
+    1. **Bug** : « Les boutons Acheté et Retirer marchent pour Pain et Lait, mais pas pour
+       les articles qu’on ajoute. » Corrige et explique la cause.
+    2. **Bug** : « Quand on ajoute `Pâtes <fraîches>`, la liste affiche seulement
+       “Pâtes”. » Corrige et explique la cause, et ce qu’elle aurait pu permettre d’autre.
+    3. Ajoute une case à cocher « Masquer les articles achetés » au-dessus de la liste,
+       qui masque ou réaffiche les articles achetés, y compris ceux achetés ensuite.
+    4. Le grand-père utilise un lecteur d’écran : le compteur doit être annoncé quand il
+       change, l’état « acheté » doit être perceptible sans la couleur ni le barré, et
+       après avoir retiré un article au clavier, il ne doit pas se retrouver en haut de la
+       page.
+  deliverable: |
+    Colle les fichiers modifiés, la liste des lignes changées ou ajoutées avec la raison de
     chaque changement, et décris tes vérifications (souris, clavier, article contenant des
-
     chevrons).
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: bug-diagnosis
-      description: Explique la cause des deux bugs (photographie des écouteurs, interprétation HTML) et
-        les corrige proprement.
-      maxScore: 3
-    - id: accessibility
-      description: Rend les changements perceptibles et le focus prévisible pour un utilisateur de lecteur
-        d’écran.
-      maxScore: 3
-    - id: feature
-      description: Ajoute le filtre des articles achetés de façon robuste.
-      maxScore: 2
-    - id: minimal-change
-      description: Fait évoluer le code de façon ciblée et justifiée.
-      maxScore: 2
+      - id: bug-diagnosis
+        description: Explique la cause des deux bugs (photographie des écouteurs, interprétation HTML) et les corrige proprement.
+        maxScore: 3
+      - id: accessibility
+        description: Rend les changements perceptibles et le focus prévisible pour un utilisateur de lecteur d’écran.
+        maxScore: 3
+      - id: feature
+        description: Ajoute le filtre des articles achetés de façon robuste.
+        maxScore: 2
+      - id: minimal-change
+        description: Fait évoluer le code de façon ciblée et justifiée.
+        maxScore: 2

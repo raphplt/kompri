@@ -1,254 +1,370 @@
 - id: js-functions-sans-ia
   family: SANS_IA
   title: La boîte à outils du ticket
-  summary: Découper l’édition d’un ticket de caisse en petites fonctions pures, avec valeurs par défaut,
-    paramètres du reste, une fonction d’ordre supérieur et une fermeture.
+  summary: Découper l’édition d’un ticket de caisse en petites fonctions pures, avec valeurs par défaut, paramètres du reste, une fonction d’ordre supérieur et une fermeture.
   estimatedMinutes: 60
-  instructions: "Une boulangerie veut imprimer ses tickets de caisse dans le terminal. Écris un\nscript\
-    \ `receipt.js`, exécuté avec `node receipt.js`, organisé en fonctions.\n\nDonnées de départ, à recopier\
-    \ telles quelles :\n\n```js\nconst items = [\n  { label: 'Baguette', unitPrice: 1.3, quantity: 3 },\n\
-    \  { label: 'Croissant', unitPrice: 1.15, quantity: 4 },\n  { label: 'Tarte aux pommes', unitPrice:\
-    \ 12.5, quantity: 1 },\n];\n```\n\nÉcris les fonctions suivantes, avec exactement ces noms :\n\n1.\
-    \ `toCents(euros)` : convertit un montant en euros en centimes entiers.\n2. `formatCents(cents, currencySymbol\
-    \ = '€')` : renvoie par exemple `'12,50 €'`,\n   avec une virgule et deux décimales.\n3. `sumCents(...amounts)`\
-    \ : renvoie la somme de tous les montants reçus (0 si\n   aucun).\n4. `sumBy(values, getAmount)` :\
-    \ fonction d’ordre supérieur qui additionne\n   `getAmount(value)` pour chaque élément du tableau\
-    \ `values`. Utilise-la deux\n   fois : pour le total du ticket en centimes et pour le nombre d’articles.\n\
-    5. `createReceiptNumberGenerator(prefix)` : renvoie une fonction qui, à chaque\n   appel, renvoie\
-    \ le numéro de ticket suivant : `'T-001'`, puis `'T-002'`, etc.\n6. `formatReceipt(receiptNumber,\
-    \ lines)` : renvoie le texte complet du ticket\n   (une ligne par article avec son sous-total, le\
-    \ nombre d’articles et le total),\n   sans rien afficher elle-même.\n\nLe programme principal, en\
-    \ bas du fichier, crée un générateur de numéros avec le\npréfixe `'T'` et affiche **deux** tickets\
-    \ pour le même panier : leurs numéros\ndoivent être différents. Ajoute aussi trois appels de `sumCents`\
-    \ (sans argument,\navec un argument, avec trois arguments) et affiche leurs résultats.\n\nContraintes\
-    \ : tous les calculs se font en centimes entiers ; seul le programme\nprincipal affiche ; pas de variable\
-    \ modifiée en dehors des fonctions, à\nl’exception de ce que la fermeture du générateur conserve.\n"
-  deliverable: 'Colle le contenu complet de `receipt.js` et la sortie exacte de `node receipt.js`.
+  instructions: |
+    Une boulangerie veut imprimer ses tickets de caisse dans le terminal. Écris un
+    script `receipt.js`, exécuté avec `node receipt.js`, organisé en fonctions.
 
+    Données de départ, à recopier telles quelles :
+
+    ```js
+    const items = [
+      { label: 'Baguette', unitPrice: 1.3, quantity: 3 },
+      { label: 'Croissant', unitPrice: 1.15, quantity: 4 },
+      { label: 'Tarte aux pommes', unitPrice: 12.5, quantity: 1 },
+    ];
+    ```
+
+    Écris les fonctions suivantes, avec exactement ces noms :
+
+    1. `toCents(euros)` : convertit un montant en euros en centimes entiers.
+    2. `formatCents(cents, currencySymbol = '€')` : renvoie par exemple `'12,50 €'`,
+       avec une virgule et deux décimales.
+    3. `sumCents(...amounts)` : renvoie la somme de tous les montants reçus (0 si
+       aucun).
+    4. `sumBy(values, getAmount)` : fonction d’ordre supérieur qui additionne
+       `getAmount(value)` pour chaque élément du tableau `values`. Utilise-la deux
+       fois : pour le total du ticket en centimes et pour le nombre d’articles.
+    5. `createReceiptNumberGenerator(prefix)` : renvoie une fonction qui, à chaque
+       appel, renvoie le numéro de ticket suivant : `'T-001'`, puis `'T-002'`, etc.
+    6. `formatReceipt(receiptNumber, lines)` : renvoie le texte complet du ticket
+       (une ligne par article avec son sous-total, le nombre d’articles et le total),
+       sans rien afficher elle-même.
+
+    Le programme principal, en bas du fichier, crée un générateur de numéros avec le
+    préfixe `'T'` et affiche **deux** tickets pour le même panier : leurs numéros
+    doivent être différents. Ajoute aussi trois appels de `sumCents` (sans argument,
+    avec un argument, avec trois arguments) et affiche leurs résultats.
+
+    Contraintes : tous les calculs se font en centimes entiers ; seul le programme
+    principal affiche ; pas de variable modifiée en dehors des fonctions, à
+    l’exception de ce que la fermeture du générateur conserve.
+  deliverable: |
+    Colle le contenu complet de `receipt.js` et la sortie exacte de `node receipt.js`.
     Indique ensuite, pour chaque fonction, si elle est pure, et explique en quelques
-
     phrases comment le générateur de numéros se souvient du dernier numéro.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: function-design
-      description: Conçoit des fonctions avec des paramètres, des valeurs par défaut et des retours adaptés.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Fonctions qui affichent au lieu de renvoyer, ou paramètres incompris.
-      - score: 1
-        description: Fonctions correctes mais valeur par défaut ou paramètre du reste mal expliqués.
-      - score: 2
-        description: Explique la valeur par défaut (undefined seulement), le tableau du paramètre du reste
-          et chaque valeur de retour.
-      - score: 3
-        description: Justifie aussi le découpage choisi et propose une évolution compatible avec les appels
-          existants.
-    - id: higher-order
-      description: Écrit et explique une fonction d’ordre supérieur et ses callbacks.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Ne sait pas ce que reçoit sumBy ni qui appelle le callback.
-      - score: 1
-        description: sumBy fonctionne mais la différence entre passer et appeler une fonction est confuse.
-      - score: 2
-        description: Explique que sumBy appelle le callback avec chaque élément et pourquoi on passe la
-          fonction sans parenthèses.
-    - id: closures
-      description: Explique la fermeture du générateur de numéros.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas où est stocké le compteur.
-      - score: 1
-        description: Sait que le compteur est conservé sans expliquer pourquoi.
-      - score: 2
-        description: Explique que la fonction renvoyée se souvient de l’environnement de son appel de
-          création.
-      - score: 3
-        description: Prévoit correctement le comportement de deux générateurs indépendants et d’un compteur
-          déplacé au niveau du fichier.
-    - id: purity
-      description: Distingue fonctions pures et effets de bord dans son propre code.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Ne sait pas ce qu’est une fonction pure.
-      - score: 1
-        description: Classe correctement la plupart des fonctions mais justifie mal.
-      - score: 2
-        description: Classe chaque fonction, justifie par le résultat et les effets de bord, et explique
-          l’intérêt d’isoler l’affichage.
+      - id: function-design
+        description: Conçoit des fonctions avec des paramètres, des valeurs par défaut et des retours adaptés.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Fonctions qui affichent au lieu de renvoyer, ou paramètres incompris.
+          - score: 1
+            description: Fonctions correctes mais valeur par défaut ou paramètre du reste mal expliqués.
+          - score: 2
+            description: Explique la valeur par défaut (undefined seulement), le tableau du paramètre du reste et chaque valeur de retour.
+          - score: 3
+            description: Justifie aussi le découpage choisi et propose une évolution compatible avec les appels existants.
+      - id: higher-order
+        description: Écrit et explique une fonction d’ordre supérieur et ses callbacks.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Ne sait pas ce que reçoit sumBy ni qui appelle le callback.
+          - score: 1
+            description: sumBy fonctionne mais la différence entre passer et appeler une fonction est confuse.
+          - score: 2
+            description: Explique que sumBy appelle le callback avec chaque élément et pourquoi on passe la fonction sans parenthèses.
+      - id: closures
+        description: Explique la fermeture du générateur de numéros.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas où est stocké le compteur.
+          - score: 1
+            description: Sait que le compteur est conservé sans expliquer pourquoi.
+          - score: 2
+            description: Explique que la fonction renvoyée se souvient de l’environnement de son appel de création.
+          - score: 3
+            description: Prévoit correctement le comportement de deux générateurs indépendants et d’un compteur déplacé au niveau du fichier.
+      - id: purity
+        description: Distingue fonctions pures et effets de bord dans son propre code.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Ne sait pas ce qu’est une fonction pure.
+          - score: 1
+            description: Classe correctement la plupart des fonctions mais justifie mal.
+          - score: 2
+            description: Classe chaque fonction, justifie par le résultat et les effets de bord, et explique l’intérêt d’isoler l’affichage.
+
 - id: js-functions-avec-ia
   family: AVEC_IA
   title: Les validateurs composables
-  summary: Construire avec une IA une petite bibliothèque de validateurs fabriqués par des fonctions,
-    puis en défendre chaque fermeture.
+  summary: Construire avec une IA une petite bibliothèque de validateurs fabriqués par des fonctions, puis en défendre chaque fermeture.
   estimatedMinutes: 90
-  instructions: "Tu peux utiliser une IA autant que tu veux pour ce mini-projet. À l’oral, tu devras\n\
-    expliquer chaque ligne sans aide, prévoir le résultat de petites modifications et\nécrire toi-même\
-    \ un nouveau validateur.\n\nObjectif : un script `validate.js` qui vérifie un pseudo et un âge passés\
-    \ en ligne\nde commande :\n\n```bash\nnode validate.js \"Ada\" 36\n```\n\nSortie attendue (format\
-    \ libre mais lisible) :\n\n```text\nPseudo : valide\nÂge : valide\n```\n\nUn **validateur** est une\
-    \ fonction qui reçoit une valeur (une chaîne ou `undefined`)\net renvoie `null` si elle est valide,\
-    \ ou un message d’erreur en français sinon.\n\nExigences :\n\n1. Écris des **fabriques** de validateurs,\
-    \ qui renvoient un validateur configuré :\n   `required(message)` avec un message par défaut, `lengthBetween(min,\
-    \ max)` (longueur\n   après `trim`) et `integerBetween(min, max)`.\n2. Écris `combine(...validators)`\
-    \ : une fonction d’ordre supérieur qui renvoie un\n   validateur appliquant chaque validateur dans\
-    \ l’ordre et renvoyant la **première**\n   erreur rencontrée, ou `null`.\n3. Le pseudo doit être présent\
-    \ et compter de 3 à 12 caractères ; l’âge doit être\n   présent et être un entier de 13 à 120.\n4.\
-    \ Toutes les fonctions de validation sont pures. Seule la fin du fichier lit\n   `process.argv`, affiche\
-    \ les résultats et fixe `process.exitCode = 1` si une\n   valeur est invalide.\n5. Ajoute au moins\
-    \ trois vérifications avec `node:assert/strict` sur tes\n   validateurs.\n6. Pas de classe, pas d’expression\
-    \ régulière, pas de bibliothèque.\n\nConseil : demande à l’IA de t’expliquer pourquoi `combine(required(),\
-    \ ...)` et\n`combine(required, ...)` ne se comportent pas de la même façon, puis vérifie-le\ntoi-même.\n"
-  deliverable: 'Colle le code complet de `validate.js`, puis la sortie de ces commandes :
+  instructions: |
+    Tu peux utiliser une IA autant que tu veux pour ce mini-projet. À l’oral, tu devras
+    expliquer chaque ligne sans aide, prévoir le résultat de petites modifications et
+    écrire toi-même un nouveau validateur.
 
+    Objectif : un script `validate.js` qui vérifie un pseudo et un âge passés en ligne
+    de commande :
+
+    ```bash
+    node validate.js "Ada" 36
+    ```
+
+    Sortie attendue (format libre mais lisible) :
+
+    ```text
+    Pseudo : valide
+    Âge : valide
+    ```
+
+    Un **validateur** est une fonction qui reçoit une valeur (une chaîne ou `undefined`)
+    et renvoie `null` si elle est valide, ou un message d’erreur en français sinon.
+
+    Exigences :
+
+    1. Écris des **fabriques** de validateurs, qui renvoient un validateur configuré :
+       `required(message)` avec un message par défaut, `lengthBetween(min, max)` (longueur
+       après `trim`) et `integerBetween(min, max)`.
+    2. Écris `combine(...validators)` : une fonction d’ordre supérieur qui renvoie un
+       validateur appliquant chaque validateur dans l’ordre et renvoyant la **première**
+       erreur rencontrée, ou `null`.
+    3. Le pseudo doit être présent et compter de 3 à 12 caractères ; l’âge doit être
+       présent et être un entier de 13 à 120.
+    4. Toutes les fonctions de validation sont pures. Seule la fin du fichier lit
+       `process.argv`, affiche les résultats et fixe `process.exitCode = 1` si une
+       valeur est invalide.
+    5. Ajoute au moins trois vérifications avec `node:assert/strict` sur tes
+       validateurs.
+    6. Pas de classe, pas d’expression régulière, pas de bibliothèque.
+
+    Conseil : demande à l’IA de t’expliquer pourquoi `combine(required(), ...)` et
+    `combine(required, ...)` ne se comportent pas de la même façon, puis vérifie-le
+    toi-même.
+  deliverable: |
+    Colle le code complet de `validate.js`, puis la sortie de ces commandes :
     `node validate.js "Ada" 36`, `node validate.js "  Al " 12.5`, `node validate.js`,
-
     `node validate.js "Grace" abc`. Indique en quelques lignes ce que l’IA t’a apporté
-
     et ce que tu as dû corriger ou vérifier.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: code-ownership
-      description: Explique chaque partie de son code sans hésitation ni lecture d’une aide.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas expliquer des lignes importantes de son propre code.
-      - score: 1
-        description: Explique le rôle général des validateurs mais pas le fonctionnement des fabriques.
-      - score: 2
-        description: Explique précisément chaque fabrique, combine et la partie qui lit les arguments.
-      - score: 3
-        description: Explique aussi les choix écartés et ce qu’il a corrigé dans la proposition de l’IA.
-    - id: closures-hof
-      description: Raisonne correctement sur les fermetures et les fonctions d’ordre supérieur.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas ce que renvoie une fabrique.
-      - score: 1
-        description: Sait qu’une fonction est renvoyée mais ne sait pas d’où viennent min et max lors
-          de l’appel.
-      - score: 2
-        description: Explique la fermeture et le fonctionnement de combine, y compris l’ordre d’application.
-      - score: 3
-        description: Prévoit aussi les cas pièges (fabrique passée sans parenthèses, ordre inversé, combine
-          vide).
-    - id: modification
-      description: Réalise ou décrit correctement une modification demandée pendant l’oral.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne parvient pas à écrire un nouveau validateur.
-      - score: 1
-        description: Nouveau validateur qui affiche au lieu de renvoyer, ou qui casse un cas existant.
-      - score: 2
-        description: Nouveau validateur pur, correctement intégré dans combine, avec un exemple de vérification.
-      - score: 3
-        description: Modification correcte, vérifiée avec node:assert sur plusieurs cas dont un cas limite.
+      - id: code-ownership
+        description: Explique chaque partie de son code sans hésitation ni lecture d’une aide.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas expliquer des lignes importantes de son propre code.
+          - score: 1
+            description: Explique le rôle général des validateurs mais pas le fonctionnement des fabriques.
+          - score: 2
+            description: Explique précisément chaque fabrique, combine et la partie qui lit les arguments.
+          - score: 3
+            description: Explique aussi les choix écartés et ce qu’il a corrigé dans la proposition de l’IA.
+      - id: closures-hof
+        description: Raisonne correctement sur les fermetures et les fonctions d’ordre supérieur.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas ce que renvoie une fabrique.
+          - score: 1
+            description: Sait qu’une fonction est renvoyée mais ne sait pas d’où viennent min et max lors de l’appel.
+          - score: 2
+            description: Explique la fermeture et le fonctionnement de combine, y compris l’ordre d’application.
+          - score: 3
+            description: Prévoit aussi les cas pièges (fabrique passée sans parenthèses, ordre inversé, combine vide).
+      - id: modification
+        description: Réalise ou décrit correctement une modification demandée pendant l’oral.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne parvient pas à écrire un nouveau validateur.
+          - score: 1
+            description: Nouveau validateur qui affiche au lieu de renvoyer, ou qui casse un cas existant.
+          - score: 2
+            description: Nouveau validateur pur, correctement intégré dans combine, avec un exemple de vérification.
+          - score: 3
+            description: Modification correcte, vérifiée avec node:assert sur plusieurs cas dont un cas limite.
+
 - id: js-functions-contre-ia
   family: CONTRE_IA
   title: Les prix qui changent tout seuls
-  summary: Trouver et corriger les erreurs de hoisting, de retour, de valeurs par défaut, de fermeture
-    et d’effets de bord d’un script généré.
+  summary: Trouver et corriger les erreurs de hoisting, de retour, de valeurs par défaut, de fermeture et d’effets de bord d’un script généré.
   estimatedMinutes: 60
-  instructions: "Un assistant a généré ce script d’outils de prix pour le catalogue d’une boutique.\n\
-    Règles métier :\n\n- les prix du catalogue sont hors taxes (HT) ; on affiche les prix TTC (TVA de\n\
-    \  20 %) **sans modifier le catalogue** ;\n- les remises s’appliquent au prix TTC ; sans taux précisé,\
-    \ la remise est de 10 % ;\n  un taux de 0 signifie « prix plein » ;\n- chaque campagne de coupons\
-    \ (printemps, hiver) a son propre compteur\n  d’utilisations ;\n- les prix s’affichent au format `48,00\
-    \ €`.\n\n```js\n// Outils de prix du catalogue — proposés par un assistant\nconst catalog = [\n  {\
-    \ name: 'Théière', price: 40 },\n  { name: 'Tasse', price: 8 },\n  { name: 'Plateau', price: 25 },\n\
-    ];\n\nconst springCounter = createCouponCounter();\nconst winterCounter = createCouponCounter();\n\
-    \nfor (const product of catalog) {\n  const productWithVat = addVat(product);\n  console.log(`${productWithVat.name}\
-    \ TTC : ${formatPrice(productWithVat.price)}`);\n}\n\nconst teapotWithVat = addVat(catalog[0]);\n\
-    console.log(`Théière en promotion : ${formatPrice(applyDiscount(teapotWithVat.price))}`);\nconsole.log(`Théière\
-    \ prix plein : ${formatPrice(applyDiscount(teapotWithVat.price, 0))}`);\n\nspringCounter();\nspringCounter();\n\
-    console.log(`Coupons hiver utilisés : ${winterCounter()}`);\n\n// --- Fonctions utilitaires ---\n\n\
-    let couponUses = 0;\n\nfunction createCouponCounter() {\n  return () => {\n    couponUses++;\n   \
-    \ return couponUses;\n  };\n}\n\nfunction addVat(product) {\n  product.price = product.price * 1.2;\n\
-    \  return product;\n}\n\nfunction applyDiscount(price, rate) {\n  rate = rate || 0.1;\n  return price\
-    \ * (1 - rate);\n}\n\nconst formatPrice = (amount) => {\n  `${amount.toFixed(2).replace('.', ',')}\
-    \ €`;\n};\n```\n\nTravail demandé :\n\n1. Exécute le script et décris ce qui se passe réellement.\n\
-    2. Liste chaque défaut : la ligne, le comportement observé ou possible, la cause\n   précise et sa\
-    \ gravité. Certains défauts n’apparaissent qu’après en avoir corrigé\n   d’autres : corrige pas à\
-    \ pas et réexécute.\n3. Indique quelles fonctions de la version d’origine sont pures et lesquelles\
-    \ ne le\n   sont pas, et pourquoi.\n4. Propose une version corrigée qui respecte toutes les règles\
-    \ métier, avec sa\n   sortie, et calcule à la main les prix attendus.\n"
-  deliverable: 'Colle ta liste de défauts (ligne, symptôme, cause, gravité), ton analyse de pureté,
+  instructions: |
+    Un assistant a généré ce script d’outils de prix pour le catalogue d’une boutique.
+    Règles métier :
 
+    - les prix du catalogue sont hors taxes (HT) ; on affiche les prix TTC (TVA de
+      20 %) **sans modifier le catalogue** ;
+    - les remises s’appliquent au prix TTC ; sans taux précisé, la remise est de 10 % ;
+      un taux de 0 signifie « prix plein » ;
+    - chaque campagne de coupons (printemps, hiver) a son propre compteur
+      d’utilisations ;
+    - les prix s’affichent au format `48,00 €`.
+
+    ```js
+    // Outils de prix du catalogue — proposés par un assistant
+    const catalog = [
+      { name: 'Théière', price: 40 },
+      { name: 'Tasse', price: 8 },
+      { name: 'Plateau', price: 25 },
+    ];
+
+    const springCounter = createCouponCounter();
+    const winterCounter = createCouponCounter();
+
+    for (const product of catalog) {
+      const productWithVat = addVat(product);
+      console.log(`${productWithVat.name} TTC : ${formatPrice(productWithVat.price)}`);
+    }
+
+    const teapotWithVat = addVat(catalog[0]);
+    console.log(`Théière en promotion : ${formatPrice(applyDiscount(teapotWithVat.price))}`);
+    console.log(`Théière prix plein : ${formatPrice(applyDiscount(teapotWithVat.price, 0))}`);
+
+    springCounter();
+    springCounter();
+    console.log(`Coupons hiver utilisés : ${winterCounter()}`);
+
+    // --- Fonctions utilitaires ---
+
+    let couponUses = 0;
+
+    function createCouponCounter() {
+      return () => {
+        couponUses++;
+        return couponUses;
+      };
+    }
+
+    function addVat(product) {
+      product.price = product.price * 1.2;
+      return product;
+    }
+
+    function applyDiscount(price, rate) {
+      rate = rate || 0.1;
+      return price * (1 - rate);
+    }
+
+    const formatPrice = (amount) => {
+      `${amount.toFixed(2).replace('.', ',')} €`;
+    };
+    ```
+
+    Travail demandé :
+
+    1. Exécute le script et décris ce qui se passe réellement.
+    2. Liste chaque défaut : la ligne, le comportement observé ou possible, la cause
+       précise et sa gravité. Certains défauts n’apparaissent qu’après en avoir corrigé
+       d’autres : corrige pas à pas et réexécute.
+    3. Indique quelles fonctions de la version d’origine sont pures et lesquelles ne le
+       sont pas, et pourquoi.
+    4. Propose une version corrigée qui respecte toutes les règles métier, avec sa
+       sortie, et calcule à la main les prix attendus.
+  deliverable: |
+    Colle ta liste de défauts (ligne, symptôme, cause, gravité), ton analyse de pureté,
     le script corrigé complet et sa sortie, puis le calcul à la main des prix attendus.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: defects-found
-      description: Identifie les défauts réels, y compris ceux masqués par d’autres.
-      maxScore: 3
-    - id: root-cause
-      description: Explique la cause technique de chaque défaut, pas seulement le symptôme.
-      maxScore: 3
-    - id: purity-analysis
-      description: Analyse la pureté des fonctions et justifie les corrections par ce critère.
-      maxScore: 3
+      - id: defects-found
+        description: Identifie les défauts réels, y compris ceux masqués par d’autres.
+        maxScore: 3
+      - id: root-cause
+        description: Explique la cause technique de chaque défaut, pas seulement le symptôme.
+        maxScore: 3
+      - id: purity-analysis
+        description: Analyse la pureté des fonctions et justifie les corrections par ce critère.
+        maxScore: 3
+
 - id: js-functions-apres-ia
   family: APRES_IA
   title: Le carnet de notes
   summary: Dépanner et faire évoluer un carnet de notes découpé en fonctions, sans le réécrire entièrement.
   estimatedMinutes: 60
-  instructions: "Ce script affiche les moyennes des élèves et celle de la classe. L’équipe\npédagogique\
-    \ l’utilise chaque semaine : tu dois le faire évoluer **en modifiant le\nmoins de lignes possible**,\
-    \ sans le régénérer.\n\n```js\n// Carnet de notes — script utilisé par l’équipe pédagogique\nfunction\
-    \ computeAverage(grades) {\n  let total = 0;\n  for (const grade of grades) {\n    total += grade;\n\
-    \  }\n  return total / grades.length;\n}\n\nfunction getMention(average) {\n  if (average >= 16) {\n\
-    \    return 'Très bien';\n  }\n  if (average >= 14) {\n    return 'Bien';\n  }\n  if (average >= 12)\
-    \ {\n    return 'Assez bien';\n  }\n  return '';\n}\n\nfunction formatStudentLine(name, grades) {\n\
-    \  const average = computeAverage(grades);\n  return `${name.padEnd(8)} ${average.toFixed(2).padStart(6)}\
-    \  ${getMention(average)}`;\n}\n\nlet classTotal = 0;\nlet studentCount = 0;\n\nfunction printStudent(name,\
-    \ grades) {\n  console.log(formatStudentLine(name, grades));\n  classTotal += computeAverage(grades);\n\
-    \  studentCount++;\n}\n\nprintStudent('Ada', [15, 17, 18]);\nprintStudent('Linus', [9, 12, 10.5]);\n\
-    printStudent('Grace', []);\nprintStudent('Alan', [13, 14]);\n\nconsole.log(`Moyenne de la classe :\
-    \ ${(classTotal / studentCount).toFixed(2)}`);\n```\n\nDemandes de l’équipe :\n\n1. **Bug** : depuis\
-    \ l’arrivée de Grace, qui n’a pas encore de note, sa ligne et la\n   moyenne de la classe affichent\
-    \ `NaN`. Un élève sans note doit afficher\n   `aucune note` et ne pas compter dans la moyenne de la\
-    \ classe. Explique la cause.\n2. Les notes doivent pouvoir être passées directement en arguments :\n\
-    \   `printStudent('Ada', 15, 17, 18)` et `printStudent('Grace')`. Adapte la fonction\n   et les appels.\n\
-    3. Pour le conseil de classe, l’équipe veut réutiliser `formatStudentLine` avec un\n   autre libellé\
-    \ que la mention : `Admis` si la moyenne est d’au moins 10,\n   `Ajourné` sinon. Ajoute à `formatStudentLine`\
-    \ un paramètre facultatif qui reçoit\n   la fonction de libellé, avec `getMention` par défaut, et\
-    \ montre un appel pour\n   chaque libellé.\n4. Les variables globales `classTotal` et `studentCount`\
-    \ sont modifiées depuis une\n   fonction. Remplace-les par une fermeture : une fabrique\n   `createAverageTracker()`\
-    \ qui renvoie une fonction ; chaque appel de cette\n   fonction avec une moyenne l’enregistre et renvoie\
-    \ la moyenne de la classe à jour.\n5. Ajoute trois vérifications avec `node:assert/strict` sur les\
-    \ fonctions pures du\n   script, dont une sur un élève sans note.\n"
-  deliverable: 'Colle le script modifié et sa sortie, la liste des lignes modifiées ou ajoutées
+  instructions: |
+    Ce script affiche les moyennes des élèves et celle de la classe. L’équipe
+    pédagogique l’utilise chaque semaine : tu dois le faire évoluer **en modifiant le
+    moins de lignes possible**, sans le régénérer.
 
+    ```js
+    // Carnet de notes — script utilisé par l’équipe pédagogique
+    function computeAverage(grades) {
+      let total = 0;
+      for (const grade of grades) {
+        total += grade;
+      }
+      return total / grades.length;
+    }
+
+    function getMention(average) {
+      if (average >= 16) {
+        return 'Très bien';
+      }
+      if (average >= 14) {
+        return 'Bien';
+      }
+      if (average >= 12) {
+        return 'Assez bien';
+      }
+      return '';
+    }
+
+    function formatStudentLine(name, grades) {
+      const average = computeAverage(grades);
+      return `${name.padEnd(8)} ${average.toFixed(2).padStart(6)}  ${getMention(average)}`;
+    }
+
+    let classTotal = 0;
+    let studentCount = 0;
+
+    function printStudent(name, grades) {
+      console.log(formatStudentLine(name, grades));
+      classTotal += computeAverage(grades);
+      studentCount++;
+    }
+
+    printStudent('Ada', [15, 17, 18]);
+    printStudent('Linus', [9, 12, 10.5]);
+    printStudent('Grace', []);
+    printStudent('Alan', [13, 14]);
+
+    console.log(`Moyenne de la classe : ${(classTotal / studentCount).toFixed(2)}`);
+    ```
+
+    Demandes de l’équipe :
+
+    1. **Bug** : depuis l’arrivée de Grace, qui n’a pas encore de note, sa ligne et la
+       moyenne de la classe affichent `NaN`. Un élève sans note doit afficher
+       `aucune note` et ne pas compter dans la moyenne de la classe. Explique la cause.
+    2. Les notes doivent pouvoir être passées directement en arguments :
+       `printStudent('Ada', 15, 17, 18)` et `printStudent('Grace')`. Adapte la fonction
+       et les appels.
+    3. Pour le conseil de classe, l’équipe veut réutiliser `formatStudentLine` avec un
+       autre libellé que la mention : `Admis` si la moyenne est d’au moins 10,
+       `Ajourné` sinon. Ajoute à `formatStudentLine` un paramètre facultatif qui reçoit
+       la fonction de libellé, avec `getMention` par défaut, et montre un appel pour
+       chaque libellé.
+    4. Les variables globales `classTotal` et `studentCount` sont modifiées depuis une
+       fonction. Remplace-les par une fermeture : une fabrique
+       `createAverageTracker()` qui renvoie une fonction ; chaque appel de cette
+       fonction avec une moyenne l’enregistre et renvoie la moyenne de la classe à jour.
+    5. Ajoute trois vérifications avec `node:assert/strict` sur les fonctions pures du
+       script, dont une sur un élève sans note.
+  deliverable: |
+    Colle le script modifié et sa sortie, la liste des lignes modifiées ou ajoutées
     avec la raison de chaque changement, puis indique quelles fonctions sont pures
-
     dans ta version finale.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: bug-diagnosis
-      description: Explique l’origine du NaN et le corrige proprement.
-      maxScore: 3
-    - id: function-features
-      description: Utilise et explique paramètre du reste, fonction passée en argument avec valeur par
-        défaut et fermeture.
-      maxScore: 3
-    - id: minimal-change
-      description: Fait évoluer le code existant de façon ciblée, pure là où c’est possible, et vérifiée.
-      maxScore: 2
+      - id: bug-diagnosis
+        description: Explique l’origine du NaN et le corrige proprement.
+        maxScore: 3
+      - id: function-features
+        description: Utilise et explique paramètre du reste, fonction passée en argument avec valeur par défaut et fermeture.
+        maxScore: 3
+      - id: minimal-change
+        description: Fait évoluer le code existant de façon ciblée, pure là où c’est possible, et vérifiée.
+        maxScore: 2

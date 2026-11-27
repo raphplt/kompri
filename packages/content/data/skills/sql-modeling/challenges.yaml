@@ -1,316 +1,480 @@
 - id: sql-modeling-sans-ia
   family: SANS_IA
   title: Le cinéma de quartier
-  summary: Traduire un besoin en tables contraintes, puis interroger le schéma avec des jointures, des
-    sous-requêtes et une transaction.
+  summary: Traduire un besoin en tables contraintes, puis interroger le schéma avec des jointures, des sous-requêtes et une transaction.
   estimatedMinutes: 60
-  instructions: "Un cinéma de quartier veut gérer ses séances et ses réservations. Tu travailles **sans\
-    \ aide**,\ndans une base PostgreSQL d’entraînement, avec `psql`.\n\n### Le besoin\n\n> Le cinéma a\
-    \ des salles (nom unique, nombre de places strictement positif) et projette des\n> films (titre, durée\
-    \ en minutes strictement positive, année de sortie facultative). Une\n> séance projette un film dans\
-    \ une salle à un instant donné, avec un prix (positif ou nul).\n> Une salle ne peut pas accueillir\
-    \ deux séances qui commencent au même instant. Des clients\n> (nom, e-mail unique) réservent un nombre\
-    \ de places strictement positif pour une séance ;\n> on garde l’instant de la réservation, par défaut\
-    \ l’instant présent. On ne doit jamais\n> pouvoir supprimer un film, une salle, une séance ou un client\
-    \ qui a un historique.\n\n### 1. Analyse\n\nListe les entités et qualifie chaque relation (1-1, 1-N\
-    \ ou N-N) en une phrase.\n\n### 2. Schéma\n\nÉcris les `CREATE TABLE` en respectant **exactement**\
-    \ ces noms de tables et de colonnes, et en\najoutant toutes les contraintes qu’exige le besoin (clés\
-    \ primaires générées, clés étrangères\navec leur `ON DELETE`, `NOT NULL`, `UNIQUE`, `CHECK`, `DEFAULT`)\
-    \ :\n\n```text\nrooms (id, name, capacity)\nfilms (id, title, duration_minutes, release_year)\nscreenings\
-    \ (id, film_id, room_id, starts_at, price)\ncustomers (id, name, email)\nbookings (id, screening_id,\
-    \ customer_id, seats, booked_at)\n```\n\nPuis exécute ces données, qui doivent toutes être acceptées\
-    \ :\n\n```sql\nSET timezone = 'Europe/Paris';\nINSERT INTO rooms (name, capacity) VALUES ('Salle Lumière',\
-    \ 80), ('Salle Méliès', 40);\nINSERT INTO films (title, duration_minutes, release_year) VALUES\n \
-    \ ('Le Phare des brumes', 104, 2024),\n  ('Course contre la nuit', 96, 2025),\n  ('Les Jardins suspendus',\
-    \ 118, 2023),\n  ('Petit Renard', 82, 2025);\nINSERT INTO screenings (film_id, room_id, starts_at,\
-    \ price) VALUES\n  (1, 1, '2025-03-14 18:00', 9.50),\n  (2, 2, '2025-03-14 20:30', 9.50),\n  (1, 1,\
-    \ '2025-03-15 14:00', 7.00),\n  (3, 2, '2025-03-15 18:00', 9.50),\n  (2, 1, '2025-03-15 21:00', 9.50);\n\
-    INSERT INTO customers (name, email) VALUES\n  ('Inès Morel', 'ines@example.com'),\n  ('Tom Girard',\
-    \ 'tom@example.com'),\n  ('Léa Martin', 'lea@example.com'),\n  ('Yanis Cherif', 'yanis@example.com');\n\
-    INSERT INTO bookings (screening_id, customer_id, seats, booked_at) VALUES\n  (1, 1, 2, '2025-03-01\
-    \ 10:00'),\n  (1, 2, 4, '2025-03-02 12:30'),\n  (2, 3, 1, '2025-03-05 09:15'),\n  (3, 1, 3, '2025-03-10\
-    \ 17:45'),\n  (5, 2, 2, '2025-03-11 08:00'),\n  (5, 3, 2, '2025-03-12 19:20');\n```\n\nVérifie ensuite\
-    \ que ton schéma **refuse** ces trois opérations, et note les messages :\n\n```sql\nINSERT INTO screenings\
-    \ (film_id, room_id, starts_at, price) VALUES (4, 1, '2025-03-14 18:00', 6.00);\nINSERT INTO bookings\
-    \ (screening_id, customer_id, seats) VALUES (2, 4, 0);\nDELETE FROM films WHERE id = 1;\n```\n\n###\
-    \ 3. Requêtes\n\n1. Le programme : instant de la séance, titre du film, nom de la salle et prix, par\
-    \ ordre\n   chronologique.\n2. Pour **chaque** séance, y compris celles sans réservation : identifiant,\
-    \ titre, instant,\n   capacité de la salle, places réservées et places restantes.\n3. Les films qui\
-    \ n’ont aucune séance programmée.\n4. Les clients ayant réservé pour « Course contre la nuit », sans\
-    \ doublon, par nom.\n5. La recette par film (places × prix), **y compris** les films à 0, de la plus\
-    \ grande à la\n   plus petite, puis par titre.\n6. Une nouvelle cliente, Zoé Lambert (`zoe@example.com`),\
-    \ réserve 2 places pour la séance 4,\n   réservation faite le 13 mars 2025 à 11 h. Écris ces écritures\
-    \ pour qu’elles réussissent ou\n   échouent ensemble, puis affiche sa réservation avec le titre du\
-    \ film.\n7. La requête « réservations d’un client » sera très fréquente quand la table grossira. Quel\n\
-    \   index crées-tu, et pourquoi PostgreSQL ne l’a-t-il pas créé tout seul ?\n"
-  deliverable: 'Colle ton analyse, tes `CREATE TABLE`, les trois messages d’erreur obtenus, puis chaque
+  instructions: |
+    Un cinéma de quartier veut gérer ses séances et ses réservations. Tu travailles **sans aide**,
+    dans une base PostgreSQL d’entraînement, avec `psql`.
 
-    requête avec sa sortie exacte de `psql` (exécutée après `SET timezone = ''Europe/Paris'';`).
+    ### Le besoin
 
+    > Le cinéma a des salles (nom unique, nombre de places strictement positif) et projette des
+    > films (titre, durée en minutes strictement positive, année de sortie facultative). Une
+    > séance projette un film dans une salle à un instant donné, avec un prix (positif ou nul).
+    > Une salle ne peut pas accueillir deux séances qui commencent au même instant. Des clients
+    > (nom, e-mail unique) réservent un nombre de places strictement positif pour une séance ;
+    > on garde l’instant de la réservation, par défaut l’instant présent. On ne doit jamais
+    > pouvoir supprimer un film, une salle, une séance ou un client qui a un historique.
+
+    ### 1. Analyse
+
+    Liste les entités et qualifie chaque relation (1-1, 1-N ou N-N) en une phrase.
+
+    ### 2. Schéma
+
+    Écris les `CREATE TABLE` en respectant **exactement** ces noms de tables et de colonnes, et en
+    ajoutant toutes les contraintes qu’exige le besoin (clés primaires générées, clés étrangères
+    avec leur `ON DELETE`, `NOT NULL`, `UNIQUE`, `CHECK`, `DEFAULT`) :
+
+    ```text
+    rooms (id, name, capacity)
+    films (id, title, duration_minutes, release_year)
+    screenings (id, film_id, room_id, starts_at, price)
+    customers (id, name, email)
+    bookings (id, screening_id, customer_id, seats, booked_at)
+    ```
+
+    Puis exécute ces données, qui doivent toutes être acceptées :
+
+    ```sql
+    SET timezone = 'Europe/Paris';
+    INSERT INTO rooms (name, capacity) VALUES ('Salle Lumière', 80), ('Salle Méliès', 40);
+    INSERT INTO films (title, duration_minutes, release_year) VALUES
+      ('Le Phare des brumes', 104, 2024),
+      ('Course contre la nuit', 96, 2025),
+      ('Les Jardins suspendus', 118, 2023),
+      ('Petit Renard', 82, 2025);
+    INSERT INTO screenings (film_id, room_id, starts_at, price) VALUES
+      (1, 1, '2025-03-14 18:00', 9.50),
+      (2, 2, '2025-03-14 20:30', 9.50),
+      (1, 1, '2025-03-15 14:00', 7.00),
+      (3, 2, '2025-03-15 18:00', 9.50),
+      (2, 1, '2025-03-15 21:00', 9.50);
+    INSERT INTO customers (name, email) VALUES
+      ('Inès Morel', 'ines@example.com'),
+      ('Tom Girard', 'tom@example.com'),
+      ('Léa Martin', 'lea@example.com'),
+      ('Yanis Cherif', 'yanis@example.com');
+    INSERT INTO bookings (screening_id, customer_id, seats, booked_at) VALUES
+      (1, 1, 2, '2025-03-01 10:00'),
+      (1, 2, 4, '2025-03-02 12:30'),
+      (2, 3, 1, '2025-03-05 09:15'),
+      (3, 1, 3, '2025-03-10 17:45'),
+      (5, 2, 2, '2025-03-11 08:00'),
+      (5, 3, 2, '2025-03-12 19:20');
+    ```
+
+    Vérifie ensuite que ton schéma **refuse** ces trois opérations, et note les messages :
+
+    ```sql
+    INSERT INTO screenings (film_id, room_id, starts_at, price) VALUES (4, 1, '2025-03-14 18:00', 6.00);
+    INSERT INTO bookings (screening_id, customer_id, seats) VALUES (2, 4, 0);
+    DELETE FROM films WHERE id = 1;
+    ```
+
+    ### 3. Requêtes
+
+    1. Le programme : instant de la séance, titre du film, nom de la salle et prix, par ordre
+       chronologique.
+    2. Pour **chaque** séance, y compris celles sans réservation : identifiant, titre, instant,
+       capacité de la salle, places réservées et places restantes.
+    3. Les films qui n’ont aucune séance programmée.
+    4. Les clients ayant réservé pour « Course contre la nuit », sans doublon, par nom.
+    5. La recette par film (places × prix), **y compris** les films à 0, de la plus grande à la
+       plus petite, puis par titre.
+    6. Une nouvelle cliente, Zoé Lambert (`zoe@example.com`), réserve 2 places pour la séance 4,
+       réservation faite le 13 mars 2025 à 11 h. Écris ces écritures pour qu’elles réussissent ou
+       échouent ensemble, puis affiche sa réservation avec le titre du film.
+    7. La requête « réservations d’un client » sera très fréquente quand la table grossira. Quel
+       index crées-tu, et pourquoi PostgreSQL ne l’a-t-il pas créé tout seul ?
+  deliverable: |
+    Colle ton analyse, tes `CREATE TABLE`, les trois messages d’erreur obtenus, puis chaque
+    requête avec sa sortie exacte de `psql` (exécutée après `SET timezone = 'Europe/Paris';`).
     Termine par ta réponse à la question 7.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: modeling
-      description: Identifie entités, relations et cardinalités et les traduit correctement en tables.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne distingue pas 1-N et N-N, ou schéma qui ne permet pas les insertions.
-      - score: 1
-        description: Relations identifiées mais traduction maladroite (clé composée sur bookings, clé
-          étrangère du mauvais côté).
-      - score: 2
-        description: Analyse et traduction correctes, explique pourquoi bookings a son propre identifiant.
-      - score: 3
-        description: Justifie aussi ce que le schéma ne peut pas garantir (surréservation) et comment
-          y remédier.
-    - id: constraints
-      description: Choisit et justifie les contraintes et les comportements ON DELETE.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Contraintes absentes ou les trois opérations interdites passent.
-      - score: 1
-        description: Une partie des contraintes, ou ON DELETE choisi sans justification.
-      - score: 2
-        description: Les trois opérations sont refusées, chaque contrainte est justifiée par le besoin.
-      - score: 3
-        description: Explique aussi les subtilités (CHECK et NULL, unicité composée, NOT NULL sur les
-          clés étrangères).
-    - id: joins
-      description: Écrit des jointures et sous-requêtes correctes et explique leurs résultats.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Jointures fausses ou résultats non vérifiés.
-      - score: 1
-        description: INNER JOIN corrects mais LEFT JOIN ou comptages faux.
-      - score: 2
-        description: Requêtes 1 à 5 justes, explique LEFT JOIN, coalesce et NOT EXISTS.
-      - score: 3
-        description: Explique les alternatives (IN ou DISTINCT, NOT EXISTS ou LEFT JOIN IS NULL) et le
-          piège de NOT IN.
-    - id: transaction-index
-      description: Utilise une transaction et raisonne sur les index à bon escient.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Pas de transaction, ou ne sait pas à quoi sert un index.
-      - score: 1
-        description: Transaction présente mais id deviné, ou index proposé sans justification.
-      - score: 2
-        description: Transaction correcte avec l’id renvoyé, index sur customer_id justifié.
-      - score: 3
-        description: Explique aussi le comportement après une erreur dans la transaction et le coût d’un
-          index en écriture.
+      - id: modeling
+        description: Identifie entités, relations et cardinalités et les traduit correctement en tables.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: 'Ne distingue pas 1-N et N-N, ou schéma qui ne permet pas les insertions.'
+          - score: 1
+            description: 'Relations identifiées mais traduction maladroite (clé composée sur bookings, clé étrangère du mauvais côté).'
+          - score: 2
+            description: 'Analyse et traduction correctes, explique pourquoi bookings a son propre identifiant.'
+          - score: 3
+            description: 'Justifie aussi ce que le schéma ne peut pas garantir (surréservation) et comment y remédier.'
+      - id: constraints
+        description: Choisit et justifie les contraintes et les comportements ON DELETE.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: 'Contraintes absentes ou les trois opérations interdites passent.'
+          - score: 1
+            description: 'Une partie des contraintes, ou ON DELETE choisi sans justification.'
+          - score: 2
+            description: 'Les trois opérations sont refusées, chaque contrainte est justifiée par le besoin.'
+          - score: 3
+            description: 'Explique aussi les subtilités (CHECK et NULL, unicité composée, NOT NULL sur les clés étrangères).'
+      - id: joins
+        description: Écrit des jointures et sous-requêtes correctes et explique leurs résultats.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: 'Jointures fausses ou résultats non vérifiés.'
+          - score: 1
+            description: 'INNER JOIN corrects mais LEFT JOIN ou comptages faux.'
+          - score: 2
+            description: 'Requêtes 1 à 5 justes, explique LEFT JOIN, coalesce et NOT EXISTS.'
+          - score: 3
+            description: 'Explique les alternatives (IN ou DISTINCT, NOT EXISTS ou LEFT JOIN IS NULL) et le piège de NOT IN.'
+      - id: transaction-index
+        description: Utilise une transaction et raisonne sur les index à bon escient.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: 'Pas de transaction, ou ne sait pas à quoi sert un index.'
+          - score: 1
+            description: 'Transaction présente mais id deviné, ou index proposé sans justification.'
+          - score: 2
+            description: 'Transaction correcte avec l’id renvoyé, index sur customer_id justifié.'
+          - score: 3
+            description: 'Explique aussi le comportement après une erreur dans la transaction et le coût d’un index en écriture.'
+
 - id: sql-modeling-avec-ia
   family: AVEC_IA
   title: La plateforme de prêt entre voisins
-  summary: Concevoir avec une IA le schéma normalisé d’une plateforme de prêt d’objets, puis défendre
-    chaque choix de modélisation.
+  summary: Concevoir avec une IA le schéma normalisé d’une plateforme de prêt d’objets, puis défendre chaque choix de modélisation.
   estimatedMinutes: 150
-  instructions: "Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras justifier chaque table,\n\
-    chaque contrainte et chaque requête **sans aide**, et modifier le schéma en direct.\n\nLe besoin :\n\
-    \n> Des voisins prêtent des objets (perceuse, tente, appareil à raclette…). Chaque objet\n> appartient\
-    \ à un membre, relève d’une catégorie et peut porter plusieurs étiquettes\n> (« électrique », « encombrant\
-    \ »…). Un membre demande à emprunter un objet pour une période\n> (date de début, date de fin) ; la\
-    \ demande est en attente, acceptée, refusée ou terminée.\n> Un membre ne peut pas emprunter son propre\
-    \ objet. Après un prêt terminé, l’emprunteur peut\n> laisser une note de 1 à 5 et un commentaire,\
-    \ une seule fois par prêt.\n\nLivrables techniques :\n\n1. `schema.sql`, rejouable (`DROP TABLE IF\
-    \ EXISTS` en tête), avec toutes les contraintes\n   que tu juges nécessaires et des `ON DELETE` choisis.\n\
-    2. `seed.sql` : au moins 5 membres, 10 objets, 3 catégories, 4 étiquettes, 8 demandes dans\n   différents\
-    \ états, 3 avis. Données inventées.\n3. `queries.sql`, chaque requête commentée :\n   - les objets\
-    \ disponibles d’une catégorie avec le nom de leur propriétaire et leurs\n     étiquettes regroupées\
-    \ sur une ligne ;\n   - pour chaque membre, le nombre d’objets prêtés et le nombre d’emprunts, **y\
-    \ compris\n     zéro** ;\n   - la note moyenne de chaque objet ayant au moins un avis ;\n   - les\
-    \ membres qui n’ont jamais emprunté (avec `NOT EXISTS`) ;\n   - une transaction qui accepte une demande\
-    \ et refuse les autres demandes en attente qui\n     chevauchent la même période pour le même objet\
-    \ ;\n   - un index que tu juges utile, avec la sortie d’`EXPLAIN` avant et après sur une table\n \
-    \    que tu as volontairement grossie (par exemple avec `generate_series`).\n4. Un court texte expliquant\
-    \ comment ton schéma respecte les trois premières formes normales,\n   et ce qui ne peut pas être\
-    \ garanti par une contrainte (et où tu le vérifies).\n"
-  deliverable: 'Colle `schema.sql`, `seed.sql` (ou un extrait si très long), `queries.sql` avec la sortie
-    de
+  instructions: |
+    Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras justifier chaque table,
+    chaque contrainte et chaque requête **sans aide**, et modifier le schéma en direct.
 
+    Le besoin :
+
+    > Des voisins prêtent des objets (perceuse, tente, appareil à raclette…). Chaque objet
+    > appartient à un membre, relève d’une catégorie et peut porter plusieurs étiquettes
+    > (« électrique », « encombrant »…). Un membre demande à emprunter un objet pour une période
+    > (date de début, date de fin) ; la demande est en attente, acceptée, refusée ou terminée.
+    > Un membre ne peut pas emprunter son propre objet. Après un prêt terminé, l’emprunteur peut
+    > laisser une note de 1 à 5 et un commentaire, une seule fois par prêt.
+
+    Livrables techniques :
+
+    1. `schema.sql`, rejouable (`DROP TABLE IF EXISTS` en tête), avec toutes les contraintes
+       que tu juges nécessaires et des `ON DELETE` choisis.
+    2. `seed.sql` : au moins 5 membres, 10 objets, 3 catégories, 4 étiquettes, 8 demandes dans
+       différents états, 3 avis. Données inventées.
+    3. `queries.sql`, chaque requête commentée :
+       - les objets disponibles d’une catégorie avec le nom de leur propriétaire et leurs
+         étiquettes regroupées sur une ligne ;
+       - pour chaque membre, le nombre d’objets prêtés et le nombre d’emprunts, **y compris
+         zéro** ;
+       - la note moyenne de chaque objet ayant au moins un avis ;
+       - les membres qui n’ont jamais emprunté (avec `NOT EXISTS`) ;
+       - une transaction qui accepte une demande et refuse les autres demandes en attente qui
+         chevauchent la même période pour le même objet ;
+       - un index que tu juges utile, avec la sortie d’`EXPLAIN` avant et après sur une table
+         que tu as volontairement grossie (par exemple avec `generate_series`).
+    4. Un court texte expliquant comment ton schéma respecte les trois premières formes normales,
+       et ce qui ne peut pas être garanti par une contrainte (et où tu le vérifies).
+  deliverable: |
+    Colle `schema.sql`, `seed.sql` (ou un extrait si très long), `queries.sql` avec la sortie de
     chaque requête, et ton texte sur la normalisation. Ajoute ce que l’IA t’a proposé que tu as
-
     corrigé ou refusé, et pourquoi.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: schema-design
-      description: Défend un schéma normalisé, ses relations et ses cardinalités.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas justifier ses tables, ou schéma avec listes dans des colonnes.
-      - score: 1
-        description: Schéma globalement correct mais redondances ou relations N-N mal traduites.
-      - score: 2
-        description: Schéma en 3NF, chaque table et chaque clé étrangère justifiée.
-      - score: 3
-        description: Discute aussi les alternatives (statut en table de référence, clé composée ou id
-          propre) et ce qu’il a corrigé chez l’IA.
-    - id: integrity
-      description: Choisit les contraintes et explique ce qu’elles ne peuvent pas garantir.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Contraintes absentes ou non comprises.
-      - score: 1
-        description: Contraintes présentes mais ON DELETE ou CHECK mal justifiés.
-      - score: 2
-        description: Contraintes justifiées, identifie les règles impossibles en CHECK (propre objet,
-          chevauchement).
-      - score: 3
-        description: Explique où et comment ces règles sont garanties (transaction, verrou) et les risques
-          de concurrence.
-    - id: queries
-      description: Écrit et explique des requêtes multi-tables correctes, dont une transaction.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Requêtes fausses ou incomprises.
-      - score: 1
-        description: Requêtes simples justes, comptages ou transaction erronés.
-      - score: 2
-        description: Requêtes justes, comptages sans double comptage, transaction tout-ou-rien expliquée.
-      - score: 3
-        description: Modifie une requête en direct et justifie un index avec EXPLAIN et la sélectivité.
+      - id: schema-design
+        description: Défend un schéma normalisé, ses relations et ses cardinalités.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: 'Ne sait pas justifier ses tables, ou schéma avec listes dans des colonnes.'
+          - score: 1
+            description: 'Schéma globalement correct mais redondances ou relations N-N mal traduites.'
+          - score: 2
+            description: 'Schéma en 3NF, chaque table et chaque clé étrangère justifiée.'
+          - score: 3
+            description: 'Discute aussi les alternatives (statut en table de référence, clé composée ou id propre) et ce qu’il a corrigé chez l’IA.'
+      - id: integrity
+        description: Choisit les contraintes et explique ce qu’elles ne peuvent pas garantir.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: 'Contraintes absentes ou non comprises.'
+          - score: 1
+            description: 'Contraintes présentes mais ON DELETE ou CHECK mal justifiés.'
+          - score: 2
+            description: 'Contraintes justifiées, identifie les règles impossibles en CHECK (propre objet, chevauchement).'
+          - score: 3
+            description: 'Explique où et comment ces règles sont garanties (transaction, verrou) et les risques de concurrence.'
+      - id: queries
+        description: Écrit et explique des requêtes multi-tables correctes, dont une transaction.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: 'Requêtes fausses ou incomprises.'
+          - score: 1
+            description: 'Requêtes simples justes, comptages ou transaction erronés.'
+          - score: 2
+            description: 'Requêtes justes, comptages sans double comptage, transaction tout-ou-rien expliquée.'
+          - score: 3
+            description: 'Modifie une requête en direct et justifie un index avec EXPLAIN et la sélectivité.'
+
 - id: sql-modeling-contre-ia
   family: CONTRE_IA
   title: L’école de musique
-  summary: Auditer un schéma et des requêtes générés pour une école de musique, puis corriger la modélisation
-    et les jointures.
+  summary: Auditer un schéma et des requêtes générés pour une école de musique, puis corriger la modélisation et les jointures.
   estimatedMinutes: 75
-  instructions: "Une école de musique a demandé à un assistant un schéma et quelques requêtes. Le script\n\
-    s’exécute sans erreur, mais la secrétaire trouve des chiffres « bizarres » et le comptable\ns’inquiète\
-    \ de l’historique des paiements.\n\nRègles métier : un cours (instrument, niveau) est assuré par au\
-    \ plus un professeur ; un élève\npeut suivre plusieurs cours ; on doit pouvoir retrouver tous les\
-    \ paiements reçus, même d’un\nélève parti ; chaque élève a une adresse e-mail unique.\n\n```sql\n\
-    DROP TABLE IF EXISTS payments, enrollments, courses, students, teachers;\n\nCREATE TABLE teachers\
-    \ (\n  id serial PRIMARY KEY,\n  name text NOT NULL,\n  phone text\n);\n\nCREATE TABLE students (\n\
-    \  id serial PRIMARY KEY,\n  name text NOT NULL,\n  email text,\n  instruments text\n);\n\nCREATE\
-    \ TABLE courses (\n  id serial PRIMARY KEY,\n  instrument text NOT NULL,\n  level text NOT NULL,\n\
-    \  teacher_id integer REFERENCES teachers (id),\n  teacher_name text,\n  weekly_fee numeric(6, 2)\
-    \ CHECK (weekly_fee > 0)\n);\n\nCREATE TABLE enrollments (\n  student_id integer REFERENCES students\
-    \ (id) ON DELETE CASCADE,\n  course_id integer REFERENCES courses (id) ON DELETE CASCADE,\n  enrolled_on\
-    \ date NOT NULL,\n  PRIMARY KEY (student_id, course_id)\n);\n\nCREATE TABLE payments (\n  id serial\
-    \ PRIMARY KEY,\n  student_id integer REFERENCES students (id) ON DELETE CASCADE,\n  amount numeric(7,\
-    \ 2) NOT NULL,\n  paid_on date NOT NULL\n);\n\nINSERT INTO teachers (name, phone) VALUES\n  ('Sophie\
-    \ Laurent', '01 02 03 04 05'),\n  ('Marc Dubois', NULL),\n  ('Nadia Benali', '01 02 03 04 06');\n\n\
-    INSERT INTO students (name, email, instruments) VALUES\n  ('Jade Morel', 'jade@example.com', 'piano,\
-    \ chant'),\n  ('Malik Diop', 'malik@example.com', 'guitare'),\n  ('Emma Roy', 'emma@example.com',\
-    \ 'piano'),\n  ('Hugo Petit', NULL, 'guitare'),\n  ('Lou Garnier', 'lou@example.com', NULL);\n\nINSERT\
-    \ INTO courses (instrument, level, teacher_id, teacher_name, weekly_fee) VALUES\n  ('piano', 'débutant',\
-    \ 1, 'Sophie Laurent', 25.00),\n  ('guitare', 'débutant', 2, 'Marc Dubois', 20.00),\n  ('piano', 'avancé',\
-    \ 1, 'Sophie Martin', 30.00),\n  ('chant', 'tous niveaux', NULL, NULL, 18.00),\n  ('violon', 'débutant',\
-    \ 2, 'Marc Dubois', 22.00);\n\nINSERT INTO enrollments (student_id, course_id, enrolled_on) VALUES\n\
-    \  (1, 1, '2024-09-02'), (1, 4, '2024-09-02'), (2, 2, '2024-09-04'),\n  (3, 3, '2024-09-09'), (4,\
-    \ 2, '2024-09-11');\n\nINSERT INTO payments (student_id, amount, paid_on) VALUES\n  (1, 43.00, '2024-09-05'),\
-    \ (1, 43.00, '2024-10-03'),\n  (2, 20.00, '2024-09-10'),\n  (3, 30.00, '2024-10-02'),\n  (4, 20.00,\
-    \ '2024-09-12'), (4, 20.00, '2024-10-01');\n\n-- 1. Nombre d'élèves par cours, y compris les cours\
-    \ vides\nSELECT c.instrument, c.level, count(*) AS students_count\nFROM courses c\nLEFT JOIN enrollments\
-    \ e ON e.course_id = c.id\nGROUP BY c.id, c.instrument, c.level\nORDER BY c.id;\n\n-- 2. Paiements\
-    \ de septembre par élève, y compris ceux qui n'ont rien payé\nSELECT s.name, coalesce(sum(p.amount),\
-    \ 0) AS paid_in_september\nFROM students s\nLEFT JOIN payments p ON p.student_id = s.id\nWHERE p.paid_on\
-    \ >= '2024-09-01' AND p.paid_on < '2024-10-01'\nGROUP BY s.id, s.name\nORDER BY s.name;\n\n-- 3. Professeurs\
-    \ sans cours\nSELECT name FROM teachers\nWHERE id NOT IN (SELECT teacher_id FROM courses);\n\n-- 4.\
-    \ Planning des cours avec leur professeur\nSELECT instrument, level, teacher_name\nFROM courses\n\
-    ORDER BY instrument, level;\n\n-- 5. Bilan par élève : nombre de cours et total payé\nSELECT s.name,\
-    \ count(e.course_id) AS courses_count, sum(p.amount) AS total_paid\nFROM students s\nLEFT JOIN enrollments\
-    \ e ON e.student_id = s.id\nLEFT JOIN payments p ON p.student_id = s.id\nGROUP BY s.id, s.name\nORDER\
-    \ BY s.name;\n\n-- 6. Inscription de Lou au cours de violon avec son premier paiement\nINSERT INTO\
-    \ enrollments (student_id, course_id, enrolled_on) VALUES (5, 5, '2024-10-07');\nINSERT INTO payments\
-    \ (student_id, amount, paid_on) VALUES (5, 22.00, '2024-10-07');\n```\n\nTravail demandé :\n\n1. Exécute\
-    \ le script et confronte chaque résultat aux données et aux règles métier.\n2. Liste les défauts **de\
-    \ modélisation** (schéma) et les défauts **de requêtes**, avec pour\n   chacun : l’emplacement, le\
-    \ symptôme ou le risque, la cause, la gravité.\n3. Fournis un schéma corrigé et des requêtes corrigées,\
-    \ avec leur sortie.\n"
-  deliverable: 'Colle ta liste de défauts classée (schéma, requêtes), le script corrigé complet, et la
-    sortie
+  instructions: |
+    Une école de musique a demandé à un assistant un schéma et quelques requêtes. Le script
+    s’exécute sans erreur, mais la secrétaire trouve des chiffres « bizarres » et le comptable
+    s’inquiète de l’historique des paiements.
 
+    Règles métier : un cours (instrument, niveau) est assuré par au plus un professeur ; un élève
+    peut suivre plusieurs cours ; on doit pouvoir retrouver tous les paiements reçus, même d’un
+    élève parti ; chaque élève a une adresse e-mail unique.
+
+    ```sql
+    DROP TABLE IF EXISTS payments, enrollments, courses, students, teachers;
+
+    CREATE TABLE teachers (
+      id serial PRIMARY KEY,
+      name text NOT NULL,
+      phone text
+    );
+
+    CREATE TABLE students (
+      id serial PRIMARY KEY,
+      name text NOT NULL,
+      email text,
+      instruments text
+    );
+
+    CREATE TABLE courses (
+      id serial PRIMARY KEY,
+      instrument text NOT NULL,
+      level text NOT NULL,
+      teacher_id integer REFERENCES teachers (id),
+      teacher_name text,
+      weekly_fee numeric(6, 2) CHECK (weekly_fee > 0)
+    );
+
+    CREATE TABLE enrollments (
+      student_id integer REFERENCES students (id) ON DELETE CASCADE,
+      course_id integer REFERENCES courses (id) ON DELETE CASCADE,
+      enrolled_on date NOT NULL,
+      PRIMARY KEY (student_id, course_id)
+    );
+
+    CREATE TABLE payments (
+      id serial PRIMARY KEY,
+      student_id integer REFERENCES students (id) ON DELETE CASCADE,
+      amount numeric(7, 2) NOT NULL,
+      paid_on date NOT NULL
+    );
+
+    INSERT INTO teachers (name, phone) VALUES
+      ('Sophie Laurent', '01 02 03 04 05'),
+      ('Marc Dubois', NULL),
+      ('Nadia Benali', '01 02 03 04 06');
+
+    INSERT INTO students (name, email, instruments) VALUES
+      ('Jade Morel', 'jade@example.com', 'piano, chant'),
+      ('Malik Diop', 'malik@example.com', 'guitare'),
+      ('Emma Roy', 'emma@example.com', 'piano'),
+      ('Hugo Petit', NULL, 'guitare'),
+      ('Lou Garnier', 'lou@example.com', NULL);
+
+    INSERT INTO courses (instrument, level, teacher_id, teacher_name, weekly_fee) VALUES
+      ('piano', 'débutant', 1, 'Sophie Laurent', 25.00),
+      ('guitare', 'débutant', 2, 'Marc Dubois', 20.00),
+      ('piano', 'avancé', 1, 'Sophie Martin', 30.00),
+      ('chant', 'tous niveaux', NULL, NULL, 18.00),
+      ('violon', 'débutant', 2, 'Marc Dubois', 22.00);
+
+    INSERT INTO enrollments (student_id, course_id, enrolled_on) VALUES
+      (1, 1, '2024-09-02'), (1, 4, '2024-09-02'), (2, 2, '2024-09-04'),
+      (3, 3, '2024-09-09'), (4, 2, '2024-09-11');
+
+    INSERT INTO payments (student_id, amount, paid_on) VALUES
+      (1, 43.00, '2024-09-05'), (1, 43.00, '2024-10-03'),
+      (2, 20.00, '2024-09-10'),
+      (3, 30.00, '2024-10-02'),
+      (4, 20.00, '2024-09-12'), (4, 20.00, '2024-10-01');
+
+    -- 1. Nombre d'élèves par cours, y compris les cours vides
+    SELECT c.instrument, c.level, count(*) AS students_count
+    FROM courses c
+    LEFT JOIN enrollments e ON e.course_id = c.id
+    GROUP BY c.id, c.instrument, c.level
+    ORDER BY c.id;
+
+    -- 2. Paiements de septembre par élève, y compris ceux qui n'ont rien payé
+    SELECT s.name, coalesce(sum(p.amount), 0) AS paid_in_september
+    FROM students s
+    LEFT JOIN payments p ON p.student_id = s.id
+    WHERE p.paid_on >= '2024-09-01' AND p.paid_on < '2024-10-01'
+    GROUP BY s.id, s.name
+    ORDER BY s.name;
+
+    -- 3. Professeurs sans cours
+    SELECT name FROM teachers
+    WHERE id NOT IN (SELECT teacher_id FROM courses);
+
+    -- 4. Planning des cours avec leur professeur
+    SELECT instrument, level, teacher_name
+    FROM courses
+    ORDER BY instrument, level;
+
+    -- 5. Bilan par élève : nombre de cours et total payé
+    SELECT s.name, count(e.course_id) AS courses_count, sum(p.amount) AS total_paid
+    FROM students s
+    LEFT JOIN enrollments e ON e.student_id = s.id
+    LEFT JOIN payments p ON p.student_id = s.id
+    GROUP BY s.id, s.name
+    ORDER BY s.name;
+
+    -- 6. Inscription de Lou au cours de violon avec son premier paiement
+    INSERT INTO enrollments (student_id, course_id, enrolled_on) VALUES (5, 5, '2024-10-07');
+    INSERT INTO payments (student_id, amount, paid_on) VALUES (5, 22.00, '2024-10-07');
+    ```
+
+    Travail demandé :
+
+    1. Exécute le script et confronte chaque résultat aux données et aux règles métier.
+    2. Liste les défauts **de modélisation** (schéma) et les défauts **de requêtes**, avec pour
+       chacun : l’emplacement, le symptôme ou le risque, la cause, la gravité.
+    3. Fournis un schéma corrigé et des requêtes corrigées, avec leur sortie.
+  deliverable: |
+    Colle ta liste de défauts classée (schéma, requêtes), le script corrigé complet, et la sortie
     de chaque requête corrigée. Explique en quelques lignes ce qu’une démonstration aurait montré
-
     si l’on supprimait l’élève 1 avec le schéma d’origine.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: query-defects
-      description: Trouve et explique les défauts des requêtes, y compris ceux qui ne produisent aucune
-        erreur.
-      maxScore: 3
-    - id: schema-defects
-      description: Identifie les défauts de modélisation et leurs conséquences.
-      maxScore: 3
-    - id: fix-quality
-      description: Propose des corrections justes et vérifiées sur les données fournies.
-      maxScore: 3
+      - id: query-defects
+        description: Trouve et explique les défauts des requêtes, y compris ceux qui ne produisent aucune erreur.
+        maxScore: 3
+      - id: schema-defects
+        description: Identifie les défauts de modélisation et leurs conséquences.
+        maxScore: 3
+      - id: fix-quality
+        description: Propose des corrections justes et vérifiées sur les données fournies.
+        maxScore: 3
+
 - id: sql-modeling-apres-ia
   family: APRES_IA
   title: Les événements de l’association
-  summary: Corriger des rapports à jointures, nettoyer des doublons et faire évoluer les contraintes d’un
-    schéma existant.
+  summary: Corriger des rapports à jointures, nettoyer des doublons et faire évoluer les contraintes d’un schéma existant.
   estimatedMinutes: 75
-  instructions: "Une association gère ses événements avec ce schéma, en production depuis un an. Tu dois\
-    \ le\ndépanner et le faire évoluer **sans le recréer** : interdiction de `DROP TABLE` sur ces\ntables,\
-    \ les données existantes doivent être conservées.\n\n```sql\nDROP TABLE IF EXISTS registrations, participants,\
-    \ events;\n\nCREATE TABLE events (\n  id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n  title\
-    \ text NOT NULL,\n  starts_on date NOT NULL,\n  capacity integer NOT NULL\n);\n\nCREATE TABLE participants\
-    \ (\n  id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n  name text NOT NULL,\n  email text NOT\
-    \ NULL UNIQUE\n);\n\nCREATE TABLE registrations (\n  id integer GENERATED ALWAYS AS IDENTITY PRIMARY\
-    \ KEY,\n  event_id integer NOT NULL REFERENCES events (id),\n  participant_id integer NOT NULL REFERENCES\
-    \ participants (id),\n  registered_on date NOT NULL\n);\n\nINSERT INTO events (title, starts_on, capacity)\
-    \ VALUES\n  ('Atelier compost', '2025-05-10', 15),\n  ('Repair café', '2025-05-24', 20),\n  ('Balade\
-    \ botanique', '2025-06-07', 12),\n  ('Soirée jeux', '2025-06-21', 0),\n  ('Pique-nique de quartier',\
-    \ '2025-07-05', 50);\n\nINSERT INTO participants (name, email) VALUES\n  ('Anna Lopez', 'anna@example.com'),\n\
-    \  ('Bruno Caron', 'bruno@example.com'),\n  ('Céline Vidal', 'celine@example.com'),\n  ('Driss Amrani',\
-    \ 'driss@example.com'),\n  ('Elsa Moreau', 'elsa@example.com');\n\nINSERT INTO registrations (event_id,\
-    \ participant_id, registered_on) VALUES\n  (1, 1, '2025-04-20'),\n  (1, 2, '2025-04-22'),\n  (2, 1,\
-    \ '2025-05-01'),\n  (2, 3, '2025-05-02'),\n  (3, 2, '2025-05-15'),\n  (3, 2, '2025-05-16'),\n  (3,\
-    \ 4, '2025-05-18'),\n  (4, 3, '2025-06-01'),\n  (2, 1, '2025-05-03');\n```\n\nRapports existants :\n\
-    \n```sql\n-- R1. Remplissage de tous les événements\nSELECT e.title, e.capacity, count(*) AS registered\n\
-    FROM events e\nJOIN registrations r ON r.event_id = e.id\nGROUP BY e.id, e.title, e.capacity\nORDER\
-    \ BY e.starts_on;\n\n-- R2. Tous les participants, avec leurs inscriptions à partir du 1er juin 2025\n\
-    --     (titre vide pour ceux qui n'en ont pas)\nSELECT p.name, e.title\nFROM participants p\nLEFT\
-    \ JOIN registrations r ON r.participant_id = p.id\nLEFT JOIN events e ON e.id = r.event_id\nWHERE\
-    \ e.starts_on >= '2025-06-01'\nORDER BY p.name, e.title;\n```\n\nDemandes, à traiter dans l’ordre\
-    \ :\n\n1. **Bug R1** : le pique-nique n’apparaît pas dans le rapport de remplissage. Corrige.\n2.\
-    \ **Bug R2** : Anna et Elsa n’apparaissent pas. Corrige pour obtenir exactement une ligne par\n  \
-    \ inscription à venir, et une ligne avec un titre vide pour chaque participant qui n’en a\n   aucune.\n\
-    3. **Doublons** : certaines personnes sont inscrites deux fois au même événement. Trouve-les,\n  \
-    \ supprime les doublons en gardant l’inscription la plus ancienne, puis empêche\n   définitivement\
-    \ qu’ils se reproduisent. Fais l’ensemble de façon sûre.\n4. **Capacité** : l’association veut interdire\
-    \ une capacité nulle ou négative. Ajoute la\n   contrainte. La capacité réelle de la soirée jeux est\
-    \ de 16 places.\n5. **Annulations** : désormais, supprimer un événement annulé doit supprimer ses\n\
-    \   inscriptions. Modifie la clé étrangère concernée (consulte `\\d registrations` pour son\n   nom)\
-    \ et vérifie le comportement sans perdre de données réelles.\n6. **Performance** : la table des inscriptions\
-    \ va beaucoup grossir et la requête la plus\n   fréquente sera « les inscriptions d’un participant\
-    \ ». Que proposes-tu ?\n"
-  deliverable: 'Pour chaque demande : les instructions exécutées, leur sortie de `psql` et une ou deux
-    phrases
+  instructions: |
+    Une association gère ses événements avec ce schéma, en production depuis un an. Tu dois le
+    dépanner et le faire évoluer **sans le recréer** : interdiction de `DROP TABLE` sur ces
+    tables, les données existantes doivent être conservées.
 
+    ```sql
+    DROP TABLE IF EXISTS registrations, participants, events;
+
+    CREATE TABLE events (
+      id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+      title text NOT NULL,
+      starts_on date NOT NULL,
+      capacity integer NOT NULL
+    );
+
+    CREATE TABLE participants (
+      id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+      name text NOT NULL,
+      email text NOT NULL UNIQUE
+    );
+
+    CREATE TABLE registrations (
+      id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+      event_id integer NOT NULL REFERENCES events (id),
+      participant_id integer NOT NULL REFERENCES participants (id),
+      registered_on date NOT NULL
+    );
+
+    INSERT INTO events (title, starts_on, capacity) VALUES
+      ('Atelier compost', '2025-05-10', 15),
+      ('Repair café', '2025-05-24', 20),
+      ('Balade botanique', '2025-06-07', 12),
+      ('Soirée jeux', '2025-06-21', 0),
+      ('Pique-nique de quartier', '2025-07-05', 50);
+
+    INSERT INTO participants (name, email) VALUES
+      ('Anna Lopez', 'anna@example.com'),
+      ('Bruno Caron', 'bruno@example.com'),
+      ('Céline Vidal', 'celine@example.com'),
+      ('Driss Amrani', 'driss@example.com'),
+      ('Elsa Moreau', 'elsa@example.com');
+
+    INSERT INTO registrations (event_id, participant_id, registered_on) VALUES
+      (1, 1, '2025-04-20'),
+      (1, 2, '2025-04-22'),
+      (2, 1, '2025-05-01'),
+      (2, 3, '2025-05-02'),
+      (3, 2, '2025-05-15'),
+      (3, 2, '2025-05-16'),
+      (3, 4, '2025-05-18'),
+      (4, 3, '2025-06-01'),
+      (2, 1, '2025-05-03');
+    ```
+
+    Rapports existants :
+
+    ```sql
+    -- R1. Remplissage de tous les événements
+    SELECT e.title, e.capacity, count(*) AS registered
+    FROM events e
+    JOIN registrations r ON r.event_id = e.id
+    GROUP BY e.id, e.title, e.capacity
+    ORDER BY e.starts_on;
+
+    -- R2. Tous les participants, avec leurs inscriptions à partir du 1er juin 2025
+    --     (titre vide pour ceux qui n'en ont pas)
+    SELECT p.name, e.title
+    FROM participants p
+    LEFT JOIN registrations r ON r.participant_id = p.id
+    LEFT JOIN events e ON e.id = r.event_id
+    WHERE e.starts_on >= '2025-06-01'
+    ORDER BY p.name, e.title;
+    ```
+
+    Demandes, à traiter dans l’ordre :
+
+    1. **Bug R1** : le pique-nique n’apparaît pas dans le rapport de remplissage. Corrige.
+    2. **Bug R2** : Anna et Elsa n’apparaissent pas. Corrige pour obtenir exactement une ligne par
+       inscription à venir, et une ligne avec un titre vide pour chaque participant qui n’en a
+       aucune.
+    3. **Doublons** : certaines personnes sont inscrites deux fois au même événement. Trouve-les,
+       supprime les doublons en gardant l’inscription la plus ancienne, puis empêche
+       définitivement qu’ils se reproduisent. Fais l’ensemble de façon sûre.
+    4. **Capacité** : l’association veut interdire une capacité nulle ou négative. Ajoute la
+       contrainte. La capacité réelle de la soirée jeux est de 16 places.
+    5. **Annulations** : désormais, supprimer un événement annulé doit supprimer ses
+       inscriptions. Modifie la clé étrangère concernée (consulte `\d registrations` pour son
+       nom) et vérifie le comportement sans perdre de données réelles.
+    6. **Performance** : la table des inscriptions va beaucoup grossir et la requête la plus
+       fréquente sera « les inscriptions d’un participant ». Que proposes-tu ?
+  deliverable: |
+    Pour chaque demande : les instructions exécutées, leur sortie de `psql` et une ou deux phrases
     d’explication. Pour la demande 5, montre comment tu as vérifié le comportement sans
-
     supprimer définitivement un événement.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: join-bugs
-      description: Diagnostique et corrige les rapports à jointures externes.
-      maxScore: 3
-    - id: schema-evolution
-      description: Fait évoluer contraintes et clés étrangères sur des données existantes, sans les recréer.
-      maxScore: 3
-    - id: safety-performance
-      description: Travaille de façon sûre et raisonne sur les index.
-      maxScore: 3
+      - id: join-bugs
+        description: Diagnostique et corrige les rapports à jointures externes.
+        maxScore: 3
+      - id: schema-evolution
+        description: Fait évoluer contraintes et clés étrangères sur des données existantes, sans les recréer.
+        maxScore: 3
+      - id: safety-performance
+        description: Travaille de façon sûre et raisonne sur les index.
+        maxScore: 3

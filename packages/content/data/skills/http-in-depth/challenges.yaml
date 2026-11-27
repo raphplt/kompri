@@ -1,408 +1,830 @@
 - id: http-in-depth-sans-ia
   family: SANS_IA
   title: Le journal d’une API de bibliothèque
-  summary: Lire des échanges HTTP bruts, repérer les erreurs de méthode, d’en-tête, de cookie et de CORS,
-    et écrire les commandes curl correctes.
+  summary: Lire des échanges HTTP bruts, repérer les erreurs de méthode, d’en-tête, de cookie et de CORS, et écrire les commandes curl correctes.
   estimatedMinutes: 50
-  instructions: "L’équipe d’une médiathèque te transmet six échanges capturés avec `curl -v` ou les\n\
-    outils du navigateur sur son API `https://api.biblio.example`. Les lignes `>` sont\nenvoyées par le\
-    \ client, les lignes `<` reçues du serveur. Réponds sans aide\nextérieure.\n\nÉchange A :\n\n```text\n\
-    > GET /books?author=Hugo HTTP/1.1\n> Host: api.biblio.example\n> Accept: application/json\n>\n< HTTP/1.1\
-    \ 200 OK\n< Content-Type: application/json; charset=utf-8\n< Cache-Control: public, max-age=300\n\
-    < ETag: \"b7-3\"\n< Content-Length: 59\n<\n[{\"id\":7,\"title\":\"Les Misérables\",\"author\":\"Victor\
-    \ Hugo\"}]\n```\n\nÉchange B :\n\n```text\n> POST /books HTTP/1.1\n> Host: api.biblio.example\n> Authorization:\
-    \ Bearer 9f2c-demo\n> Content-Type: application/x-www-form-urlencoded\n> Content-Length: 43\n>\n{\"\
-    title\":\"Notre-Dame de Paris\",\"year\":1831}\n< HTTP/1.1 415 Unsupported Media Type\n< Content-Type:\
-    \ application/json; charset=utf-8\n<\n{\"error\":\"JSON attendu\"}\n```\n\nÉchange C :\n\n```text\n\
-    > DELETE /books/7 HTTP/1.1\n> Host: api.biblio.example\n>\n< HTTP/1.1 401 Unauthorized\n< WWW-Authenticate:\
-    \ Bearer\n< Content-Length: 0\n```\n\nÉchange D (cinq minutes après l’échange A, lancé par le navigateur)\
-    \ :\n\n```text\n> GET /books?author=Hugo HTTP/1.1\n> Host: api.biblio.example\n> If-None-Match: \"\
-    b7-3\"\n>\n< HTTP/1.1 304 Not Modified\n< ETag: \"b7-3\"\n< Cache-Control: public, max-age=300\n```\n\
-    \nÉchange E (envoyé par le navigateur, depuis une page de `https://lecteurs.example`) :\n\n```text\n\
-    > OPTIONS /books/7 HTTP/1.1\n> Host: api.biblio.example\n> Origin: https://lecteurs.example\n> Access-Control-Request-Method:\
-    \ PUT\n> Access-Control-Request-Headers: authorization, content-type\n>\n< HTTP/1.1 204 No Content\n\
-    < Access-Control-Allow-Origin: https://lecteurs.example\n< Access-Control-Allow-Methods: GET, POST\n\
-    < Access-Control-Allow-Headers: Authorization, Content-Type\n```\n\nÉchange F (connexion d’un bibliothécaire\
-    \ au site d’administration, en HTTPS) :\n\n```text\n< HTTP/1.1 200 OK\n< Set-Cookie: user=martin;\
-    \ Path=/; Max-Age=31536000\n```\n\nQuestions :\n\n1. Pour l’échange A, nomme chaque partie de la requête\
-    \ et de la réponse (ligne de\n   requête, cible, en-têtes, ligne vide, ligne de statut, corps). Vérifie\
-    \ que\n   `Content-Length: 59` est cohérent avec le corps, en expliquant ton calcul.\n2. Échange B\
-    \ : pourquoi le serveur répond-il 415 alors que le corps est du JSON\n   valide ? Écris la commande\
-    \ curl corrigée.\n3. Échange C : que signifient le code et l’en-tête `WWW-Authenticate` ? Écris la\n\
-    \   commande curl corrigée, en supposant que le jeton est `9f2c-demo`. Si la\n   suppression réussit,\
-    \ quel code de statut attends-tu, et que se passe-t-il si\n   l’on renvoie la même requête ? Utilise\
-    \ les mots « sûre » et « idempotente ».\n4. Échanges A et D : explique `Cache-Control`, `ETag`, `If-None-Match`\
-    \ et le 304.\n   Combien d’octets de corps ont circulé dans D ? La directive `public` est-elle un\n\
-    \   bon choix pour cette liste ? Et pour une route `/me/loans` qui liste les prêts\n   d’un lecteur\
-    \ ?\n5. Échange E : de quoi s’agit-il ? Le navigateur va-t-il envoyer le `PUT` ? Pourquoi ?\n   Quel\
-    \ en-tête de réponse faut-il corriger, et comment ?\n6. Échange F : liste les problèmes de ce cookie\
-    \ et écris un `Set-Cookie` correct pour\n   une session de 8 heures.\n7. Parmi les requêtes des échanges\
-    \ A, B (corrigé) et C (corrigé), lesquelles un client\n   peut-il renvoyer automatiquement sans risque\
-    \ après une coupure réseau ? Justifie.\n"
-  deliverable: 'Colle tes réponses numérotées de 1 à 7, avec les commandes curl complètes demandées
+  instructions: |
+    L’équipe d’une médiathèque te transmet six échanges capturés avec `curl -v` ou les
+    outils du navigateur sur son API `https://api.biblio.example`. Les lignes `>` sont
+    envoyées par le client, les lignes `<` reçues du serveur. Réponds sans aide
+    extérieure.
 
+    Échange A :
+
+    ```text
+    > GET /books?author=Hugo HTTP/1.1
+    > Host: api.biblio.example
+    > Accept: application/json
+    >
+    < HTTP/1.1 200 OK
+    < Content-Type: application/json; charset=utf-8
+    < Cache-Control: public, max-age=300
+    < ETag: "b7-3"
+    < Content-Length: 59
+    <
+    [{"id":7,"title":"Les Misérables","author":"Victor Hugo"}]
+    ```
+
+    Échange B :
+
+    ```text
+    > POST /books HTTP/1.1
+    > Host: api.biblio.example
+    > Authorization: Bearer 9f2c-demo
+    > Content-Type: application/x-www-form-urlencoded
+    > Content-Length: 43
+    >
+    {"title":"Notre-Dame de Paris","year":1831}
+    < HTTP/1.1 415 Unsupported Media Type
+    < Content-Type: application/json; charset=utf-8
+    <
+    {"error":"JSON attendu"}
+    ```
+
+    Échange C :
+
+    ```text
+    > DELETE /books/7 HTTP/1.1
+    > Host: api.biblio.example
+    >
+    < HTTP/1.1 401 Unauthorized
+    < WWW-Authenticate: Bearer
+    < Content-Length: 0
+    ```
+
+    Échange D (cinq minutes après l’échange A, lancé par le navigateur) :
+
+    ```text
+    > GET /books?author=Hugo HTTP/1.1
+    > Host: api.biblio.example
+    > If-None-Match: "b7-3"
+    >
+    < HTTP/1.1 304 Not Modified
+    < ETag: "b7-3"
+    < Cache-Control: public, max-age=300
+    ```
+
+    Échange E (envoyé par le navigateur, depuis une page de `https://lecteurs.example`) :
+
+    ```text
+    > OPTIONS /books/7 HTTP/1.1
+    > Host: api.biblio.example
+    > Origin: https://lecteurs.example
+    > Access-Control-Request-Method: PUT
+    > Access-Control-Request-Headers: authorization, content-type
+    >
+    < HTTP/1.1 204 No Content
+    < Access-Control-Allow-Origin: https://lecteurs.example
+    < Access-Control-Allow-Methods: GET, POST
+    < Access-Control-Allow-Headers: Authorization, Content-Type
+    ```
+
+    Échange F (connexion d’un bibliothécaire au site d’administration, en HTTPS) :
+
+    ```text
+    < HTTP/1.1 200 OK
+    < Set-Cookie: user=martin; Path=/; Max-Age=31536000
+    ```
+
+    Questions :
+
+    1. Pour l’échange A, nomme chaque partie de la requête et de la réponse (ligne de
+       requête, cible, en-têtes, ligne vide, ligne de statut, corps). Vérifie que
+       `Content-Length: 59` est cohérent avec le corps, en expliquant ton calcul.
+    2. Échange B : pourquoi le serveur répond-il 415 alors que le corps est du JSON
+       valide ? Écris la commande curl corrigée.
+    3. Échange C : que signifient le code et l’en-tête `WWW-Authenticate` ? Écris la
+       commande curl corrigée, en supposant que le jeton est `9f2c-demo`. Si la
+       suppression réussit, quel code de statut attends-tu, et que se passe-t-il si
+       l’on renvoie la même requête ? Utilise les mots « sûre » et « idempotente ».
+    4. Échanges A et D : explique `Cache-Control`, `ETag`, `If-None-Match` et le 304.
+       Combien d’octets de corps ont circulé dans D ? La directive `public` est-elle un
+       bon choix pour cette liste ? Et pour une route `/me/loans` qui liste les prêts
+       d’un lecteur ?
+    5. Échange E : de quoi s’agit-il ? Le navigateur va-t-il envoyer le `PUT` ? Pourquoi ?
+       Quel en-tête de réponse faut-il corriger, et comment ?
+    6. Échange F : liste les problèmes de ce cookie et écris un `Set-Cookie` correct pour
+       une session de 8 heures.
+    7. Parmi les requêtes des échanges A, B (corrigé) et C (corrigé), lesquelles un client
+       peut-il renvoyer automatiquement sans risque après une coupure réseau ? Justifie.
+  deliverable: |
+    Colle tes réponses numérotées de 1 à 7, avec les commandes curl complètes demandées
     aux questions 2 et 3 et l’en-tête `Set-Cookie` de la question 6.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: raw-messages
-      description: Lit et décompose des messages HTTP bruts, y compris le calcul de Content-Length.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne distingue pas ligne de départ, en-têtes et corps.
-      - score: 1
-        description: Nomme les parties mais se trompe sur la cible ou sur Content-Length.
-      - score: 2
-        description: Décomposition exacte et calcul en octets correct.
-      - score: 3
-        description: Explique aussi le rôle de la ligne vide et de Content-Length dans le découpage des
-          messages.
-    - id: methods-and-status
-      description: Interprète codes de statut, sûreté et idempotence.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Confond les familles de codes ou les propriétés des méthodes.
-      - score: 1
-        description: Lit correctement les codes mais confond sûreté et idempotence.
-      - score: 2
-        description: Explique 401, 415, 204 et 304 et classe correctement les méthodes.
-      - score: 3
-        description: Relie idempotence et réessai automatique, et nuance le code du second DELETE.
-    - id: headers
-      description: Utilise correctement Content-Type, Accept, Authorization et Cache-Control.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Commandes curl incorrectes ou en-têtes confondus.
-      - score: 1
-        description: Commandes partiellement correctes, explication du cache confuse.
-      - score: 2
-        description: Commandes correctes et explication juste de la revalidation par ETag.
-      - score: 3
-        description: Choisit aussi la bonne politique de cache selon la nature des données.
-    - id: cookies-and-cors
-      description: Analyse un prévol CORS et un cookie de session.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne reconnaît pas le prévol ou ne voit aucun problème dans le cookie.
-      - score: 1
-        description: Reconnaît le prévol mais pas pourquoi il échoue, ou corrige partiellement le cookie.
-      - score: 2
-        description: Explique l’échec du prévol et propose un cookie avec Secure, HttpOnly et SameSite.
-      - score: 3
-        description: Explique aussi pourquoi le cookie ne doit contenir qu’un identifiant aléatoire et
-          que CORS ne protège pas le serveur.
+      - id: raw-messages
+        description: Lit et décompose des messages HTTP bruts, y compris le calcul de Content-Length.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne distingue pas ligne de départ, en-têtes et corps.
+          - score: 1
+            description: Nomme les parties mais se trompe sur la cible ou sur Content-Length.
+          - score: 2
+            description: Décomposition exacte et calcul en octets correct.
+          - score: 3
+            description: Explique aussi le rôle de la ligne vide et de Content-Length dans le découpage des messages.
+      - id: methods-and-status
+        description: Interprète codes de statut, sûreté et idempotence.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Confond les familles de codes ou les propriétés des méthodes.
+          - score: 1
+            description: Lit correctement les codes mais confond sûreté et idempotence.
+          - score: 2
+            description: Explique 401, 415, 204 et 304 et classe correctement les méthodes.
+          - score: 3
+            description: Relie idempotence et réessai automatique, et nuance le code du second DELETE.
+      - id: headers
+        description: Utilise correctement Content-Type, Accept, Authorization et Cache-Control.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Commandes curl incorrectes ou en-têtes confondus.
+          - score: 1
+            description: Commandes partiellement correctes, explication du cache confuse.
+          - score: 2
+            description: Commandes correctes et explication juste de la revalidation par ETag.
+          - score: 3
+            description: Choisit aussi la bonne politique de cache selon la nature des données.
+      - id: cookies-and-cors
+        description: Analyse un prévol CORS et un cookie de session.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne reconnaît pas le prévol ou ne voit aucun problème dans le cookie.
+          - score: 1
+            description: Reconnaît le prévol mais pas pourquoi il échoue, ou corrige partiellement le cookie.
+          - score: 2
+            description: Explique l’échec du prévol et propose un cookie avec Secure, HttpOnly et SameSite.
+          - score: 3
+            description: Explique aussi pourquoi le cookie ne doit contenir qu’un identifiant aléatoire et que CORS ne protège pas le serveur.
+
 - id: http-in-depth-avec-ia
   family: AVEC_IA
   title: Le guide et les tests de l’API des salles
-  summary: Explorer avec une IA une API fournie, la documenter en détail et écrire un scénario de test
-    curl reproductible.
+  summary: Explorer avec une IA une API fournie, la documenter en détail et écrire un scénario de test curl reproductible.
   estimatedMinutes: 120
-  instructions: "Une association met à disposition une API de réservation de salles. Personne ne l’a\n\
-    documentée. Ta mission, avec l’aide d’une IA autant que tu le souhaites :\n**documenter précisément\
-    \ son comportement HTTP** et **écrire un scénario de test\nreproductible**. À l’oral, tu devras prévoir\
-    \ sans aide la réponse exacte (code et\nen-têtes importants) à des requêtes que l’examinateur te proposera.\n\
-    \nCode du serveur, à enregistrer dans `rooms-server.mjs` (Node.js 24, aucune\ndépendance) :\n\n```js\n\
-    import { createServer } from 'node:http';\nimport { createHash } from 'node:crypto';\n\nconst port\
-    \ = 3000;\nconst allowedOrigin = 'http://localhost:5173';\nconst token = process.env.ROOMS_TOKEN;\n\
-    if (!token) {\n  console.error('Définis ROOMS_TOKEN avant de lancer le serveur.');\n  process.exit(1);\n\
-    }\n\nconst rooms = [\n  { id: 1, name: 'Lovelace', seats: 6 },\n  { id: 2, name: 'Hopper', seats:\
-    \ 12 },\n];\nconst bookings = new Map();\nlet nextBookingId = 1;\n\nfunction send(res, status, body,\
-    \ headers = {}) {\n  const cors = { 'Access-Control-Allow-Origin': allowedOrigin, Vary: 'Origin' };\n\
-    \  if (body === undefined) {\n    res.writeHead(status, { ...cors, ...headers });\n    return res.end();\n\
-    \  }\n  res.writeHead(status, {\n    ...cors,\n    'Content-Length': Buffer.byteLength(body),\n  \
-    \  ...headers,\n  });\n  res.end(body);\n}\n\nfunction sendJson(res, status, data, headers = {}) {\n\
-    \  const type = { 'Content-Type': 'application/json; charset=utf-8' };\n  send(res, status, `${JSON.stringify(data)}\\\
-    n`, { ...type, ...headers });\n}\n\nasync function readJson(req) {\n  let raw = '';\n  for await (const\
-    \ chunk of req) raw += chunk;\n  return JSON.parse(raw);\n}\n\nfunction roomsAsCsv() {\n  const lines\
-    \ = rooms.map((room) => `${room.id},${room.name},${room.seats}`);\n  return `id,name,seats\\n${lines.join('\\\
-    n')}\\n`;\n}\n\nfunction isAuthorized(req) {\n  return req.headers.authorization === `Bearer ${token}`;\n\
-    }\n\nfunction refuseAccess(res) {\n  const challenge = { 'WWW-Authenticate': 'Bearer' };\n  sendJson(res,\
-    \ 401, { error: 'Jeton manquant ou invalide' }, challenge);\n}\n\nasync function handle(req, res)\
-    \ {\n  const { pathname } = new URL(req.url, 'http://localhost');\n  const method = req.method ===\
-    \ 'HEAD' ? 'GET' : req.method;\n\n  if (req.method === 'OPTIONS') {\n    return send(res, 204, undefined,\
-    \ {\n      'Access-Control-Allow-Methods': 'GET, POST, DELETE',\n      'Access-Control-Allow-Headers':\
-    \ 'Authorization, Content-Type',\n      'Access-Control-Max-Age': '600',\n    });\n  }\n\n  if (pathname\
-    \ === '/rooms' && method === 'GET') {\n    const accept = req.headers.accept ?? '*/*';\n    const\
-    \ wantsCsv = accept.includes('text/csv');\n    if (!wantsCsv && !accept.includes('json') && !accept.includes('*/*'))\
-    \ {\n      return sendJson(res, 406, {\n        error: 'Formats : application/json, text/csv',\n \
-    \     });\n    }\n    const body = wantsCsv ? roomsAsCsv() : `${JSON.stringify(rooms)}\\n`;\n    const\
-    \ etag = `\"${createHash('sha256').update(body).digest('hex').slice(0, 16)}\"`;\n    const headers\
-    \ = {\n      'Cache-Control': 'no-cache',\n      ETag: etag,\n      Vary: 'Origin, Accept',\n    };\n\
-    \    if (req.headers['if-none-match'] === etag) {\n      return send(res, 304, undefined, headers);\n\
-    \    }\n    const type = wantsCsv\n      ? 'text/csv; charset=utf-8'\n      : 'application/json; charset=utf-8';\n\
-    \    return send(res, 200, body, { ...headers, 'Content-Type': type });\n  }\n\n  if (pathname ===\
-    \ '/bookings' && method === 'POST') {\n    if (!isAuthorized(req)) return refuseAccess(res);\n   \
-    \ if (!req.headers['content-type']?.startsWith('application/json')) {\n      return sendJson(res,\
-    \ 415, { error: 'Corps JSON attendu' });\n    }\n    const input = await readJson(req);\n    const\
-    \ room = rooms.find((candidate) => candidate.id === input?.roomId);\n    const slot = input?.slot;\n\
-    \    if (\n      !room ||\n      typeof slot !== 'string' ||\n      !/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:00$/.test(slot)\n\
-    \    ) {\n      return sendJson(res, 400, {\n        error: 'roomId et slot (AAAA-MM-JJTHH:00) requis',\n\
-    \      });\n    }\n    const taken = [...bookings.values()].some(\n      (booking) => booking.roomId\
-    \ === room.id && booking.slot === slot,\n    );\n    if (taken) return sendJson(res, 409, { error:\
-    \ 'Créneau déjà réservé' });\n    const booking = { id: nextBookingId++, roomId: room.id, slot };\n\
-    \    bookings.set(booking.id, booking);\n    return sendJson(res, 201, booking, { Location: `/bookings/${booking.id}`\
-    \ });\n  }\n\n  const match = pathname.match(/^\\/bookings\\/(\\d+)$/);\n  if (match && method ===\
-    \ 'DELETE') {\n    if (!isAuthorized(req)) return refuseAccess(res);\n    if (!bookings.delete(Number(match[1])))\
-    \ {\n      return sendJson(res, 404, { error: 'Réservation introuvable' });\n    }\n    return send(res,\
-    \ 204);\n  }\n\n  const allowed = { '/rooms': 'GET, HEAD', '/bookings': 'POST' }[pathname];\n  if\
-    \ (allowed || match) {\n    const allow = { Allow: allowed ?? 'DELETE' };\n    return sendJson(res,\
-    \ 405, { error: 'Méthode non autorisée' }, allow);\n  }\n  return sendJson(res, 404, { error: 'Ressource\
-    \ introuvable' });\n}\n\nconst server = createServer(async (req, res) => {\n  try {\n    await handle(req,\
-    \ res);\n  } catch (error) {\n    if (error instanceof SyntaxError) {\n      return sendJson(res,\
-    \ 400, { error: 'JSON invalide' });\n    }\n    console.error(error);\n    sendJson(res, 500, { error:\
-    \ 'Erreur interne' });\n  }\n});\n\nserver.listen(port, () => {\n  console.log(`API des salles prête\
-    \ sur http://localhost:${port}`);\n});\n```\n\nLancement (bash) :\n\n```bash\nROOMS_TOKEN=salle-42\
-    \ node rooms-server.mjs\n```\n\nTravail demandé :\n\n1. **Documentation.** Pour chaque route (`GET`\
-    \ et `HEAD /rooms`, `POST /bookings`,\n   `DELETE /bookings/:id`, toute requête `OPTIONS`, méthodes\
-    \ non prévues, chemins\n   inconnus), décris : ce qu’elle fait, les en-têtes de requête qu’elle utilise,\
-    \ et\n   chaque code de statut possible avec les en-têtes de réponse importants. Chaque\n   affirmation\
-    \ doit être appuyée par une commande curl que tu as exécutée.\n2. **Cache et négociation.** Explique\
-    \ `ETag`, `Cache-Control: no-cache`, `Vary` et\n   la réponse `406`, avec les commandes qui le montrent.\n\
-    3. **CORS.** Explique quelle origine peut lire les réponses depuis un navigateur,\n   montre la réponse\
-    \ au prévol avec curl, et dis ce qui se passerait pour une page\n   servie depuis `http://localhost:8080`.\n\
-    4. **Scénario de test.** Écris un script bash `test-rooms.sh`, sur le modèle de la\n   leçon 5, avec\
-    \ au moins 12 vérifications de codes de statut : cas nominaux,\n   erreurs du client (`400`, `401`,\
-    \ `404`, `405`, `406`, `409`, `415`), revalidation\n   `304`. Le script doit pouvoir être relancé\
-    \ plusieurs fois **sans redémarrer le\n   serveur** et donner le même résultat (indice : utilise des\
-    \ créneaux différents\n   à chaque exécution, ou supprime ce que tu crées).\n5. **Esprit critique.**\
-    \ Relève au moins deux limites ou choix discutables de ce\n   serveur (par exemple dans sa façon de\
-    \ négocier le format ou de gérer les\n   réservations) et explique-les.\n"
-  deliverable: 'Colle ta documentation (points 1 à 3 et 5, avec les commandes curl et les extraits
+  instructions: |
+    Une association met à disposition une API de réservation de salles. Personne ne l’a
+    documentée. Ta mission, avec l’aide d’une IA autant que tu le souhaites :
+    **documenter précisément son comportement HTTP** et **écrire un scénario de test
+    reproductible**. À l’oral, tu devras prévoir sans aide la réponse exacte (code et
+    en-têtes importants) à des requêtes que l’examinateur te proposera.
 
+    Code du serveur, à enregistrer dans `rooms-server.mjs` (Node.js 24, aucune
+    dépendance) :
+
+    ```js
+    import { createServer } from 'node:http';
+    import { createHash } from 'node:crypto';
+
+    const port = 3000;
+    const allowedOrigin = 'http://localhost:5173';
+    const token = process.env.ROOMS_TOKEN;
+    if (!token) {
+      console.error('Définis ROOMS_TOKEN avant de lancer le serveur.');
+      process.exit(1);
+    }
+
+    const rooms = [
+      { id: 1, name: 'Lovelace', seats: 6 },
+      { id: 2, name: 'Hopper', seats: 12 },
+    ];
+    const bookings = new Map();
+    let nextBookingId = 1;
+
+    function send(res, status, body, headers = {}) {
+      const cors = { 'Access-Control-Allow-Origin': allowedOrigin, Vary: 'Origin' };
+      if (body === undefined) {
+        res.writeHead(status, { ...cors, ...headers });
+        return res.end();
+      }
+      res.writeHead(status, {
+        ...cors,
+        'Content-Length': Buffer.byteLength(body),
+        ...headers,
+      });
+      res.end(body);
+    }
+
+    function sendJson(res, status, data, headers = {}) {
+      const type = { 'Content-Type': 'application/json; charset=utf-8' };
+      send(res, status, `${JSON.stringify(data)}\n`, { ...type, ...headers });
+    }
+
+    async function readJson(req) {
+      let raw = '';
+      for await (const chunk of req) raw += chunk;
+      return JSON.parse(raw);
+    }
+
+    function roomsAsCsv() {
+      const lines = rooms.map((room) => `${room.id},${room.name},${room.seats}`);
+      return `id,name,seats\n${lines.join('\n')}\n`;
+    }
+
+    function isAuthorized(req) {
+      return req.headers.authorization === `Bearer ${token}`;
+    }
+
+    function refuseAccess(res) {
+      const challenge = { 'WWW-Authenticate': 'Bearer' };
+      sendJson(res, 401, { error: 'Jeton manquant ou invalide' }, challenge);
+    }
+
+    async function handle(req, res) {
+      const { pathname } = new URL(req.url, 'http://localhost');
+      const method = req.method === 'HEAD' ? 'GET' : req.method;
+
+      if (req.method === 'OPTIONS') {
+        return send(res, 204, undefined, {
+          'Access-Control-Allow-Methods': 'GET, POST, DELETE',
+          'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+          'Access-Control-Max-Age': '600',
+        });
+      }
+
+      if (pathname === '/rooms' && method === 'GET') {
+        const accept = req.headers.accept ?? '*/*';
+        const wantsCsv = accept.includes('text/csv');
+        if (!wantsCsv && !accept.includes('json') && !accept.includes('*/*')) {
+          return sendJson(res, 406, {
+            error: 'Formats : application/json, text/csv',
+          });
+        }
+        const body = wantsCsv ? roomsAsCsv() : `${JSON.stringify(rooms)}\n`;
+        const etag = `"${createHash('sha256').update(body).digest('hex').slice(0, 16)}"`;
+        const headers = {
+          'Cache-Control': 'no-cache',
+          ETag: etag,
+          Vary: 'Origin, Accept',
+        };
+        if (req.headers['if-none-match'] === etag) {
+          return send(res, 304, undefined, headers);
+        }
+        const type = wantsCsv
+          ? 'text/csv; charset=utf-8'
+          : 'application/json; charset=utf-8';
+        return send(res, 200, body, { ...headers, 'Content-Type': type });
+      }
+
+      if (pathname === '/bookings' && method === 'POST') {
+        if (!isAuthorized(req)) return refuseAccess(res);
+        if (!req.headers['content-type']?.startsWith('application/json')) {
+          return sendJson(res, 415, { error: 'Corps JSON attendu' });
+        }
+        const input = await readJson(req);
+        const room = rooms.find((candidate) => candidate.id === input?.roomId);
+        const slot = input?.slot;
+        if (
+          !room ||
+          typeof slot !== 'string' ||
+          !/^\d{4}-\d{2}-\d{2}T\d{2}:00$/.test(slot)
+        ) {
+          return sendJson(res, 400, {
+            error: 'roomId et slot (AAAA-MM-JJTHH:00) requis',
+          });
+        }
+        const taken = [...bookings.values()].some(
+          (booking) => booking.roomId === room.id && booking.slot === slot,
+        );
+        if (taken) return sendJson(res, 409, { error: 'Créneau déjà réservé' });
+        const booking = { id: nextBookingId++, roomId: room.id, slot };
+        bookings.set(booking.id, booking);
+        return sendJson(res, 201, booking, { Location: `/bookings/${booking.id}` });
+      }
+
+      const match = pathname.match(/^\/bookings\/(\d+)$/);
+      if (match && method === 'DELETE') {
+        if (!isAuthorized(req)) return refuseAccess(res);
+        if (!bookings.delete(Number(match[1]))) {
+          return sendJson(res, 404, { error: 'Réservation introuvable' });
+        }
+        return send(res, 204);
+      }
+
+      const allowed = { '/rooms': 'GET, HEAD', '/bookings': 'POST' }[pathname];
+      if (allowed || match) {
+        const allow = { Allow: allowed ?? 'DELETE' };
+        return sendJson(res, 405, { error: 'Méthode non autorisée' }, allow);
+      }
+      return sendJson(res, 404, { error: 'Ressource introuvable' });
+    }
+
+    const server = createServer(async (req, res) => {
+      try {
+        await handle(req, res);
+      } catch (error) {
+        if (error instanceof SyntaxError) {
+          return sendJson(res, 400, { error: 'JSON invalide' });
+        }
+        console.error(error);
+        sendJson(res, 500, { error: 'Erreur interne' });
+      }
+    });
+
+    server.listen(port, () => {
+      console.log(`API des salles prête sur http://localhost:${port}`);
+    });
+    ```
+
+    Lancement (bash) :
+
+    ```bash
+    ROOMS_TOKEN=salle-42 node rooms-server.mjs
+    ```
+
+    Travail demandé :
+
+    1. **Documentation.** Pour chaque route (`GET` et `HEAD /rooms`, `POST /bookings`,
+       `DELETE /bookings/:id`, toute requête `OPTIONS`, méthodes non prévues, chemins
+       inconnus), décris : ce qu’elle fait, les en-têtes de requête qu’elle utilise, et
+       chaque code de statut possible avec les en-têtes de réponse importants. Chaque
+       affirmation doit être appuyée par une commande curl que tu as exécutée.
+    2. **Cache et négociation.** Explique `ETag`, `Cache-Control: no-cache`, `Vary` et
+       la réponse `406`, avec les commandes qui le montrent.
+    3. **CORS.** Explique quelle origine peut lire les réponses depuis un navigateur,
+       montre la réponse au prévol avec curl, et dis ce qui se passerait pour une page
+       servie depuis `http://localhost:8080`.
+    4. **Scénario de test.** Écris un script bash `test-rooms.sh`, sur le modèle de la
+       leçon 5, avec au moins 12 vérifications de codes de statut : cas nominaux,
+       erreurs du client (`400`, `401`, `404`, `405`, `406`, `409`, `415`), revalidation
+       `304`. Le script doit pouvoir être relancé plusieurs fois **sans redémarrer le
+       serveur** et donner le même résultat (indice : utilise des créneaux différents
+       à chaque exécution, ou supprime ce que tu crées).
+    5. **Esprit critique.** Relève au moins deux limites ou choix discutables de ce
+       serveur (par exemple dans sa façon de négocier le format ou de gérer les
+       réservations) et explique-les.
+  deliverable: |
+    Colle ta documentation (points 1 à 3 et 5, avec les commandes curl et les extraits
     de réponses qui la justifient), puis le script `test-rooms.sh` complet et sa sortie
-
     lors de deux exécutions successives. Termine par quelques lignes : ce que l’IA t’a
-
     apporté et une erreur de l’IA que tu as corrigée grâce à tes propres tests.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: behavior-prediction
-      description: Prévoit sans aide la réponse du serveur à des requêtes nouvelles.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas prévoir les codes de statut de requêtes simples.
-      - score: 1
-        description: Prévoit les cas nominaux mais se trompe sur l’ordre des contrôles (401 avant 415,
-          400 avant 409).
-      - score: 2
-        description: Prévoit correctement codes et en-têtes importants pour la plupart des requêtes proposées.
-      - score: 3
-        description: Prévoit aussi les cas limites (HEAD, 304, négociation, OPTIONS) et justifie par le
-          code.
-    - id: documentation-quality
-      description: Documente chaque route avec des preuves reproductibles.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Documentation absente, générique ou contredite par le serveur.
-      - score: 1
-        description: Documentation incomplète, peu de preuves.
-      - score: 2
-        description: Toutes les routes documentées avec commandes et extraits de réponses.
-      - score: 3
-        description: Documentation précise, qui explique aussi cache, négociation et CORS sans erreur.
-    - id: test-scenario
-      description: Écrit un scénario de test rejouable et en explique chaque partie.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Script absent ou non fonctionnel.
-      - score: 1
-        description: Script fonctionnel mais non rejouable ou couvrant peu de cas.
-      - score: 2
-        description: Au moins 12 vérifications pertinentes, rejouable, expliqué ligne par ligne.
-      - score: 3
-        description: Explique aussi comment il a rendu le scénario indépendant de l’état et ce qu’il ne
-          teste pas.
-    - id: critical-thinking
-      description: Identifie les limites du serveur et les erreurs de l’IA.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Aucune limite pertinente ou affirmations de l’IA reprises sans vérification.
-      - score: 1
-        description: Une limite pertinente ou une vérification de l’IA décrite vaguement.
-      - score: 2
-        description: Deux limites pertinentes et une erreur de l’IA corrigée par un test précis.
+      - id: behavior-prediction
+        description: Prévoit sans aide la réponse du serveur à des requêtes nouvelles.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas prévoir les codes de statut de requêtes simples.
+          - score: 1
+            description: Prévoit les cas nominaux mais se trompe sur l’ordre des contrôles (401 avant 415, 400 avant 409).
+          - score: 2
+            description: Prévoit correctement codes et en-têtes importants pour la plupart des requêtes proposées.
+          - score: 3
+            description: Prévoit aussi les cas limites (HEAD, 304, négociation, OPTIONS) et justifie par le code.
+      - id: documentation-quality
+        description: Documente chaque route avec des preuves reproductibles.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Documentation absente, générique ou contredite par le serveur.
+          - score: 1
+            description: Documentation incomplète, peu de preuves.
+          - score: 2
+            description: Toutes les routes documentées avec commandes et extraits de réponses.
+          - score: 3
+            description: Documentation précise, qui explique aussi cache, négociation et CORS sans erreur.
+      - id: test-scenario
+        description: Écrit un scénario de test rejouable et en explique chaque partie.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Script absent ou non fonctionnel.
+          - score: 1
+            description: Script fonctionnel mais non rejouable ou couvrant peu de cas.
+          - score: 2
+            description: Au moins 12 vérifications pertinentes, rejouable, expliqué ligne par ligne.
+          - score: 3
+            description: Explique aussi comment il a rendu le scénario indépendant de l’état et ce qu’il ne teste pas.
+      - id: critical-thinking
+        description: Identifie les limites du serveur et les erreurs de l’IA.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Aucune limite pertinente ou affirmations de l’IA reprises sans vérification.
+          - score: 1
+            description: Une limite pertinente ou une vérification de l’IA décrite vaguement.
+          - score: 2
+            description: Deux limites pertinentes et une erreur de l’IA corrigée par un test précis.
+
 - id: http-in-depth-contre-ia
   family: CONTRE_IA
   title: Le carnet d’adresses « conforme REST et sécurisé »
-  summary: Tester une API générée par une IA, mettre au jour ses fautes de sémantique HTTP et de sécurité,
-    et décrire les réponses correctes.
+  summary: Tester une API générée par une IA, mettre au jour ses fautes de sémantique HTTP et de sécurité, et décrire les réponses correctes.
   estimatedMinutes: 75
-  instructions: "Un assistant a généré cette API de carnet d’adresses en affirmant qu’elle est\n« conforme\
-    \ REST, sécurisée et prête pour la production ». Une interface web,\nservie depuis `https://carnet.example`,\
-    \ doit l’appeler avec les cookies de\nl’utilisateur. Avant la mise en ligne, on te demande un audit\
-    \ HTTP.\n\nDocumentation fournie par l’assistant :\n\n```text\nPOST /login                 corps JSON\
-    \ {\"code\": \"...\"} -> crée la session (cookie)\nGET  /contacts              liste des contacts\n\
-    POST /contacts              corps JSON {\"name\": \"...\", \"phone\": \"...\"} -> crée un contact\n\
-    GET  /contacts/:id          un contact\nPUT  /contacts/:id          met à jour un contact\nGET  /contacts/:id/delete\
-    \   supprime un contact\n```\n\nCode, à enregistrer dans `contacts-api.mjs` :\n\n```js\nimport { createServer\
-    \ } from 'node:http';\nimport { randomUUID } from 'node:crypto';\n\n// API de carnet d’adresses :\
-    \ connexion par code d’accès, puis gestion des contacts.\nconst accessCode = process.env.ACCESS_CODE;\n\
-    const sessions = new Set();\nconst contacts = new Map([\n  [1, { id: 1, name: 'Grace Hopper', phone:\
-    \ '01 23 45 67 89' }],\n]);\nlet nextId = 2;\n\nfunction json(res, status, data, headers = {}) {\n\
-    \  const body = JSON.stringify(data);\n  res.writeHead(status, {\n    'Content-Type': 'application/json;\
-    \ charset=utf-8',\n    'Content-Length': Buffer.byteLength(body),\n    ...headers,\n  });\n  res.end(body);\n\
-    }\n\nasync function readBody(req) {\n  let raw = '';\n  for await (const chunk of req) raw += chunk;\n\
-    \  return raw ? JSON.parse(raw) : {};\n}\n\nfunction isLoggedIn(req) {\n  const match = /session=([^;]+)/.exec(req.headers.cookie\
-    \ ?? '');\n  return match !== null && sessions.has(match[1]);\n}\n\nconst server = createServer(async\
-    \ (req, res) => {\n  // CORS : autorise le front-end à appeler l’API avec les cookies.\n  if (req.headers.origin)\
-    \ {\n    res.setHeader('Access-Control-Allow-Origin', req.headers.origin);\n    res.setHeader('Access-Control-Allow-Credentials',\
-    \ 'true');\n  }\n  if (req.method === 'OPTIONS') {\n    res.writeHead(204, {\n      'Access-Control-Allow-Methods':\
-    \ 'GET, POST, PUT, DELETE',\n      'Access-Control-Allow-Headers': 'Content-Type',\n    });\n    return\
-    \ res.end();\n  }\n\n  const { pathname } = new URL(req.url, 'http://localhost');\n\n  try {\n   \
-    \ if (pathname === '/login' && req.method === 'POST') {\n      const { code } = await readBody(req);\n\
-    \      if (code !== accessCode)\n        return json(res, 401, { error: 'Code invalide' });\n    \
-    \  const sessionId = randomUUID();\n      sessions.add(sessionId);\n      return json(\n        res,\n\
-    \        200,\n        { ok: true },\n        {\n          'Set-Cookie': `session=${sessionId}; Path=/;\
-    \ Max-Age=2592000`,\n        },\n      );\n    }\n\n    if (!isLoggedIn(req)) return json(res, 401,\
-    \ { error: 'Non connecté' });\n\n    if (pathname === '/contacts' && req.method === 'GET') {\n   \
-    \   return json(res, 200, [...contacts.values()], {\n        'Cache-Control': 'public, max-age=3600',\n\
-    \      });\n    }\n\n    if (pathname === '/contacts' && req.method === 'POST') {\n      const input\
-    \ = await readBody(req);\n      if (!input.name) throw new Error('name is required');\n      const\
-    \ contact = {\n        id: nextId++,\n        name: input.name,\n        phone: input.phone ?? '',\n\
-    \      };\n      contacts.set(contact.id, contact);\n      return json(res, 200, contact);\n    }\n\
-    \n    const match = /^\\/contacts\\/(\\d+)(\\/delete)?$/.exec(pathname);\n    if (match) {\n     \
-    \ const id = Number(match[1]);\n      const contact = contacts.get(id);\n      if (!contact) return\
-    \ json(res, 200, { error: 'Contact not found' });\n\n      if (match[2] && req.method === 'GET') {\n\
-    \        contacts.delete(id);\n        return json(res, 200, { deleted: id });\n      }\n      if\
-    \ (req.method === 'GET') return json(res, 200, contact);\n      if (req.method === 'PUT') {\n    \
-    \    const input = await readBody(req);\n        const updated = { ...contact, ...input, id };\n \
-    \       contacts.set(id, updated);\n        return json(res, 200, updated);\n      }\n    }\n\n  \
-    \  return json(res, 404, { error: 'Not found' });\n  } catch (error) {\n    console.error(error);\n\
-    \    return json(res, 500, { error: 'Something went wrong' });\n  }\n});\n\nserver.listen(3000, ()\
-    \ => console.log('Contacts API on http://localhost:3000'));\n```\n\nLancement (bash) :\n\n```bash\n\
-    ACCESS_CODE=carnet-2026 node contacts-api.mjs\n```\n\nTravail demandé :\n\n1. Teste l’API avec curl\
-    \ (cookies avec `-c` et `-b`, en-tête `Origin` pour simuler\n   un navigateur). Tu n’as pas besoin\
-    \ de savoir modifier le JavaScript : ton audit\n   porte sur ce que l’API **envoie et reçoit**.\n\
-    2. Pour chaque défaut trouvé, donne : la commande curl qui le montre, la réponse\n   obtenue (extrait),\
-    \ la réponse **correcte** attendue (code de statut et en-têtes),\n   la règle HTTP enfreinte et la\
-    \ gravité (sécurité, interopérabilité, confort).\n3. Classe les défauts du plus grave au moins grave\
-    \ et justifie les trois premiers.\n4. Facultatif : si tu sais le faire, indique les lignes de code\
-    \ à modifier.\n"
-  deliverable: 'Colle ton rapport d’audit : la liste des défauts (commande, réponse obtenue, réponse
+  instructions: |
+    Un assistant a généré cette API de carnet d’adresses en affirmant qu’elle est
+    « conforme REST, sécurisée et prête pour la production ». Une interface web,
+    servie depuis `https://carnet.example`, doit l’appeler avec les cookies de
+    l’utilisateur. Avant la mise en ligne, on te demande un audit HTTP.
 
+    Documentation fournie par l’assistant :
+
+    ```text
+    POST /login                 corps JSON {"code": "..."} -> crée la session (cookie)
+    GET  /contacts              liste des contacts
+    POST /contacts              corps JSON {"name": "...", "phone": "..."} -> crée un contact
+    GET  /contacts/:id          un contact
+    PUT  /contacts/:id          met à jour un contact
+    GET  /contacts/:id/delete   supprime un contact
+    ```
+
+    Code, à enregistrer dans `contacts-api.mjs` :
+
+    ```js
+    import { createServer } from 'node:http';
+    import { randomUUID } from 'node:crypto';
+
+    // API de carnet d’adresses : connexion par code d’accès, puis gestion des contacts.
+    const accessCode = process.env.ACCESS_CODE;
+    const sessions = new Set();
+    const contacts = new Map([
+      [1, { id: 1, name: 'Grace Hopper', phone: '01 23 45 67 89' }],
+    ]);
+    let nextId = 2;
+
+    function json(res, status, data, headers = {}) {
+      const body = JSON.stringify(data);
+      res.writeHead(status, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Content-Length': Buffer.byteLength(body),
+        ...headers,
+      });
+      res.end(body);
+    }
+
+    async function readBody(req) {
+      let raw = '';
+      for await (const chunk of req) raw += chunk;
+      return raw ? JSON.parse(raw) : {};
+    }
+
+    function isLoggedIn(req) {
+      const match = /session=([^;]+)/.exec(req.headers.cookie ?? '');
+      return match !== null && sessions.has(match[1]);
+    }
+
+    const server = createServer(async (req, res) => {
+      // CORS : autorise le front-end à appeler l’API avec les cookies.
+      if (req.headers.origin) {
+        res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+      }
+      if (req.method === 'OPTIONS') {
+        res.writeHead(204, {
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        });
+        return res.end();
+      }
+
+      const { pathname } = new URL(req.url, 'http://localhost');
+
+      try {
+        if (pathname === '/login' && req.method === 'POST') {
+          const { code } = await readBody(req);
+          if (code !== accessCode)
+            return json(res, 401, { error: 'Code invalide' });
+          const sessionId = randomUUID();
+          sessions.add(sessionId);
+          return json(
+            res,
+            200,
+            { ok: true },
+            {
+              'Set-Cookie': `session=${sessionId}; Path=/; Max-Age=2592000`,
+            },
+          );
+        }
+
+        if (!isLoggedIn(req)) return json(res, 401, { error: 'Non connecté' });
+
+        if (pathname === '/contacts' && req.method === 'GET') {
+          return json(res, 200, [...contacts.values()], {
+            'Cache-Control': 'public, max-age=3600',
+          });
+        }
+
+        if (pathname === '/contacts' && req.method === 'POST') {
+          const input = await readBody(req);
+          if (!input.name) throw new Error('name is required');
+          const contact = {
+            id: nextId++,
+            name: input.name,
+            phone: input.phone ?? '',
+          };
+          contacts.set(contact.id, contact);
+          return json(res, 200, contact);
+        }
+
+        const match = /^\/contacts\/(\d+)(\/delete)?$/.exec(pathname);
+        if (match) {
+          const id = Number(match[1]);
+          const contact = contacts.get(id);
+          if (!contact) return json(res, 200, { error: 'Contact not found' });
+
+          if (match[2] && req.method === 'GET') {
+            contacts.delete(id);
+            return json(res, 200, { deleted: id });
+          }
+          if (req.method === 'GET') return json(res, 200, contact);
+          if (req.method === 'PUT') {
+            const input = await readBody(req);
+            const updated = { ...contact, ...input, id };
+            contacts.set(id, updated);
+            return json(res, 200, updated);
+          }
+        }
+
+        return json(res, 404, { error: 'Not found' });
+      } catch (error) {
+        console.error(error);
+        return json(res, 500, { error: 'Something went wrong' });
+      }
+    });
+
+    server.listen(3000, () => console.log('Contacts API on http://localhost:3000'));
+    ```
+
+    Lancement (bash) :
+
+    ```bash
+    ACCESS_CODE=carnet-2026 node contacts-api.mjs
+    ```
+
+    Travail demandé :
+
+    1. Teste l’API avec curl (cookies avec `-c` et `-b`, en-tête `Origin` pour simuler
+       un navigateur). Tu n’as pas besoin de savoir modifier le JavaScript : ton audit
+       porte sur ce que l’API **envoie et reçoit**.
+    2. Pour chaque défaut trouvé, donne : la commande curl qui le montre, la réponse
+       obtenue (extrait), la réponse **correcte** attendue (code de statut et en-têtes),
+       la règle HTTP enfreinte et la gravité (sécurité, interopérabilité, confort).
+    3. Classe les défauts du plus grave au moins grave et justifie les trois premiers.
+    4. Facultatif : si tu sais le faire, indique les lignes de code à modifier.
+  deliverable: |
+    Colle ton rapport d’audit : la liste des défauts (commande, réponse obtenue, réponse
     attendue, règle, gravité), puis ton classement justifié. Ajoute la liste des
-
     commandes curl que tu as utilisées, dans l’ordre.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: defects-found
-      description: Trouve les défauts réels par des tests reproductibles.
-      maxScore: 3
-    - id: http-rules
-      description: Relie chaque défaut à la règle HTTP enfreinte et décrit la réponse correcte.
-      maxScore: 3
-    - id: security-reasoning
-      description: Explique le scénario d’attaque derrière les défauts de sécurité.
-      maxScore: 3
-    - id: method
-      description: Mène l’audit avec méthode et le rend reproductible.
-      maxScore: 2
+      - id: defects-found
+        description: Trouve les défauts réels par des tests reproductibles.
+        maxScore: 3
+      - id: http-rules
+        description: Relie chaque défaut à la règle HTTP enfreinte et décrit la réponse correcte.
+        maxScore: 3
+      - id: security-reasoning
+        description: Explique le scénario d’attaque derrière les défauts de sécurité.
+        maxScore: 3
+      - id: method
+        description: Mène l’audit avec méthode et le rend reproductible.
+        maxScore: 2
+
 - id: http-in-depth-apres-ia
   family: APRES_IA
   title: La cantine coupée en deux
-  summary: Dépanner une application dont l’interface et l’API ont été séparées, avec les outils du navigateur,
-    curl et des corrections minimales d’en-têtes et de statuts.
+  summary: Dépanner une application dont l’interface et l’API ont été séparées, avec les outils du navigateur, curl et des corrections minimales d’en-têtes et de statuts.
   estimatedMinutes: 75
-  instructions: "La cantine d’un collège avait une petite application : une page qui affiche le menu\n\
-    du jour et permet de commander. Pour « moderniser », une IA a séparé l’interface et\nl’API en deux\
-    \ serveurs. Depuis, rien ne va. Tu dois remettre l’application en état\n**en modifiant le moins de\
-    \ choses possible**, sans régénérer le projet.\n\nArborescence :\n\n```text\napi.mjs            API,\
-    \ port 3000\nfront.mjs          serveur de l’interface, port 5173\npublic/index.html\npublic/app.js\n\
-    ```\n\n`api.mjs` :\n\n```js\nimport { createServer } from 'node:http';\n\nconst cookToken = process.env.COOK_TOKEN;\n\
-    let menu = {\n  date: '2026-11-23',\n  dishes: ['Lentilles corail', 'Gratin de courge'],\n};\nconst\
-    \ orders = [];\n\nfunction sendJson(res, status, data, headers = {}) {\n  const body = `${JSON.stringify(data)}\\\
-    n`;\n  res.writeHead(status, {\n    'Content-Type': 'application/json; charset=utf-8',\n    'Content-Length':\
-    \ Buffer.byteLength(body),\n    ...headers,\n  });\n  res.end(body);\n}\n\nasync function readJson(req)\
-    \ {\n  let raw = '';\n  for await (const chunk of req) raw += chunk;\n  return JSON.parse(raw);\n\
-    }\n\nasync function handle(req, res) {\n  const { pathname } = new URL(req.url, 'http://localhost');\n\
-    \n  if (pathname === '/api/menu' && req.method === 'GET') {\n    return sendJson(res, 200, menu, {\n\
-    \      'Cache-Control': 'public, max-age=86400',\n    });\n  }\n\n  if (pathname === '/api/menu' &&\
-    \ req.method === 'PUT') {\n    if (!cookToken || req.headers.authorization !== `Bearer ${cookToken}`)\
-    \ {\n      return sendJson(\n        res,\n        401,\n        { error: 'Réservé à la cuisine' },\n\
-    \        {\n          'WWW-Authenticate': 'Bearer',\n        },\n      );\n    }\n    const input\
-    \ = await readJson(req);\n    if (typeof input?.date !== 'string' || !Array.isArray(input?.dishes))\
-    \ {\n      return sendJson(res, 400, { error: 'date et dishes sont obligatoires' });\n    }\n    menu\
-    \ = { date: input.date, dishes: input.dishes };\n    return sendJson(res, 200, menu);\n  }\n\n  if\
-    \ (pathname === '/api/orders' && req.method === 'POST') {\n    if (!req.headers['content-type']?.startsWith('application/json'))\
-    \ {\n      return sendJson(res, 415, { error: 'Corps JSON attendu' });\n    }\n    const input = await\
-    \ readJson(req);\n    if (typeof input?.name !== 'string' || !menu.dishes.includes(input?.dish)) {\n\
-    \      return sendJson(res, 400, { error: 'Nom ou plat invalide' });\n    }\n    const order = { id:\
-    \ orders.length + 1, name: input.name, dish: input.dish };\n    orders.push(order);\n    return sendJson(res,\
-    \ 200, order);\n  }\n\n  return sendJson(res, 404, { error: 'Ressource introuvable' });\n}\n\nconst\
-    \ server = createServer(async (req, res) => {\n  try {\n    await handle(req, res);\n  } catch (error)\
-    \ {\n    if (error instanceof SyntaxError) {\n      return sendJson(res, 400, { error: 'JSON invalide'\
-    \ });\n    }\n    console.error(error);\n    sendJson(res, 500, { error: 'Erreur interne' });\n  }\n\
-    });\n\nserver.listen(3000, () =>\n  console.log('API de la cantine sur http://localhost:3000'),\n\
-    );\n```\n\n`front.mjs` (fonctionne correctement, à ne pas modifier) :\n\n```js\nimport { createServer\
-    \ } from 'node:http';\nimport { readFile } from 'node:fs/promises';\n\nconst types = {\n  '/index.html':\
-    \ 'text/html; charset=utf-8',\n  '/app.js': 'text/javascript; charset=utf-8',\n};\n\nconst server\
-    \ = createServer(async (req, res) => {\n  const { pathname } = new URL(req.url, 'http://localhost');\n\
-    \  const file = pathname === '/' ? '/index.html' : pathname;\n  if (!types[file]) {\n    res.writeHead(404,\
-    \ { 'Content-Type': 'text/plain; charset=utf-8' });\n    return res.end('Introuvable\\n');\n  }\n\
-    \  const body = await readFile(new URL(`./public${file}`, import.meta.url));\n  res.writeHead(200,\
-    \ { 'Content-Type': types[file] });\n  res.end(body);\n});\n\nserver.listen(5173, () => console.log('Interface\
-    \ sur http://localhost:5173'));\n```\n\n`public/index.html` :\n\n```html\n<!doctype html>\n<html lang=\"\
-    fr\">\n  <head>\n    <meta charset=\"utf-8\">\n    <title>Cantine</title>\n    <script src=\"app.js\"\
-    \ type=\"module\"></script>\n  </head>\n  <body>\n    <h1>Menu du jour</h1>\n    <ul id=\"dishes\"\
-    ></ul>\n    <form id=\"order-form\">\n      <label>Prénom <input name=\"name\" required></label>\n\
-    \      <label>Plat <input name=\"dish\" required></label>\n      <button>Commander</button>\n    </form>\n\
-    \    <p id=\"status\" role=\"status\"></p>\n  </body>\n</html>\n```\n\n`public/app.js` (à ne pas modifier\
-    \ : il est déjà utilisé par l’application mobile\nde la cantine, qui suit la même logique) :\n\n```js\n\
-    const apiUrl = 'http://localhost:3000';\nconst list = document.querySelector('#dishes');\nconst statusText\
-    \ = document.querySelector('#status');\nconst form = document.querySelector('#order-form');\n\nasync\
-    \ function loadMenu() {\n  const response = await fetch(`${apiUrl}/api/menu`);\n  const menu = await\
-    \ response.json();\n  for (const dish of menu.dishes) {\n    const item = document.createElement('li');\n\
-    \    item.textContent = dish;\n    list.append(item);\n  }\n}\n\nform.addEventListener('submit', async\
-    \ (event) => {\n  event.preventDefault();\n  const response = await fetch(`${apiUrl}/api/orders`,\
-    \ {\n    method: 'POST',\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify({\n\
-    \      name: form.elements.name.value,\n      dish: form.elements.dish.value,\n    }),\n  });\n  statusText.textContent\
-    \ =\n    response.status === 201\n      ? 'Commande enregistrée'\n      : `Erreur ${response.status}`;\n\
-    });\n\nloadMenu();\n```\n\nLancement, dans deux terminaux :\n\n```bash\nCOOK_TOKEN=chef-secret node\
-    \ api.mjs\nnode front.mjs\n```\n\nPuis ouvre `http://localhost:5173/` avec les outils de développement.\n\
-    \nProblèmes signalés, à traiter dans l’ordre :\n\n1. Le menu ne s’affiche plus.\n2. Une fois le menu\
-    \ réparé, le bouton « Commander » ne fonctionne pas.\n3. Une fois les commandes envoyées, la page\
-    \ affiche « Erreur 200 » alors que la\n   commande est bien enregistrée.\n4. Le cuisinier met à jour\
-    \ le menu avec la commande ci-dessous, mais les élèves\n   voient encore l’ancien menu en rechargeant\
-    \ la page, et ce jusqu’au lendemain.\n\n```bash\ncurl -i -X PUT -H 'Authorization: Bearer chef-secret'\
-    \ --json '{\"date\":\"2026-11-24\",\"dishes\":[\"Soupe de potiron\",\"Riz cantonais\"]}' http://localhost:3000/api/menu\n\
-    ```\n\nPour chaque problème : décris ce que montrent la console et le panneau Réseau,\nexplique la\
-    \ cause en termes HTTP, applique la correction minimale dans `api.mjs`,\net donne une commande curl\
-    \ qui prouve que la correction est en place.\n"
-  deliverable: 'Colle le contenu final de `api.mjs`, la liste des lignes modifiées ou ajoutées avec
+  instructions: |
+    La cantine d’un collège avait une petite application : une page qui affiche le menu
+    du jour et permet de commander. Pour « moderniser », une IA a séparé l’interface et
+    l’API en deux serveurs. Depuis, rien ne va. Tu dois remettre l’application en état
+    **en modifiant le moins de choses possible**, sans régénérer le projet.
 
+    Arborescence :
+
+    ```text
+    api.mjs            API, port 3000
+    front.mjs          serveur de l’interface, port 5173
+    public/index.html
+    public/app.js
+    ```
+
+    `api.mjs` :
+
+    ```js
+    import { createServer } from 'node:http';
+
+    const cookToken = process.env.COOK_TOKEN;
+    let menu = {
+      date: '2026-11-23',
+      dishes: ['Lentilles corail', 'Gratin de courge'],
+    };
+    const orders = [];
+
+    function sendJson(res, status, data, headers = {}) {
+      const body = `${JSON.stringify(data)}\n`;
+      res.writeHead(status, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Content-Length': Buffer.byteLength(body),
+        ...headers,
+      });
+      res.end(body);
+    }
+
+    async function readJson(req) {
+      let raw = '';
+      for await (const chunk of req) raw += chunk;
+      return JSON.parse(raw);
+    }
+
+    async function handle(req, res) {
+      const { pathname } = new URL(req.url, 'http://localhost');
+
+      if (pathname === '/api/menu' && req.method === 'GET') {
+        return sendJson(res, 200, menu, {
+          'Cache-Control': 'public, max-age=86400',
+        });
+      }
+
+      if (pathname === '/api/menu' && req.method === 'PUT') {
+        if (!cookToken || req.headers.authorization !== `Bearer ${cookToken}`) {
+          return sendJson(
+            res,
+            401,
+            { error: 'Réservé à la cuisine' },
+            {
+              'WWW-Authenticate': 'Bearer',
+            },
+          );
+        }
+        const input = await readJson(req);
+        if (typeof input?.date !== 'string' || !Array.isArray(input?.dishes)) {
+          return sendJson(res, 400, { error: 'date et dishes sont obligatoires' });
+        }
+        menu = { date: input.date, dishes: input.dishes };
+        return sendJson(res, 200, menu);
+      }
+
+      if (pathname === '/api/orders' && req.method === 'POST') {
+        if (!req.headers['content-type']?.startsWith('application/json')) {
+          return sendJson(res, 415, { error: 'Corps JSON attendu' });
+        }
+        const input = await readJson(req);
+        if (typeof input?.name !== 'string' || !menu.dishes.includes(input?.dish)) {
+          return sendJson(res, 400, { error: 'Nom ou plat invalide' });
+        }
+        const order = { id: orders.length + 1, name: input.name, dish: input.dish };
+        orders.push(order);
+        return sendJson(res, 200, order);
+      }
+
+      return sendJson(res, 404, { error: 'Ressource introuvable' });
+    }
+
+    const server = createServer(async (req, res) => {
+      try {
+        await handle(req, res);
+      } catch (error) {
+        if (error instanceof SyntaxError) {
+          return sendJson(res, 400, { error: 'JSON invalide' });
+        }
+        console.error(error);
+        sendJson(res, 500, { error: 'Erreur interne' });
+      }
+    });
+
+    server.listen(3000, () =>
+      console.log('API de la cantine sur http://localhost:3000'),
+    );
+    ```
+
+    `front.mjs` (fonctionne correctement, à ne pas modifier) :
+
+    ```js
+    import { createServer } from 'node:http';
+    import { readFile } from 'node:fs/promises';
+
+    const types = {
+      '/index.html': 'text/html; charset=utf-8',
+      '/app.js': 'text/javascript; charset=utf-8',
+    };
+
+    const server = createServer(async (req, res) => {
+      const { pathname } = new URL(req.url, 'http://localhost');
+      const file = pathname === '/' ? '/index.html' : pathname;
+      if (!types[file]) {
+        res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+        return res.end('Introuvable\n');
+      }
+      const body = await readFile(new URL(`./public${file}`, import.meta.url));
+      res.writeHead(200, { 'Content-Type': types[file] });
+      res.end(body);
+    });
+
+    server.listen(5173, () => console.log('Interface sur http://localhost:5173'));
+    ```
+
+    `public/index.html` :
+
+    ```html
+    <!doctype html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8">
+        <title>Cantine</title>
+        <script src="app.js" type="module"></script>
+      </head>
+      <body>
+        <h1>Menu du jour</h1>
+        <ul id="dishes"></ul>
+        <form id="order-form">
+          <label>Prénom <input name="name" required></label>
+          <label>Plat <input name="dish" required></label>
+          <button>Commander</button>
+        </form>
+        <p id="status" role="status"></p>
+      </body>
+    </html>
+    ```
+
+    `public/app.js` (à ne pas modifier : il est déjà utilisé par l’application mobile
+    de la cantine, qui suit la même logique) :
+
+    ```js
+    const apiUrl = 'http://localhost:3000';
+    const list = document.querySelector('#dishes');
+    const statusText = document.querySelector('#status');
+    const form = document.querySelector('#order-form');
+
+    async function loadMenu() {
+      const response = await fetch(`${apiUrl}/api/menu`);
+      const menu = await response.json();
+      for (const dish of menu.dishes) {
+        const item = document.createElement('li');
+        item.textContent = dish;
+        list.append(item);
+      }
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const response = await fetch(`${apiUrl}/api/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.elements.name.value,
+          dish: form.elements.dish.value,
+        }),
+      });
+      statusText.textContent =
+        response.status === 201
+          ? 'Commande enregistrée'
+          : `Erreur ${response.status}`;
+    });
+
+    loadMenu();
+    ```
+
+    Lancement, dans deux terminaux :
+
+    ```bash
+    COOK_TOKEN=chef-secret node api.mjs
+    node front.mjs
+    ```
+
+    Puis ouvre `http://localhost:5173/` avec les outils de développement.
+
+    Problèmes signalés, à traiter dans l’ordre :
+
+    1. Le menu ne s’affiche plus.
+    2. Une fois le menu réparé, le bouton « Commander » ne fonctionne pas.
+    3. Une fois les commandes envoyées, la page affiche « Erreur 200 » alors que la
+       commande est bien enregistrée.
+    4. Le cuisinier met à jour le menu avec la commande ci-dessous, mais les élèves
+       voient encore l’ancien menu en rechargeant la page, et ce jusqu’au lendemain.
+
+    ```bash
+    curl -i -X PUT -H 'Authorization: Bearer chef-secret' --json '{"date":"2026-11-24","dishes":["Soupe de potiron","Riz cantonais"]}' http://localhost:3000/api/menu
+    ```
+
+    Pour chaque problème : décris ce que montrent la console et le panneau Réseau,
+    explique la cause en termes HTTP, applique la correction minimale dans `api.mjs`,
+    et donne une commande curl qui prouve que la correction est en place.
+  deliverable: |
+    Colle le contenu final de `api.mjs`, la liste des lignes modifiées ou ajoutées avec
     la raison de chacune, puis pour chaque problème : observation, cause, correction et
-
     commande curl de vérification avec un extrait de sa sortie.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: cors-diagnosis
-      description: Diagnostique les deux échecs CORS à partir de la console et du panneau Réseau.
-      maxScore: 3
-    - id: status-and-cache
-      description: Corrige le code de statut de création et la politique de cache en les expliquant.
-      maxScore: 3
-    - id: verification
-      description: Prouve chaque correction par une commande curl et une observation dans le navigateur.
-      maxScore: 2
-    - id: minimal-change
-      description: Fait évoluer le code existant de façon ciblée.
-      maxScore: 2
+      - id: cors-diagnosis
+        description: Diagnostique les deux échecs CORS à partir de la console et du panneau Réseau.
+        maxScore: 3
+      - id: status-and-cache
+        description: Corrige le code de statut de création et la politique de cache en les expliquant.
+        maxScore: 3
+      - id: verification
+        description: Prouve chaque correction par une commande curl et une observation dans le navigateur.
+        maxScore: 2
+      - id: minimal-change
+        description: Fait évoluer le code existant de façon ciblée.
+        maxScore: 2

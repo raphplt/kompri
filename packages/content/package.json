@@ -8,7 +8,10 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "tsc --outDir dist",
-    "validate": "tsx src/validate.ts"
+    "validate": "tsx src/validate.ts",
+    "lock": "tsx src/lock.ts lock",
+    "unlock": "tsx src/lock.ts unlock",
+    "key": "tsx src/lock.ts key"
   },
   "dependencies": {
     "zod": "4.6.7",

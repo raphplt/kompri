@@ -4,13 +4,11 @@
  * and prints the questions, their latency and any long passage copied from the
  * examiner notes. It calls the configured examiner model; never run in CI.
  */
-import { readFile } from 'node:fs/promises';
-import { parse } from 'yaml';
 import { loadContent } from '@kompri/content';
 import { loadEnvironment } from '@kompri/shared/load-env';
 import { createRegistry } from '@kompri/llm';
 import { answerOral, prepareOral } from '@kompri/examiner';
-import { referenceSchema } from './index.ts';
+import { loadReferences } from './references.ts';
 
 loadEnvironment();
 if (
@@ -44,19 +42,17 @@ export function sharedPassage(a: string, b: string) {
 }
 
 const content = await loadContent();
+const { references } = await loadReferences();
 let cost = 0;
 const client = createRegistry(process.env, (metric) => {
   cost += metric.estimatedCostUsd ?? 0;
 }).forUsage('examiner');
 for (const id of ids) {
-  const reference = referenceSchema.parse(
-    parse(
-      await readFile(
-        new URL(`../references/${id}.yaml`, import.meta.url),
-        'utf8',
-      ),
-    ),
-  );
+  const reference = references.find((r) => r.id === id);
+  if (!reference)
+    throw new Error(
+      `Reference ${id} not loaded: set KOMPRI_CONTENT_KEY or run pnpm content:unlock`,
+    );
   const challenge = content.challenges.find(
     (c) => c.id === reference.challengeId,
   )!;

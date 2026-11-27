@@ -1,278 +1,401 @@
 - id: command-line-sans-ia
   family: SANS_IA
   title: Le ménage du serveur
-  summary: Naviguer, ranger des fichiers sans rien perdre, analyser un journal avec des tubes et interpréter
-    des codes de sortie, sans aide.
+  summary: Naviguer, ranger des fichiers sans rien perdre, analyser un journal avec des tubes et interpréter des codes de sortie, sans aide.
   estimatedMinutes: 50
-  instructions: "Tu reprends le dossier d’un collègue parti en vacances. Commence par créer le\nterrain\
-    \ du défi en copiant ce bloc dans un terminal bash (Linux, macOS ou WSL) :\n\n```bash\nmkdir -p ~/defi-terminal/src\
-    \ ~/defi-terminal/brouillons ~/defi-terminal/\"vieux fichiers\"\ncd ~/defi-terminal\ntouch brouillons/note1.txt\
-    \ brouillons/note2.txt brouillons/.cache\ntouch \"vieux fichiers/a.bak\" \"vieux fichiers/b.bak\"\n\
-    cat > serveur.log <<'EOF'\n2026-11-20 08:00:01 INFO GET /api/notes 200\n2026-11-20 08:00:04 INFO GET\
-    \ /api/notes/3 200\n2026-11-20 08:01:12 WARN GET /api/notes/99 404\n2026-11-20 08:02:30 INFO POST\
-    \ /api/notes 201\n2026-11-20 08:02:31 ERROR POST /api/notes 500\n2026-11-20 08:03:00 INFO GET /favicon.ico\
-    \ 404\n2026-11-20 08:03:45 INFO DELETE /api/notes/3 204\n2026-11-20 08:04:10 ERROR GET /api/notes\
-    \ 500\n2026-11-20 08:05:00 WARN GET /api/notes/99 404\n2026-11-20 08:05:30 INFO GET /api/notes 200\n\
-    2026-11-20 08:06:02 ERROR GET /api/stats 503\n2026-11-20 08:07:15 WARN GET /api/notes/7 404\nEOF\n\
-    cat > src/saluer.js <<'EOF'\nconst name = process.env.GREETING_NAME;\nif (!name) {\n  console.error('Variable\
-    \ GREETING_NAME manquante');\n  process.exitCode = 3;\n} else {\n  console.log(`Bonjour ${name}, le\
-    \ serveur démarre.`);\n}\nEOF\n```\n\nRéponds à chaque question en donnant **la ou les commandes exactes**\
-    \ que tu as\ntapées et **leur sortie**. Sans aide extérieure : ni IA, ni recherche.\n\n1. **Se repérer.**\
-    \ Place-toi dans `~/defi-terminal/src`. Donne le chemin absolu de\n   ce dossier, puis deux façons\
-    \ de désigner `serveur.log` depuis là : un chemin\n   absolu et un chemin relatif. Combien d’éléments\
-    \ contient `brouillons`, fichiers\n   cachés compris ?\n2. **Ranger.** Depuis `~/defi-terminal`, crée\
-    \ `docs/guides` en une commande, puis\n   déplace les deux notes de `brouillons` dans `docs/guides`\
-    \ en une commande, sans\n   déplacer `.cache`.\n3. **Supprimer prudemment.** Supprime le dossier `vieux\
-    \ fichiers` et son contenu.\n   Montre comment tu vérifies, avant de le supprimer, ce qu’il contient.\
-    \ Explique\n   ensuite ce qu’aurait fait la commande `rm -r vieux fichiers` (sans guillemets),\n \
-    \  et pourquoi `echo rm -r vieux fichiers` ne t’aurait pas permis de voir le\n   problème.\n4. **Analyser\
-    \ le journal.** Avec des tubes, et sans ouvrir le fichier dans un\n   éditeur : combien de lignes\
-    \ contiennent `ERROR` ? Combien de réponses par code\n   de statut, du plus fréquent au moins fréquent\
-    \ ? Quels chemins ont reçu un `404`,\n   et combien de fois chacun ? Enregistre enfin les lignes `ERROR`\
-    \ dans\n   `erreurs.txt`, puis **ajoute** à ce même fichier les lignes `WARN`.\n5. **Lancer un programme.**\
-    \ Depuis `~/defi-terminal/src`, lance `saluer.js` sans\n   puis avec la variable `GREETING_NAME` valant\
-    \ `Lina`, en affichant chaque fois le\n   code de sortie. Pourquoi le premier code n’est-il ni 0 ni\
-    \ 1 ? Écris une seule\n   ligne de commande qui affiche `Prêt` seulement si le script réussit, et\n\
-    \   `Configuration incomplète` sinon.\n"
-  deliverable: 'Colle tes réponses numérotées de 1 à 5 : pour chacune, les commandes exactes et
+  instructions: |
+    Tu reprends le dossier d’un collègue parti en vacances. Commence par créer le
+    terrain du défi en copiant ce bloc dans un terminal bash (Linux, macOS ou WSL) :
 
+    ```bash
+    mkdir -p ~/defi-terminal/src ~/defi-terminal/brouillons ~/defi-terminal/"vieux fichiers"
+    cd ~/defi-terminal
+    touch brouillons/note1.txt brouillons/note2.txt brouillons/.cache
+    touch "vieux fichiers/a.bak" "vieux fichiers/b.bak"
+    cat > serveur.log <<'EOF'
+    2026-11-20 08:00:01 INFO GET /api/notes 200
+    2026-11-20 08:00:04 INFO GET /api/notes/3 200
+    2026-11-20 08:01:12 WARN GET /api/notes/99 404
+    2026-11-20 08:02:30 INFO POST /api/notes 201
+    2026-11-20 08:02:31 ERROR POST /api/notes 500
+    2026-11-20 08:03:00 INFO GET /favicon.ico 404
+    2026-11-20 08:03:45 INFO DELETE /api/notes/3 204
+    2026-11-20 08:04:10 ERROR GET /api/notes 500
+    2026-11-20 08:05:00 WARN GET /api/notes/99 404
+    2026-11-20 08:05:30 INFO GET /api/notes 200
+    2026-11-20 08:06:02 ERROR GET /api/stats 503
+    2026-11-20 08:07:15 WARN GET /api/notes/7 404
+    EOF
+    cat > src/saluer.js <<'EOF'
+    const name = process.env.GREETING_NAME;
+    if (!name) {
+      console.error('Variable GREETING_NAME manquante');
+      process.exitCode = 3;
+    } else {
+      console.log(`Bonjour ${name}, le serveur démarre.`);
+    }
+    EOF
+    ```
+
+    Réponds à chaque question en donnant **la ou les commandes exactes** que tu as
+    tapées et **leur sortie**. Sans aide extérieure : ni IA, ni recherche.
+
+    1. **Se repérer.** Place-toi dans `~/defi-terminal/src`. Donne le chemin absolu de
+       ce dossier, puis deux façons de désigner `serveur.log` depuis là : un chemin
+       absolu et un chemin relatif. Combien d’éléments contient `brouillons`, fichiers
+       cachés compris ?
+    2. **Ranger.** Depuis `~/defi-terminal`, crée `docs/guides` en une commande, puis
+       déplace les deux notes de `brouillons` dans `docs/guides` en une commande, sans
+       déplacer `.cache`.
+    3. **Supprimer prudemment.** Supprime le dossier `vieux fichiers` et son contenu.
+       Montre comment tu vérifies, avant de le supprimer, ce qu’il contient. Explique
+       ensuite ce qu’aurait fait la commande `rm -r vieux fichiers` (sans guillemets),
+       et pourquoi `echo rm -r vieux fichiers` ne t’aurait pas permis de voir le
+       problème.
+    4. **Analyser le journal.** Avec des tubes, et sans ouvrir le fichier dans un
+       éditeur : combien de lignes contiennent `ERROR` ? Combien de réponses par code
+       de statut, du plus fréquent au moins fréquent ? Quels chemins ont reçu un `404`,
+       et combien de fois chacun ? Enregistre enfin les lignes `ERROR` dans
+       `erreurs.txt`, puis **ajoute** à ce même fichier les lignes `WARN`.
+    5. **Lancer un programme.** Depuis `~/defi-terminal/src`, lance `saluer.js` sans
+       puis avec la variable `GREETING_NAME` valant `Lina`, en affichant chaque fois le
+       code de sortie. Pourquoi le premier code n’est-il ni 0 ni 1 ? Écris une seule
+       ligne de commande qui affiche `Prêt` seulement si le script réussit, et
+       `Configuration incomplète` sinon.
+  deliverable: |
+    Colle tes réponses numérotées de 1 à 5 : pour chacune, les commandes exactes et
     leurs sorties, puis tes explications.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: paths
-      description: Se repère et désigne fichiers et dossiers par des chemins absolus et relatifs.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Confond chemin absolu et relatif ou se perd dans l’arborescence.
-      - score: 1
-        description: Chemins corrects mais explication hésitante de `..` ou des fichiers cachés.
-      - score: 2
-        description: Chemins justes, explique `.`, `..`, `~` et les fichiers cachés.
-      - score: 3
-        description: Prévoit aussi le résultat de chemins proposés à l’oral depuis un autre dossier.
-    - id: safe-file-operations
-      description: Manipule fichiers et dossiers en sécurité.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Commandes destructrices sans vérification ou erreur de découpage non comprise.
-      - score: 1
-        description: Opérations correctes mais sans vérification préalable.
-      - score: 2
-        description: Vérifie avant de supprimer et explique le découpage des arguments sur les espaces.
-      - score: 3
-        description: Explique aussi les limites de la vérification par echo et le comportement des motifs.
-    - id: pipes-and-redirections
-      description: Analyse un fichier avec des tubes et utilise les redirections à bon escient.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas enchaîner des commandes ou confond `>` et `|`.
-      - score: 1
-        description: Résultats partiellement justes, rôle de sort avant uniq ignoré.
-      - score: 2
-        description: Tous les comptages justes, `>` et `>>` utilisés correctement et expliqués.
-      - score: 3
-        description: Explique chaque étape des tubes et propose une variante correcte.
-    - id: exit-codes-and-env
-      description: Lance un programme avec une variable d’environnement et interprète son code de sortie.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas définir la variable ni lire le code de sortie.
-      - score: 1
-        description: Lit le code de sortie mais ne sait pas pourquoi il vaut 3.
-      - score: 2
-        description: Explique codes de sortie, `&&` et `||`, et la portée de la variable.
-      - score: 3
-        description: Distingue variable du shell, variable exportée et variable pour une seule commande.
+      - id: paths
+        description: Se repère et désigne fichiers et dossiers par des chemins absolus et relatifs.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Confond chemin absolu et relatif ou se perd dans l’arborescence.
+          - score: 1
+            description: Chemins corrects mais explication hésitante de `..` ou des fichiers cachés.
+          - score: 2
+            description: Chemins justes, explique `.`, `..`, `~` et les fichiers cachés.
+          - score: 3
+            description: Prévoit aussi le résultat de chemins proposés à l’oral depuis un autre dossier.
+      - id: safe-file-operations
+        description: Manipule fichiers et dossiers en sécurité.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Commandes destructrices sans vérification ou erreur de découpage non comprise.
+          - score: 1
+            description: Opérations correctes mais sans vérification préalable.
+          - score: 2
+            description: Vérifie avant de supprimer et explique le découpage des arguments sur les espaces.
+          - score: 3
+            description: Explique aussi les limites de la vérification par echo et le comportement des motifs.
+      - id: pipes-and-redirections
+        description: Analyse un fichier avec des tubes et utilise les redirections à bon escient.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas enchaîner des commandes ou confond `>` et `|`.
+          - score: 1
+            description: Résultats partiellement justes, rôle de sort avant uniq ignoré.
+          - score: 2
+            description: Tous les comptages justes, `>` et `>>` utilisés correctement et expliqués.
+          - score: 3
+            description: Explique chaque étape des tubes et propose une variante correcte.
+      - id: exit-codes-and-env
+        description: Lance un programme avec une variable d’environnement et interprète son code de sortie.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas définir la variable ni lire le code de sortie.
+          - score: 1
+            description: Lit le code de sortie mais ne sait pas pourquoi il vaut 3.
+          - score: 2
+            description: Explique codes de sortie, `&&` et `||`, et la portée de la variable.
+          - score: 3
+            description: Distingue variable du shell, variable exportée et variable pour une seule commande.
+
 - id: command-line-avec-ia
   family: AVEC_IA
   title: Le rapport de journal automatique
-  summary: Écrire avec une IA un script bash qui analyse un journal de serveur, puis en défendre chaque
-    ligne.
+  summary: Écrire avec une IA un script bash qui analyse un journal de serveur, puis en défendre chaque ligne.
   estimatedMinutes: 90
-  instructions: "Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras expliquer chaque\nligne\
-    \ de ton script sans aide, prévoir sa sortie sur un autre journal et le modifier\nen direct.\n\nCrée\
-    \ le journal d’exemple suivant dans un dossier de travail (copie le bloc dans un\nterminal bash) :\n\
-    \n```bash\nmkdir -p ~/defi-journal && cd ~/defi-journal\ncat > boutique.log <<'EOF'\n2026-11-21 09:00:01\
-    \ INFO GET / 200\n2026-11-21 09:00:02 INFO GET /produits 200\n2026-11-21 09:00:05 WARN GET /produits/lampe-orion\
-    \ 404\n2026-11-21 09:01:10 INFO POST /panier 201\n2026-11-21 09:01:11 ERROR POST /commande 500\n2026-11-21\
-    \ 09:02:00 INFO GET /produits 200\n2026-11-21 09:02:30 WARN GET /produits/lampe-orion 404\n2026-11-21\
-    \ 09:03:00 WARN GET /images/promo.jpg 404\n2026-11-21 09:03:20 INFO POST /commande 201\n2026-11-21\
-    \ 09:04:00 ERROR GET /produits 503\n2026-11-21 09:04:30 WARN GET /produits/lampe-orion 404\n2026-11-21\
-    \ 09:05:00 INFO GET /contact 200\n2026-11-21 09:05:40 WARN GET /images/promo.jpg 404\n2026-11-21 09:06:10\
-    \ WARN GET /ancienne-page 404\n2026-11-21 09:07:00 INFO GET / 200\n2026-11-21 09:07:30 ERROR POST\
-    \ /commande 500\nEOF\n```\n\nÉcris un script `analyse-journal.sh`, lancé ainsi : `bash analyse-journal.sh\
-    \ boutique.log`.\n\nExigences :\n\n1. Le fichier à analyser est le premier argument du script. S’il\
-    \ manque ou s’il\n   n’existe pas, le script écrit un message clair **sur la sortie d’erreur** et\
-    \ se\n   termine avec le code **1**.\n2. Le rapport affiche : le nombre total de requêtes, le nombre\
-    \ de réponses `5xx`, le\n   nombre de réponses par code de statut (du plus fréquent au moins fréquent),\
-    \ et\n   les chemins les plus souvent en `404`, avec leur nombre.\n3. Le nombre de chemins `404` affichés\
-    \ vaut 3 par défaut, mais peut être changé par\n   une variable d’environnement `TOP` : `TOP=2 bash\
-    \ analyse-journal.sh boutique.log`.\n4. Le rapport s’affiche à l’écran **et** est enregistré dans\
-    \ `rapport.txt`,\n   remplacé à chaque exécution.\n5. En cas de succès, le script se termine avec\
-    \ le code 0.\n6. Le script ne contient que des commandes que tu sais expliquer : celles du cours,\n\
-    \   plus au plus quatre éléments nouveaux (par exemple une condition `if` ou la\n   commande `tee`)\
-    \ que tu présenteras à l’oral.\n"
-  deliverable: 'Colle le script complet, puis la sortie de ces commandes, chacune suivie de
+  instructions: |
+    Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras expliquer chaque
+    ligne de ton script sans aide, prévoir sa sortie sur un autre journal et le modifier
+    en direct.
 
+    Crée le journal d’exemple suivant dans un dossier de travail (copie le bloc dans un
+    terminal bash) :
+
+    ```bash
+    mkdir -p ~/defi-journal && cd ~/defi-journal
+    cat > boutique.log <<'EOF'
+    2026-11-21 09:00:01 INFO GET / 200
+    2026-11-21 09:00:02 INFO GET /produits 200
+    2026-11-21 09:00:05 WARN GET /produits/lampe-orion 404
+    2026-11-21 09:01:10 INFO POST /panier 201
+    2026-11-21 09:01:11 ERROR POST /commande 500
+    2026-11-21 09:02:00 INFO GET /produits 200
+    2026-11-21 09:02:30 WARN GET /produits/lampe-orion 404
+    2026-11-21 09:03:00 WARN GET /images/promo.jpg 404
+    2026-11-21 09:03:20 INFO POST /commande 201
+    2026-11-21 09:04:00 ERROR GET /produits 503
+    2026-11-21 09:04:30 WARN GET /produits/lampe-orion 404
+    2026-11-21 09:05:00 INFO GET /contact 200
+    2026-11-21 09:05:40 WARN GET /images/promo.jpg 404
+    2026-11-21 09:06:10 WARN GET /ancienne-page 404
+    2026-11-21 09:07:00 INFO GET / 200
+    2026-11-21 09:07:30 ERROR POST /commande 500
+    EOF
+    ```
+
+    Écris un script `analyse-journal.sh`, lancé ainsi : `bash analyse-journal.sh boutique.log`.
+
+    Exigences :
+
+    1. Le fichier à analyser est le premier argument du script. S’il manque ou s’il
+       n’existe pas, le script écrit un message clair **sur la sortie d’erreur** et se
+       termine avec le code **1**.
+    2. Le rapport affiche : le nombre total de requêtes, le nombre de réponses `5xx`, le
+       nombre de réponses par code de statut (du plus fréquent au moins fréquent), et
+       les chemins les plus souvent en `404`, avec leur nombre.
+    3. Le nombre de chemins `404` affichés vaut 3 par défaut, mais peut être changé par
+       une variable d’environnement `TOP` : `TOP=2 bash analyse-journal.sh boutique.log`.
+    4. Le rapport s’affiche à l’écran **et** est enregistré dans `rapport.txt`,
+       remplacé à chaque exécution.
+    5. En cas de succès, le script se termine avec le code 0.
+    6. Le script ne contient que des commandes que tu sais expliquer : celles du cours,
+       plus au plus quatre éléments nouveaux (par exemple une condition `if` ou la
+       commande `tee`) que tu présenteras à l’oral.
+  deliverable: |
+    Colle le script complet, puis la sortie de ces commandes, chacune suivie de
     `echo $?` : `bash analyse-journal.sh boutique.log`,
-
     `TOP=1 bash analyse-journal.sh boutique.log`, `bash analyse-journal.sh absent.log`
-
     et `bash analyse-journal.sh`. Termine par quelques lignes : ce que l’IA t’a apporté,
-
     ce que tu as dû vérifier ou corriger, et la liste des éléments nouveaux utilisés.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: code-ownership
-      description: Explique chaque ligne de son script sans aide.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas expliquer des lignes importantes de son script.
-      - score: 1
-        description: Explique le déroulé global mais pas les tubes ou les redirections en détail.
-      - score: 2
-        description: Explique précisément chaque commande, option, tube et redirection.
-      - score: 3
-        description: Explique aussi les choix écartés et ce qu’il a corrigé dans la proposition de l’IA.
-    - id: robustness
-      description: Gère les arguments manquants, les fichiers absents et les codes de sortie.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Le script ne signale pas les erreurs ou renvoie 0 en cas d’échec.
-      - score: 1
-        description: Gère un cas d’erreur sur deux ou écrit l’erreur sur la sortie standard.
-      - score: 2
-        description: Messages sur la sortie d’erreur et code 1 pour les deux cas, code 0 sinon.
-      - score: 3
-        description: Justifie les guillemets autour des variables et prévoit les noms de fichiers avec
-          espaces.
-    - id: modification
-      description: Réalise ou décrit correctement une modification demandée à l’oral.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne parvient pas à modifier le comportement.
-      - score: 1
-        description: Modification partielle ou qui casse un cas existant.
-      - score: 2
-        description: Modification correcte, vérifiée sur boutique.log.
-      - score: 3
-        description: Modification correcte, vérifiée aussi sur un cas limite (journal vide, TOP absent).
+      - id: code-ownership
+        description: Explique chaque ligne de son script sans aide.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas expliquer des lignes importantes de son script.
+          - score: 1
+            description: Explique le déroulé global mais pas les tubes ou les redirections en détail.
+          - score: 2
+            description: Explique précisément chaque commande, option, tube et redirection.
+          - score: 3
+            description: Explique aussi les choix écartés et ce qu’il a corrigé dans la proposition de l’IA.
+      - id: robustness
+        description: Gère les arguments manquants, les fichiers absents et les codes de sortie.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Le script ne signale pas les erreurs ou renvoie 0 en cas d’échec.
+          - score: 1
+            description: Gère un cas d’erreur sur deux ou écrit l’erreur sur la sortie standard.
+          - score: 2
+            description: Messages sur la sortie d’erreur et code 1 pour les deux cas, code 0 sinon.
+          - score: 3
+            description: Justifie les guillemets autour des variables et prévoit les noms de fichiers avec espaces.
+      - id: modification
+        description: Réalise ou décrit correctement une modification demandée à l’oral.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne parvient pas à modifier le comportement.
+          - score: 1
+            description: Modification partielle ou qui casse un cas existant.
+          - score: 2
+            description: Modification correcte, vérifiée sur boutique.log.
+          - score: 3
+            description: Modification correcte, vérifiée aussi sur un cas limite (journal vide, TOP absent).
+
 - id: command-line-contre-ia
   family: CONTRE_IA
   title: Le script d’installation trop confiant
-  summary: Auditer un script bash généré par une IA qui détruit des fichiers, cache des erreurs et annonce
-    un succès imaginaire.
+  summary: Auditer un script bash généré par une IA qui détruit des fichiers, cache des erreurs et annonce un succès imaginaire.
   estimatedMinutes: 60
-  instructions: "Un assistant a proposé ce script pour « préparer le projet boutique en une\ncommande\
-    \ ». Il affirme qu’il est « sûr et réutilisable ». Avant de l’utiliser sur\nle vrai projet, tu l’essaies\
-    \ dans un dossier d’entraînement.\n\nCréation du dossier d’entraînement (copie le bloc dans bash)\
-    \ :\n\n```bash\nmkdir -p ~/atelier-terminal/boutique/src/pages ~/atelier-terminal/boutique/dist ~/atelier-terminal/boutique/node_modules\n\
-    cd ~/atelier-terminal/boutique\necho 'export default { port: 3000 };' > config.example.js\necho 'export\
-    \ default { port: 8080 }; // réglage de production' > config.js\necho '<h1>Accueil</h1>' > src/index.html\n\
-    echo '<h1>Contact</h1>' > src/pages/contact.html\necho 'body { margin: 0; }' > src/.styles-communs.css\n\
-    echo 'ancien journal' > serveur.log\necho 'commandes de mars' > commandes.log\ncat > server.js <<'EOF'\n\
-    const port = process.env.PORT;\nif (!port) {\n  console.error('Erreur : la variable PORT est obligatoire');\n\
-    \  process.exitCode = 1;\n} else {\n  console.log(`Serveur démarré sur le port ${port}`);\n}\nEOF\n\
-    ```\n\nLe script proposé, à enregistrer dans `~/atelier-terminal/boutique/installer.sh` :\n\n```bash\n\
-    #!/usr/bin/env bash\n# Mise en place du projet boutique : nettoyage, build et démarrage.\n\ncd ~/atelier-terminal/boutique\n\
-    rm -rf node_modules dist *.log\n\nmkdir build\ncp src/* build\n\nmv config.example.js config.js\n\
-    echo \"API_KEY=cle-secrete-de-production-1234\" > .env\n\nexport PORT = 3000\nnode server.js > serveur.log\n\
-    \necho \"Installation terminée avec succès\"\n```\n\nTravail demandé :\n\n1. Avant de lancer quoi\
-    \ que ce soit, lis le script et note ce que tu crains.\n2. Lance-le **dans le dossier d’entraînement**\
-    \ avec `bash installer.sh`, puis\n   `echo $?`. Compare l’état du dossier avant et après (`ls -A`,\
-    \ `cat`), et lance-le\n   une **seconde** fois.\n3. Liste chaque défaut : la ligne, ce qui se passe\
-    \ réellement (sortie ou état des\n   fichiers), la cause, et la gravité (perte de données, sécurité,\
-    \ fiabilité).\n4. Explique ce qui se passerait si le dossier `~/atelier-terminal/boutique`\n   n’existait\
-    \ pas, par exemple sur la machine d’un collègue.\n5. Propose une version corrigée du script, puis\
-    \ montre sa sortie et son code de\n   sortie dans le dossier d’entraînement recréé.\n"
-  deliverable: 'Colle tes craintes initiales, la sortie de la première et de la seconde exécution
+  instructions: |
+    Un assistant a proposé ce script pour « préparer le projet boutique en une
+    commande ». Il affirme qu’il est « sûr et réutilisable ». Avant de l’utiliser sur
+    le vrai projet, tu l’essaies dans un dossier d’entraînement.
 
+    Création du dossier d’entraînement (copie le bloc dans bash) :
+
+    ```bash
+    mkdir -p ~/atelier-terminal/boutique/src/pages ~/atelier-terminal/boutique/dist ~/atelier-terminal/boutique/node_modules
+    cd ~/atelier-terminal/boutique
+    echo 'export default { port: 3000 };' > config.example.js
+    echo 'export default { port: 8080 }; // réglage de production' > config.js
+    echo '<h1>Accueil</h1>' > src/index.html
+    echo '<h1>Contact</h1>' > src/pages/contact.html
+    echo 'body { margin: 0; }' > src/.styles-communs.css
+    echo 'ancien journal' > serveur.log
+    echo 'commandes de mars' > commandes.log
+    cat > server.js <<'EOF'
+    const port = process.env.PORT;
+    if (!port) {
+      console.error('Erreur : la variable PORT est obligatoire');
+      process.exitCode = 1;
+    } else {
+      console.log(`Serveur démarré sur le port ${port}`);
+    }
+    EOF
+    ```
+
+    Le script proposé, à enregistrer dans `~/atelier-terminal/boutique/installer.sh` :
+
+    ```bash
+    #!/usr/bin/env bash
+    # Mise en place du projet boutique : nettoyage, build et démarrage.
+
+    cd ~/atelier-terminal/boutique
+    rm -rf node_modules dist *.log
+
+    mkdir build
+    cp src/* build
+
+    mv config.example.js config.js
+    echo "API_KEY=cle-secrete-de-production-1234" > .env
+
+    export PORT = 3000
+    node server.js > serveur.log
+
+    echo "Installation terminée avec succès"
+    ```
+
+    Travail demandé :
+
+    1. Avant de lancer quoi que ce soit, lis le script et note ce que tu crains.
+    2. Lance-le **dans le dossier d’entraînement** avec `bash installer.sh`, puis
+       `echo $?`. Compare l’état du dossier avant et après (`ls -A`, `cat`), et lance-le
+       une **seconde** fois.
+    3. Liste chaque défaut : la ligne, ce qui se passe réellement (sortie ou état des
+       fichiers), la cause, et la gravité (perte de données, sécurité, fiabilité).
+    4. Explique ce qui se passerait si le dossier `~/atelier-terminal/boutique`
+       n’existait pas, par exemple sur la machine d’un collègue.
+    5. Propose une version corrigée du script, puis montre sa sortie et son code de
+       sortie dans le dossier d’entraînement recréé.
+  deliverable: |
+    Colle tes craintes initiales, la sortie de la première et de la seconde exécution
     avec les codes de sortie, la liste des défauts (ligne, constat, cause, gravité), ta
-
     réponse à la question 4, puis le script corrigé et sa sortie.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: defects-found
-      description: Identifie les défauts réels, y compris ceux qui n’apparaissent qu’en seconde exécution
-        ou sur une autre machine.
-      maxScore: 3
-    - id: root-cause
-      description: Explique la cause technique de chaque défaut.
-      maxScore: 3
-    - id: fix-quality
-      description: Propose un script corrigé sûr, vérifié et rejouable.
-      maxScore: 3
+      - id: defects-found
+        description: Identifie les défauts réels, y compris ceux qui n’apparaissent qu’en seconde exécution ou sur une autre machine.
+        maxScore: 3
+      - id: root-cause
+        description: Explique la cause technique de chaque défaut.
+        maxScore: 3
+      - id: fix-quality
+        description: Propose un script corrigé sûr, vérifié et rejouable.
+        maxScore: 3
+
 - id: command-line-apres-ia
   family: APRES_IA
   title: Le rapport météo qui marche chez moi
-  summary: Faire évoluer un petit script bash existant pour qu’il fonctionne depuis n’importe quel dossier,
-    signale ses échecs et garde un historique.
+  summary: Faire évoluer un petit script bash existant pour qu’il fonctionne depuis n’importe quel dossier, signale ses échecs et garde un historique.
   estimatedMinutes: 50
-  instructions: "Une association publie chaque matin la température moyenne relevée par ses\nbénévoles.\
-    \ Une IA a écrit le petit projet ci-dessous ; il « marche » quand on le\nlance depuis son dossier.\
-    \ Tu dois le faire évoluer **en modifiant le moins de lignes\npossible**, sans le régénérer.\n\nCréation\
-    \ du projet (copie le bloc dans bash) :\n\n```bash\nmkdir -p ~/atelier-terminal/meteo/data\ncd ~/atelier-terminal/meteo\n\
-    cat > data/releves.csv <<'EOF'\nville,temperature\nBrest,11.5\nLyon,8\nMarseille,15.5\nLille,7\nEOF\n\
-    ```\n\n`meteo.mjs` (programme Node.js, à ne pas modifier) :\n\n```js\nimport { readFileSync } from\
-    \ 'node:fs';\n\n// Unité d’affichage : C (par défaut) ou F, lue dans l’environnement.\nconst unit\
-    \ = process.env.UNIT ?? 'C';\n\nconst csv = readFileSync('data/releves.csv', 'utf8');\nconst lines\
-    \ = csv.trim().split('\\n').slice(1);\nconst temperatures = lines.map((line) => Number(line.split(',')[1]));\n\
-    const total = temperatures.reduce((sum, value) => sum + value, 0);\nconst average = total / temperatures.length;\n\
-    const shown = unit === 'F' ? (average * 9) / 5 + 32 : average;\n\nconsole.log(`Relevés : ${temperatures.length}`);\n\
-    console.log(`Moyenne : ${shown.toFixed(1)} °${unit}`);\n```\n\n`rapport.sh` (le script à faire évoluer)\
-    \ :\n\n```bash\n#!/usr/bin/env bash\n# Génère le rapport météo du jour. Usage : bash rapport.sh\n\
-    node meteo.mjs > rapport.txt\necho \"Rapport généré\"\ncat rapport.txt\n```\n\nDepuis le dossier du\
-    \ projet, `bash rapport.sh` affiche :\n\n```text\nRapport généré\nRelevés : 4\nMoyenne : 10.5 °C\n\
-    ```\n\nDemandes de l’équipe :\n\n1. **Bug** : la tâche planifiée lance le script depuis le dossier\
-    \ personnel avec\n   `bash ~/atelier-terminal/meteo/rapport.sh`. Le terminal affiche une longue erreur\n\
-    \   Node.js, puis « Rapport généré », et le rapport est vide. Reproduis le bug,\n   explique la cause\
-    \ précise (il y en a plusieurs facettes : le script, le programme\n   Node.js et le fichier de rapport)\
-    \ et corrige le script.\n2. Le script doit **signaler un échec** : si `node` échoue, ne pas afficher\n\
-    \   « Rapport généré » et se terminer avec un code non nul. Vérifie en renommant\n   temporairement\
-    \ `data/releves.csv`.\n3. Chaque exécution doit **ajouter** à `historique.log` (dans le dossier du\
-    \ projet) la\n   date, le rapport et les éventuels messages d’erreur, sans jamais effacer\n   l’historique\
-    \ précédent.\n4. L’équipe veut parfois le rapport en Fahrenheit. Montre que\n   `UNIT=F bash rapport.sh`\
-    \ fonctionne sans modifier le script, et explique pourquoi.\n   Explique aussi pourquoi `UNIT=F` tapé\
-    \ seul sur une ligne, suivi de\n   `bash rapport.sh`, ne suffit pas.\n"
-  deliverable: 'Colle le script final, la liste des lignes ajoutées ou modifiées avec la raison de
+  instructions: |
+    Une association publie chaque matin la température moyenne relevée par ses
+    bénévoles. Une IA a écrit le petit projet ci-dessous ; il « marche » quand on le
+    lance depuis son dossier. Tu dois le faire évoluer **en modifiant le moins de lignes
+    possible**, sans le régénérer.
 
+    Création du projet (copie le bloc dans bash) :
+
+    ```bash
+    mkdir -p ~/atelier-terminal/meteo/data
+    cd ~/atelier-terminal/meteo
+    cat > data/releves.csv <<'EOF'
+    ville,temperature
+    Brest,11.5
+    Lyon,8
+    Marseille,15.5
+    Lille,7
+    EOF
+    ```
+
+    `meteo.mjs` (programme Node.js, à ne pas modifier) :
+
+    ```js
+    import { readFileSync } from 'node:fs';
+
+    // Unité d’affichage : C (par défaut) ou F, lue dans l’environnement.
+    const unit = process.env.UNIT ?? 'C';
+
+    const csv = readFileSync('data/releves.csv', 'utf8');
+    const lines = csv.trim().split('\n').slice(1);
+    const temperatures = lines.map((line) => Number(line.split(',')[1]));
+    const total = temperatures.reduce((sum, value) => sum + value, 0);
+    const average = total / temperatures.length;
+    const shown = unit === 'F' ? (average * 9) / 5 + 32 : average;
+
+    console.log(`Relevés : ${temperatures.length}`);
+    console.log(`Moyenne : ${shown.toFixed(1)} °${unit}`);
+    ```
+
+    `rapport.sh` (le script à faire évoluer) :
+
+    ```bash
+    #!/usr/bin/env bash
+    # Génère le rapport météo du jour. Usage : bash rapport.sh
+    node meteo.mjs > rapport.txt
+    echo "Rapport généré"
+    cat rapport.txt
+    ```
+
+    Depuis le dossier du projet, `bash rapport.sh` affiche :
+
+    ```text
+    Rapport généré
+    Relevés : 4
+    Moyenne : 10.5 °C
+    ```
+
+    Demandes de l’équipe :
+
+    1. **Bug** : la tâche planifiée lance le script depuis le dossier personnel avec
+       `bash ~/atelier-terminal/meteo/rapport.sh`. Le terminal affiche une longue erreur
+       Node.js, puis « Rapport généré », et le rapport est vide. Reproduis le bug,
+       explique la cause précise (il y en a plusieurs facettes : le script, le programme
+       Node.js et le fichier de rapport) et corrige le script.
+    2. Le script doit **signaler un échec** : si `node` échoue, ne pas afficher
+       « Rapport généré » et se terminer avec un code non nul. Vérifie en renommant
+       temporairement `data/releves.csv`.
+    3. Chaque exécution doit **ajouter** à `historique.log` (dans le dossier du projet) la
+       date, le rapport et les éventuels messages d’erreur, sans jamais effacer
+       l’historique précédent.
+    4. L’équipe veut parfois le rapport en Fahrenheit. Montre que
+       `UNIT=F bash rapport.sh` fonctionne sans modifier le script, et explique pourquoi.
+       Explique aussi pourquoi `UNIT=F` tapé seul sur une ligne, suivi de
+       `bash rapport.sh`, ne suffit pas.
+  deliverable: |
+    Colle le script final, la liste des lignes ajoutées ou modifiées avec la raison de
     chaque changement, puis la sortie et le code de sortie (`echo $?`) de : l’exécution
-
     depuis le dossier personnel, l’exécution avec `data/releves.csv` renommé, et
-
     `UNIT=F bash ~/atelier-terminal/meteo/rapport.sh`. Ajoute le contenu de
-
     `historique.log` après ces exécutions.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: working-directory
-      description: Explique le rôle du répertoire courant et des chemins relatifs dans le bug, et le corrige.
-      maxScore: 3
-    - id: exit-codes-and-streams
-      description: Fait échouer proprement le script et conserve sortie et erreurs dans l’historique.
-      maxScore: 3
-    - id: environment
-      description: Explique la transmission des variables d’environnement au script puis à Node.js.
-      maxScore: 2
-    - id: minimal-change
-      description: Fait évoluer le script de façon ciblée et vérifiée.
-      maxScore: 2
+      - id: working-directory
+        description: Explique le rôle du répertoire courant et des chemins relatifs dans le bug, et le corrige.
+        maxScore: 3
+      - id: exit-codes-and-streams
+        description: Fait échouer proprement le script et conserve sortie et erreurs dans l’historique.
+        maxScore: 3
+      - id: environment
+        description: Explique la transmission des variables d’environnement au script puis à Node.js.
+        maxScore: 2
+      - id: minimal-change
+        description: Fait évoluer le script de façon ciblée et vérifiée.
+        maxScore: 2

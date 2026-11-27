@@ -1,256 +1,374 @@
 - id: js-async-sans-ia
   family: SANS_IA
   title: L’ordre d’exécution et le rapport de livres
-  summary: Prédire l’ordre d’un programme asynchrone, puis écrire un petit client fetch robuste avec async,
-    await et Promise.allSettled.
+  summary: Prédire l’ordre d’un programme asynchrone, puis écrire un petit client fetch robuste avec async, await et Promise.allSettled.
   estimatedMinutes: 60
-  instructions: "Ce défi comporte deux parties, à faire sans aide.\n\n**Partie 1 — Prédire.** Sans exécuter\
-    \ ce code, écris l’ordre exact des nombres affichés\net justifie chaque position en parlant de pile\
-    \ d’appels, de microtâches et de tâches.\nExécute-le ensuite avec Node.js pour vérifier.\n\n```js\n\
-    console.log('1');\nsetTimeout(() => console.log('2'), 0);\n\nasync function run() {\n  console.log('3');\n\
-    \  await null;\n  console.log('4');\n}\n\nrun();\nPromise.resolve().then(() => console.log('5'));\n\
-    queueMicrotask(() => console.log('6'));\nconsole.log('7');\n```\n\n**Partie 2 — Écrire.** Lance le\
-    \ `server.js` de la leçon « Appeler une API avec fetch »\n(`node server.js`, port 3000). Écris un\
-    \ script `report.js`, exécuté avec\n`node report.js`, qui :\n\n1. définit `getJson(path)` : elle appelle\
-    \ `http://localhost:3000` + `path` avec un délai\n   maximal de 2 secondes, lève une erreur qui porte\
-    \ le statut si la réponse n’est pas\n   `ok`, et renvoie les données JSON sinon ;\n2. récupère **en\
-    \ parallèle** les livres 1, 3 et 42, et affiche une ligne par livre, dans\n   cet ordre : `#1 : Dune`,\
-    \ ou `#42 : introuvable` pour un 404, ou\n   `#N : erreur (message)` pour un autre échec. Un échec\
-    \ ne doit pas empêcher\n   d’afficher les autres ;\n3. affiche ensuite le nombre de livres dont le\
-    \ titre ou l’auteur contient `le guin`\n   (route `GET /api/books?q=…`, adresse construite avec `URL`\
-    \ et `searchParams`) ;\n4. termine par une ligne `Bilan : N réussite(s), M échec(s)` et, s’il y a\
-    \ au moins un\n   échec, fixe `process.exitCode = 1`.\n\nContraintes : `async`/`await` (pas de chaîne\
-    \ de `then`), aucun `forEach` avec une\nfonction `async`, aucune exception non gérée. Vérifie aussi\
-    \ ce qui se passe quand le\nserveur est arrêté.\n"
-  deliverable: 'Colle ta réponse à la partie 1 (ordre et justification), puis le code complet de
+  instructions: |
+    Ce défi comporte deux parties, à faire sans aide.
 
+    **Partie 1 — Prédire.** Sans exécuter ce code, écris l’ordre exact des nombres affichés
+    et justifie chaque position en parlant de pile d’appels, de microtâches et de tâches.
+    Exécute-le ensuite avec Node.js pour vérifier.
+
+    ```js
+    console.log('1');
+    setTimeout(() => console.log('2'), 0);
+
+    async function run() {
+      console.log('3');
+      await null;
+      console.log('4');
+    }
+
+    run();
+    Promise.resolve().then(() => console.log('5'));
+    queueMicrotask(() => console.log('6'));
+    console.log('7');
+    ```
+
+    **Partie 2 — Écrire.** Lance le `server.js` de la leçon « Appeler une API avec fetch »
+    (`node server.js`, port 3000). Écris un script `report.js`, exécuté avec
+    `node report.js`, qui :
+
+    1. définit `getJson(path)` : elle appelle `http://localhost:3000` + `path` avec un délai
+       maximal de 2 secondes, lève une erreur qui porte le statut si la réponse n’est pas
+       `ok`, et renvoie les données JSON sinon ;
+    2. récupère **en parallèle** les livres 1, 3 et 42, et affiche une ligne par livre, dans
+       cet ordre : `#1 : Dune`, ou `#42 : introuvable` pour un 404, ou
+       `#N : erreur (message)` pour un autre échec. Un échec ne doit pas empêcher
+       d’afficher les autres ;
+    3. affiche ensuite le nombre de livres dont le titre ou l’auteur contient `le guin`
+       (route `GET /api/books?q=…`, adresse construite avec `URL` et `searchParams`) ;
+    4. termine par une ligne `Bilan : N réussite(s), M échec(s)` et, s’il y a au moins un
+       échec, fixe `process.exitCode = 1`.
+
+    Contraintes : `async`/`await` (pas de chaîne de `then`), aucun `forEach` avec une
+    fonction `async`, aucune exception non gérée. Vérifie aussi ce qui se passe quand le
+    serveur est arrêté.
+  deliverable: |
+    Colle ta réponse à la partie 1 (ordre et justification), puis le code complet de
     `report.js`, sa sortie serveur lancé, et sa sortie serveur arrêté.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: event-loop
-      description: Prédit et explique l’ordre d’exécution avec la pile, les microtâches et les tâches.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ordre faux et explication absente ou fausse.
-      - score: 1
-        description: Ordre partiellement juste, ou juste sans pouvoir l’expliquer.
-      - score: 2
-        description: Ordre juste, explique microtâches et tâches, et le comportement synchrone de run
-          jusqu’au await.
-      - score: 3
-        description: Prédit aussi correctement l’effet d’une modification proposée à l’oral.
-    - id: fetch-handling
-      description: Utilise fetch correctement et distingue erreurs HTTP, erreurs réseau et délai dépassé.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne teste pas le statut ou ne sait pas pourquoi un 404 ne rejette pas.
-      - score: 1
-        description: Teste le statut mais ne gère pas le serveur arrêté ou le délai.
-      - score: 2
-        description: Gère les trois cas avec des messages lisibles et explique quand fetch rejette.
-      - score: 3
-        description: Explique aussi l’annulation par signal et la construction sûre de l’adresse.
-    - id: concurrency
-      description: Choisit et justifie l’exécution en parallèle et la combinaison des promesses.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Requêtes en séquence sans le savoir, ou forEach avec async.
-      - score: 1
-        description: Parallèle correct mais choix entre all et allSettled non justifié.
-      - score: 2
-        description: Justifie allSettled, l’ordre des résultats et la durée totale observée.
-    - id: error-propagation
-      description: Ne laisse aucune promesse rompue sans gestion et signale l’échec au shell.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Le script plante avec un rejet non géré quand le serveur est arrêté.
-      - score: 1
-        description: Pas de plantage, mais erreurs avalées ou code de sortie oublié.
-      - score: 2
-        description: Erreurs gérées au bon niveau, messages clairs et code de sortie 1 en cas d’échec.
+      - id: event-loop
+        description: Prédit et explique l’ordre d’exécution avec la pile, les microtâches et les tâches.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ordre faux et explication absente ou fausse.
+          - score: 1
+            description: Ordre partiellement juste, ou juste sans pouvoir l’expliquer.
+          - score: 2
+            description: Ordre juste, explique microtâches et tâches, et le comportement synchrone de run jusqu’au await.
+          - score: 3
+            description: Prédit aussi correctement l’effet d’une modification proposée à l’oral.
+      - id: fetch-handling
+        description: Utilise fetch correctement et distingue erreurs HTTP, erreurs réseau et délai dépassé.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne teste pas le statut ou ne sait pas pourquoi un 404 ne rejette pas.
+          - score: 1
+            description: Teste le statut mais ne gère pas le serveur arrêté ou le délai.
+          - score: 2
+            description: Gère les trois cas avec des messages lisibles et explique quand fetch rejette.
+          - score: 3
+            description: Explique aussi l’annulation par signal et la construction sûre de l’adresse.
+      - id: concurrency
+        description: Choisit et justifie l’exécution en parallèle et la combinaison des promesses.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Requêtes en séquence sans le savoir, ou forEach avec async.
+          - score: 1
+            description: Parallèle correct mais choix entre all et allSettled non justifié.
+          - score: 2
+            description: Justifie allSettled, l’ordre des résultats et la durée totale observée.
+      - id: error-propagation
+        description: Ne laisse aucune promesse rompue sans gestion et signale l’échec au shell.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Le script plante avec un rejet non géré quand le serveur est arrêté.
+          - score: 1
+            description: Pas de plantage, mais erreurs avalées ou code de sortie oublié.
+          - score: 2
+            description: Erreurs gérées au bon niveau, messages clairs et code de sortie 1 en cas d’échec.
+
 - id: js-async-avec-ia
   family: AVEC_IA
   title: Le vérificateur de liens
-  summary: Construire avec une IA un script qui vérifie une liste d’adresses avec fetch, un délai maximal
-    et une limite de requêtes simultanées, puis le défendre.
+  summary: Construire avec une IA un script qui vérifie une liste d’adresses avec fetch, un délai maximal et une limite de requêtes simultanées, puis le défendre.
   estimatedMinutes: 120
-  instructions: "Tu peux utiliser une IA autant que tu le souhaites. À l’oral, tu devras expliquer chaque\n\
-    ligne sans aide, prévoir la durée d’exécution et modifier ton script.\n\nUne équipe veut vérifier\
-    \ régulièrement que les adresses de son site répondent. Écris un\nscript Node.js `check-links.js`,\
-    \ lancé avec `node check-links.js`, qui teste les\nadresses suivantes. Pour t’entraîner sans internet,\
-    \ lance le `server.js` de la leçon\n« Appeler une API avec fetch » (port 3000) ; rien n’écoute sur\
-    \ le port 3999.\n\n```js\nconst urls = [\n  'http://localhost:3000/api/books/1',\n  'http://localhost:3000/api/books/42',\n\
-    \  'http://localhost:3000/api/broken',\n  'http://localhost:3000/api/slow',\n  'http://localhost:3999/',\n\
-    \  'http://localhost:3000/api/books?q=dune',\n];\n```\n\nExigences :\n\n1. Chaque adresse est testée\
-    \ avec `fetch` et un délai maximal de 2 secondes.\n2. Chaque résultat est classé : `OK (statut)` pour\
-    \ un statut 2xx, `erreur HTTP statut`,\n   `délai dépassé` ou `injoignable`.\n3. Les adresses sont\
-    \ testées en parallèle, mais **jamais plus de 2 requêtes en même\n   temps** (une limite fixée par\
-    \ une constante).\n4. Le rapport affiche une ligne par adresse **dans l’ordre de la liste**, puis\
-    \ le nombre\n   d’adresses valides sur le total et la durée totale arrondie à 100 ms.\n5. Le script\
-    \ se termine avec `process.exitCode = 1` si au moins une adresse est en\n   échec, et ne plante jamais,\
-    \ même si toutes échouent.\n6. Code lisible : petites fonctions `async`, pas de chaîne de `then`,\
-    \ pas de\n   `forEach` avec `async`.\n\nConseil : demande à l’IA plusieurs façons de limiter le nombre\
-    \ de requêtes simultanées,\nchoisis celle que tu comprends le mieux, et trace-la à la main sur les\
-    \ six adresses\navant de l’exécuter.\n"
-  deliverable: 'Colle le code complet, la sortie obtenue avec une limite de 2, puis avec une limite de
+  instructions: |
+    Tu peux utiliser une IA autant que tu le souhaites. À l’oral, tu devras expliquer chaque
+    ligne sans aide, prévoir la durée d’exécution et modifier ton script.
 
+    Une équipe veut vérifier régulièrement que les adresses de son site répondent. Écris un
+    script Node.js `check-links.js`, lancé avec `node check-links.js`, qui teste les
+    adresses suivantes. Pour t’entraîner sans internet, lance le `server.js` de la leçon
+    « Appeler une API avec fetch » (port 3000) ; rien n’écoute sur le port 3999.
+
+    ```js
+    const urls = [
+      'http://localhost:3000/api/books/1',
+      'http://localhost:3000/api/books/42',
+      'http://localhost:3000/api/broken',
+      'http://localhost:3000/api/slow',
+      'http://localhost:3999/',
+      'http://localhost:3000/api/books?q=dune',
+    ];
+    ```
+
+    Exigences :
+
+    1. Chaque adresse est testée avec `fetch` et un délai maximal de 2 secondes.
+    2. Chaque résultat est classé : `OK (statut)` pour un statut 2xx, `erreur HTTP statut`,
+       `délai dépassé` ou `injoignable`.
+    3. Les adresses sont testées en parallèle, mais **jamais plus de 2 requêtes en même
+       temps** (une limite fixée par une constante).
+    4. Le rapport affiche une ligne par adresse **dans l’ordre de la liste**, puis le nombre
+       d’adresses valides sur le total et la durée totale arrondie à 100 ms.
+    5. Le script se termine avec `process.exitCode = 1` si au moins une adresse est en
+       échec, et ne plante jamais, même si toutes échouent.
+    6. Code lisible : petites fonctions `async`, pas de chaîne de `then`, pas de
+       `forEach` avec `async`.
+
+    Conseil : demande à l’IA plusieurs façons de limiter le nombre de requêtes simultanées,
+    choisis celle que tu comprends le mieux, et trace-la à la main sur les six adresses
+    avant de l’exécuter.
+  deliverable: |
+    Colle le code complet, la sortie obtenue avec une limite de 2, puis avec une limite de
     1 et de 6, et quelques lignes sur ce que l’IA t’a apporté, ce que tu as corrigé et
-
     comment tu expliques les durées observées.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: code-ownership
-      description: Explique chaque partie de son code, en particulier la limite de simultanéité.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas expliquer des parties importantes de son propre code.
-      - score: 1
-        description: Explique le déroulé global mais pas le mécanisme de limitation.
-      - score: 2
-        description: Trace la limitation à la main et explique l’ordre des résultats.
-      - score: 3
-        description: Compare aussi plusieurs approches proposées par l’IA et justifie son choix.
-    - id: async-model
-      description: Raisonne sur la boucle d’événements et les durées observées.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas expliquer pourquoi les requêtes sont simultanées ou non.
-      - score: 1
-        description: Explique le parallélisme sans pouvoir prévoir une durée.
-      - score: 2
-        description: Prévoit correctement les durées avec des limites de 1, 2 et 6.
-      - score: 3
-        description: Explique aussi pourquoi l’index partagé est sûr en JavaScript.
-    - id: error-handling
-      description: Classe correctement chaque issue et ne laisse aucune erreur non gérée.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: 404 ou 500 classés comme OK, ou plantage sur une adresse injoignable.
-      - score: 1
-        description: Classement correct mais délai dépassé confondu avec injoignable.
-      - score: 2
-        description: Quatre catégories distinguées par statut et nom d’erreur, code de sortie correct.
-    - id: modification
-      description: Réalise ou décrit correctement une modification demandée pendant l’oral.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne parvient pas à modifier le comportement.
-      - score: 1
-        description: Modification partielle ou qui casse la limite ou l’ordre.
-      - score: 2
-        description: Modification correcte et vérifiée.
-      - score: 3
-        description: Modification correcte, vérifiée, avec un cas limite traité.
+      - id: code-ownership
+        description: Explique chaque partie de son code, en particulier la limite de simultanéité.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas expliquer des parties importantes de son propre code.
+          - score: 1
+            description: Explique le déroulé global mais pas le mécanisme de limitation.
+          - score: 2
+            description: Trace la limitation à la main et explique l’ordre des résultats.
+          - score: 3
+            description: Compare aussi plusieurs approches proposées par l’IA et justifie son choix.
+      - id: async-model
+        description: Raisonne sur la boucle d’événements et les durées observées.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas expliquer pourquoi les requêtes sont simultanées ou non.
+          - score: 1
+            description: Explique le parallélisme sans pouvoir prévoir une durée.
+          - score: 2
+            description: Prévoit correctement les durées avec des limites de 1, 2 et 6.
+          - score: 3
+            description: Explique aussi pourquoi l’index partagé est sûr en JavaScript.
+      - id: error-handling
+        description: Classe correctement chaque issue et ne laisse aucune erreur non gérée.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: 404 ou 500 classés comme OK, ou plantage sur une adresse injoignable.
+          - score: 1
+            description: Classement correct mais délai dépassé confondu avec injoignable.
+          - score: 2
+            description: Quatre catégories distinguées par statut et nom d’erreur, code de sortie correct.
+      - id: modification
+        description: Réalise ou décrit correctement une modification demandée pendant l’oral.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne parvient pas à modifier le comportement.
+          - score: 1
+            description: Modification partielle ou qui casse la limite ou l’ordre.
+          - score: 2
+            description: Modification correcte et vérifiée.
+          - score: 3
+            description: Modification correcte, vérifiée, avec un cas limite traité.
+
 - id: js-async-contre-ia
   family: CONTRE_IA
   title: La recherche qui affiche n’importe quoi
-  summary: Trouver et corriger les erreurs asynchrones, de sécurité et d’état d’une page de recherche
-    générée.
+  summary: Trouver et corriger les erreurs asynchrones, de sécurité et d’état d’une page de recherche générée.
   estimatedMinutes: 75
-  instructions: "Un assistant a généré cette page de recherche de livres. Elle utilise le `server.js`\
-    \ de\nla leçon « Appeler une API avec fetch » : place les fichiers dans `public/ci/` et ouvre\n`http://localhost:3000/ci/`.\n\
-    \nComportement attendu : la ligne des favoris affiche les titres des livres favoris\nexistants ; la\
-    \ recherche se fait pendant la frappe et affiche toujours les résultats\ndu texte **actuellement**\
-    \ saisi ; l’utilisateur sait quand une recherche est en cours,\nquand elle n’a rien trouvé et quand\
-    \ elle a échoué.\n\n`public/ci/index.html` :\n\n```html\n<!doctype html>\n<html lang=\"fr\">\n  <head>\n\
-    \    <meta charset=\"utf-8\" />\n    <title>Recherche de livres</title>\n    <script type=\"module\"\
-    \ src=\"search.js\"></script>\n  </head>\n  <body>\n    <h1>Recherche de livres</h1>\n    <p id=\"\
-    favorites\"></p>\n    <label for=\"search\">Rechercher</label>\n    <input id=\"search\" type=\"search\"\
-    \ />\n    <p id=\"status\"></p>\n    <ul id=\"results\"></ul>\n  </body>\n</html>\n```\n\n`public/ci/search.js`\
-    \ :\n\n```js\n// search.js — recherche de livres et favoris\n\nconst input = document.querySelector('#search');\n\
-    const list = document.querySelector('#results');\nconst status = document.querySelector('#status');\n\
-    const favoritesBox = document.querySelector('#favorites');\n\nconst favoriteIds = [1, 3, 42];\n\n\
-    async function searchBooks(query) {\n  status.textContent = 'Chargement…';\n  try {\n    const response\
-    \ = await fetch(`/api/books?q=${query}`);\n    const books = await response.json();\n    list.innerHTML\
-    \ = books.map((book) => `<li>${book.title} — ${book.author}</li>`).join('');\n    status.textContent\
-    \ = `${books.length} résultat(s)`;\n  } catch (error) {\n    console.error(error);\n  }\n}\n\nasync\
-    \ function loadFavorites() {\n  const favorites = [];\n  favoriteIds.forEach(async (id) => {\n   \
-    \ const response = await fetch(`/api/books/${id}`);\n    const book = await response.json();\n   \
-    \ favorites.push(book.title);\n  });\n  favoritesBox.textContent = `Favoris : ${favorites.join(',\
-    \ ')}`;\n}\n\ninput.addEventListener('input', () => {\n  searchBooks(input.value);\n});\n\nloadFavorites();\n\
-    searchBooks('');\n```\n\nTravail demandé :\n\n1. Teste la page et décris ce que tu observes : ligne\
-    \ des favoris, frappe rapide de\n   `du`, recherche de `dépossédés & co`.\n2. Pour tester les erreurs,\
-    \ arrête le serveur pendant une recherche, ou ajoute\n   temporairement au serveur un livre dont le\
-    \ titre est\n   `<img src=x onerror=\"alert(1)\">` avec une requête `POST`.\n3. Liste chaque défaut\
-    \ : symptôme, cause, gravité, correction.\n4. Livre une version corrigée complète et décris comment\
-    \ tu l’as vérifiée.\n"
-  deliverable: 'Colle ta liste de défauts, les fichiers corrigés complets, et la description de tes
+  instructions: |
+    Un assistant a généré cette page de recherche de livres. Elle utilise le `server.js` de
+    la leçon « Appeler une API avec fetch » : place les fichiers dans `public/ci/` et ouvre
+    `http://localhost:3000/ci/`.
 
+    Comportement attendu : la ligne des favoris affiche les titres des livres favoris
+    existants ; la recherche se fait pendant la frappe et affiche toujours les résultats
+    du texte **actuellement** saisi ; l’utilisateur sait quand une recherche est en cours,
+    quand elle n’a rien trouvé et quand elle a échoué.
+
+    `public/ci/index.html` :
+
+    ```html
+    <!doctype html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8" />
+        <title>Recherche de livres</title>
+        <script type="module" src="search.js"></script>
+      </head>
+      <body>
+        <h1>Recherche de livres</h1>
+        <p id="favorites"></p>
+        <label for="search">Rechercher</label>
+        <input id="search" type="search" />
+        <p id="status"></p>
+        <ul id="results"></ul>
+      </body>
+    </html>
+    ```
+
+    `public/ci/search.js` :
+
+    ```js
+    // search.js — recherche de livres et favoris
+
+    const input = document.querySelector('#search');
+    const list = document.querySelector('#results');
+    const status = document.querySelector('#status');
+    const favoritesBox = document.querySelector('#favorites');
+
+    const favoriteIds = [1, 3, 42];
+
+    async function searchBooks(query) {
+      status.textContent = 'Chargement…';
+      try {
+        const response = await fetch(`/api/books?q=${query}`);
+        const books = await response.json();
+        list.innerHTML = books.map((book) => `<li>${book.title} — ${book.author}</li>`).join('');
+        status.textContent = `${books.length} résultat(s)`;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    async function loadFavorites() {
+      const favorites = [];
+      favoriteIds.forEach(async (id) => {
+        const response = await fetch(`/api/books/${id}`);
+        const book = await response.json();
+        favorites.push(book.title);
+      });
+      favoritesBox.textContent = `Favoris : ${favorites.join(', ')}`;
+    }
+
+    input.addEventListener('input', () => {
+      searchBooks(input.value);
+    });
+
+    loadFavorites();
+    searchBooks('');
+    ```
+
+    Travail demandé :
+
+    1. Teste la page et décris ce que tu observes : ligne des favoris, frappe rapide de
+       `du`, recherche de `dépossédés & co`.
+    2. Pour tester les erreurs, arrête le serveur pendant une recherche, ou ajoute
+       temporairement au serveur un livre dont le titre est
+       `<img src=x onerror="alert(1)">` avec une requête `POST`.
+    3. Liste chaque défaut : symptôme, cause, gravité, correction.
+    4. Livre une version corrigée complète et décris comment tu l’as vérifiée.
+  deliverable: |
+    Colle ta liste de défauts, les fichiers corrigés complets, et la description de tes
     vérifications (avec les entrées utilisées).
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: defects-found
-      description: Identifie les défauts réels, y compris ceux qui dépendent du timing ou des données.
-      maxScore: 3
-    - id: root-cause
-      description: Explique la cause technique de chaque défaut, en particulier ceux liés à l’asynchrone.
-      maxScore: 3
-    - id: fix-quality
-      description: Livre une version corrigée fiable, sûre et vérifiée.
-      maxScore: 3
+      - id: defects-found
+        description: Identifie les défauts réels, y compris ceux qui dépendent du timing ou des données.
+        maxScore: 3
+      - id: root-cause
+        description: Explique la cause technique de chaque défaut, en particulier ceux liés à l’asynchrone.
+        maxScore: 3
+      - id: fix-quality
+        description: Livre une version corrigée fiable, sûre et vérifiée.
+        maxScore: 3
+
 - id: js-async-apres-ia
   family: APRES_IA
   title: Le client en ligne de commande
-  summary: Fiabiliser et faire évoluer un petit client fetch écrit avec des chaînes de then, sans le réécrire
-    entièrement.
+  summary: Fiabiliser et faire évoluer un petit client fetch écrit avec des chaînes de then, sans le réécrire entièrement.
   estimatedMinutes: 60
-  instructions: "Ce petit client en ligne de commande interroge l’API de livres du cours (lance le\n`server.js`\
-    \ de la leçon « Appeler une API avec fetch »). Il est utilisé par une\ncollègue au quotidien. Tu dois\
-    \ corriger deux bugs et ajouter deux fonctionnalités **en\nmodifiant le moins de lignes possible**.\n\
-    \n```js\n// books-cli.js — petit client en ligne de commande pour l’API de livres\n// Utilisation\
-    \ : node books-cli.js 3\n//               node books-cli.js --search guin\nconst BASE_URL = process.env.API_URL\
-    \ ?? 'http://localhost:3000';\n\nfunction getBook(id) {\n  return fetch(`${BASE_URL}/api/books/${id}`).then((response)\
-    \ => response.json());\n}\n\nfunction searchBooks(query) {\n  return fetch(`${BASE_URL}/api/books?q=${encodeURIComponent(query)}`).then((response)\
-    \ =>\n    response.json(),\n  );\n}\n\nfunction formatBook(book) {\n  return `#${book.id} ${book.title}\
-    \ — ${book.author}`;\n}\n\nconst [, , first, second] = process.argv;\n\nif (first === '--search')\
-    \ {\n  searchBooks(second ?? '').then((books) => {\n    console.log(`${books.length} livre(s) trouvé(s)`);\n\
-    \    books.forEach((book) => console.log(formatBook(book)));\n  });\n} else {\n  getBook(first).then((book)\
-    \ => {\n    console.log(formatBook(book));\n  });\n}\n```\n\nDemandes :\n\n1. **Bug** : « `node books-cli.js\
-    \ 42` affiche `#undefined undefined — undefined`. » Il\n   doit afficher un message clair et terminer\
-    \ avec le code de sortie 1.\n2. **Bug** : « Quand le serveur est arrêté, j’obtiens un long message\
-    \ incompréhensible. »\n   Teste avec `API_URL=http://localhost:3999 node books-cli.js 3`. Le message\
-    \ doit être\n   clair, sans trace de pile, avec le code de sortie 1, pour les deux commandes.\n3.\
-    \ Afficher plusieurs livres : `node books-cli.js 1 3 42` récupère les livres **en\n   parallèle**,\
-    \ les affiche dans l’ordre demandé, et un livre introuvable n’empêche pas\n   d’afficher les autres.\n\
-    4. Toutes les requêtes ont un délai maximal de 3 secondes. Pour le vérifier, fais\n   appeler temporairement\
-    \ la route `/api/slow` (réponse en 5 secondes).\n\nTu peux passer certaines fonctions à `async`/`await`\
-    \ si cela simplifie ta modification,\nmais justifie chaque changement.\n"
-  deliverable: 'Colle le script modifié, les sorties de `node books-cli.js 1 3 42`,
+  instructions: |
+    Ce petit client en ligne de commande interroge l’API de livres du cours (lance le
+    `server.js` de la leçon « Appeler une API avec fetch »). Il est utilisé par une
+    collègue au quotidien. Tu dois corriger deux bugs et ajouter deux fonctionnalités **en
+    modifiant le moins de lignes possible**.
 
+    ```js
+    // books-cli.js — petit client en ligne de commande pour l’API de livres
+    // Utilisation : node books-cli.js 3
+    //               node books-cli.js --search guin
+    const BASE_URL = process.env.API_URL ?? 'http://localhost:3000';
+
+    function getBook(id) {
+      return fetch(`${BASE_URL}/api/books/${id}`).then((response) => response.json());
+    }
+
+    function searchBooks(query) {
+      return fetch(`${BASE_URL}/api/books?q=${encodeURIComponent(query)}`).then((response) =>
+        response.json(),
+      );
+    }
+
+    function formatBook(book) {
+      return `#${book.id} ${book.title} — ${book.author}`;
+    }
+
+    const [, , first, second] = process.argv;
+
+    if (first === '--search') {
+      searchBooks(second ?? '').then((books) => {
+        console.log(`${books.length} livre(s) trouvé(s)`);
+        books.forEach((book) => console.log(formatBook(book)));
+      });
+    } else {
+      getBook(first).then((book) => {
+        console.log(formatBook(book));
+      });
+    }
+    ```
+
+    Demandes :
+
+    1. **Bug** : « `node books-cli.js 42` affiche `#undefined undefined — undefined`. » Il
+       doit afficher un message clair et terminer avec le code de sortie 1.
+    2. **Bug** : « Quand le serveur est arrêté, j’obtiens un long message incompréhensible. »
+       Teste avec `API_URL=http://localhost:3999 node books-cli.js 3`. Le message doit être
+       clair, sans trace de pile, avec le code de sortie 1, pour les deux commandes.
+    3. Afficher plusieurs livres : `node books-cli.js 1 3 42` récupère les livres **en
+       parallèle**, les affiche dans l’ordre demandé, et un livre introuvable n’empêche pas
+       d’afficher les autres.
+    4. Toutes les requêtes ont un délai maximal de 3 secondes. Pour le vérifier, fais
+       appeler temporairement la route `/api/slow` (réponse en 5 secondes).
+
+    Tu peux passer certaines fonctions à `async`/`await` si cela simplifie ta modification,
+    mais justifie chaque changement.
+  deliverable: |
+    Colle le script modifié, les sorties de `node books-cli.js 1 3 42`,
     `node books-cli.js --search guin`, et de la commande avec le serveur arrêté (avec les
-
     codes de sortie, par exemple avec `echo $?`), puis la liste des lignes modifiées et la
-
     raison de chaque changement.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: bug-diagnosis
-      description: Explique la cause des deux bugs (fetch et les statuts HTTP, rejet non géré) et les
-        corrige proprement.
-      maxScore: 3
-    - id: features
-      description: Implémente l’affichage multiple en parallèle et le délai maximal de façon robuste.
-      maxScore: 3
-    - id: minimal-change
-      description: Fait évoluer le script de façon ciblée et justifiée.
-      maxScore: 2
+      - id: bug-diagnosis
+        description: Explique la cause des deux bugs (fetch et les statuts HTTP, rejet non géré) et les corrige proprement.
+        maxScore: 3
+      - id: features
+        description: Implémente l’affichage multiple en parallèle et le délai maximal de façon robuste.
+        maxScore: 3
+      - id: minimal-change
+        description: Fait évoluer le script de façon ciblée et justifiée.
+        maxScore: 2

@@ -1,322 +1,541 @@
 - id: web-security-sans-ia
   family: SANS_IA
   title: La recherche de la médiathèque
-  summary: Écrire une page de recherche rendue côté serveur, à l’abri de l’injection SQL et du XSS, et
-    justifier ses choix.
+  summary: Écrire une page de recherche rendue côté serveur, à l’abri de l’injection SQL et du XSS, et justifier ses choix.
   estimatedMinutes: 60
-  instructions: "La médiathèque municipale veut une page de recherche minimale, rendue par le serveur\n\
-    (pas de JavaScript dans le navigateur). Tu travailles seul, sans IA, avec Node.js 24,\nExpress 5,\
-    \ PostgreSQL et le client `pg`.\n\nTable à créer dans une base de test :\n\n```sql\nCREATE TABLE books\
-    \ (\n  id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n  title text NOT NULL,\n  author text\
-    \ NOT NULL,\n  is_available boolean NOT NULL DEFAULT true\n);\nINSERT INTO books (title, author, is_available)\
-    \ VALUES\n  ('L’Étranger', 'Albert Camus', true),\n  ('Les Misérables', 'Victor Hugo', false),\n \
-    \ ('100 % JavaScript', 'Jeanne O''Connor', true);\n```\n\nTravail demandé :\n\n1. **Modèle de menace\
-    \ (cinq à huit lignes).** Pour la route `GET /search?q=…`, liste les\n   entrées non fiables, puis\
-    \ au moins deux menaces, chacune avec sa catégorie du Top 10\n   de l’OWASP 2025 et la parade que\
-    \ tu mets en place.\n2. **La route.** `GET /search?q=…` renvoie une page HTML complète (`<!doctype\
-    \ html>`,\n   `lang=\"fr\"`, encodage UTF-8) qui affiche « Résultats pour » suivi de la saisie, puis\
-    \ la\n   liste des livres dont le titre **ou** l’auteur contient la saisie, sans tenir compte de\n\
-    \   la casse. Chaque ligne affiche le titre, l’auteur et « disponible » ou « emprunté ».\n3. **Contraintes\
-    \ de sécurité :**\n   - requête SQL paramétrée ; les caractères `%` et `_` saisis sont cherchés\n\
-    \     littéralement (la recherche `%` ne renvoie que le livre dont le titre contient `%`) ;\n   -\
-    \ toute donnée insérée dans le HTML est échappée par une fonction `escapeHtml` que tu\n     écris\
-    \ ;\n   - si `q` est absent, vide, n’est pas une chaîne ou dépasse 100 caractères, réponse 400\n \
-    \    avec un message en français ;\n   - un middleware ajoute `Content-Security-Policy: default-src\
-    \ 'self'` et\n     `X-Content-Type-Options: nosniff`, et l’en-tête `X-Powered-By` est supprimé ;\n\
-    \   - l’adresse de la base est lue dans `DATABASE_URL`, jamais écrite dans le code.\n4. **Preuves.**\
-    \ Exécute ces requêtes et garde leur sortie :\n\n   ```bash\n   curl -s \"http://localhost:3000/search?q=hugo\"\
-    \n   curl -s \"http://localhost:3000/search?q=%25\"\n   curl -s \"http://localhost:3000/search?q=%27%20OR%201%3D1%20--\"\
-    \n   curl -s \"http://localhost:3000/search?q=%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E\"\n   curl\
-    \ -s -i \"http://localhost:3000/search?q=a&q=b\"\n   ```\n"
-  deliverable: 'Colle ton modèle de menace, le code complet de `server.js` (et de `escape-html.js` si
-    tu
+  instructions: |
+    La médiathèque municipale veut une page de recherche minimale, rendue par le serveur
+    (pas de JavaScript dans le navigateur). Tu travailles seul, sans IA, avec Node.js 24,
+    Express 5, PostgreSQL et le client `pg`.
 
+    Table à créer dans une base de test :
+
+    ```sql
+    CREATE TABLE books (
+      id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+      title text NOT NULL,
+      author text NOT NULL,
+      is_available boolean NOT NULL DEFAULT true
+    );
+    INSERT INTO books (title, author, is_available) VALUES
+      ('L’Étranger', 'Albert Camus', true),
+      ('Les Misérables', 'Victor Hugo', false),
+      ('100 % JavaScript', 'Jeanne O''Connor', true);
+    ```
+
+    Travail demandé :
+
+    1. **Modèle de menace (cinq à huit lignes).** Pour la route `GET /search?q=…`, liste les
+       entrées non fiables, puis au moins deux menaces, chacune avec sa catégorie du Top 10
+       de l’OWASP 2025 et la parade que tu mets en place.
+    2. **La route.** `GET /search?q=…` renvoie une page HTML complète (`<!doctype html>`,
+       `lang="fr"`, encodage UTF-8) qui affiche « Résultats pour » suivi de la saisie, puis la
+       liste des livres dont le titre **ou** l’auteur contient la saisie, sans tenir compte de
+       la casse. Chaque ligne affiche le titre, l’auteur et « disponible » ou « emprunté ».
+    3. **Contraintes de sécurité :**
+       - requête SQL paramétrée ; les caractères `%` et `_` saisis sont cherchés
+         littéralement (la recherche `%` ne renvoie que le livre dont le titre contient `%`) ;
+       - toute donnée insérée dans le HTML est échappée par une fonction `escapeHtml` que tu
+         écris ;
+       - si `q` est absent, vide, n’est pas une chaîne ou dépasse 100 caractères, réponse 400
+         avec un message en français ;
+       - un middleware ajoute `Content-Security-Policy: default-src 'self'` et
+         `X-Content-Type-Options: nosniff`, et l’en-tête `X-Powered-By` est supprimé ;
+       - l’adresse de la base est lue dans `DATABASE_URL`, jamais écrite dans le code.
+    4. **Preuves.** Exécute ces requêtes et garde leur sortie :
+
+       ```bash
+       curl -s "http://localhost:3000/search?q=hugo"
+       curl -s "http://localhost:3000/search?q=%25"
+       curl -s "http://localhost:3000/search?q=%27%20OR%201%3D1%20--"
+       curl -s "http://localhost:3000/search?q=%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E"
+       curl -s -i "http://localhost:3000/search?q=a&q=b"
+       ```
+  deliverable: |
+    Colle ton modèle de menace, le code complet de `server.js` (et de `escape-html.js` si tu
     l’as séparé), puis la sortie des cinq commandes `curl`. Termine par trois ou quatre phrases
-
     qui expliquent pourquoi la troisième requête ne renvoie pas tous les livres.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: sql-injection
-      description: Écrit une requête paramétrée correcte et explique pourquoi elle empêche l’injection.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Concatène la saisie dans le texte SQL ou ne sait pas expliquer la différence.
-      - score: 1
-        description: Requête paramétrée mais explication vague (« ça échappe les apostrophes »).
-      - score: 2
-        description: Explique la séparation texte/valeurs et pourquoi la troisième requête ne renvoie
-          rien.
-      - score: 3
-        description: Explique aussi les jokers de LIKE, ce qui ne se paramètre pas (identifiants) et la
-          parade par liste blanche.
-    - id: xss-escaping
-      description: Échappe chaque insertion dans le HTML et justifie l’ordre et le lieu de l’échappement.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Une donnée au moins est insérée sans échappement, ou l’apprenant ne voit pas le risque.
-      - score: 1
-        description: Échappe la saisie mais pas les données de la base, ou fonction incomplète.
-      - score: 2
-        description: Échappement complet, explique le rôle de chaque caractère et pourquoi & passe en
-          premier.
-      - score: 3
-        description: Distingue les contextes (contenu, attribut, URL) et explique pourquoi on échappe
-          à la sortie.
-    - id: validation-headers
-      description: Valide l’entrée et configure les en-têtes de sécurité en expliquant leur rôle.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Pas de validation, ou en-têtes absents ou non compris.
-      - score: 1
-        description: Validation et en-têtes présents, mais le cas du tableau ou le rôle de la CSP n’est
-          pas expliqué.
-      - score: 2
-        description: Gère vide, trop long et tableau ; explique la CSP comme défense en profondeur et
-          nosniff.
-    - id: threat-model
-      description: Produit un modèle de menace pertinent relié au Top 10 de l’OWASP.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Liste absente ou générique, sans lien avec la route.
-      - score: 1
-        description: Entrées et menaces correctes mais catégories approximatives ou parades absentes.
-      - score: 2
-        description: Entrées, menaces, catégories exactes et datées (2025, ou 2021 si l’année est précisée)
-          et parades vérifiables, défendues à l’oral.
+      - id: sql-injection
+        description: Écrit une requête paramétrée correcte et explique pourquoi elle empêche l’injection.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Concatène la saisie dans le texte SQL ou ne sait pas expliquer la différence.
+          - score: 1
+            description: Requête paramétrée mais explication vague (« ça échappe les apostrophes »).
+          - score: 2
+            description: Explique la séparation texte/valeurs et pourquoi la troisième requête ne renvoie rien.
+          - score: 3
+            description: Explique aussi les jokers de LIKE, ce qui ne se paramètre pas (identifiants) et la parade par liste blanche.
+      - id: xss-escaping
+        description: Échappe chaque insertion dans le HTML et justifie l’ordre et le lieu de l’échappement.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Une donnée au moins est insérée sans échappement, ou l’apprenant ne voit pas le risque.
+          - score: 1
+            description: Échappe la saisie mais pas les données de la base, ou fonction incomplète.
+          - score: 2
+            description: Échappement complet, explique le rôle de chaque caractère et pourquoi & passe en premier.
+          - score: 3
+            description: Distingue les contextes (contenu, attribut, URL) et explique pourquoi on échappe à la sortie.
+      - id: validation-headers
+        description: Valide l’entrée et configure les en-têtes de sécurité en expliquant leur rôle.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Pas de validation, ou en-têtes absents ou non compris.
+          - score: 1
+            description: Validation et en-têtes présents, mais le cas du tableau ou le rôle de la CSP n’est pas expliqué.
+          - score: 2
+            description: Gère vide, trop long et tableau ; explique la CSP comme défense en profondeur et nosniff.
+      - id: threat-model
+        description: Produit un modèle de menace pertinent relié au Top 10 de l’OWASP.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Liste absente ou générique, sans lien avec la route.
+          - score: 1
+            description: Entrées et menaces correctes mais catégories approximatives ou parades absentes.
+          - score: 2
+            description: Entrées, menaces, catégories exactes et datées (2025, ou 2021 si l’année est précisée) et parades vérifiables, défendues à l’oral.
+
 - id: web-security-avec-ia
   family: AVEC_IA
   title: Durcir une API de notes publiques
-  summary: Construire avec une IA une petite API Express et PostgreSQL durcie, puis défendre chaque mesure
-    de sécurité.
+  summary: Construire avec une IA une petite API Express et PostgreSQL durcie, puis défendre chaque mesure de sécurité.
   estimatedMinutes: 120
-  instructions: "Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras expliquer chaque ligne\n\
-    sans aide, dire à quelle menace répond chaque mesure et modifier le code en direct.\n\nObjectif :\
-    \ une API de notes **publiques et anonymes** (pas d’authentification), servie\navec une page statique,\
-    \ en Node.js 24, Express 5, PostgreSQL et `pg`.\n\nFonctionnalités :\n\n1. `POST /api/notes` crée\
-    \ une note `{ \"author\": \"…\", \"text\": \"…\" }` (auteur 1 à 40\n   caractères, texte 1 à 1000\
-    \ caractères, après `trim`), réponse 201 avec la note créée.\n2. `GET /api/notes?search=…&sort=recent|author`\
-    \ liste au plus 50 notes, filtrées par un\n   texte facultatif et triées par date décroissante (défaut)\
-    \ ou par auteur.\n3. Une page `public/index.html` avec `public/app.js` affiche les notes et un formulaire\n\
-    \   d’ajout. Aucun gestionnaire d’événement dans le HTML, aucun script en ligne.\n\nExigences de sécurité,\
-    \ à démontrer :\n\n- requêtes paramétrées partout, tri par liste blanche ;\n- affichage des notes\
-    \ côté navigateur sans `innerHTML` pour les données ;\n- configuration lue dans l’environnement et\
-    \ validée au démarrage (`PORT`, `DATABASE_URL`) ;\n- middleware d’en-têtes : CSP stricte (`default-src\
-    \ 'self'` au minimum), `nosniff`,\n  `Referrer-Policy`, HSTS seulement en production ; `X-Powered-By`\
-    \ supprimé ;\n- refus des requêtes modifiantes venues d’une autre origine (`Origin` ou\n  `Sec-Fetch-Site`)\
-    \ et des corps qui ne sont pas du JSON (415) ;\n- gestionnaire d’erreurs qui journalise le détail\
-    \ et renvoie un message générique ;\n- journal d’une ligne JSON par requête (méthode, chemin sans\
-    \ chaîne de requête, statut,\n  durée), sans corps ni en-têtes ;\n- `npm audit` sans vulnérabilité\
-    \ connue au moment du rendu.\n\nEnfin, rédige un tableau de modèle de menace : au moins six menaces,\
-    \ chacune avec sa\ncatégorie du Top 10 OWASP 2025, la parade et la façon dont tu l’as vérifiée.\n"
-  deliverable: 'Colle : le code de chaque fichier (serveur, middlewares, configuration, `app.js`,
+  instructions: |
+    Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras expliquer chaque ligne
+    sans aide, dire à quelle menace répond chaque mesure et modifier le code en direct.
 
+    Objectif : une API de notes **publiques et anonymes** (pas d’authentification), servie
+    avec une page statique, en Node.js 24, Express 5, PostgreSQL et `pg`.
+
+    Fonctionnalités :
+
+    1. `POST /api/notes` crée une note `{ "author": "…", "text": "…" }` (auteur 1 à 40
+       caractères, texte 1 à 1000 caractères, après `trim`), réponse 201 avec la note créée.
+    2. `GET /api/notes?search=…&sort=recent|author` liste au plus 50 notes, filtrées par un
+       texte facultatif et triées par date décroissante (défaut) ou par auteur.
+    3. Une page `public/index.html` avec `public/app.js` affiche les notes et un formulaire
+       d’ajout. Aucun gestionnaire d’événement dans le HTML, aucun script en ligne.
+
+    Exigences de sécurité, à démontrer :
+
+    - requêtes paramétrées partout, tri par liste blanche ;
+    - affichage des notes côté navigateur sans `innerHTML` pour les données ;
+    - configuration lue dans l’environnement et validée au démarrage (`PORT`, `DATABASE_URL`) ;
+    - middleware d’en-têtes : CSP stricte (`default-src 'self'` au minimum), `nosniff`,
+      `Referrer-Policy`, HSTS seulement en production ; `X-Powered-By` supprimé ;
+    - refus des requêtes modifiantes venues d’une autre origine (`Origin` ou
+      `Sec-Fetch-Site`) et des corps qui ne sont pas du JSON (415) ;
+    - gestionnaire d’erreurs qui journalise le détail et renvoie un message générique ;
+    - journal d’une ligne JSON par requête (méthode, chemin sans chaîne de requête, statut,
+      durée), sans corps ni en-têtes ;
+    - `npm audit` sans vulnérabilité connue au moment du rendu.
+
+    Enfin, rédige un tableau de modèle de menace : au moins six menaces, chacune avec sa
+    catégorie du Top 10 OWASP 2025, la parade et la façon dont tu l’as vérifiée.
+  deliverable: |
+    Colle : le code de chaque fichier (serveur, middlewares, configuration, `app.js`,
     `index.html`, migration SQL), la sortie de `npm audit`, la sortie de cinq commandes `curl`
-
     qui prouvent les protections (injection, origine refusée, 415, tri refusé, en-têtes), le
-
     tableau de modèle de menace, puis quelques lignes sur ce que l’IA t’a proposé de faux ou
-
     d’excessif et comment tu l’as détecté.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: code-ownership
-      description: Explique chaque fichier et chaque middleware sans aide, y compris l’ordre des middlewares.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas expliquer des parties importantes de son propre code.
-      - score: 1
-        description: Explique le rôle général des fichiers mais pas le détail des middlewares.
-      - score: 2
-        description: Explique chaque middleware, son ordre et ce qu’il renvoie en cas de refus.
-      - score: 3
-        description: Explique aussi les propositions de l’IA écartées ou corrigées, avec la raison.
-    - id: threat-mapping
-      description: Relie chaque mesure à une menace précise et à une catégorie du Top 10 2025.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Mesures listées sans menace associée, ou catégories inventées.
-      - score: 1
-        description: Quelques liens corrects, d’autres approximatifs.
-      - score: 2
-        description: Tableau complet et juste, chaque parade vérifiée par une commande.
-      - score: 3
-        description: Hiérarchise les risques et reconnaît les mesures de faible impact dans ce contexte
-          (CSRF sans cookie).
-    - id: browser-defenses
-      description: Comprend les protections côté navigateur (CSP, rendu sans innerHTML, origine).
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas ce que fait la CSP ou utilise innerHTML avec des données.
-      - score: 1
-        description: Rendu sûr mais CSP mal comprise (pense qu’elle remplace l’échappement).
-      - score: 2
-        description: Explique précisément ce que la CSP bloque et pourquoi textContent est sûr.
-      - score: 3
-        description: Prévoit correctement l’effet d’une modification proposée pendant l’oral.
-    - id: modification
-      description: Réalise ou décrit correctement une modification demandée à l’oral.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Ne parvient pas à modifier le comportement ou introduit une faille.
-      - score: 1
-        description: Modification correcte mais non vérifiée.
-      - score: 2
-        description: Modification correcte, sûre et vérifiée par une requête.
+      - id: code-ownership
+        description: Explique chaque fichier et chaque middleware sans aide, y compris l’ordre des middlewares.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas expliquer des parties importantes de son propre code.
+          - score: 1
+            description: Explique le rôle général des fichiers mais pas le détail des middlewares.
+          - score: 2
+            description: Explique chaque middleware, son ordre et ce qu’il renvoie en cas de refus.
+          - score: 3
+            description: Explique aussi les propositions de l’IA écartées ou corrigées, avec la raison.
+      - id: threat-mapping
+        description: Relie chaque mesure à une menace précise et à une catégorie du Top 10 2025.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Mesures listées sans menace associée, ou catégories inventées.
+          - score: 1
+            description: Quelques liens corrects, d’autres approximatifs.
+          - score: 2
+            description: Tableau complet et juste, chaque parade vérifiée par une commande.
+          - score: 3
+            description: Hiérarchise les risques et reconnaît les mesures de faible impact dans ce contexte (CSRF sans cookie).
+      - id: browser-defenses
+        description: Comprend les protections côté navigateur (CSP, rendu sans innerHTML, origine).
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas ce que fait la CSP ou utilise innerHTML avec des données.
+          - score: 1
+            description: Rendu sûr mais CSP mal comprise (pense qu’elle remplace l’échappement).
+          - score: 2
+            description: Explique précisément ce que la CSP bloque et pourquoi textContent est sûr.
+          - score: 3
+            description: Prévoit correctement l’effet d’une modification proposée pendant l’oral.
+      - id: modification
+        description: Réalise ou décrit correctement une modification demandée à l’oral.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Ne parvient pas à modifier le comportement ou introduit une faille.
+          - score: 1
+            description: Modification correcte mais non vérifiée.
+          - score: 2
+            description: Modification correcte, sûre et vérifiée par une requête.
+
 - id: web-security-contre-ia
   family: CONTRE_IA
   title: Les avis clients
   summary: Auditer une API d’avis générée par une IA, trouver ses failles de sécurité et les corriger.
   estimatedMinutes: 75
-  instructions: "Une boutique a demandé à un assistant une fonctionnalité « avis clients ». Le code\n\
-    fonctionne et l’équipe veut le mettre en ligne cette semaine. On te demande un audit de\nsécurité\
-    \ avant la mise en production.\n\nTable PostgreSQL :\n\n```sql\nCREATE TABLE reviews (\n  id integer\
-    \ GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n  product text NOT NULL,\n  author text NOT NULL,\n \
-    \ rating integer NOT NULL CHECK (rating BETWEEN 1 AND 5),\n  body text NOT NULL,\n  created_at timestamptz\
-    \ NOT NULL DEFAULT now()\n);\n```\n\n`server.js` :\n\n```js\nimport express from 'express';\nimport\
-    \ pg from 'pg';\n\nconst app = express();\nconst pool = new pg.Pool({ connectionString: process.env.DATABASE_URL\
-    \ });\nconst ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'admin-2024';\n\napp.use((req, res, next) =>\
-    \ {\n  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');\n  res.header('Access-Control-Allow-Credentials',\
-    \ 'true');\n  res.header('Access-Control-Allow-Headers', 'Content-Type');\n  next();\n});\napp.use(express.json());\n\
-    app.use(express.static('public'));\n\n// Liste des avis d’un produit, avec tri optionnel\napp.get('/api/reviews',\
-    \ async (req, res, next) => {\n  try {\n    const { product = '', sort = 'created_at' } = req.query;\n\
-    \    const result = await pool.query(\n      `SELECT id, author, rating, body, created_at FROM reviews\n\
-    \       WHERE product = $1 ORDER BY ${sort} DESC LIMIT 50`,\n      [product],\n    );\n    res.json(result.rows);\n\
-    \  } catch (err) {\n    next(err);\n  }\n});\n\n// Recherche plein texte dans les avis\napp.get('/api/reviews/search',\
-    \ async (req, res, next) => {\n  try {\n    const q = req.query.q || '';\n    const result = await\
-    \ pool.query(\n      `SELECT id, product, author, body FROM reviews WHERE body ILIKE '%${q}%' LIMIT\
-    \ 20`,\n    );\n    res.json(result.rows);\n  } catch (err) {\n    next(err);\n  }\n});\n\napp.post('/api/reviews',\
-    \ async (req, res, next) => {\n  try {\n    const { product, author, rating, body } = req.body;\n\
-    \    if (!product || !author || !body) {\n      return res.status(400).json({ error: 'Champs manquants'\
-    \ });\n    }\n    const result = await pool.query(\n      'INSERT INTO reviews (product, author, rating,\
-    \ body) VALUES ($1, $2, $3, $4) RETURNING *',\n      [product, author, rating, body],\n    );\n  \
-    \  res.status(201).json(result.rows[0]);\n  } catch (err) {\n    next(err);\n  }\n});\n\n// Modération\
-    \ : suppression d’un avis\napp.get('/admin/reviews/:id/delete', async (req, res, next) => {\n  try\
-    \ {\n    if (req.query.token !== ADMIN_TOKEN) {\n      return res.status(403).send('Accès refusé');\n\
-    \    }\n    await pool.query('DELETE FROM reviews WHERE id = $1', [req.params.id]);\n    res.redirect('/admin.html');\n\
-    \  } catch (err) {\n    next(err);\n  }\n});\n\napp.use((err, req, res, next) => {\n  console.error(err);\n\
-    \  res.status(500).json({ error: err.message, stack: err.stack });\n});\n\napp.listen(3000, () =>\
-    \ {\n  console.log(`Serveur prêt sur http://localhost:3000 (admin token: ${ADMIN_TOKEN})`);\n});\n\
-    ```\n\n`public/reviews.js`, chargé par une page qui contient un titre `#title`, une liste\n`#reviews`\
-    \ et un formulaire `#review-form` (champs `author`, `rating`, `body`) :\n\n```js\nconst form = document.querySelector('#review-form');\n\
-    const list = document.querySelector('#reviews');\nconst product = new URLSearchParams(location.search).get('product')\
-    \ || 'theiere';\n\ndocument.querySelector('#title').innerHTML = `Avis sur ${product}`;\n\nasync function\
-    \ loadReviews() {\n  const response = await fetch(`/api/reviews?product=${encodeURIComponent(product)}`);\n\
-    \  const reviews = await response.json();\n  list.innerHTML = reviews\n    .map(\n      (r) => `<li>\n\
-    \        <strong>${r.author}</strong> — ${'★'.repeat(r.rating)}\n        <p>${r.body}</p>\n      </li>`,\n\
-    \    )\n    .join('');\n}\n\nform.addEventListener('submit', async (event) => {\n  event.preventDefault();\n\
-    \  const data = Object.fromEntries(new FormData(form));\n  await fetch('/api/reviews', {\n    method:\
-    \ 'POST',\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify({ ...data,\
-    \ product, rating: Number(data.rating) }),\n  });\n  form.reset();\n  loadReviews();\n});\n\nloadReviews();\n\
-    ```\n\nTravail demandé :\n\n1. Liste chaque défaut de sécurité : fichier et ligne, scénario d’attaque\
-    \ concret (la\n   requête ou la saisie de l’attaquant), conséquence, catégorie du Top 10 OWASP 2025\
-    \ et\n   gravité (critique, élevée, moyenne, faible).\n2. Prouve au moins deux défauts en les exploitant\
-    \ sur ta base de test (commande et\n   sortie obtenue).\n3. Fournis une version corrigée des deux\
-    \ fichiers.\n4. Classe tes corrections par ordre de priorité et justifie ce classement.\n"
-  deliverable: 'Colle ton tableau de défauts, les preuves d’exploitation (commandes et sorties), les deux
+  instructions: |
+    Une boutique a demandé à un assistant une fonctionnalité « avis clients ». Le code
+    fonctionne et l’équipe veut le mettre en ligne cette semaine. On te demande un audit de
+    sécurité avant la mise en production.
 
+    Table PostgreSQL :
+
+    ```sql
+    CREATE TABLE reviews (
+      id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+      product text NOT NULL,
+      author text NOT NULL,
+      rating integer NOT NULL CHECK (rating BETWEEN 1 AND 5),
+      body text NOT NULL,
+      created_at timestamptz NOT NULL DEFAULT now()
+    );
+    ```
+
+    `server.js` :
+
+    ```js
+    import express from 'express';
+    import pg from 'pg';
+
+    const app = express();
+    const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+    const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'admin-2024';
+
+    app.use((req, res, next) => {
+      res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+      res.header('Access-Control-Allow-Credentials', 'true');
+      res.header('Access-Control-Allow-Headers', 'Content-Type');
+      next();
+    });
+    app.use(express.json());
+    app.use(express.static('public'));
+
+    // Liste des avis d’un produit, avec tri optionnel
+    app.get('/api/reviews', async (req, res, next) => {
+      try {
+        const { product = '', sort = 'created_at' } = req.query;
+        const result = await pool.query(
+          `SELECT id, author, rating, body, created_at FROM reviews
+           WHERE product = $1 ORDER BY ${sort} DESC LIMIT 50`,
+          [product],
+        );
+        res.json(result.rows);
+      } catch (err) {
+        next(err);
+      }
+    });
+
+    // Recherche plein texte dans les avis
+    app.get('/api/reviews/search', async (req, res, next) => {
+      try {
+        const q = req.query.q || '';
+        const result = await pool.query(
+          `SELECT id, product, author, body FROM reviews WHERE body ILIKE '%${q}%' LIMIT 20`,
+        );
+        res.json(result.rows);
+      } catch (err) {
+        next(err);
+      }
+    });
+
+    app.post('/api/reviews', async (req, res, next) => {
+      try {
+        const { product, author, rating, body } = req.body;
+        if (!product || !author || !body) {
+          return res.status(400).json({ error: 'Champs manquants' });
+        }
+        const result = await pool.query(
+          'INSERT INTO reviews (product, author, rating, body) VALUES ($1, $2, $3, $4) RETURNING *',
+          [product, author, rating, body],
+        );
+        res.status(201).json(result.rows[0]);
+      } catch (err) {
+        next(err);
+      }
+    });
+
+    // Modération : suppression d’un avis
+    app.get('/admin/reviews/:id/delete', async (req, res, next) => {
+      try {
+        if (req.query.token !== ADMIN_TOKEN) {
+          return res.status(403).send('Accès refusé');
+        }
+        await pool.query('DELETE FROM reviews WHERE id = $1', [req.params.id]);
+        res.redirect('/admin.html');
+      } catch (err) {
+        next(err);
+      }
+    });
+
+    app.use((err, req, res, next) => {
+      console.error(err);
+      res.status(500).json({ error: err.message, stack: err.stack });
+    });
+
+    app.listen(3000, () => {
+      console.log(`Serveur prêt sur http://localhost:3000 (admin token: ${ADMIN_TOKEN})`);
+    });
+    ```
+
+    `public/reviews.js`, chargé par une page qui contient un titre `#title`, une liste
+    `#reviews` et un formulaire `#review-form` (champs `author`, `rating`, `body`) :
+
+    ```js
+    const form = document.querySelector('#review-form');
+    const list = document.querySelector('#reviews');
+    const product = new URLSearchParams(location.search).get('product') || 'theiere';
+
+    document.querySelector('#title').innerHTML = `Avis sur ${product}`;
+
+    async function loadReviews() {
+      const response = await fetch(`/api/reviews?product=${encodeURIComponent(product)}`);
+      const reviews = await response.json();
+      list.innerHTML = reviews
+        .map(
+          (r) => `<li>
+            <strong>${r.author}</strong> — ${'★'.repeat(r.rating)}
+            <p>${r.body}</p>
+          </li>`,
+        )
+        .join('');
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const data = Object.fromEntries(new FormData(form));
+      await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...data, product, rating: Number(data.rating) }),
+      });
+      form.reset();
+      loadReviews();
+    });
+
+    loadReviews();
+    ```
+
+    Travail demandé :
+
+    1. Liste chaque défaut de sécurité : fichier et ligne, scénario d’attaque concret (la
+       requête ou la saisie de l’attaquant), conséquence, catégorie du Top 10 OWASP 2025 et
+       gravité (critique, élevée, moyenne, faible).
+    2. Prouve au moins deux défauts en les exploitant sur ta base de test (commande et
+       sortie obtenue).
+    3. Fournis une version corrigée des deux fichiers.
+    4. Classe tes corrections par ordre de priorité et justifie ce classement.
+  deliverable: |
+    Colle ton tableau de défauts, les preuves d’exploitation (commandes et sorties), les deux
     fichiers corrigés complets, puis ta liste de priorités justifiée.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: defects-found
-      description: Identifie les failles réelles, y compris les moins visibles.
-      maxScore: 4
-    - id: exploitation
-      description: Démontre concrètement l’exploitation et explique le mécanisme.
-      maxScore: 3
-    - id: fixes
-      description: Corrige chaque faille avec la bonne technique, sans casser la fonctionnalité.
-      maxScore: 3
-    - id: prioritization
-      description: Hiérarchise les risques et justifie ses priorités à l’oral.
-      maxScore: 2
+      - id: defects-found
+        description: Identifie les failles réelles, y compris les moins visibles.
+        maxScore: 4
+      - id: exploitation
+        description: Démontre concrètement l’exploitation et explique le mécanisme.
+        maxScore: 3
+      - id: fixes
+        description: Corrige chaque faille avec la bonne technique, sans casser la fonctionnalité.
+        maxScore: 3
+      - id: prioritization
+        description: Hiérarchise les risques et justifie ses priorités à l’oral.
+        maxScore: 2
+
 - id: web-security-apres-ia
   family: APRES_IA
   title: L’annuaire des membres
-  summary: Dépanner et faire évoluer une petite application existante en renforçant sa sécurité sans la
-    réécrire.
+  summary: Dépanner et faire évoluer une petite application existante en renforçant sa sécurité sans la réécrire.
   estimatedMinutes: 90
-  instructions: "Une association utilise cet annuaire depuis quelques mois. Il a été écrit rapidement\
-    \ avec\nune IA. Tu dois le faire évoluer **en modifiant le moins possible**, sans le régénérer.\n\n\
-    Base de données :\n\n```sql\nCREATE TABLE members (\n  id integer GENERATED ALWAYS AS IDENTITY PRIMARY\
-    \ KEY,\n  full_name text NOT NULL,\n  city text NOT NULL,\n  joined_on date NOT NULL DEFAULT current_date\n\
-    );\nINSERT INTO members (full_name, city, joined_on) VALUES\n  ('Ada Lovelace', 'Lyon', '2024-03-01'),\n\
-    \  ('Grace Hopper', 'Nantes', '2023-11-15'),\n  ('Shaquille O''Neil', 'L''Haÿ-les-Roses', '2025-01-10');\n\
-    ```\n\n`server.js` :\n\n```js\nimport express from 'express';\nimport pg from 'pg';\n\nconst app =\
-    \ express();\nconst pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });\n\napp.use(express.json());\n\
-    app.use(express.static('public'));\n\napp.get('/api/members', async (req, res, next) => {\n  try {\n\
-    \    const q = String(req.query.q ?? '');\n    const result = await pool.query(\n      `SELECT id,\
-    \ full_name, city, joined_on FROM members\n       WHERE full_name ILIKE '%' || $1 || '%'\n       ORDER\
-    \ BY full_name`,\n      [q],\n    );\n    res.json(result.rows);\n  } catch (error) {\n    next(error);\n\
-    \  }\n});\n\napp.get('/api/cities/:city/members', async (req, res, next) => {\n  try {\n    const\
-    \ result = await pool.query(\n      `SELECT id, full_name, city, joined_on FROM members WHERE city\
-    \ = '${req.params.city}' ORDER BY full_name`,\n    );\n    res.json(result.rows);\n  } catch (error)\
-    \ {\n    next(error);\n  }\n});\n\napp.use((error, req, res, next) => {\n  console.error(error);\n\
-    \  res.status(500).json({ error: 'Erreur interne' });\n});\n\napp.listen(3000, () => console.log('Annuaire\
-    \ sur http://localhost:3000'));\n```\n\n`public/index.html` :\n\n```html\n<!doctype html>\n<html lang=\"\
-    fr\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width,\
-    \ initial-scale=1\">\n  <title>Annuaire des membres</title>\n  <style>\n    body { font-family: system-ui,\
-    \ sans-serif; max-width: 40rem; margin: 2rem auto; }\n    li { margin-block: 0.5rem; }\n  </style>\n\
-    </head>\n<body>\n  <h1>Annuaire des membres</h1>\n  <form id=\"search-form\">\n    <label for=\"q\"\
-    >Nom</label>\n    <input id=\"q\" name=\"q\" type=\"search\">\n    <button type=\"submit\">Rechercher</button>\n\
-    \    <button type=\"button\" onclick=\"resetSearch()\">Tout afficher</button>\n  </form>\n  <ul id=\"\
-    members\"></ul>\n\n  <script>\n    const list = document.getElementById('members');\n\n    function\
-    \ render(members) {\n      list.innerHTML = '';\n      for (const member of members) {\n        const\
-    \ li = document.createElement('li');\n        const link = document.createElement('a');\n        link.href\
-    \ = '#';\n        link.textContent = member.city;\n        link.addEventListener('click', (event)\
-    \ => {\n          event.preventDefault();\n          load(`/api/cities/${encodeURIComponent(member.city)}/members`);\n\
-    \        });\n        li.append(`${member.full_name} — `, link);\n        list.append(li);\n     \
-    \ }\n    }\n\n    async function load(url) {\n      const response = await fetch(url);\n      render(await\
-    \ response.json());\n    }\n\n    function resetSearch() {\n      document.getElementById('q').value\
-    \ = '';\n      load('/api/members');\n    }\n\n    document.getElementById('search-form').addEventListener('submit',\
-    \ (event) => {\n      event.preventDefault();\n      const q = document.getElementById('q').value;\n\
-    \      load(`/api/members?q=${encodeURIComponent(q)}`);\n    });\n\n    load('/api/members');\n  </script>\n\
-    </body>\n</html>\n```\n\nDemandes de l’association :\n\n1. **Bug signalé** : « quand on clique sur\
-    \ la ville de Shaquille, la liste se vide et\n   plus rien ne marche ». Reproduis, explique la cause\
-    \ côté serveur **et** côté\n   navigateur, corrige les deux.\n2. **CSP** : le bureau veut l’en-tête\
-    \ `Content-Security-Policy: default-src 'self'` sur\n   toutes les réponses, ainsi que `X-Content-Type-Options:\
-    \ nosniff`. Ajoute-les, puis\n   fais en sorte que la page fonctionne **à l’identique** avec cette\
-    \ politique.\n3. **Site web des membres** : ajoute une colonne `website` (facultative) par une\n \
-    \  migration SQL, renvoie-la dans l’API, et affiche un lien « site » après le nom quand\n   elle contient\
-    \ une adresse `http` ou `https`. Toute autre valeur est ignorée. Teste\n   avec `https://example.org`,\
-    \ `javascript:alert(1)` et une valeur vide.\n4. **Tri** : `GET /api/members?sort=name` (défaut) ou\
-    \ `sort=joined` (plus récents\n   d’abord). Toute autre valeur renvoie 400.\n"
-  deliverable: 'Colle les fichiers modifiés ou créés en entier, la migration SQL, la sortie des
+  instructions: |
+    Une association utilise cet annuaire depuis quelques mois. Il a été écrit rapidement avec
+    une IA. Tu dois le faire évoluer **en modifiant le moins possible**, sans le régénérer.
 
+    Base de données :
+
+    ```sql
+    CREATE TABLE members (
+      id integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+      full_name text NOT NULL,
+      city text NOT NULL,
+      joined_on date NOT NULL DEFAULT current_date
+    );
+    INSERT INTO members (full_name, city, joined_on) VALUES
+      ('Ada Lovelace', 'Lyon', '2024-03-01'),
+      ('Grace Hopper', 'Nantes', '2023-11-15'),
+      ('Shaquille O''Neil', 'L''Haÿ-les-Roses', '2025-01-10');
+    ```
+
+    `server.js` :
+
+    ```js
+    import express from 'express';
+    import pg from 'pg';
+
+    const app = express();
+    const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+
+    app.use(express.json());
+    app.use(express.static('public'));
+
+    app.get('/api/members', async (req, res, next) => {
+      try {
+        const q = String(req.query.q ?? '');
+        const result = await pool.query(
+          `SELECT id, full_name, city, joined_on FROM members
+           WHERE full_name ILIKE '%' || $1 || '%'
+           ORDER BY full_name`,
+          [q],
+        );
+        res.json(result.rows);
+      } catch (error) {
+        next(error);
+      }
+    });
+
+    app.get('/api/cities/:city/members', async (req, res, next) => {
+      try {
+        const result = await pool.query(
+          `SELECT id, full_name, city, joined_on FROM members WHERE city = '${req.params.city}' ORDER BY full_name`,
+        );
+        res.json(result.rows);
+      } catch (error) {
+        next(error);
+      }
+    });
+
+    app.use((error, req, res, next) => {
+      console.error(error);
+      res.status(500).json({ error: 'Erreur interne' });
+    });
+
+    app.listen(3000, () => console.log('Annuaire sur http://localhost:3000'));
+    ```
+
+    `public/index.html` :
+
+    ```html
+    <!doctype html>
+    <html lang="fr">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Annuaire des membres</title>
+      <style>
+        body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; }
+        li { margin-block: 0.5rem; }
+      </style>
+    </head>
+    <body>
+      <h1>Annuaire des membres</h1>
+      <form id="search-form">
+        <label for="q">Nom</label>
+        <input id="q" name="q" type="search">
+        <button type="submit">Rechercher</button>
+        <button type="button" onclick="resetSearch()">Tout afficher</button>
+      </form>
+      <ul id="members"></ul>
+
+      <script>
+        const list = document.getElementById('members');
+
+        function render(members) {
+          list.innerHTML = '';
+          for (const member of members) {
+            const li = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = '#';
+            link.textContent = member.city;
+            link.addEventListener('click', (event) => {
+              event.preventDefault();
+              load(`/api/cities/${encodeURIComponent(member.city)}/members`);
+            });
+            li.append(`${member.full_name} — `, link);
+            list.append(li);
+          }
+        }
+
+        async function load(url) {
+          const response = await fetch(url);
+          render(await response.json());
+        }
+
+        function resetSearch() {
+          document.getElementById('q').value = '';
+          load('/api/members');
+        }
+
+        document.getElementById('search-form').addEventListener('submit', (event) => {
+          event.preventDefault();
+          const q = document.getElementById('q').value;
+          load(`/api/members?q=${encodeURIComponent(q)}`);
+        });
+
+        load('/api/members');
+      </script>
+    </body>
+    </html>
+    ```
+
+    Demandes de l’association :
+
+    1. **Bug signalé** : « quand on clique sur la ville de Shaquille, la liste se vide et
+       plus rien ne marche ». Reproduis, explique la cause côté serveur **et** côté
+       navigateur, corrige les deux.
+    2. **CSP** : le bureau veut l’en-tête `Content-Security-Policy: default-src 'self'` sur
+       toutes les réponses, ainsi que `X-Content-Type-Options: nosniff`. Ajoute-les, puis
+       fais en sorte que la page fonctionne **à l’identique** avec cette politique.
+    3. **Site web des membres** : ajoute une colonne `website` (facultative) par une
+       migration SQL, renvoie-la dans l’API, et affiche un lien « site » après le nom quand
+       elle contient une adresse `http` ou `https`. Toute autre valeur est ignorée. Teste
+       avec `https://example.org`, `javascript:alert(1)` et une valeur vide.
+    4. **Tri** : `GET /api/members?sort=name` (défaut) ou `sort=joined` (plus récents
+       d’abord). Toute autre valeur renvoie 400.
+  deliverable: |
+    Colle les fichiers modifiés ou créés en entier, la migration SQL, la sortie des
     commandes `curl` qui montrent le bug corrigé, le tri et l’erreur 400, puis une liste des
-
     changements : pour chacun, la raison et la menace ou le bug auquel il répond.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: bug-diagnosis
-      description: Diagnostique le bug comme une injection SQL et traite aussi la gestion d’erreur côté
-        navigateur.
-      maxScore: 3
-    - id: csp-compliance
-      description: Met en place la CSP sans l’affaiblir et adapte la page en conséquence.
-      maxScore: 3
-    - id: safe-features
-      description: Ajoute le site web et le tri de façon sûre (validation d’URL, liste blanche).
-      maxScore: 3
-    - id: minimal-change
-      description: Fait évoluer le projet de façon ciblée, justifiée et vérifiée.
-      maxScore: 2
+      - id: bug-diagnosis
+        description: Diagnostique le bug comme une injection SQL et traite aussi la gestion d’erreur côté navigateur.
+        maxScore: 3
+      - id: csp-compliance
+        description: Met en place la CSP sans l’affaiblir et adapte la page en conséquence.
+        maxScore: 3
+      - id: safe-features
+        description: Ajoute le site web et le tri de façon sûre (validation d’URL, liste blanche).
+        maxScore: 3
+      - id: minimal-change
+        description: Fait évoluer le projet de façon ciblée, justifiée et vérifiée.
+        maxScore: 2

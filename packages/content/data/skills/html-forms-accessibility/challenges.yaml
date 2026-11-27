@@ -3,281 +3,377 @@
   title: L’adhésion à la bibliothèque
   summary: Écrire deux formulaires accessibles, choisir leur méthode d’envoi et prédire la requête produite.
   estimatedMinutes: 60
-  instructions: "La bibliothèque (fictive) des Tilleuls te demande deux formulaires, à écrire **sans\n\
-    IA**, en HTML seulement (pas de CSS ni de JavaScript), dans le `main` d’une page\ncomplète.\n\n**Formulaire\
-    \ 1 — Recherche dans le catalogue**, envoyé vers `/catalogue` :\n\n- un champ de recherche libre,\
-    \ de `name` `q`, étiqueté « Rechercher » ;\n- une liste déroulante de `name` `type`, étiquetée « Type\
-    \ de document », avec les\n  options Livre (`livre`), Bande dessinée (`bd`) et DVD (`dvd`), dans cet\
-    \ ordre ;\n- un bouton « Lancer la recherche ».\n\n**Formulaire 2 — Demande d’adhésion**, envoyé vers\
-    \ `/adhesion` :\n\n- prénom et nom, obligatoires ;\n- adresse électronique, obligatoire ;\n- date\
-    \ de naissance, obligatoire ;\n- code postal, obligatoire, exactement 5 chiffres, avec une consigne\
-    \ de format\n  visible et associée au champ ;\n- formule, obligatoire, un seul choix parmi : individuelle,\
-    \ famille, étudiant ;\n- centres d’intérêt, facultatifs, plusieurs choix possibles parmi : romans,\
-    \ bandes\n  dessinées, documentaires ;\n- un message facultatif sur plusieurs lignes ;\n- l’acceptation\
-    \ obligatoire du règlement ;\n- un bouton « Envoyer ma demande ».\n\nExigences : chaque champ a une\
-    \ étiquette visible associée ; les groupes de choix\nsont regroupés et intitulés ; les types de champs,\
-    \ `autocomplete` et contraintes de\nvalidation native sont adaptés ; la page indique en texte quels\
-    \ champs sont\nobligatoires ; la méthode d’envoi de chaque formulaire est choisie et justifiée.\n"
-  deliverable: "Colle la page complète. Puis réponds en quelques phrases :\n\n1. Quelle méthode as-tu\
-    \ choisie pour chaque formulaire, et pourquoi ?\n2. Écris l’adresse exacte demandée par le formulaire\
-    \ 1 quand on cherche\n   « Astérix & Obélix » dans les bandes dessinées.\n3. Le service informatique\
-    \ dit : « Le code postal est contrôlé par `pattern`, le\n   serveur n’a pas besoin de le vérifier.\
-    \ » Que lui réponds-tu ?\n"
+  instructions: |
+    La bibliothèque (fictive) des Tilleuls te demande deux formulaires, à écrire **sans
+    IA**, en HTML seulement (pas de CSS ni de JavaScript), dans le `main` d’une page
+    complète.
+
+    **Formulaire 1 — Recherche dans le catalogue**, envoyé vers `/catalogue` :
+
+    - un champ de recherche libre, de `name` `q`, étiqueté « Rechercher » ;
+    - une liste déroulante de `name` `type`, étiquetée « Type de document », avec les
+      options Livre (`livre`), Bande dessinée (`bd`) et DVD (`dvd`), dans cet ordre ;
+    - un bouton « Lancer la recherche ».
+
+    **Formulaire 2 — Demande d’adhésion**, envoyé vers `/adhesion` :
+
+    - prénom et nom, obligatoires ;
+    - adresse électronique, obligatoire ;
+    - date de naissance, obligatoire ;
+    - code postal, obligatoire, exactement 5 chiffres, avec une consigne de format
+      visible et associée au champ ;
+    - formule, obligatoire, un seul choix parmi : individuelle, famille, étudiant ;
+    - centres d’intérêt, facultatifs, plusieurs choix possibles parmi : romans, bandes
+      dessinées, documentaires ;
+    - un message facultatif sur plusieurs lignes ;
+    - l’acceptation obligatoire du règlement ;
+    - un bouton « Envoyer ma demande ».
+
+    Exigences : chaque champ a une étiquette visible associée ; les groupes de choix
+    sont regroupés et intitulés ; les types de champs, `autocomplete` et contraintes de
+    validation native sont adaptés ; la page indique en texte quels champs sont
+    obligatoires ; la méthode d’envoi de chaque formulaire est choisie et justifiée.
+  deliverable: |
+    Colle la page complète. Puis réponds en quelques phrases :
+
+    1. Quelle méthode as-tu choisie pour chaque formulaire, et pourquoi ?
+    2. Écris l’adresse exacte demandée par le formulaire 1 quand on cherche
+       « Astérix & Obélix » dans les bandes dessinées.
+    3. Le service informatique dit : « Le code postal est contrôlé par `pattern`, le
+       serveur n’a pas besoin de le vérifier. » Que lui réponds-tu ?
   rubric:
     passRatio: 0.7
     criteria:
-    - id: labels-and-groups
-      description: Associe une étiquette à chaque champ et regroupe les choix, en expliquant l’effet sur
-        l’accessibilité.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Champs sans étiquette associée ou groupes de choix sans regroupement.
-      - score: 1
-        description: Étiquettes présentes mais associations erronées, ou fieldset manquant pour un groupe.
-      - score: 2
-        description: Toutes les étiquettes et légendes sont correctes ; explique le nom accessible et
-          la zone cliquable.
-      - score: 3
-        description: Explique aussi ce qu’annonce un lecteur d’écran pour un radio avec et sans legend,
-          et pourquoi le placeholder ne suffit pas.
-    - id: field-types-validation
-      description: Choisit les types, l’autocomplétion et les contraintes adaptés, et en connaît les limites.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Types et contraintes inadaptés ou absents.
-      - score: 1
-        description: Types corrects pour l’essentiel mais contraintes incomplètes ou code postal en number.
-      - score: 2
-        description: Types, autocomplete et contraintes corrects et justifiés.
-      - score: 3
-        description: Explique aussi des cas limites (champ vide non obligatoire, pattern ancré, espaces
-          acceptés par required).
-    - id: http-method
-      description: Choisit GET ou POST et prédit exactement la requête produite.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Choix non justifié ou ne sait pas où voyagent les données.
-      - score: 1
-        description: Choix correct mais adresse prédite fausse (encodage, ordre ou valeur de l’option).
-      - score: 2
-        description: Choix justifié et adresse exacte avec l’explication de l’encodage.
-      - score: 3
-        description: Prédit aussi le corps POST du second formulaire pour une saisie donnée à l’oral.
-    - id: server-validation
-      description: Explique pourquoi le serveur doit revalider.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Pense que la validation HTML protège le serveur.
-      - score: 1
-        description: Sait qu’il faut revalider sans pouvoir dire comment on contourne la validation.
-      - score: 2
-        description: Donne des moyens concrets de contournement et distingue confort et sécurité.
+      - id: labels-and-groups
+        description: Associe une étiquette à chaque champ et regroupe les choix, en expliquant l’effet sur l’accessibilité.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Champs sans étiquette associée ou groupes de choix sans regroupement.
+          - score: 1
+            description: Étiquettes présentes mais associations erronées, ou fieldset manquant pour un groupe.
+          - score: 2
+            description: Toutes les étiquettes et légendes sont correctes ; explique le nom accessible et la zone cliquable.
+          - score: 3
+            description: Explique aussi ce qu’annonce un lecteur d’écran pour un radio avec et sans legend, et pourquoi le placeholder ne suffit pas.
+      - id: field-types-validation
+        description: Choisit les types, l’autocomplétion et les contraintes adaptés, et en connaît les limites.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Types et contraintes inadaptés ou absents.
+          - score: 1
+            description: Types corrects pour l’essentiel mais contraintes incomplètes ou code postal en number.
+          - score: 2
+            description: Types, autocomplete et contraintes corrects et justifiés.
+          - score: 3
+            description: Explique aussi des cas limites (champ vide non obligatoire, pattern ancré, espaces acceptés par required).
+      - id: http-method
+        description: Choisit GET ou POST et prédit exactement la requête produite.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Choix non justifié ou ne sait pas où voyagent les données.
+          - score: 1
+            description: Choix correct mais adresse prédite fausse (encodage, ordre ou valeur de l’option).
+          - score: 2
+            description: Choix justifié et adresse exacte avec l’explication de l’encodage.
+          - score: 3
+            description: Prédit aussi le corps POST du second formulaire pour une saisie donnée à l’oral.
+      - id: server-validation
+        description: Explique pourquoi le serveur doit revalider.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Pense que la validation HTML protège le serveur.
+          - score: 1
+            description: Sait qu’il faut revalider sans pouvoir dire comment on contourne la validation.
+          - score: 2
+            description: Donne des moyens concrets de contournement et distingue confort et sécurité.
+
 - id: html-forms-accessibility-avec-ia
   family: AVEC_IA
   title: La réservation d’atelier, testée pour de vrai
-  summary: Construire avec une IA un formulaire et sa page d’erreur, puis les auditer au clavier et avec
-    un outil automatique.
+  summary: Construire avec une IA un formulaire et sa page d’erreur, puis les auditer au clavier et avec un outil automatique.
   estimatedMinutes: 120
-  instructions: "Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras justifier chaque\nattribut\
-    \ sans aide, refaire un test au clavier en direct et corriger un défaut\nqu’on te montrera.\n\nProjet\
-    \ : deux pages HTML pour réserver une place à un atelier de céramique fictif.\n\n1. `reservation.html`\
-    \ : le formulaire (POST vers `/reservation`) avec nom, adresse\n   électronique, téléphone facultatif,\
-    \ choix de l’atelier dans une liste\n   déroulante, choix du créneau (matin ou soir) en boutons radio,\
-    \ nombre de places\n   (1 à 4), case d’acceptation des conditions, bouton d’envoi. Une icône\n   d’information\
-    \ (`info.svg`) placée à côté du nombre de places renvoie vers la page\n   des conditions.\n2. `reservation-erreur.html`\
-    \ : la page que le serveur renverra si l’adresse\n   électronique est refusée (« adresse déjà utilisée\
-    \ pour ce créneau ») et si aucun\n   créneau n’a été choisi. Les valeurs saisies sont conservées.\n\
-    3. Un peu de CSS dans un élément `style` est autorisé pour les couleurs : tout texte\n   doit respecter\
-    \ un contraste AA, et le focus doit rester visible.\n\nDémarche imposée :\n\n- Conserve la première\
-    \ version produite par l’IA.\n- Fais le **test au clavier** du cours (leçon 5) sur cette version et\
-    \ note les\n  problèmes.\n- Passe-la dans un outil d’audit automatique (Lighthouse, axe DevTools ou\
-    \ WAVE) et\n  dans le validateur du W3C, et note ce qu’ils signalent.\n- Corrige, puis refais les\
-    \ trois vérifications.\n\nConseil : demande à l’IA d’expliquer chaque attribut ARIA qu’elle propose,\
-    \ puis\napplique les règles d’usage d’ARIA du cours pour décider s’il doit rester.\n"
-  deliverable: 'Colle le code final des deux pages. Puis fournis un rapport d’audit court en trois
+  instructions: |
+    Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras justifier chaque
+    attribut sans aide, refaire un test au clavier en direct et corriger un défaut
+    qu’on te montrera.
 
+    Projet : deux pages HTML pour réserver une place à un atelier de céramique fictif.
+
+    1. `reservation.html` : le formulaire (POST vers `/reservation`) avec nom, adresse
+       électronique, téléphone facultatif, choix de l’atelier dans une liste
+       déroulante, choix du créneau (matin ou soir) en boutons radio, nombre de places
+       (1 à 4), case d’acceptation des conditions, bouton d’envoi. Une icône
+       d’information (`info.svg`) placée à côté du nombre de places renvoie vers la page
+       des conditions.
+    2. `reservation-erreur.html` : la page que le serveur renverra si l’adresse
+       électronique est refusée (« adresse déjà utilisée pour ce créneau ») et si aucun
+       créneau n’a été choisi. Les valeurs saisies sont conservées.
+    3. Un peu de CSS dans un élément `style` est autorisé pour les couleurs : tout texte
+       doit respecter un contraste AA, et le focus doit rester visible.
+
+    Démarche imposée :
+
+    - Conserve la première version produite par l’IA.
+    - Fais le **test au clavier** du cours (leçon 5) sur cette version et note les
+      problèmes.
+    - Passe-la dans un outil d’audit automatique (Lighthouse, axe DevTools ou WAVE) et
+      dans le validateur du W3C, et note ce qu’ils signalent.
+    - Corrige, puis refais les trois vérifications.
+
+    Conseil : demande à l’IA d’expliquer chaque attribut ARIA qu’elle propose, puis
+    applique les règles d’usage d’ARIA du cours pour décider s’il doit rester.
+  deliverable: |
+    Colle le code final des deux pages. Puis fournis un rapport d’audit court en trois
     parties : problèmes trouvés au clavier, problèmes signalés par l’outil automatique
-
     (en précisant l’outil), problèmes que tu as trouvés toi-même sans outil ; pour
-
     chacun, la correction apportée. Termine par le rapport de contraste de tes couleurs
-
     de texte et la façon dont tu l’as mesuré.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: code-ownership
-      description: Explique chaque élément et attribut de ses pages sans aide.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas expliquer des attributs importants de son propre code.
-      - score: 1
-        description: Explique les éléments principaux mais pas les attributs ARIA ni autocomplete.
-      - score: 2
-        description: Explique chaque attribut et son effet (nom, description, état invalide, autocomplétion).
-      - score: 3
-        description: Justifie aussi ce qu’il a retiré de la proposition de l’IA avec les règles d’usage
-          d’ARIA.
-    - id: error-page
-      description: Construit une page d’erreur serveur accessible et compréhensible.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Erreurs absentes, seulement en couleur, ou valeurs perdues.
-      - score: 1
-        description: Messages textuels présents mais non associés aux champs.
-      - score: 2
-        description: Titre, récapitulatif avec liens, aria-invalid, aria-describedby et valeurs conservées.
-      - score: 3
-        description: Messages qui proposent une correction et explication de ce qu’annonce un lecteur
-          d’écran.
-    - id: testing
-      description: Mène un test au clavier et un audit outillé, et en connaît les limites.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Aucun test réel effectué ou décrit.
-      - score: 1
-        description: Un seul type de test, ou résultats non exploités.
-      - score: 2
-        description: Test au clavier et outil automatique menés, problèmes corrigés et revérifiés.
-      - score: 3
-        description: Distingue précisément ce que l’outil détecte et ce que seul un humain peut juger,
-          avec des exemples du projet.
-    - id: contrast-keyboard
-      description: Garantit des contrastes conformes et un focus visible.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Contrastes non mesurés ou focus supprimé.
-      - score: 1
-        description: Contrastes mesurés mais un seuil mal appliqué (grand texte, composant).
-      - score: 2
-        description: Rapports mesurés et conformes, seuils expliqués, focus visible.
+      - id: code-ownership
+        description: Explique chaque élément et attribut de ses pages sans aide.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas expliquer des attributs importants de son propre code.
+          - score: 1
+            description: Explique les éléments principaux mais pas les attributs ARIA ni autocomplete.
+          - score: 2
+            description: Explique chaque attribut et son effet (nom, description, état invalide, autocomplétion).
+          - score: 3
+            description: Justifie aussi ce qu’il a retiré de la proposition de l’IA avec les règles d’usage d’ARIA.
+      - id: error-page
+        description: Construit une page d’erreur serveur accessible et compréhensible.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Erreurs absentes, seulement en couleur, ou valeurs perdues.
+          - score: 1
+            description: Messages textuels présents mais non associés aux champs.
+          - score: 2
+            description: Titre, récapitulatif avec liens, aria-invalid, aria-describedby et valeurs conservées.
+          - score: 3
+            description: Messages qui proposent une correction et explication de ce qu’annonce un lecteur d’écran.
+      - id: testing
+        description: Mène un test au clavier et un audit outillé, et en connaît les limites.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Aucun test réel effectué ou décrit.
+          - score: 1
+            description: Un seul type de test, ou résultats non exploités.
+          - score: 2
+            description: Test au clavier et outil automatique menés, problèmes corrigés et revérifiés.
+          - score: 3
+            description: Distingue précisément ce que l’outil détecte et ce que seul un humain peut juger, avec des exemples du projet.
+      - id: contrast-keyboard
+        description: Garantit des contrastes conformes et un focus visible.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Contrastes non mesurés ou focus supprimé.
+          - score: 1
+            description: Contrastes mesurés mais un seuil mal appliqué (grand texte, composant).
+          - score: 2
+            description: Rapports mesurés et conformes, seuils expliqués, focus visible.
+
 - id: html-forms-accessibility-contre-ia
   family: CONTRE_IA
   title: Le formulaire d’inscription du club
   summary: Trouver et corriger les défauts d’accessibilité, de validation et d’envoi d’un formulaire généré.
   estimatedMinutes: 60
-  instructions: "Un assistant a généré la page d’inscription à l’espace adhérent d’un club de\ntennis\
-    \ de table (fictif). L’équipe trouve le résultat « propre » et voudrait le mettre\nen ligne. Une adhérente\
-    \ aveugle et un adhérent qui navigue uniquement au clavier ont\naccepté de le tester la semaine prochaine\
-    \ : avant cela, tu dois l’auditer et le\ncorriger.\n\nRègles métier : prénom, nom, e-mail, mot de\
-    \ passe (12 caractères minimum), catégorie\net acceptation du règlement sont obligatoires ; le téléphone\
-    \ et le numéro de licence\nsont facultatifs mais doivent être transmis au serveur quand ils sont remplis.\n\
-    \n```html\n<!DOCTYPE html>\n<html lang=\"fr\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta\
-    \ name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <title>Créer mon compte\
-    \ — Club de tennis de table des Tilleuls</title>\n    <style>\n      body { font-family: sans-serif;\
-    \ color: #222222; background-color: #ffffff; }\n      .hint { color: #aaaaaa; font-size: 14px; }\n\
-    \      .required { color: #d32f2f; }\n      input:focus, button:focus, .btn:focus { outline: none;\
-    \ }\n      .btn { background-color: #ff9800; color: #ffffff; padding: 12px 24px; display: inline-block;\
-    \ }\n    </style>\n  </head>\n  <body>\n    <main role=\"main\">\n      <h1>Créer mon compte adhérent</h1>\n\
-    \      <p>Les champs en <span class=\"required\">rouge</span> sont obligatoires.</p>\n\n      <form\
-    \ action=\"/compte\" method=\"get\">\n        <input type=\"text\" name=\"firstName\" placeholder=\"\
-    Prénom\" class=\"required\" required>\n        <input type=\"text\" name=\"lastName\" placeholder=\"\
-    Nom\" class=\"required\" required>\n\n        <label for=\"mail\" class=\"required\">E-mail</label>\n\
-    \        <input type=\"email\" id=\"email\" name=\"email\" required>\n\n        <label for=\"phone\"\
-    >Téléphone</label>\n        <input type=\"number\" id=\"phone\" name=\"phone\">\n\n        <label\
-    \ for=\"password\" class=\"required\">Mot de passe</label>\n        <input type=\"password\" id=\"\
-    password\" name=\"password\" required minlength=\"12\" tabindex=\"1\">\n        <p class=\"hint\"\
-    >12 caractères minimum</p>\n\n        <p class=\"required\">Catégorie</p>\n        <input type=\"\
-    radio\" id=\"cat-youth\" name=\"category-youth\" value=\"youth\">\n        <label for=\"cat-youth\"\
-    >Jeune (moins de 18 ans)</label>\n        <input type=\"radio\" id=\"cat-adult\" name=\"category-adult\"\
-    \ value=\"adult\">\n        <label for=\"cat-adult\">Adulte</label>\n\n        <label for=\"licence\"\
-    >Numéro de licence (facultatif)</label>\n        <input type=\"text\" id=\"licence\" required=\"false\"\
-    >\n\n        <input type=\"checkbox\" id=\"rules\" name=\"rules\" required>\n        <label for=\"\
-    rules\">J’accepte le <a href=\"/reglement.pdf\" aria-hidden=\"true\">règlement</a></label>\n\n   \
-    \     <div class=\"btn\" onclick=\"submitForm()\" aria-label=\"Valider\">Créer mon compte</div>\n\
-    \      </form>\n    </main>\n  </body>\n</html>\n```\n\nLa fonction JavaScript `submitForm` n’est\
-    \ pas fournie : considère seulement qu’elle\nenvoie le formulaire.\n\nTravail demandé :\n\n1. Fais\
-    \ le test au clavier du cours (en raisonnant sur le code ou en ouvrant la\n   page) et décris ce que\
-    \ vivra l’adhérent qui navigue au clavier.\n2. Liste **tous** les défauts que tu trouves : extrait,\
-    \ problème, personnes\n   concernées, critère WCAG quand tu le connais, gravité.\n3. Livre la page\
-    \ corrigée.\n4. L’équipe back-end propose de ne pas valider les données côté serveur, « puisque\n\
-    \   le formulaire a déjà `required` et `minlength` ». Réponds-lui en quelques\n   phrases.\n"
-  deliverable: 'Colle ton compte rendu du test au clavier, ta liste de défauts, le code complet de
+  instructions: |
+    Un assistant a généré la page d’inscription à l’espace adhérent d’un club de
+    tennis de table (fictif). L’équipe trouve le résultat « propre » et voudrait le mettre
+    en ligne. Une adhérente aveugle et un adhérent qui navigue uniquement au clavier ont
+    accepté de le tester la semaine prochaine : avant cela, tu dois l’auditer et le
+    corriger.
 
+    Règles métier : prénom, nom, e-mail, mot de passe (12 caractères minimum), catégorie
+    et acceptation du règlement sont obligatoires ; le téléphone et le numéro de licence
+    sont facultatifs mais doivent être transmis au serveur quand ils sont remplis.
+
+    ```html
+    <!DOCTYPE html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Créer mon compte — Club de tennis de table des Tilleuls</title>
+        <style>
+          body { font-family: sans-serif; color: #222222; background-color: #ffffff; }
+          .hint { color: #aaaaaa; font-size: 14px; }
+          .required { color: #d32f2f; }
+          input:focus, button:focus, .btn:focus { outline: none; }
+          .btn { background-color: #ff9800; color: #ffffff; padding: 12px 24px; display: inline-block; }
+        </style>
+      </head>
+      <body>
+        <main role="main">
+          <h1>Créer mon compte adhérent</h1>
+          <p>Les champs en <span class="required">rouge</span> sont obligatoires.</p>
+
+          <form action="/compte" method="get">
+            <input type="text" name="firstName" placeholder="Prénom" class="required" required>
+            <input type="text" name="lastName" placeholder="Nom" class="required" required>
+
+            <label for="mail" class="required">E-mail</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="phone">Téléphone</label>
+            <input type="number" id="phone" name="phone">
+
+            <label for="password" class="required">Mot de passe</label>
+            <input type="password" id="password" name="password" required minlength="12" tabindex="1">
+            <p class="hint">12 caractères minimum</p>
+
+            <p class="required">Catégorie</p>
+            <input type="radio" id="cat-youth" name="category-youth" value="youth">
+            <label for="cat-youth">Jeune (moins de 18 ans)</label>
+            <input type="radio" id="cat-adult" name="category-adult" value="adult">
+            <label for="cat-adult">Adulte</label>
+
+            <label for="licence">Numéro de licence (facultatif)</label>
+            <input type="text" id="licence" required="false">
+
+            <input type="checkbox" id="rules" name="rules" required>
+            <label for="rules">J’accepte le <a href="/reglement.pdf" aria-hidden="true">règlement</a></label>
+
+            <div class="btn" onclick="submitForm()" aria-label="Valider">Créer mon compte</div>
+          </form>
+        </main>
+      </body>
+    </html>
+    ```
+
+    La fonction JavaScript `submitForm` n’est pas fournie : considère seulement qu’elle
+    envoie le formulaire.
+
+    Travail demandé :
+
+    1. Fais le test au clavier du cours (en raisonnant sur le code ou en ouvrant la
+       page) et décris ce que vivra l’adhérent qui navigue au clavier.
+    2. Liste **tous** les défauts que tu trouves : extrait, problème, personnes
+       concernées, critère WCAG quand tu le connais, gravité.
+    3. Livre la page corrigée.
+    4. L’équipe back-end propose de ne pas valider les données côté serveur, « puisque
+       le formulaire a déjà `required` et `minlength` ». Réponds-lui en quelques
+       phrases.
+  deliverable: |
+    Colle ton compte rendu du test au clavier, ta liste de défauts, le code complet de
     la page corrigée, puis ta réponse à l’équipe back-end.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: defect-detection
-      description: Trouve les défauts d’accessibilité, de validation et d’envoi.
-      maxScore: 3
-    - id: keyboard-and-at
-      description: Décrit précisément l’expérience au clavier et avec un lecteur d’écran.
-      maxScore: 3
-    - id: corrections
-      description: Livre une page corrigée, conforme aux règles métier.
-      maxScore: 3
-    - id: server-validation
-      description: Argumente la nécessité de la validation côté serveur.
-      maxScore: 2
+      - id: defect-detection
+        description: Trouve les défauts d’accessibilité, de validation et d’envoi.
+        maxScore: 3
+      - id: keyboard-and-at
+        description: Décrit précisément l’expérience au clavier et avec un lecteur d’écran.
+        maxScore: 3
+      - id: corrections
+        description: Livre une page corrigée, conforme aux règles métier.
+        maxScore: 3
+      - id: server-validation
+        description: Argumente la nécessité de la validation côté serveur.
+        maxScore: 2
+
 - id: html-forms-accessibility-apres-ia
   family: APRES_IA
   title: La lettre d’information
   summary: Dépanner et faire évoluer un formulaire existant par des modifications ciblées.
   estimatedMinutes: 60
-  instructions: "Cette page d’abonnement à la lettre d’information d’un atelier (fictif) est en\nligne\
-    \ depuis six mois. Elle a été générée par une IA puis retouchée. Fais-la évoluer\n**en modifiant le\
-    \ moins de lignes possible**, sans la régénérer.\n\n```html\n<!DOCTYPE html>\n<html lang=\"fr\">\n\
-    \  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width,\
-    \ initial-scale=1\">\n    <title>Lettre d’information — Atelier de Lou</title>\n    <style>\n    \
-    \  .help { color: #999999; }\n    </style>\n  </head>\n  <body>\n    <header>\n      <p>Atelier de\
-    \ Lou</p>\n      <form action=\"/recherche\" method=\"post\" role=\"search\">\n        <label for=\"\
-    q\">Rechercher un cours</label>\n        <input type=\"search\" id=\"q\" name=\"q\">\n        <button\
-    \ type=\"submit\">Rechercher</button>\n      </form>\n    </header>\n    <main>\n      <h1>S’abonner\
-    \ à la lettre d’information</h1>\n      <form action=\"/abonnement\" method=\"post\">\n        <label\
-    \ for=\"email\">Adresse électronique</label>\n        <input type=\"email\" id=\"email\" name=\"email\"\
-    \ autocomplete=\"email\" required\n               aria-describedby=\"email-help\">\n        <p id=\"\
-    email-help\" class=\"help\">Une lettre par mois, désinscription en un clic.</p>\n\n        <fieldset>\n\
-    \          <legend>Format de la lettre</legend>\n          <input type=\"radio\" id=\"format-text\"\
-    \ name=\"format\" value=\"text\" checked>\n          <label for=\"format-text\">Texte simple</label>\n\
-    \          <input type=\"radio\" id=\"format-html\" name=\"fomat\" value=\"html\">\n          <label\
-    \ for=\"format-html\">Mise en page illustrée</label>\n        </fieldset>\n\n        <input type=\"\
-    checkbox\" id=\"terms\" name=\"terms\" value=\"accepted\" required>\n        <label for=\"terms\"\
-    >J’accepte les conditions d’abonnement</label>\n        <button onclick=\"showTerms()\">Afficher les\
-    \ conditions</button>\n\n        <button type=\"submit\">M’abonner</button>\n      </form>\n    </main>\n\
-    \  </body>\n</html>\n```\n\nLa fonction JavaScript `showTerms` existe ailleurs et affiche les conditions\
-    \ ; tu\nn’as pas à la modifier.\n\nDemandes de l’équipe :\n\n1. **Bug** : les abonnés qui choisissent\
-    \ « Mise en page illustrée » reçoivent quand\n   même la version texte. Trouve la cause dans le HTML\
-    \ et corrige-la.\n2. **Bug** : cliquer sur « Afficher les conditions » envoie le formulaire au lieu\n\
-    \   d’afficher les conditions. Trouve la cause et corrige-la.\n3. Un abonné malvoyant trouve le texte\
-    \ d’aide illisible. Corrige sa couleur et\n   justifie ton choix par le rapport de contraste mesuré.\n\
-    4. Les visiteurs veulent pouvoir partager le lien d’une page de résultats de\n   recherche. Fais le\
-    \ changement nécessaire et explique-le.\n5. Ajoute un choix obligatoire de la fréquence (mensuelle\
-    \ ou trimestrielle) sous\n   forme de liste déroulante qui oblige à faire un choix explicite.\n6.\
-    \ Le serveur refuse l’adresse `lou@exemple.fr` car elle est déjà abonnée. Écris la\n   version de\
-    \ la page que le serveur doit renvoyer dans ce cas : erreur\n   compréhensible par tous, y compris\
-    \ au lecteur d’écran, et saisie conservée.\n"
-  deliverable: 'Colle la page modifiée, puis la version renvoyée en cas d’erreur (demande 6). Liste
+  instructions: |
+    Cette page d’abonnement à la lettre d’information d’un atelier (fictif) est en
+    ligne depuis six mois. Elle a été générée par une IA puis retouchée. Fais-la évoluer
+    **en modifiant le moins de lignes possible**, sans la régénérer.
 
+    ```html
+    <!DOCTYPE html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Lettre d’information — Atelier de Lou</title>
+        <style>
+          .help { color: #999999; }
+        </style>
+      </head>
+      <body>
+        <header>
+          <p>Atelier de Lou</p>
+          <form action="/recherche" method="post" role="search">
+            <label for="q">Rechercher un cours</label>
+            <input type="search" id="q" name="q">
+            <button type="submit">Rechercher</button>
+          </form>
+        </header>
+        <main>
+          <h1>S’abonner à la lettre d’information</h1>
+          <form action="/abonnement" method="post">
+            <label for="email">Adresse électronique</label>
+            <input type="email" id="email" name="email" autocomplete="email" required
+                   aria-describedby="email-help">
+            <p id="email-help" class="help">Une lettre par mois, désinscription en un clic.</p>
+
+            <fieldset>
+              <legend>Format de la lettre</legend>
+              <input type="radio" id="format-text" name="format" value="text" checked>
+              <label for="format-text">Texte simple</label>
+              <input type="radio" id="format-html" name="fomat" value="html">
+              <label for="format-html">Mise en page illustrée</label>
+            </fieldset>
+
+            <input type="checkbox" id="terms" name="terms" value="accepted" required>
+            <label for="terms">J’accepte les conditions d’abonnement</label>
+            <button onclick="showTerms()">Afficher les conditions</button>
+
+            <button type="submit">M’abonner</button>
+          </form>
+        </main>
+      </body>
+    </html>
+    ```
+
+    La fonction JavaScript `showTerms` existe ailleurs et affiche les conditions ; tu
+    n’as pas à la modifier.
+
+    Demandes de l’équipe :
+
+    1. **Bug** : les abonnés qui choisissent « Mise en page illustrée » reçoivent quand
+       même la version texte. Trouve la cause dans le HTML et corrige-la.
+    2. **Bug** : cliquer sur « Afficher les conditions » envoie le formulaire au lieu
+       d’afficher les conditions. Trouve la cause et corrige-la.
+    3. Un abonné malvoyant trouve le texte d’aide illisible. Corrige sa couleur et
+       justifie ton choix par le rapport de contraste mesuré.
+    4. Les visiteurs veulent pouvoir partager le lien d’une page de résultats de
+       recherche. Fais le changement nécessaire et explique-le.
+    5. Ajoute un choix obligatoire de la fréquence (mensuelle ou trimestrielle) sous
+       forme de liste déroulante qui oblige à faire un choix explicite.
+    6. Le serveur refuse l’adresse `lou@exemple.fr` car elle est déjà abonnée. Écris la
+       version de la page que le serveur doit renvoyer dans ce cas : erreur
+       compréhensible par tous, y compris au lecteur d’écran, et saisie conservée.
+  deliverable: |
+    Colle la page modifiée, puis la version renvoyée en cas d’erreur (demande 6). Liste
     les lignes modifiées ou ajoutées avec le numéro de la demande et la raison. Explique
-
     en deux ou trois phrases la cause de chacun des deux bugs.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: bug-diagnosis
-      description: Explique la cause des deux bugs et les corrige proprement.
-      maxScore: 3
-    - id: accessible-error
-      description: Produit une page d’erreur accessible et conserve la saisie.
-      maxScore: 3
-    - id: method-and-contrast
-      description: Justifie le passage en GET et le choix de couleur.
-      maxScore: 2
-    - id: minimal-change
-      description: Fait évoluer le code de façon ciblée et vérifiée.
-      maxScore: 2
+      - id: bug-diagnosis
+        description: Explique la cause des deux bugs et les corrige proprement.
+        maxScore: 3
+      - id: accessible-error
+        description: Produit une page d’erreur accessible et conserve la saisie.
+        maxScore: 3
+      - id: method-and-contrast
+        description: Justifie le passage en GET et le choix de couleur.
+        maxScore: 2
+      - id: minimal-change
+        description: Fait évoluer le code de façon ciblée et vérifiée.
+        maxScore: 2

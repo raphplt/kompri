@@ -1,317 +1,469 @@
 - id: web-fundamentals-sans-ia
   family: SANS_IA
   title: La capture réseau du café
-  summary: Lire une URL et une capture du panneau Réseau pour raconter le chargement d’une page et diagnostiquer
-    ses erreurs.
+  summary: Lire une URL et une capture du panneau Réseau pour raconter le chargement d’une page et diagnostiquer ses erreurs.
   estimatedMinutes: 45
-  instructions: "Le gérant du Café des Arts trouve que la page de sa carte « ne marche qu’à moitié ».\n\
-    Il a tapé l’adresse suivante dans son navigateur :\n\n```text\nhttp://www.cafe-des-arts.example/carte?lang=fr#desserts\n\
-    ```\n\nUn ami a ouvert les outils de développement, panneau Réseau, case « Conserver le\njournal »\
-    \ cochée, et a relevé ces lignes dans l’ordre d’apparition :\n\n```text\n#  Nom                Méthode\
-    \  Statut                       Type        Initiateur\n1  carte?lang=fr      GET      301       \
-    \                   document    (aucun)\n2  carte?lang=fr      GET      200                      \
-    \    document    1 (redirection)\n3  style.css          GET      200                          stylesheet\
-    \  carte?lang=fr\n4  theme.css          GET      200                          stylesheet  style.css\n\
-    5  logo.svg           GET      304                          svg+xml     carte?lang=fr\n6  app.js \
-    \            GET      200                          script      carte?lang=fr\n7  tarte-citron.jpg\
-    \   GET      404                          html        carte?lang=fr\n8  horaires           GET   \
-    \   500                          fetch       app.js\n9  widget.js          GET      (échec) ERR_NAME_NOT_RESOLVED\
-    \ script     carte?lang=fr\n```\n\nInformations complémentaires relevées dans les détails :\n\n- ligne\
-    \ 1, en-tête de réponse : `location: https://www.cafe-des-arts.example/carte?lang=fr` ;\n- ligne 2,\
-    \ adresse distante : `203.0.113.10:443` ; en-tête de réponse\n  `content-type: text/html; charset=utf-8`\
-    \ ;\n- ligne 6 : dans le HTML, le script est chargé par `script src=\"app.js\" defer` ;\n- ligne 9\
-    \ : l’URL complète est `https://cdn.widgets-cafe.example/widget.js`.\n\nRéponds aux questions suivantes,\
-    \ sans aide extérieure, en justifiant chaque réponse\navec le vocabulaire du cours.\n\n1. Décompose\
-    \ l’URL tapée : schéma, hôte, port effectivement utilisé, chemin,\n   requête, fragment. Quel port\
-    \ utilise ensuite la requête de la ligne 2 ?\n2. Écris la ligne de requête et l’en-tête `Host` de\
-    \ la requête de la ligne 2.\n   Pourquoi `#desserts` n’y figure-t-il pas ?\n3. Explique les lignes\
-    \ 1 et 2 : pourquoi deux requêtes pour une seule page, et\n   pourquoi le site fait-il cela ?\n4.\
-    \ Explique pourquoi les lignes 3 à 9 arrivent après le document, et pourquoi\n   `theme.css` a pour\
-    \ initiateur `style.css`.\n5. Que signifie le statut `304` de la ligne 5 ? Le logo a-t-il été retéléchargé\
-    \ ?\n6. Pour chacune des lignes 7, 8 et 9 : à quelle étape l’échec se produit-il (DNS,\n   connexion,\
-    \ réponse du serveur), qui doit agir, et que vérifierais-tu en premier ?\n7. Grâce à `defer`, à quel\
-    \ moment `app.js` s’exécute-t-il par rapport à l’analyse du\n   HTML ? Que se passerait-il si un script\
-    \ classique sans `defer`, placé dans le\n   `head`, cherchait un élément du `body` ?\n8. Le gérant\
-    \ affirme : « Mon site a un cadenas, donc il est sûr pour mes clients. »\n   Que garantit exactement\
-    \ ce cadenas, et que ne garantit-il pas ?\n"
-  deliverable: 'Colle tes réponses aux huit questions, numérotées. Pour les questions 1 et 2, présente
+  instructions: |
+    Le gérant du Café des Arts trouve que la page de sa carte « ne marche qu’à moitié ».
+    Il a tapé l’adresse suivante dans son navigateur :
 
+    ```text
+    http://www.cafe-des-arts.example/carte?lang=fr#desserts
+    ```
+
+    Un ami a ouvert les outils de développement, panneau Réseau, case « Conserver le
+    journal » cochée, et a relevé ces lignes dans l’ordre d’apparition :
+
+    ```text
+    #  Nom                Méthode  Statut                       Type        Initiateur
+    1  carte?lang=fr      GET      301                          document    (aucun)
+    2  carte?lang=fr      GET      200                          document    1 (redirection)
+    3  style.css          GET      200                          stylesheet  carte?lang=fr
+    4  theme.css          GET      200                          stylesheet  style.css
+    5  logo.svg           GET      304                          svg+xml     carte?lang=fr
+    6  app.js             GET      200                          script      carte?lang=fr
+    7  tarte-citron.jpg   GET      404                          html        carte?lang=fr
+    8  horaires           GET      500                          fetch       app.js
+    9  widget.js          GET      (échec) ERR_NAME_NOT_RESOLVED script     carte?lang=fr
+    ```
+
+    Informations complémentaires relevées dans les détails :
+
+    - ligne 1, en-tête de réponse : `location: https://www.cafe-des-arts.example/carte?lang=fr` ;
+    - ligne 2, adresse distante : `203.0.113.10:443` ; en-tête de réponse
+      `content-type: text/html; charset=utf-8` ;
+    - ligne 6 : dans le HTML, le script est chargé par `script src="app.js" defer` ;
+    - ligne 9 : l’URL complète est `https://cdn.widgets-cafe.example/widget.js`.
+
+    Réponds aux questions suivantes, sans aide extérieure, en justifiant chaque réponse
+    avec le vocabulaire du cours.
+
+    1. Décompose l’URL tapée : schéma, hôte, port effectivement utilisé, chemin,
+       requête, fragment. Quel port utilise ensuite la requête de la ligne 2 ?
+    2. Écris la ligne de requête et l’en-tête `Host` de la requête de la ligne 2.
+       Pourquoi `#desserts` n’y figure-t-il pas ?
+    3. Explique les lignes 1 et 2 : pourquoi deux requêtes pour une seule page, et
+       pourquoi le site fait-il cela ?
+    4. Explique pourquoi les lignes 3 à 9 arrivent après le document, et pourquoi
+       `theme.css` a pour initiateur `style.css`.
+    5. Que signifie le statut `304` de la ligne 5 ? Le logo a-t-il été retéléchargé ?
+    6. Pour chacune des lignes 7, 8 et 9 : à quelle étape l’échec se produit-il (DNS,
+       connexion, réponse du serveur), qui doit agir, et que vérifierais-tu en premier ?
+    7. Grâce à `defer`, à quel moment `app.js` s’exécute-t-il par rapport à l’analyse du
+       HTML ? Que se passerait-il si un script classique sans `defer`, placé dans le
+       `head`, cherchait un élément du `body` ?
+    8. Le gérant affirme : « Mon site a un cadenas, donc il est sûr pour mes clients. »
+       Que garantit exactement ce cadenas, et que ne garantit-il pas ?
+  deliverable: |
+    Colle tes réponses aux huit questions, numérotées. Pour les questions 1 et 2, présente
     les éléments demandés sur des lignes séparées.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: url-and-addressing
-      description: Décompose l’URL et explique port par défaut, fragment, DNS et adresse distante.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas identifier les parties de l’URL ou confond domaine et chemin.
-      - score: 1
-        description: Identifie les parties mais se trompe sur le port implicite ou sur le fragment.
-      - score: 2
-        description: Décomposition exacte, ports 80 puis 443 justifiés, fragment non envoyé expliqué.
-      - score: 3
-        description: Relie aussi l’adresse distante à la résolution DNS et sait comment la vérifier.
-    - id: http-exchange
-      description: Explique requête, réponse, codes de statut, redirection et cache.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas lire une ligne de requête ou confond les familles de statuts.
-      - score: 1
-        description: Lit les statuts par famille mais explique mal la redirection ou le 304.
-      - score: 2
-        description: Explique la redirection par location, le 304 et écrit une requête correcte avec Host.
-      - score: 3
-        description: Explique aussi pourquoi les sites redirigent vers HTTPS et pourquoi Host est indispensable.
-    - id: failure-diagnosis
-      description: Situe chaque échec à la bonne étape et propose une vérification pertinente.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Attribue tous les échecs au serveur ou à la connexion sans distinction.
-      - score: 1
-        description: Distingue 404 et 500 mais pas l’échec DNS sans code de statut.
-      - score: 2
-        description: Situe correctement les trois échecs et dit qui doit agir.
-      - score: 3
-        description: Propose pour chacun une vérification concrète et explique ce que voit l’utilisateur.
-    - id: page-building
-      description: Explique la découverte des ressources, l’ordre d’exécution des scripts et les limites
-        de HTTPS.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Pense que le navigateur reçoit la page entière en une seule réponse.
-      - score: 1
-        description: Sait que les ressources sont demandées séparément mais ignore le rôle de defer.
-      - score: 2
-        description: Explique la découverte par analyse du HTML et du CSS, defer et l’erreur avec null.
-      - score: 3
-        description: Explique aussi précisément ce que le cadenas garantit et ne garantit pas.
+      - id: url-and-addressing
+        description: Décompose l’URL et explique port par défaut, fragment, DNS et adresse distante.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas identifier les parties de l’URL ou confond domaine et chemin.
+          - score: 1
+            description: Identifie les parties mais se trompe sur le port implicite ou sur le fragment.
+          - score: 2
+            description: Décomposition exacte, ports 80 puis 443 justifiés, fragment non envoyé expliqué.
+          - score: 3
+            description: Relie aussi l’adresse distante à la résolution DNS et sait comment la vérifier.
+      - id: http-exchange
+        description: Explique requête, réponse, codes de statut, redirection et cache.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas lire une ligne de requête ou confond les familles de statuts.
+          - score: 1
+            description: Lit les statuts par famille mais explique mal la redirection ou le 304.
+          - score: 2
+            description: Explique la redirection par location, le 304 et écrit une requête correcte avec Host.
+          - score: 3
+            description: Explique aussi pourquoi les sites redirigent vers HTTPS et pourquoi Host est indispensable.
+      - id: failure-diagnosis
+        description: Situe chaque échec à la bonne étape et propose une vérification pertinente.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Attribue tous les échecs au serveur ou à la connexion sans distinction.
+          - score: 1
+            description: Distingue 404 et 500 mais pas l’échec DNS sans code de statut.
+          - score: 2
+            description: Situe correctement les trois échecs et dit qui doit agir.
+          - score: 3
+            description: Propose pour chacun une vérification concrète et explique ce que voit l’utilisateur.
+      - id: page-building
+        description: Explique la découverte des ressources, l’ordre d’exécution des scripts et les limites de HTTPS.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Pense que le navigateur reçoit la page entière en une seule réponse.
+          - score: 1
+            description: Sait que les ressources sont demandées séparément mais ignore le rôle de defer.
+          - score: 2
+            description: Explique la découverte par analyse du HTML et du CSS, defer et l’erreur avec null.
+          - score: 3
+            description: Explique aussi précisément ce que le cadenas garantit et ne garantit pas.
+
 - id: web-fundamentals-avec-ia
   family: AVEC_IA
   title: Enquête sur un site réel
-  summary: Mener avec une IA une enquête technique sur le chargement d’un vrai site, puis défendre chaque
-    observation.
+  summary: Mener avec une IA une enquête technique sur le chargement d’un vrai site, puis défendre chaque observation.
   estimatedMinutes: 90
-  instructions: "Tu peux utiliser une IA autant que tu veux pour comprendre ce que tu observes. À\nl’oral,\
-    \ tu devras refaire une partie de l’enquête en direct, expliquer chaque valeur\nrelevée sans aide\
-    \ et répondre à des questions de type « et si… ».\n\nChoisis un site public réel, de préférence celui\
-    \ d’une organisation que tu connais\n(une bibliothèque, un musée, une association, un service public).\
-    \ Évite les sites\nqui demandent une connexion : tu ne dois jamais publier d’informations personnelles\n\
-    ni de cookies.\n\nRédige une fiche d’enquête qui répond aux points suivants :\n\n1. **L’adresse.**\
-    \ L’URL complète de la page d’accueil, décomposée. Tape l’adresse en\n   `http://` avec « Conserver\
-    \ le journal » coché : y a-t-il une redirection ? Avec\n   quel code de statut et quel en-tête ?\n\
-    2. **Le DNS.** La sortie de `nslookup` pour le nom de domaine du site (copie-la\n   telle quelle).\
-    \ Compare l’adresse obtenue avec l’adresse distante affichée dans le\n   panneau Réseau pour le document\
-    \ principal. Sont-elles identiques ? Explique.\n3. **Le chargement.** Cache désactivé : nombre total\
-    \ de requêtes, volume transféré,\n   durées jusqu’à `DOMContentLoaded` et `load` si ton navigateur\
-    \ les affiche. Classe\n   les requêtes par type (document, CSS, scripts, images, polices, fetch) avec\
-    \ un\n   ordre de grandeur pour chaque type.\n4. **Trois requêtes choisies.** Pour un fichier CSS,\
-    \ un script et une requête de\n   type fetch (s’il y en a), relève : URL, statut, `content-type`,\
-    \ initiateur. Si le\n   site n’a aucune requête fetch, dis-le et choisis une image.\n5. **Les scripts.**\
-    \ Dans le code source (`Ctrl`+`U`), relève comment deux scripts\n   sont chargés (classique, `defer`,\
-    \ `type=\"module\"`, `async` éventuellement) et\n   explique ce que cela change pour l’analyse du\
-    \ HTML.\n6. **Le cache.** Recharge sans désactiver le cache : qu’est-ce qui change dans le\n   panneau\
-    \ Réseau et dans le volume transféré ?\n7. **La sécurité.** Clique sur l’icône à gauche de l’adresse\
-    \ pour afficher les\n   informations du certificat (selon le navigateur, il faut passer par une entrée\n\
-    \   du type « Connexion sécurisée », puis « Certificat valide » ou « Plus\n   d’informations ») :\
-    \ pour quel domaine est-il valide, qui l’a émis, jusqu’à\n   quand ? Explique ce que ces informations\
-    \ garantissent au visiteur.\n8. **Le délai.** Pour le document principal, l’onglet Délais : quelles\
-    \ étapes\n   vois-tu et laquelle domine ?\n\nConseils : demande à l’IA d’expliquer chaque terme inconnu,\
-    \ puis vérifie dans le\npanneau Réseau. Méfie-toi des réponses générales : tes observations priment\
-    \ sur ce\nque l’IA suppose de ce site.\n"
-  deliverable: 'Colle ta fiche d’enquête (points 1 à 8, avec les valeurs relevées et tes
+  instructions: |
+    Tu peux utiliser une IA autant que tu veux pour comprendre ce que tu observes. À
+    l’oral, tu devras refaire une partie de l’enquête en direct, expliquer chaque valeur
+    relevée sans aide et répondre à des questions de type « et si… ».
 
+    Choisis un site public réel, de préférence celui d’une organisation que tu connais
+    (une bibliothèque, un musée, une association, un service public). Évite les sites
+    qui demandent une connexion : tu ne dois jamais publier d’informations personnelles
+    ni de cookies.
+
+    Rédige une fiche d’enquête qui répond aux points suivants :
+
+    1. **L’adresse.** L’URL complète de la page d’accueil, décomposée. Tape l’adresse en
+       `http://` avec « Conserver le journal » coché : y a-t-il une redirection ? Avec
+       quel code de statut et quel en-tête ?
+    2. **Le DNS.** La sortie de `nslookup` pour le nom de domaine du site (copie-la
+       telle quelle). Compare l’adresse obtenue avec l’adresse distante affichée dans le
+       panneau Réseau pour le document principal. Sont-elles identiques ? Explique.
+    3. **Le chargement.** Cache désactivé : nombre total de requêtes, volume transféré,
+       durées jusqu’à `DOMContentLoaded` et `load` si ton navigateur les affiche. Classe
+       les requêtes par type (document, CSS, scripts, images, polices, fetch) avec un
+       ordre de grandeur pour chaque type.
+    4. **Trois requêtes choisies.** Pour un fichier CSS, un script et une requête de
+       type fetch (s’il y en a), relève : URL, statut, `content-type`, initiateur. Si le
+       site n’a aucune requête fetch, dis-le et choisis une image.
+    5. **Les scripts.** Dans le code source (`Ctrl`+`U`), relève comment deux scripts
+       sont chargés (classique, `defer`, `type="module"`, `async` éventuellement) et
+       explique ce que cela change pour l’analyse du HTML.
+    6. **Le cache.** Recharge sans désactiver le cache : qu’est-ce qui change dans le
+       panneau Réseau et dans le volume transféré ?
+    7. **La sécurité.** Clique sur l’icône à gauche de l’adresse pour afficher les
+       informations du certificat (selon le navigateur, il faut passer par une entrée
+       du type « Connexion sécurisée », puis « Certificat valide » ou « Plus
+       d’informations ») : pour quel domaine est-il valide, qui l’a émis, jusqu’à
+       quand ? Explique ce que ces informations garantissent au visiteur.
+    8. **Le délai.** Pour le document principal, l’onglet Délais : quelles étapes
+       vois-tu et laquelle domine ?
+
+    Conseils : demande à l’IA d’expliquer chaque terme inconnu, puis vérifie dans le
+    panneau Réseau. Méfie-toi des réponses générales : tes observations priment sur ce
+    que l’IA suppose de ce site.
+  deliverable: |
+    Colle ta fiche d’enquête (points 1 à 8, avec les valeurs relevées et tes
     explications), le nom du navigateur et sa version, puis un court paragraphe : ce que
-
     l’IA t’a apporté, et au moins une affirmation de l’IA que tu as vérifiée ou corrigée
-
     grâce à tes observations.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: observation-ownership
-      description: Retrouve et explique en direct les valeurs de sa fiche.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas où se trouvent les valeurs qu’il a relevées.
-      - score: 1
-        description: Retrouve les valeurs avec hésitation, explications vagues.
-      - score: 2
-        description: Retrouve chaque valeur rapidement et l’explique correctement.
-      - score: 3
-        description: Retrouve aussi une information nouvelle demandée à l’oral et l’interprète seul.
-    - id: network-chain
-      description: Relie URL, DNS, connexion, TLS, requête et réponse sur le cas observé.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne relie pas les observations aux étapes du chargement.
-      - score: 1
-        description: Cite les étapes mais se trompe sur l’une d’elles.
-      - score: 2
-        description: Explique correctement la redirection, le DNS, l’adresse distante et les délais.
-      - score: 3
-        description: Explique les écarts observés, par exemple entre nslookup et adresse distante.
-    - id: rendering-and-cache
-      description: Explique découverte des ressources, chargement des scripts et cache.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Explications absentes ou fausses sur l’ordre de chargement.
-      - score: 1
-        description: Ordre global compris, mais rôle de defer ou du cache confus.
-      - score: 2
-        description: Explique correctement scripts classiques, defer ou module, et effets du cache.
-      - score: 3
-        description: Prévoit l’effet d’une modification proposée à l’oral (retrait de defer, cache vidé).
-    - id: critical-ai-use
-      description: Montre un usage critique de l’IA et la sécurité de ce qu’il partage.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Reprend des affirmations de l’IA non vérifiées ou partage des données sensibles.
-      - score: 1
-        description: Vérifie certaines affirmations sans pouvoir dire comment.
-      - score: 2
-        description: Cite une affirmation vérifiée ou corrigée grâce à une observation précise.
+      - id: observation-ownership
+        description: Retrouve et explique en direct les valeurs de sa fiche.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas où se trouvent les valeurs qu’il a relevées.
+          - score: 1
+            description: Retrouve les valeurs avec hésitation, explications vagues.
+          - score: 2
+            description: Retrouve chaque valeur rapidement et l’explique correctement.
+          - score: 3
+            description: Retrouve aussi une information nouvelle demandée à l’oral et l’interprète seul.
+      - id: network-chain
+        description: Relie URL, DNS, connexion, TLS, requête et réponse sur le cas observé.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne relie pas les observations aux étapes du chargement.
+          - score: 1
+            description: Cite les étapes mais se trompe sur l’une d’elles.
+          - score: 2
+            description: Explique correctement la redirection, le DNS, l’adresse distante et les délais.
+          - score: 3
+            description: Explique les écarts observés, par exemple entre nslookup et adresse distante.
+      - id: rendering-and-cache
+        description: Explique découverte des ressources, chargement des scripts et cache.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Explications absentes ou fausses sur l’ordre de chargement.
+          - score: 1
+            description: Ordre global compris, mais rôle de defer ou du cache confus.
+          - score: 2
+            description: Explique correctement scripts classiques, defer ou module, et effets du cache.
+          - score: 3
+            description: Prévoit l’effet d’une modification proposée à l’oral (retrait de defer, cache vidé).
+      - id: critical-ai-use
+        description: Montre un usage critique de l’IA et la sécurité de ce qu’il partage.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Reprend des affirmations de l’IA non vérifiées ou partage des données sensibles.
+          - score: 1
+            description: Vérifie certaines affirmations sans pouvoir dire comment.
+          - score: 2
+            description: Cite une affirmation vérifiée ou corrigée grâce à une observation précise.
+
 - id: web-fundamentals-contre-ia
   family: CONTRE_IA
   title: La fiche explicative trop sûre d’elle
   summary: Repérer et corriger les erreurs d’une explication du web générée par une IA pour un client.
   estimatedMinutes: 45
-  instructions: "Une agence web a demandé à un assistant de rédiger une fiche pour expliquer à une\ncliente,\
-    \ gérante de la boutique Lumen, ce qui se passe quand ses clients visitent\nson site, et pourquoi\
-    \ certains se plaignent. La fiche doit être envoyée demain. Tu\nes chargé de la relire avant envoi.\n\
-    \n```text\nFiche — Comment votre site arrive chez vos clients\n\n(1) Internet et le web désignent\
-    \ le même réseau mondial : dès qu’un appareil est\n    connecté, il est « sur le web ».\n(2) Quand\
-    \ un client tape https://boutique-lumen.example/catalogue#promo, son\n    navigateur envoie d’abord\
-    \ sa requête HTTP au serveur DNS, qui la transmet\n    ensuite à votre serveur web.\n(3) Le DNS traduit\
-    \ le nom boutique-lumen.example en adresse IP ; cette réponse est\n    gardée en cache pendant une\
-    \ durée appelée TTL.\n(4) Comme aucun port n’est indiqué dans l’adresse, le navigateur se connecte\
-    \ au\n    port 80 de votre serveur.\n(5) Le navigateur demande alors au serveur la section « promo\
-    \ » de la page\n    /catalogue, ce qui évite de télécharger toute la page.\n(6) Le serveur répond\
-    \ avec un code de statut, puis le navigateur envoie des\n    requêtes séparées pour la feuille de\
-    \ style, les scripts et les images.\n(7) Grâce à HTTPS, le cadenas garantit à vos clients que votre\
-    \ boutique est une\n    entreprise de confiance. Tout est chiffré, y compris le nom du site visité\
-    \ :\n    même le Wi-Fi du café ne sait pas sur quel site ils se trouvent.\n(8) HTTP ne garde pas la\
-    \ mémoire des requêtes précédentes : c’est pourquoi le\n    panier repose sur un cookie renvoyé à\
-    \ chaque requête.\n(9) Diagnostic : certains clients voient une page « 404 Not Found » sur\n    /catalogue/lampe-orion.\
-    \ Cela signifie que votre serveur est tombé en panne ;\n    nous allons le redémarrer.\n(10) Le menu\
-    \ de votre site ne s’ouvre plus depuis la dernière mise à jour. Ce n’est\n    pas lié au script menu.js\
-    \ : placé dans le head, il s’exécute une fois la page\n    affichée et trouve donc forcément le bouton.\
-    \ Le problème vient sûrement du\n    navigateur des clients.\n(11) La couleur des prix a disparu,\
-    \ mais s’il y avait une erreur dans le CSS, le\n    navigateur afficherait un message d’erreur en\
-    \ rouge dans la console ; le CSS\n    n’est donc pas en cause.\n```\n\nPour t’aider, l’agence te transmet\
-    \ le début du HTML actuel de la page catalogue et la\nrègle CSS des prix :\n\n```text\n<head>\n  <meta\
-    \ charset=\"utf-8\">\n  <title>Lumen — Catalogue</title>\n  <link rel=\"stylesheet\" href=\"/css/style.css\"\
-    >\n  <script src=\"/js/menu.js\"></script>\n</head>\n```\n\n```css\n.price {\n  font-weight: bold;\n\
-    \  color: #b0004;\n}\n```\n\nTravail demandé :\n\n1. Pour chaque phrase numérotée, indique si elle\
-    \ est juste, fausse ou imprécise.\n2. Pour chaque phrase fausse ou imprécise, explique l’erreur et\
-    \ propose une\n   formulation corrigée, compréhensible par une cliente non technicienne.\n3. Pour\
-    \ les phrases 9, 10 et 11, propose le bon diagnostic et la vérification à\n   faire dans les outils\
-    \ de développement.\n"
-  deliverable: 'Colle un tableau ou une liste : numéro de la phrase, verdict (juste, fausse,
+  instructions: |
+    Une agence web a demandé à un assistant de rédiger une fiche pour expliquer à une
+    cliente, gérante de la boutique Lumen, ce qui se passe quand ses clients visitent
+    son site, et pourquoi certains se plaignent. La fiche doit être envoyée demain. Tu
+    es chargé de la relire avant envoi.
 
+    ```text
+    Fiche — Comment votre site arrive chez vos clients
+
+    (1) Internet et le web désignent le même réseau mondial : dès qu’un appareil est
+        connecté, il est « sur le web ».
+    (2) Quand un client tape https://boutique-lumen.example/catalogue#promo, son
+        navigateur envoie d’abord sa requête HTTP au serveur DNS, qui la transmet
+        ensuite à votre serveur web.
+    (3) Le DNS traduit le nom boutique-lumen.example en adresse IP ; cette réponse est
+        gardée en cache pendant une durée appelée TTL.
+    (4) Comme aucun port n’est indiqué dans l’adresse, le navigateur se connecte au
+        port 80 de votre serveur.
+    (5) Le navigateur demande alors au serveur la section « promo » de la page
+        /catalogue, ce qui évite de télécharger toute la page.
+    (6) Le serveur répond avec un code de statut, puis le navigateur envoie des
+        requêtes séparées pour la feuille de style, les scripts et les images.
+    (7) Grâce à HTTPS, le cadenas garantit à vos clients que votre boutique est une
+        entreprise de confiance. Tout est chiffré, y compris le nom du site visité :
+        même le Wi-Fi du café ne sait pas sur quel site ils se trouvent.
+    (8) HTTP ne garde pas la mémoire des requêtes précédentes : c’est pourquoi le
+        panier repose sur un cookie renvoyé à chaque requête.
+    (9) Diagnostic : certains clients voient une page « 404 Not Found » sur
+        /catalogue/lampe-orion. Cela signifie que votre serveur est tombé en panne ;
+        nous allons le redémarrer.
+    (10) Le menu de votre site ne s’ouvre plus depuis la dernière mise à jour. Ce n’est
+        pas lié au script menu.js : placé dans le head, il s’exécute une fois la page
+        affichée et trouve donc forcément le bouton. Le problème vient sûrement du
+        navigateur des clients.
+    (11) La couleur des prix a disparu, mais s’il y avait une erreur dans le CSS, le
+        navigateur afficherait un message d’erreur en rouge dans la console ; le CSS
+        n’est donc pas en cause.
+    ```
+
+    Pour t’aider, l’agence te transmet le début du HTML actuel de la page catalogue et la
+    règle CSS des prix :
+
+    ```text
+    <head>
+      <meta charset="utf-8">
+      <title>Lumen — Catalogue</title>
+      <link rel="stylesheet" href="/css/style.css">
+      <script src="/js/menu.js"></script>
+    </head>
+    ```
+
+    ```css
+    .price {
+      font-weight: bold;
+      color: #b0004;
+    }
+    ```
+
+    Travail demandé :
+
+    1. Pour chaque phrase numérotée, indique si elle est juste, fausse ou imprécise.
+    2. Pour chaque phrase fausse ou imprécise, explique l’erreur et propose une
+       formulation corrigée, compréhensible par une cliente non technicienne.
+    3. Pour les phrases 9, 10 et 11, propose le bon diagnostic et la vérification à
+       faire dans les outils de développement.
+  deliverable: |
+    Colle un tableau ou une liste : numéro de la phrase, verdict (juste, fausse,
     imprécise), explication de l’erreur, formulation corrigée. Ajoute ensuite tes
-
     diagnostics corrigés pour les phrases 9 à 11, avec la vérification proposée.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: errors-found
-      description: Repère les erreurs réelles, y compris les plus subtiles, sans signaler à tort les phrases
-        justes.
-      maxScore: 3
-    - id: explanations
-      description: Explique la cause technique de chaque erreur avec le bon vocabulaire.
-      maxScore: 3
-    - id: diagnosis
-      description: Propose pour les pannes 9 à 11 le bon diagnostic et une vérification dans les outils
-        de développement.
-      maxScore: 3
-    - id: communication
-      description: Reformule clairement pour une cliente non technicienne sans perdre l’exactitude.
-      maxScore: 2
+      - id: errors-found
+        description: Repère les erreurs réelles, y compris les plus subtiles, sans signaler à tort les phrases justes.
+        maxScore: 3
+      - id: explanations
+        description: Explique la cause technique de chaque erreur avec le bon vocabulaire.
+        maxScore: 3
+      - id: diagnosis
+        description: Propose pour les pannes 9 à 11 le bon diagnostic et une vérification dans les outils de développement.
+        maxScore: 3
+      - id: communication
+        description: Reformule clairement pour une cliente non technicienne sans perdre l’exactitude.
+        maxScore: 2
+
 - id: web-fundamentals-apres-ia
   family: APRES_IA
   title: La page Tarifs de l’Atelier Vélo
-  summary: Dépanner une page ajoutée par une IA à un petit site existant, avec les outils de développement
-    et des corrections minimales.
+  summary: Dépanner une page ajoutée par une IA à un petit site existant, avec les outils de développement et des corrections minimales.
   estimatedMinutes: 60
-  instructions: "L’Atelier Vélo a un petit site qui fonctionne. Pour ajouter une page de tarifs, un\n\
-    bénévole a demandé à une IA de « créer une page Tarifs sur le modèle de l’accueil »,\npuis l’a mise\
-    \ en ligne. Depuis, la page Tarifs est cassée. Tu dois la réparer **en\nmodifiant le moins de choses\
-    \ possible**, sans régénérer les fichiers.\n\nArborescence du site :\n\n```text\nindex.html\ncss/style.css\n\
-    js/menu.js\nimages/atelier.jpg\npages/tarifs.html\n```\n\n`index.html` (fonctionne correctement) :\n\
-    \n```html\n<!doctype html>\n<html lang=\"fr\">\n  <head>\n    <meta charset=\"utf-8\">\n    <title>Atelier\
-    \ Vélo — Accueil</title>\n    <link rel=\"stylesheet\" href=\"css/style.css\">\n    <script src=\"\
-    js/menu.js\" defer></script>\n  </head>\n  <body>\n    <header>\n      <button class=\"menu-toggle\"\
-    >Menu</button>\n      <nav class=\"menu\">\n        <a href=\"index.html\">Accueil</a>\n        <a\
-    \ href=\"pages/tarifs.html\">Tarifs</a>\n      </nav>\n    </header>\n    <main>\n      <h1>Atelier\
-    \ Vélo</h1>\n      <img src=\"images/atelier.jpg\" alt=\"L’atelier vu de l’entrée\">\n      <h2 id=\"\
-    horaires\">Horaires</h2>\n      <p>Du mardi au samedi, de 9 h à 18 h.</p>\n    </main>\n  </body>\n\
-    </html>\n```\n\n`pages/tarifs.html` (la page ajoutée) :\n\n```html\n<!doctype html>\n<html lang=\"\
-    fr\">\n  <head>\n    <meta charset=\"utf-8\">\n    <title>Atelier Vélo — Tarifs</title>\n    <link\
-    \ rel=\"stylesheet\" href=\"css/style.css\">\n    <script src=\"js/menu.js\"></script>\n  </head>\n\
-    \  <body>\n    <header>\n      <button class=\"menu-toggle\">Menu</button>\n      <nav class=\"menu\"\
-    >\n        <a href=\"index.html\">Accueil</a>\n        <a href=\"pages/tarifs.html\">Tarifs</a>\n\
-    \      </nav>\n    </header>\n    <main>\n      <h1>Nos tarifs</h1>\n      <img src=\"images/atelier.jpg\"\
-    \ alt=\"L’atelier vu de l’entrée\">\n      <ul>\n        <li>Révision complète : <span class=\"price\"\
-    >65 €</span></li>\n        <li>Réglage des freins : <span class=\"price\">15 €</span></li>\n     \
-    \ </ul>\n      <p>Consultez nos <a href=\"index.html\">horaires d’ouverture</a>.</p>\n    </main>\n\
-    \  </body>\n</html>\n```\n\n`css/style.css` (la règle `.price` a été ajoutée en même temps que la\
-    \ page) :\n\n```css\nbody {\n  font-family: sans-serif;\n  margin: 0 auto;\n  max-width: 40rem;\n\
-    }\n\n.menu {\n  display: none;\n}\n\n.menu.open {\n  display: block;\n}\n\n.price {\n  font-weight:\
-    \ bold;\n  colour: darkred;\n}\n```\n\n`js/menu.js` (inchangé ; il affiche ou masque le menu quand\
-    \ on clique sur le bouton) :\n\n```js\nconst button = document.querySelector('.menu-toggle');\nconst\
-    \ menu = document.querySelector('.menu');\n\nbutton.addEventListener('click', () => {\n  menu.classList.toggle('open');\n\
-    });\n```\n\nCe que le bénévole a relevé sur le site en ligne, page\n`https://atelier-velo.example/pages/tarifs.html`,\
-    \ panneau Réseau :\n\n```text\nNom            Statut  Type        URL complète\ntarifs.html    200\
-    \     document    https://atelier-velo.example/pages/tarifs.html\nstyle.css      404     stylesheet\
-    \  https://atelier-velo.example/pages/css/style.css\nmenu.js        404     script      https://atelier-velo.example/pages/js/menu.js\n\
-    atelier.jpg    404     jpeg        https://atelier-velo.example/pages/images/atelier.jpg\n```\n\n\
-    Symptômes signalés : la page n’a aucune mise en forme, l’image est absente, le menu\nest toujours\
-    \ affiché et le bouton « Menu » ne fait rien, les liens du menu mènent à\nune page introuvable, les\
-    \ prix ne sont pas en rouge.\n\nTravail demandé :\n\n1. Explique, à partir des URL complètes du panneau\
-    \ Réseau, pourquoi les trois\n   ressources sont introuvables. Explique aussi pourquoi le menu est\
-    \ toujours\n   affiché.\n2. Corrige les chemins de `pages/tarifs.html`, y compris les deux liens du\
-    \ menu.\n3. Fais en sorte que le lien « horaires d’ouverture » mène directement à la section\n   Horaires\
-    \ de l’accueil. Explique ce que le serveur reçoit quand on clique.\n4. Une fois les chemins corrigés,\
-    \ le bouton « Menu » ne fonctionne toujours pas et\n   la console affiche une erreur mentionnant `null`.\
-    \ Explique pourquoi et corrige.\n5. Les prix ne sont toujours pas en rouge et la console ne dit rien.\
-    \ Explique\n   pourquoi et corrige.\n\nTu peux recréer les fichiers sur ton ordinateur et ouvrir les\
-    \ pages par un\ndouble-clic pour vérifier : les chemins relatifs et les scripts s’y comportent de\
-    \ la\nmême façon, et les ressources introuvables apparaissent comme erreurs dans la\nconsole (sans\
-    \ code de statut HTTP, puisqu’aucun serveur n’intervient).\n"
-  deliverable: 'Colle le contenu final de `pages/tarifs.html` et de la règle `.price`, puis la liste
+  instructions: |
+    L’Atelier Vélo a un petit site qui fonctionne. Pour ajouter une page de tarifs, un
+    bénévole a demandé à une IA de « créer une page Tarifs sur le modèle de l’accueil »,
+    puis l’a mise en ligne. Depuis, la page Tarifs est cassée. Tu dois la réparer **en
+    modifiant le moins de choses possible**, sans régénérer les fichiers.
 
+    Arborescence du site :
+
+    ```text
+    index.html
+    css/style.css
+    js/menu.js
+    images/atelier.jpg
+    pages/tarifs.html
+    ```
+
+    `index.html` (fonctionne correctement) :
+
+    ```html
+    <!doctype html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8">
+        <title>Atelier Vélo — Accueil</title>
+        <link rel="stylesheet" href="css/style.css">
+        <script src="js/menu.js" defer></script>
+      </head>
+      <body>
+        <header>
+          <button class="menu-toggle">Menu</button>
+          <nav class="menu">
+            <a href="index.html">Accueil</a>
+            <a href="pages/tarifs.html">Tarifs</a>
+          </nav>
+        </header>
+        <main>
+          <h1>Atelier Vélo</h1>
+          <img src="images/atelier.jpg" alt="L’atelier vu de l’entrée">
+          <h2 id="horaires">Horaires</h2>
+          <p>Du mardi au samedi, de 9 h à 18 h.</p>
+        </main>
+      </body>
+    </html>
+    ```
+
+    `pages/tarifs.html` (la page ajoutée) :
+
+    ```html
+    <!doctype html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8">
+        <title>Atelier Vélo — Tarifs</title>
+        <link rel="stylesheet" href="css/style.css">
+        <script src="js/menu.js"></script>
+      </head>
+      <body>
+        <header>
+          <button class="menu-toggle">Menu</button>
+          <nav class="menu">
+            <a href="index.html">Accueil</a>
+            <a href="pages/tarifs.html">Tarifs</a>
+          </nav>
+        </header>
+        <main>
+          <h1>Nos tarifs</h1>
+          <img src="images/atelier.jpg" alt="L’atelier vu de l’entrée">
+          <ul>
+            <li>Révision complète : <span class="price">65 €</span></li>
+            <li>Réglage des freins : <span class="price">15 €</span></li>
+          </ul>
+          <p>Consultez nos <a href="index.html">horaires d’ouverture</a>.</p>
+        </main>
+      </body>
+    </html>
+    ```
+
+    `css/style.css` (la règle `.price` a été ajoutée en même temps que la page) :
+
+    ```css
+    body {
+      font-family: sans-serif;
+      margin: 0 auto;
+      max-width: 40rem;
+    }
+
+    .menu {
+      display: none;
+    }
+
+    .menu.open {
+      display: block;
+    }
+
+    .price {
+      font-weight: bold;
+      colour: darkred;
+    }
+    ```
+
+    `js/menu.js` (inchangé ; il affiche ou masque le menu quand on clique sur le bouton) :
+
+    ```js
+    const button = document.querySelector('.menu-toggle');
+    const menu = document.querySelector('.menu');
+
+    button.addEventListener('click', () => {
+      menu.classList.toggle('open');
+    });
+    ```
+
+    Ce que le bénévole a relevé sur le site en ligne, page
+    `https://atelier-velo.example/pages/tarifs.html`, panneau Réseau :
+
+    ```text
+    Nom            Statut  Type        URL complète
+    tarifs.html    200     document    https://atelier-velo.example/pages/tarifs.html
+    style.css      404     stylesheet  https://atelier-velo.example/pages/css/style.css
+    menu.js        404     script      https://atelier-velo.example/pages/js/menu.js
+    atelier.jpg    404     jpeg        https://atelier-velo.example/pages/images/atelier.jpg
+    ```
+
+    Symptômes signalés : la page n’a aucune mise en forme, l’image est absente, le menu
+    est toujours affiché et le bouton « Menu » ne fait rien, les liens du menu mènent à
+    une page introuvable, les prix ne sont pas en rouge.
+
+    Travail demandé :
+
+    1. Explique, à partir des URL complètes du panneau Réseau, pourquoi les trois
+       ressources sont introuvables. Explique aussi pourquoi le menu est toujours
+       affiché.
+    2. Corrige les chemins de `pages/tarifs.html`, y compris les deux liens du menu.
+    3. Fais en sorte que le lien « horaires d’ouverture » mène directement à la section
+       Horaires de l’accueil. Explique ce que le serveur reçoit quand on clique.
+    4. Une fois les chemins corrigés, le bouton « Menu » ne fonctionne toujours pas et
+       la console affiche une erreur mentionnant `null`. Explique pourquoi et corrige.
+    5. Les prix ne sont toujours pas en rouge et la console ne dit rien. Explique
+       pourquoi et corrige.
+
+    Tu peux recréer les fichiers sur ton ordinateur et ouvrir les pages par un
+    double-clic pour vérifier : les chemins relatifs et les scripts s’y comportent de la
+    même façon, et les ressources introuvables apparaissent comme erreurs dans la
+    console (sans code de statut HTTP, puisqu’aucun serveur n’intervient).
+  deliverable: |
+    Colle le contenu final de `pages/tarifs.html` et de la règle `.price`, puis la liste
     de chaque ligne modifiée avec la raison du changement, et tes réponses aux questions
-
     1, 3, 4 et 5.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: path-resolution
-      description: Explique la résolution des chemins relatifs à partir des URL observées et corrige.
-      maxScore: 3
-    - id: script-timing
-      description: Explique l’erreur null par l’ordre d’analyse et d’exécution, et la corrige.
-      maxScore: 3
-    - id: css-and-fragment
-      description: Explique le CSS ignoré silencieusement, le menu visible et le fragment non envoyé.
-      maxScore: 3
-    - id: minimal-change
-      description: Fait évoluer le site de façon ciblée et vérifiée.
-      maxScore: 2
+      - id: path-resolution
+        description: Explique la résolution des chemins relatifs à partir des URL observées et corrige.
+        maxScore: 3
+      - id: script-timing
+        description: Explique l’erreur null par l’ordre d’analyse et d’exécution, et la corrige.
+        maxScore: 3
+      - id: css-and-fragment
+        description: Explique le CSS ignoré silencieusement, le menu visible et le fragment non envoyé.
+        maxScore: 3
+      - id: minimal-change
+        description: Fait évoluer le site de façon ciblée et vérifiée.
+        maxScore: 2

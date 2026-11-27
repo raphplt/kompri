@@ -1,340 +1,559 @@
 - id: react-fundamentals-sans-ia
   family: SANS_IA
   title: Le panier de la librairie
-  summary: Construire sans aide une petite boutique en composants, avec un panier remonté dans le parent
-    et des totaux calculés.
+  summary: Construire sans aide une petite boutique en composants, avec un panier remonté dans le parent et des totaux calculés.
   estimatedMinutes: 60
-  instructions: "Une librairie veut une page qui présente quatre livres et un panier. Réalise-la **sans\n\
-    IA**, dans un projet créé avec `npm create vite@latest librairie -- --template react --no-interactive`.\n\
-    \nDonnées à recopier telles quelles dans `src/App.jsx` :\n\n```js\nconst books = [\n  { id: 'b1',\
-    \ title: 'Le Petit Prince', author: 'Antoine de Saint-Exupéry', price: 8.5, inStock: true },\n  {\
-    \ id: 'b2', title: 'Germinal', author: 'Émile Zola', price: 6.9, inStock: true },\n  { id: 'b3', title:\
-    \ 'Les Misérables', author: 'Victor Hugo', price: 12, inStock: false },\n  { id: 'b4', title: 'Bel-Ami',\
-    \ author: 'Guy de Maupassant', price: 5.5, inStock: true },\n];\n```\n\nComportement attendu :\n\n\
-    1. Un en-tête affiche « Librairie » et « Panier (N) », où N est le nombre total\n   d’exemplaires\
-    \ dans le panier.\n2. Chaque livre est affiché par un composant `BookCard` (fichier\n   `src/components/BookCard.jsx`)\
-    \ : titre, auteur, prix avec deux décimales, et un bouton\n   « Ajouter au panier ». Un livre qui\
-    \ n’est pas en stock affiche un bouton désactivé\n   « Indisponible ».\n3. Un composant `Cart` (fichier\
-    \ `src/components/Cart.jsx`) affiche une ligne par livre\n   présent dans le panier : « Titre × quantité\
-    \ — sous-total € », avec des boutons `−` et\n   `+`. Une ligne dont la quantité tombe à 0 disparaît.\
-    \ Sous les lignes, le total avec deux\n   décimales. Panier vide : le texte « Ton panier est vide.\
-    \ ».\n4. Ajouter deux fois le même livre augmente la quantité de sa ligne, sans créer de\n   seconde\
-    \ ligne.\n\nContraintes :\n\n- l’état du panier est un **seul** tableau de lignes `{ bookId, quantity\
-    \ }` déclaré dans\n  `App` ; le nombre d’exemplaires et le total ne sont **pas** stockés dans un état\
-    \ ;\n- aucune mutation d’état (`push`, `splice`, affectation de propriété…) ;\n- chaque élément de\
-    \ liste a une clé stable ;\n- aucun `useEffect`, aucune bibliothèque en plus de React, JavaScript\
-    \ (pas de TypeScript) ;\n- la console de développement ne doit afficher aucun avertissement.\n\nScénario\
-    \ de vérification : ajouter deux fois « Le Petit Prince » et une fois « Germinal »\ndoit afficher\
-    \ « Panier (3) » et un total de 23.90 €.\n"
-  deliverable: 'Colle le contenu de `src/App.jsx`, `src/components/BookCard.jsx` et
+  instructions: |
+    Une librairie veut une page qui présente quatre livres et un panier. Réalise-la **sans
+    IA**, dans un projet créé avec `npm create vite@latest librairie -- --template react --no-interactive`.
 
+    Données à recopier telles quelles dans `src/App.jsx` :
+
+    ```js
+    const books = [
+      { id: 'b1', title: 'Le Petit Prince', author: 'Antoine de Saint-Exupéry', price: 8.5, inStock: true },
+      { id: 'b2', title: 'Germinal', author: 'Émile Zola', price: 6.9, inStock: true },
+      { id: 'b3', title: 'Les Misérables', author: 'Victor Hugo', price: 12, inStock: false },
+      { id: 'b4', title: 'Bel-Ami', author: 'Guy de Maupassant', price: 5.5, inStock: true },
+    ];
+    ```
+
+    Comportement attendu :
+
+    1. Un en-tête affiche « Librairie » et « Panier (N) », où N est le nombre total
+       d’exemplaires dans le panier.
+    2. Chaque livre est affiché par un composant `BookCard` (fichier
+       `src/components/BookCard.jsx`) : titre, auteur, prix avec deux décimales, et un bouton
+       « Ajouter au panier ». Un livre qui n’est pas en stock affiche un bouton désactivé
+       « Indisponible ».
+    3. Un composant `Cart` (fichier `src/components/Cart.jsx`) affiche une ligne par livre
+       présent dans le panier : « Titre × quantité — sous-total € », avec des boutons `−` et
+       `+`. Une ligne dont la quantité tombe à 0 disparaît. Sous les lignes, le total avec deux
+       décimales. Panier vide : le texte « Ton panier est vide. ».
+    4. Ajouter deux fois le même livre augmente la quantité de sa ligne, sans créer de
+       seconde ligne.
+
+    Contraintes :
+
+    - l’état du panier est un **seul** tableau de lignes `{ bookId, quantity }` déclaré dans
+      `App` ; le nombre d’exemplaires et le total ne sont **pas** stockés dans un état ;
+    - aucune mutation d’état (`push`, `splice`, affectation de propriété…) ;
+    - chaque élément de liste a une clé stable ;
+    - aucun `useEffect`, aucune bibliothèque en plus de React, JavaScript (pas de TypeScript) ;
+    - la console de développement ne doit afficher aucun avertissement.
+
+    Scénario de vérification : ajouter deux fois « Le Petit Prince » et une fois « Germinal »
+    doit afficher « Panier (3) » et un total de 23.90 €.
+  deliverable: |
+    Colle le contenu de `src/App.jsx`, `src/components/BookCard.jsx` et
     `src/components/Cart.jsx`. Ajoute ensuite trois réponses courtes (deux à cinq phrases) :
 
-
     1. Pourquoi l’état du panier est-il dans `App` et non dans `Cart` ?
-
     2. Pourquoi « Panier (N) » et le total ne sont-ils pas des états ?
-
     3. Que se passerait-il si un bouton était écrit `onClick={onAdd(book.id)}` ?
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: components-props
-      description: Découpe l’interface en composants et transmet données et fonctions par les props.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Tout est dans un seul composant, ou ne sait pas expliquer ce qu’est une prop.
-      - score: 1
-        description: Composants présents mais props mal utilisées (données recopiées, enfant qui lit des
-          variables globales).
-      - score: 2
-        description: Composants pertinents, props déstructurées, fonctions transmises pour signaler les
-          événements.
-      - score: 3
-        description: Justifie le découpage et le sens des flux (données vers le bas, événements vers le
-          haut) avec ses propres mots.
-    - id: state-ownership
-      description: Place l’état au bon endroit et calcule les données dérivées.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: État dupliqué ou placé dans un composant qui ne peut pas le partager ; compteur ou
-          total stockés.
-      - score: 1
-        description: État dans App mais une donnée dérivée est stockée, ou la justification est absente.
-      - score: 2
-        description: Un seul tableau d’état dans App, compteur et total calculés, choix justifiés.
-      - score: 3
-        description: Explique aussi quel bug apparaîtrait avec un total stocké et comment l’éviter sans
-          y penser.
-    - id: immutable-updates
-      description: Met à jour l’état sans mutation et comprend le cycle de rendu.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Mute l’état ou ne sait pas pourquoi l’écran ne se met pas à jour après une mutation.
-      - score: 1
-        description: Mises à jour immuables mais explication confuse (comparaison des références, instantané).
-      - score: 2
-        description: Explique map, filter, décomposition et pourquoi React a besoin d’une nouvelle référence.
-      - score: 3
-        description: Explique aussi l’instantané, le regroupement des mises à jour et quand utiliser la
-          forme fonctionnelle.
-    - id: lists-conditions
-      description: Affiche listes et contenus conditionnels correctement, avec des clés stables.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Pas de clé, clé aléatoire, ou panier vide mal géré.
-      - score: 1
-        description: Clés présentes mais choix non justifié (index), ou piège du 0 présent.
-      - score: 2
-        description: Clés par identifiant justifiées, panier vide et bouton désactivé corrects.
-      - score: 3
-        description: Explique ce qu’une clé par index casserait si la liste changeait d’ordre, exemple
-          à l’appui.
+      - id: components-props
+        description: Découpe l’interface en composants et transmet données et fonctions par les props.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Tout est dans un seul composant, ou ne sait pas expliquer ce qu’est une prop.
+          - score: 1
+            description: Composants présents mais props mal utilisées (données recopiées, enfant qui lit des variables globales).
+          - score: 2
+            description: Composants pertinents, props déstructurées, fonctions transmises pour signaler les événements.
+          - score: 3
+            description: Justifie le découpage et le sens des flux (données vers le bas, événements vers le haut) avec ses propres mots.
+      - id: state-ownership
+        description: Place l’état au bon endroit et calcule les données dérivées.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: État dupliqué ou placé dans un composant qui ne peut pas le partager ; compteur ou total stockés.
+          - score: 1
+            description: État dans App mais une donnée dérivée est stockée, ou la justification est absente.
+          - score: 2
+            description: Un seul tableau d’état dans App, compteur et total calculés, choix justifiés.
+          - score: 3
+            description: Explique aussi quel bug apparaîtrait avec un total stocké et comment l’éviter sans y penser.
+      - id: immutable-updates
+        description: Met à jour l’état sans mutation et comprend le cycle de rendu.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Mute l’état ou ne sait pas pourquoi l’écran ne se met pas à jour après une mutation.
+          - score: 1
+            description: Mises à jour immuables mais explication confuse (comparaison des références, instantané).
+          - score: 2
+            description: Explique map, filter, décomposition et pourquoi React a besoin d’une nouvelle référence.
+          - score: 3
+            description: Explique aussi l’instantané, le regroupement des mises à jour et quand utiliser la forme fonctionnelle.
+      - id: lists-conditions
+        description: Affiche listes et contenus conditionnels correctement, avec des clés stables.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Pas de clé, clé aléatoire, ou panier vide mal géré.
+          - score: 1
+            description: Clés présentes mais choix non justifié (index), ou piège du 0 présent.
+          - score: 2
+            description: Clés par identifiant justifiées, panier vide et bouton désactivé corrects.
+          - score: 3
+            description: Explique ce qu’une clé par index casserait si la liste changeait d’ordre, exemple à l’appui.
+
 - id: react-fundamentals-avec-ia
   family: AVEC_IA
   title: Le tableau de tâches réordonnable
-  summary: Réaliser avec une IA une petite application de tâches, puis en défendre chaque choix d’état,
-    de clé et de composant.
+  summary: Réaliser avec une IA une petite application de tâches, puis en défendre chaque choix d’état, de clé et de composant.
   estimatedMinutes: 120
-  instructions: "Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras expliquer chaque ligne\n\
-    sans aide, prévoir l’effet de petites modifications et corriger toi-même un comportement.\n\nObjectif\
-    \ : une application React (projet Vite, modèle `react`, JavaScript) de gestion de\ntâches.\n\nFonctionnalités\
-    \ :\n\n1. Ajouter une tâche avec un champ texte contrôlé et un bouton « Ajouter » ; un titre vide\n\
-    \   ou composé d’espaces n’est pas ajouté. Après ajout, le champ se vide.\n2. Chaque tâche affiche\
-    \ son titre, une case « terminée » et trois boutons : « Monter »,\n   « Descendre » (désactivés aux\
-    \ extrémités) et « Supprimer ».\n3. Chaque tâche a un bouton « Note » qui affiche ou masque, sous\
-    \ la tâche, une note\n   personnelle saisie au moment de l’ajout (ou « Pas de note. »). Ce bouton\
-    \ est géré par un\n   état **local** au composant de la tâche.\n4. Trois filtres : « Toutes », « À\
-    \ faire », « Terminées ».\n5. Un résumé : « N tâche(s) à faire sur M », ou « Rien à faire ! » quand\
-    \ tout est terminé.\n   Si le filtre ne laisse aucune tâche visible, le texte « Aucune tâche ici.\
-    \ » s’affiche.\n\nContraintes :\n\n- au moins quatre composants, dans des fichiers séparés sous `src/components/`\
-    \ ;\n- pas de `useEffect`, pas de stockage dans le navigateur, pas de bibliothèque en plus de\n  React,\
-    \ `StrictMode` conservé dans `main.jsx` ;\n- `npm run lint` et `npm run build` passent sans erreur,\
-    \ la console de développement\n  n’affiche aucun avertissement ;\n- aucune donnée dérivée stockée\
-    \ dans un état.\n\nConseil : avant de demander du code à l’IA, écris toi-même la liste des états et\
-    \ le\ncomposant où chacun vit. Ensuite, teste ce scénario : ouvrir la note de la deuxième tâche,\n\
-    la faire monter, supprimer la première tâche, changer de filtre. La note ouverte doit\ntoujours rester\
-    \ sous la bonne tâche.\n"
-  deliverable: 'Colle le code de tous les fichiers de `src/` que tu as modifiés ou créés, la sortie de
+  instructions: |
+    Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras expliquer chaque ligne
+    sans aide, prévoir l’effet de petites modifications et corriger toi-même un comportement.
 
+    Objectif : une application React (projet Vite, modèle `react`, JavaScript) de gestion de
+    tâches.
+
+    Fonctionnalités :
+
+    1. Ajouter une tâche avec un champ texte contrôlé et un bouton « Ajouter » ; un titre vide
+       ou composé d’espaces n’est pas ajouté. Après ajout, le champ se vide.
+    2. Chaque tâche affiche son titre, une case « terminée » et trois boutons : « Monter »,
+       « Descendre » (désactivés aux extrémités) et « Supprimer ».
+    3. Chaque tâche a un bouton « Note » qui affiche ou masque, sous la tâche, une note
+       personnelle saisie au moment de l’ajout (ou « Pas de note. »). Ce bouton est géré par un
+       état **local** au composant de la tâche.
+    4. Trois filtres : « Toutes », « À faire », « Terminées ».
+    5. Un résumé : « N tâche(s) à faire sur M », ou « Rien à faire ! » quand tout est terminé.
+       Si le filtre ne laisse aucune tâche visible, le texte « Aucune tâche ici. » s’affiche.
+
+    Contraintes :
+
+    - au moins quatre composants, dans des fichiers séparés sous `src/components/` ;
+    - pas de `useEffect`, pas de stockage dans le navigateur, pas de bibliothèque en plus de
+      React, `StrictMode` conservé dans `main.jsx` ;
+    - `npm run lint` et `npm run build` passent sans erreur, la console de développement
+      n’affiche aucun avertissement ;
+    - aucune donnée dérivée stockée dans un état.
+
+    Conseil : avant de demander du code à l’IA, écris toi-même la liste des états et le
+    composant où chacun vit. Ensuite, teste ce scénario : ouvrir la note de la deuxième tâche,
+    la faire monter, supprimer la première tâche, changer de filtre. La note ouverte doit
+    toujours rester sous la bonne tâche.
+  deliverable: |
+    Colle le code de tous les fichiers de `src/` que tu as modifiés ou créés, la sortie de
     `npm run lint` et de `npm run build`, puis :
 
-
     - un tableau « information → composant où vit l’état, ou calculée » ;
-
     - le résultat du scénario de test décrit dans les consignes ;
-
     - quelques lignes sur ce que l’IA t’a apporté et ce que tu as dû corriger ou vérifier.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: code-ownership
-      description: Explique chaque partie de son code sans hésitation ni aide.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas expliquer des parties importantes de son propre code.
-      - score: 1
-        description: Explique le déroulé général mais pas le détail des mises à jour d’état.
-      - score: 2
-        description: Explique précisément composants, props, gestionnaires et mises à jour.
-      - score: 3
-        description: Explique aussi les choix écartés et ce qu’il a corrigé dans la proposition de l’IA.
-    - id: state-design
-      description: Justifie la place de chaque état et l’absence de données dérivées stockées.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: États dupliqués ou synchronisés à la main, sans conscience du problème.
-      - score: 1
-        description: Structure correcte mais justification approximative ou une donnée dérivée stockée.
-      - score: 2
-        description: Tableau des états juste et justifié (partagé dans App, local sinon, dérivé calculé).
-      - score: 3
-        description: Anticipe les conséquences d’autres choix (état remonté inutilement, copie de prop,
-          démontage par le filtre).
-    - id: keys-and-lists
-      description: Maîtrise les clés et les mises à jour de liste lors des réordonnancements.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Clé par index ou aléatoire, ou réordonnancement par mutation.
-      - score: 1
-        description: Clés correctes sans pouvoir expliquer le rôle de la clé.
-      - score: 2
-        description: Explique l’identité des éléments et prédit le bug de l’index sur le scénario de test.
-      - score: 3
-        description: Explique aussi le cas de la clé aléatoire et l’effet du filtre sur l’état local.
-    - id: modification
-      description: Réalise ou décrit correctement une modification demandée pendant l’oral.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne parvient pas à modifier le comportement.
-      - score: 1
-        description: Modification partielle ou qui casse un comportement existant.
-      - score: 2
-        description: Modification correcte avec un scénario de vérification.
-      - score: 3
-        description: Modification correcte, vérifiée, qui respecte la source de vérité unique et l’immutabilité.
+      - id: code-ownership
+        description: Explique chaque partie de son code sans hésitation ni aide.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas expliquer des parties importantes de son propre code.
+          - score: 1
+            description: Explique le déroulé général mais pas le détail des mises à jour d’état.
+          - score: 2
+            description: Explique précisément composants, props, gestionnaires et mises à jour.
+          - score: 3
+            description: Explique aussi les choix écartés et ce qu’il a corrigé dans la proposition de l’IA.
+      - id: state-design
+        description: Justifie la place de chaque état et l’absence de données dérivées stockées.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: États dupliqués ou synchronisés à la main, sans conscience du problème.
+          - score: 1
+            description: Structure correcte mais justification approximative ou une donnée dérivée stockée.
+          - score: 2
+            description: Tableau des états juste et justifié (partagé dans App, local sinon, dérivé calculé).
+          - score: 3
+            description: Anticipe les conséquences d’autres choix (état remonté inutilement, copie de prop, démontage par le filtre).
+      - id: keys-and-lists
+        description: Maîtrise les clés et les mises à jour de liste lors des réordonnancements.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Clé par index ou aléatoire, ou réordonnancement par mutation.
+          - score: 1
+            description: Clés correctes sans pouvoir expliquer le rôle de la clé.
+          - score: 2
+            description: Explique l’identité des éléments et prédit le bug de l’index sur le scénario de test.
+          - score: 3
+            description: Explique aussi le cas de la clé aléatoire et l’effet du filtre sur l’état local.
+      - id: modification
+        description: Réalise ou décrit correctement une modification demandée pendant l’oral.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne parvient pas à modifier le comportement.
+          - score: 1
+            description: Modification partielle ou qui casse un comportement existant.
+          - score: 2
+            description: Modification correcte avec un scénario de vérification.
+          - score: 3
+            description: Modification correcte, vérifiée, qui respecte la source de vérité unique et l’immutabilité.
+
 - id: react-fundamentals-contre-ia
   family: CONTRE_IA
   title: La liste de lecture qui perd le fil
-  summary: Trouver et corriger les défauts d’un composant React généré, dont certains n’apparaissent qu’avec
-    des actions précises.
+  summary: Trouver et corriger les défauts d’un composant React généré, dont certains n’apparaissent qu’avec des actions précises.
   estimatedMinutes: 60
-  instructions: "Un assistant a généré ce composant de liste de lecture. Règles attendues : on peut\n\
-    ajouter un livre par son titre, cocher les livres lus, afficher ou masquer les notes d’un\nlivre,\
-    \ trier par titre, passer en vue compacte, supprimer un livre, et vider toute la\nliste **après confirmation**.\
-    \ Le nombre de livres à lire s’affiche au-dessus de la liste.\n\nCrée un projet Vite (modèle `react`),\
-    \ remplace `src/App.jsx` par ce code, puis lance\n`npm run dev`.\n\n```jsx\nimport { useState } from\
-    \ 'react';\n\nconst initialBooks = [\n  { id: 1, title: 'Germinal', author: 'Émile Zola', read: true,\
-    \ notes: 'Relire la grève.' },\n  { id: 2, title: 'Bel-Ami', author: 'Guy de Maupassant', read: false,\
-    \ notes: '' },\n  { id: 3, title: 'Candide', author: 'Voltaire', read: false, notes: 'Pour le club\
-    \ de lecture.' },\n];\n\nfunction BookRow({ book, compact, onToggleRead, onRemove }) {\n  if (compact)\
-    \ {\n    return <li>{book.title}</li>;\n  }\n\n  const [showNotes, setShowNotes] = useState(false);\n\
-    \n  return (\n    <li>\n      <label>\n        <input type=\"checkbox\" checked={book.read} onChange={()\
-    \ => onToggleRead(book.id)} />{' '}\n        {book.title} — {book.author}\n      </label>{' '}\n \
-    \     <button type=\"button\" onClick={() => setShowNotes(!showNotes)}>\n        {showNotes ? 'Masquer\
-    \ les notes' : 'Notes'}\n      </button>{' '}\n      <button type=\"button\" onClick={() => onRemove(book.id)}>\n\
-    \        Supprimer\n      </button>\n      {showNotes && <p>{book.notes || 'Aucune note.'}</p>}\n\
-    \    </li>\n  );\n}\n\nfunction ReadingList() {\n  const [books, setBooks] = useState(initialBooks);\n\
-    \  const [title, setTitle] = useState('');\n  const [compact, setCompact] = useState(false);\n  const\
-    \ [sortByTitle, setSortByTitle] = useState(false);\n  const [confirmingClear, setConfirmingClear]\
-    \ = useState(false);\n\n  const unreadCount = books.filter((book) => !book.read).length;\n  const\
-    \ displayedBooks = sortByTitle\n    ? books.toSorted((a, b) => a.title.localeCompare(b.title))\n \
-    \   : books;\n\n  function addBook() {\n    if (title.trim() === '') {\n      return;\n    }\n   \
-    \ books.push({ id: Date.now(), title: title.trim(), author: 'Auteur inconnu', read: false, notes:\
-    \ '' });\n    setBooks(books);\n  }\n\n  function toggleRead(id) {\n    setBooks(books.map((book)\
-    \ => (book.id === id ? { ...book, read: !book.read } : book)));\n  }\n\n  function removeBook(id)\
-    \ {\n    setBooks(books.filter((book) => book.id !== id));\n  }\n\n  function clearAll() {\n    setBooks([]);\n\
-    \    setConfirmingClear(false);\n  }\n\n  return (\n    <main>\n      <h1>Ma liste de lecture</h1>\n\
-    \      <p>\n        <label htmlFor=\"new-title\">Titre</label>{' '}\n        <input id=\"new-title\"\
-    \ value={title} onChange={(event) => setTitle(event.target.value)} />{' '}\n        <button type=\"\
-    button\" onClick={addBook}>\n          Ajouter\n        </button>\n      </p>\n      <p>\n       \
-    \ <label>\n          <input type=\"checkbox\" checked={compact} onChange={() => setCompact(!compact)}\
-    \ /> Vue\n          compacte\n        </label>{' '}\n        <label>\n          <input\n         \
-    \   type=\"checkbox\"\n            checked={sortByTitle}\n            onChange={() => setSortByTitle(!sortByTitle)}\n\
-    \          />{' '}\n          Trier par titre\n        </label>\n      </p>\n      {unreadCount &&\
-    \ <p>{unreadCount} livre(s) à lire</p>}\n      <ul>\n        {displayedBooks.map((book, index) =>\
-    \ (\n          <BookRow\n            key={index}\n            book={book}\n            compact={compact}\n\
-    \            onToggleRead={toggleRead}\n            onRemove={removeBook}\n          />\n        ))}\n\
-    \      </ul>\n      {confirmingClear ? (\n        <p>\n          Vider toute la liste ?{' '}\n   \
-    \       <button type=\"button\" onClick={clearAll()}>\n            Oui, vider\n          </button>{'\
-    \ '}\n          <button type=\"button\" onClick={() => setConfirmingClear(false)}>\n            Annuler\n\
-    \          </button>\n        </p>\n      ) : (\n        <button type=\"button\" onClick={() => setConfirmingClear(true)}>\n\
-    \          Vider la liste\n        </button>\n      )}\n    </main>\n  );\n}\n\nexport default ReadingList;\n\
-    ```\n\nTravail demandé :\n\n1. Utilise l’application et décris ce qui fonctionne et ce qui ne fonctionne\
-    \ pas.\n   Teste au moins : ajouter un livre ; ouvrir les notes de « Candide » puis trier par\n  \
-    \ titre ; cocher tous les livres ; ouvrir des notes puis passer en vue compacte et\n   revenir ; cliquer\
-    \ sur « Vider la liste ».\n2. Liste chaque défaut : la ligne, le symptôme observé (ou le scénario\
-    \ qui le\n   révèle), la cause précise et sa gravité.\n3. Propose une version corrigée complète, en\
-    \ modifiant le moins possible le reste.\n4. Pour chaque correction, indique le scénario qui prouve\
-    \ qu’elle fonctionne.\n"
-  deliverable: 'Colle ta liste de défauts (ligne, symptôme ou scénario, cause, gravité), puis le code
+  instructions: |
+    Un assistant a généré ce composant de liste de lecture. Règles attendues : on peut
+    ajouter un livre par son titre, cocher les livres lus, afficher ou masquer les notes d’un
+    livre, trier par titre, passer en vue compacte, supprimer un livre, et vider toute la
+    liste **après confirmation**. Le nombre de livres à lire s’affiche au-dessus de la liste.
 
+    Crée un projet Vite (modèle `react`), remplace `src/App.jsx` par ce code, puis lance
+    `npm run dev`.
+
+    ```jsx
+    import { useState } from 'react';
+
+    const initialBooks = [
+      { id: 1, title: 'Germinal', author: 'Émile Zola', read: true, notes: 'Relire la grève.' },
+      { id: 2, title: 'Bel-Ami', author: 'Guy de Maupassant', read: false, notes: '' },
+      { id: 3, title: 'Candide', author: 'Voltaire', read: false, notes: 'Pour le club de lecture.' },
+    ];
+
+    function BookRow({ book, compact, onToggleRead, onRemove }) {
+      if (compact) {
+        return <li>{book.title}</li>;
+      }
+
+      const [showNotes, setShowNotes] = useState(false);
+
+      return (
+        <li>
+          <label>
+            <input type="checkbox" checked={book.read} onChange={() => onToggleRead(book.id)} />{' '}
+            {book.title} — {book.author}
+          </label>{' '}
+          <button type="button" onClick={() => setShowNotes(!showNotes)}>
+            {showNotes ? 'Masquer les notes' : 'Notes'}
+          </button>{' '}
+          <button type="button" onClick={() => onRemove(book.id)}>
+            Supprimer
+          </button>
+          {showNotes && <p>{book.notes || 'Aucune note.'}</p>}
+        </li>
+      );
+    }
+
+    function ReadingList() {
+      const [books, setBooks] = useState(initialBooks);
+      const [title, setTitle] = useState('');
+      const [compact, setCompact] = useState(false);
+      const [sortByTitle, setSortByTitle] = useState(false);
+      const [confirmingClear, setConfirmingClear] = useState(false);
+
+      const unreadCount = books.filter((book) => !book.read).length;
+      const displayedBooks = sortByTitle
+        ? books.toSorted((a, b) => a.title.localeCompare(b.title))
+        : books;
+
+      function addBook() {
+        if (title.trim() === '') {
+          return;
+        }
+        books.push({ id: Date.now(), title: title.trim(), author: 'Auteur inconnu', read: false, notes: '' });
+        setBooks(books);
+      }
+
+      function toggleRead(id) {
+        setBooks(books.map((book) => (book.id === id ? { ...book, read: !book.read } : book)));
+      }
+
+      function removeBook(id) {
+        setBooks(books.filter((book) => book.id !== id));
+      }
+
+      function clearAll() {
+        setBooks([]);
+        setConfirmingClear(false);
+      }
+
+      return (
+        <main>
+          <h1>Ma liste de lecture</h1>
+          <p>
+            <label htmlFor="new-title">Titre</label>{' '}
+            <input id="new-title" value={title} onChange={(event) => setTitle(event.target.value)} />{' '}
+            <button type="button" onClick={addBook}>
+              Ajouter
+            </button>
+          </p>
+          <p>
+            <label>
+              <input type="checkbox" checked={compact} onChange={() => setCompact(!compact)} /> Vue
+              compacte
+            </label>{' '}
+            <label>
+              <input
+                type="checkbox"
+                checked={sortByTitle}
+                onChange={() => setSortByTitle(!sortByTitle)}
+              />{' '}
+              Trier par titre
+            </label>
+          </p>
+          {unreadCount && <p>{unreadCount} livre(s) à lire</p>}
+          <ul>
+            {displayedBooks.map((book, index) => (
+              <BookRow
+                key={index}
+                book={book}
+                compact={compact}
+                onToggleRead={toggleRead}
+                onRemove={removeBook}
+              />
+            ))}
+          </ul>
+          {confirmingClear ? (
+            <p>
+              Vider toute la liste ?{' '}
+              <button type="button" onClick={clearAll()}>
+                Oui, vider
+              </button>{' '}
+              <button type="button" onClick={() => setConfirmingClear(false)}>
+                Annuler
+              </button>
+            </p>
+          ) : (
+            <button type="button" onClick={() => setConfirmingClear(true)}>
+              Vider la liste
+            </button>
+          )}
+        </main>
+      );
+    }
+
+    export default ReadingList;
+    ```
+
+    Travail demandé :
+
+    1. Utilise l’application et décris ce qui fonctionne et ce qui ne fonctionne pas.
+       Teste au moins : ajouter un livre ; ouvrir les notes de « Candide » puis trier par
+       titre ; cocher tous les livres ; ouvrir des notes puis passer en vue compacte et
+       revenir ; cliquer sur « Vider la liste ».
+    2. Liste chaque défaut : la ligne, le symptôme observé (ou le scénario qui le
+       révèle), la cause précise et sa gravité.
+    3. Propose une version corrigée complète, en modifiant le moins possible le reste.
+    4. Pour chaque correction, indique le scénario qui prouve qu’elle fonctionne.
+  deliverable: |
+    Colle ta liste de défauts (ligne, symptôme ou scénario, cause, gravité), puis le code
     corrigé complet et, pour chaque correction, le scénario de vérification et son résultat.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: defects-found
-      description: Identifie les défauts réels, y compris ceux qui n’apparaissent qu’avec un scénario
-        précis.
-      maxScore: 3
-    - id: root-cause
-      description: Explique la cause technique de chaque défaut, pas seulement le symptôme.
-      maxScore: 3
-    - id: fix-quality
-      description: Propose des corrections justes, minimales et vérifiées.
-      maxScore: 3
+      - id: defects-found
+        description: Identifie les défauts réels, y compris ceux qui n’apparaissent qu’avec un scénario précis.
+        maxScore: 3
+      - id: root-cause
+        description: Explique la cause technique de chaque défaut, pas seulement le symptôme.
+        maxScore: 3
+      - id: fix-quality
+        description: Propose des corrections justes, minimales et vérifiées.
+        maxScore: 3
+
 - id: react-fundamentals-apres-ia
   family: APRES_IA
   title: Les ateliers de cuisine
-  summary: Faire évoluer une petite application React existante, corriger un bug de total et découvrir
-    les défauts que les évolutions révèlent.
+  summary: Faire évoluer une petite application React existante, corriger un bug de total et découvrir les défauts que les évolutions révèlent.
   estimatedMinutes: 75
-  instructions: "Une école de cuisine utilise cette page pour réserver des ateliers. Elle a été écrite\n\
-    avec une IA et fonctionne « à peu près ». Tu dois la faire évoluer **en modifiant le\nmoins de lignes\
-    \ possible**, sans la régénérer.\n\nCrée un projet Vite (modèle `react`) et place ces trois fichiers.\n\
-    \n```jsx\n// src/App.jsx\nimport { useState } from 'react';\nimport WorkshopCard from './components/WorkshopCard.jsx';\n\
-    import Cart from './components/Cart.jsx';\n\nconst workshops = [\n  { id: 'w1', title: 'Pain au levain',\
-    \ price: 45, description: 'Pétrir, façonner et cuire un pain.' },\n  { id: 'w2', title: 'Sushis',\
-    \ price: 60, description: 'Riz vinaigré, découpe et roulage.' },\n  { id: 'w3', title: 'Pâtisserie',\
-    \ price: 55, description: 'Pâte à choux et crème pâtissière.' },\n];\n\nfunction App() {\n  const\
-    \ [cart, setCart] = useState([]); // lignes { workshopId, quantity }\n  const [total, setTotal] =\
-    \ useState(0);\n\n  function handleBook(workshop) {\n    const existing = cart.find((line) => line.workshopId\
-    \ === workshop.id);\n    if (existing) {\n      setCart(\n        cart.map((line) =>\n          line.workshopId\
-    \ === workshop.id ? { ...line, quantity: line.quantity + 1 } : line,\n        ),\n      );\n    }\
-    \ else {\n      setCart([...cart, { workshopId: workshop.id, quantity: 1 }]);\n    }\n    setTotal(total\
-    \ + workshop.price);\n  }\n\n  function handleQuantityChange(workshopId, quantity) {\n    const workshop\
-    \ = workshops.find((w) => w.id === workshopId);\n    const line = cart.find((l) => l.workshopId ===\
-    \ workshopId);\n    setCart(cart.map((l) => (l.workshopId === workshopId ? { ...l, quantity } : l)));\n\
-    \    setTotal(total + (quantity - line.quantity) * workshop.price);\n  }\n\n  function handleRemove(workshopId)\
-    \ {\n    setCart(cart.filter((line) => line.workshopId !== workshopId));\n  }\n\n  return (\n    <main>\n\
-    \      <h1>Ateliers de cuisine</h1>\n      <section>\n        <h2>Ateliers</h2>\n        {workshops.map((workshop,\
-    \ index) => (\n          <WorkshopCard key={index} workshop={workshop} onBook={handleBook} />\n  \
-    \      ))}\n      </section>\n      <Cart\n        lines={cart}\n        workshops={workshops}\n \
-    \       total={total}\n        onQuantityChange={handleQuantityChange}\n        onRemove={handleRemove}\n\
-    \      />\n    </main>\n  );\n}\n\nexport default App;\n```\n\n```jsx\n// src/components/WorkshopCard.jsx\n\
-    import { useState } from 'react';\n\nfunction WorkshopCard({ workshop, onBook }) {\n  const [showProgram,\
-    \ setShowProgram] = useState(false);\n\n  return (\n    <article>\n      <h3>{workshop.title}</h3>\n\
-    \      <p>{workshop.price} € par personne</p>\n      <button type=\"button\" onClick={() => setShowProgram(!showProgram)}>\n\
-    \        {showProgram ? 'Masquer le programme' : 'Voir le programme'}\n      </button>{' '}\n    \
-    \  <button type=\"button\" onClick={() => onBook(workshop)}>\n        Réserver\n      </button>\n\
-    \      {showProgram && <p>{workshop.description}</p>}\n    </article>\n  );\n}\n\nexport default WorkshopCard;\n\
-    ```\n\n```jsx\n// src/components/Cart.jsx\nimport { useState } from 'react';\n\nfunction CartLine({\
-    \ title, price, quantity, onQuantityChange, onRemove }) {\n  const [places, setPlaces] = useState(quantity);\n\
-    \n  function changePlaces(delta) {\n    const next = Math.max(1, places + delta);\n    setPlaces(next);\n\
-    \    onQuantityChange(next);\n  }\n\n  return (\n    <li>\n      {title} × {places} — {(price * places).toFixed(2)}\
-    \ €{' '}\n      <button type=\"button\" aria-label={`Une place de moins : ${title}`} onClick={() =>\
-    \ changePlaces(-1)}>\n        −\n      </button>{' '}\n      <button type=\"button\" aria-label={`Une\
-    \ place de plus : ${title}`} onClick={() => changePlaces(1)}>\n        +\n      </button>{' '}\n \
-    \     <button type=\"button\" onClick={onRemove}>\n        Retirer\n      </button>\n    </li>\n \
-    \ );\n}\n\nfunction Cart({ lines, workshops, total, onQuantityChange, onRemove }) {\n  if (lines.length\
-    \ === 0) {\n    return <p>Aucune réservation pour l’instant.</p>;\n  }\n\n  return (\n    <section>\n\
-    \      <h2>Mes réservations</h2>\n      <ul>\n        {lines.map((line) => {\n          const workshop\
-    \ = workshops.find((w) => w.id === line.workshopId);\n          return (\n            <CartLine\n\
-    \              key={line.workshopId}\n              title={workshop.title}\n              price={workshop.price}\n\
-    \              quantity={line.quantity}\n              onQuantityChange={(quantity) => onQuantityChange(line.workshopId,\
-    \ quantity)}\n              onRemove={() => onRemove(line.workshopId)}\n            />\n         \
-    \ );\n        })}\n      </ul>\n      <p>Total : {total.toFixed(2)} €</p>\n    </section>\n  );\n\
-    }\n\nexport default Cart;\n```\n\nDemandes de l’équipe :\n\n1. **Bug** : « Quand je retire un atelier\
-    \ de mes réservations, le total ne baisse pas. »\n   Corrige-le et explique la cause.\n2. Ajouter\
-    \ une case « Trier par prix » au-dessus des ateliers, qui les affiche par prix\n   croissant quand\
-    \ elle est cochée. La liste `workshops` ne doit pas être modifiée.\n3. Afficher sous le titre principal\
-    \ « Panier : N place(s) », où N est le nombre total de\n   places réservées.\n4. Ajouter un bouton\
-    \ « Vider le panier » sous le total.\n\nAprès chaque modification, teste aussi les fonctionnalités\
-    \ existantes : réserver deux\nfois le même atelier, utiliser `+` et `−`, ouvrir le programme d’un\
-    \ atelier puis trier.\nSi tu découvres d’autres défauts, corrige-les et explique-les.\n"
-  deliverable: 'Colle les trois fichiers modifiés, puis la liste des lignes modifiées, ajoutées ou
+  instructions: |
+    Une école de cuisine utilise cette page pour réserver des ateliers. Elle a été écrite
+    avec une IA et fonctionne « à peu près ». Tu dois la faire évoluer **en modifiant le
+    moins de lignes possible**, sans la régénérer.
 
+    Crée un projet Vite (modèle `react`) et place ces trois fichiers.
+
+    ```jsx
+    // src/App.jsx
+    import { useState } from 'react';
+    import WorkshopCard from './components/WorkshopCard.jsx';
+    import Cart from './components/Cart.jsx';
+
+    const workshops = [
+      { id: 'w1', title: 'Pain au levain', price: 45, description: 'Pétrir, façonner et cuire un pain.' },
+      { id: 'w2', title: 'Sushis', price: 60, description: 'Riz vinaigré, découpe et roulage.' },
+      { id: 'w3', title: 'Pâtisserie', price: 55, description: 'Pâte à choux et crème pâtissière.' },
+    ];
+
+    function App() {
+      const [cart, setCart] = useState([]); // lignes { workshopId, quantity }
+      const [total, setTotal] = useState(0);
+
+      function handleBook(workshop) {
+        const existing = cart.find((line) => line.workshopId === workshop.id);
+        if (existing) {
+          setCart(
+            cart.map((line) =>
+              line.workshopId === workshop.id ? { ...line, quantity: line.quantity + 1 } : line,
+            ),
+          );
+        } else {
+          setCart([...cart, { workshopId: workshop.id, quantity: 1 }]);
+        }
+        setTotal(total + workshop.price);
+      }
+
+      function handleQuantityChange(workshopId, quantity) {
+        const workshop = workshops.find((w) => w.id === workshopId);
+        const line = cart.find((l) => l.workshopId === workshopId);
+        setCart(cart.map((l) => (l.workshopId === workshopId ? { ...l, quantity } : l)));
+        setTotal(total + (quantity - line.quantity) * workshop.price);
+      }
+
+      function handleRemove(workshopId) {
+        setCart(cart.filter((line) => line.workshopId !== workshopId));
+      }
+
+      return (
+        <main>
+          <h1>Ateliers de cuisine</h1>
+          <section>
+            <h2>Ateliers</h2>
+            {workshops.map((workshop, index) => (
+              <WorkshopCard key={index} workshop={workshop} onBook={handleBook} />
+            ))}
+          </section>
+          <Cart
+            lines={cart}
+            workshops={workshops}
+            total={total}
+            onQuantityChange={handleQuantityChange}
+            onRemove={handleRemove}
+          />
+        </main>
+      );
+    }
+
+    export default App;
+    ```
+
+    ```jsx
+    // src/components/WorkshopCard.jsx
+    import { useState } from 'react';
+
+    function WorkshopCard({ workshop, onBook }) {
+      const [showProgram, setShowProgram] = useState(false);
+
+      return (
+        <article>
+          <h3>{workshop.title}</h3>
+          <p>{workshop.price} € par personne</p>
+          <button type="button" onClick={() => setShowProgram(!showProgram)}>
+            {showProgram ? 'Masquer le programme' : 'Voir le programme'}
+          </button>{' '}
+          <button type="button" onClick={() => onBook(workshop)}>
+            Réserver
+          </button>
+          {showProgram && <p>{workshop.description}</p>}
+        </article>
+      );
+    }
+
+    export default WorkshopCard;
+    ```
+
+    ```jsx
+    // src/components/Cart.jsx
+    import { useState } from 'react';
+
+    function CartLine({ title, price, quantity, onQuantityChange, onRemove }) {
+      const [places, setPlaces] = useState(quantity);
+
+      function changePlaces(delta) {
+        const next = Math.max(1, places + delta);
+        setPlaces(next);
+        onQuantityChange(next);
+      }
+
+      return (
+        <li>
+          {title} × {places} — {(price * places).toFixed(2)} €{' '}
+          <button type="button" aria-label={`Une place de moins : ${title}`} onClick={() => changePlaces(-1)}>
+            −
+          </button>{' '}
+          <button type="button" aria-label={`Une place de plus : ${title}`} onClick={() => changePlaces(1)}>
+            +
+          </button>{' '}
+          <button type="button" onClick={onRemove}>
+            Retirer
+          </button>
+        </li>
+      );
+    }
+
+    function Cart({ lines, workshops, total, onQuantityChange, onRemove }) {
+      if (lines.length === 0) {
+        return <p>Aucune réservation pour l’instant.</p>;
+      }
+
+      return (
+        <section>
+          <h2>Mes réservations</h2>
+          <ul>
+            {lines.map((line) => {
+              const workshop = workshops.find((w) => w.id === line.workshopId);
+              return (
+                <CartLine
+                  key={line.workshopId}
+                  title={workshop.title}
+                  price={workshop.price}
+                  quantity={line.quantity}
+                  onQuantityChange={(quantity) => onQuantityChange(line.workshopId, quantity)}
+                  onRemove={() => onRemove(line.workshopId)}
+                />
+              );
+            })}
+          </ul>
+          <p>Total : {total.toFixed(2)} €</p>
+        </section>
+      );
+    }
+
+    export default Cart;
+    ```
+
+    Demandes de l’équipe :
+
+    1. **Bug** : « Quand je retire un atelier de mes réservations, le total ne baisse pas. »
+       Corrige-le et explique la cause.
+    2. Ajouter une case « Trier par prix » au-dessus des ateliers, qui les affiche par prix
+       croissant quand elle est cochée. La liste `workshops` ne doit pas être modifiée.
+    3. Afficher sous le titre principal « Panier : N place(s) », où N est le nombre total de
+       places réservées.
+    4. Ajouter un bouton « Vider le panier » sous le total.
+
+    Après chaque modification, teste aussi les fonctionnalités existantes : réserver deux
+    fois le même atelier, utiliser `+` et `−`, ouvrir le programme d’un atelier puis trier.
+    Si tu découvres d’autres défauts, corrige-les et explique-les.
+  deliverable: |
+    Colle les trois fichiers modifiés, puis la liste des lignes modifiées, ajoutées ou
     supprimées, avec la raison de chaque changement. Termine par les scénarios testés et
-
     leurs résultats (affichages du panier et du total).
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: bug-diagnosis
-      description: Explique la cause du bug de total et le corrige à la racine.
-      maxScore: 3
-    - id: hidden-defects
-      description: Découvre en testant les défauts révélés par les évolutions.
-      maxScore: 3
-    - id: feature-implementation
-      description: Réalise les évolutions demandées avec les bonnes pratiques de React.
-      maxScore: 3
-    - id: minimal-change
-      description: Fait évoluer le code existant de façon ciblée et vérifiée.
-      maxScore: 2
+      - id: bug-diagnosis
+        description: Explique la cause du bug de total et le corrige à la racine.
+        maxScore: 3
+      - id: hidden-defects
+        description: Découvre en testant les défauts révélés par les évolutions.
+        maxScore: 3
+      - id: feature-implementation
+        description: Réalise les évolutions demandées avec les bonnes pratiques de React.
+        maxScore: 3
+      - id: minimal-change
+        description: Fait évoluer le code existant de façon ciblée et vérifiée.
+        maxScore: 2

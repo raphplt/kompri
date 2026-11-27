@@ -1,10 +1,10 @@
-import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
-import { parse } from 'yaml';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { loadContent } from '@kompri/content';
 import { loadEnvironment } from '@kompri/shared/load-env';
 import { createRegistry } from '@kompri/llm';
 import { examinerMockResponder } from '@kompri/examiner/testing';
-import { evaluate, referenceSchema } from './index.ts';
+import { evaluate } from './index.ts';
+import { loadReferences } from './references.ts';
 import { promptFingerprint } from './fingerprint.ts';
 loadEnvironment();
 const live = process.argv.includes('--live');
@@ -43,17 +43,12 @@ const client = createRegistry(
   },
   examinerMockResponder,
 ).forUsage('examiner');
-const directory = new URL('../references/', import.meta.url);
-const files = (await readdir(directory))
-  .filter((name) => name.endsWith('.yaml'))
-  .sort();
-const references = await Promise.all(
-  files.map(async (name) =>
-    referenceSchema.parse(
-      parse(await readFile(new URL(name, directory), 'utf8')),
-    ),
-  ),
-);
+const { references, privateCount } = await loadReferences();
+// A live run must cover every reference, so that archived reports compare.
+if (live && !privateCount)
+  throw new Error(
+    'Live evals need the private references: set KOMPRI_CONTENT_KEY or run pnpm content:unlock',
+  );
 const runsArgument = process.argv.find((arg) => arg.startsWith('--runs='));
 const report = await evaluate(
   references,

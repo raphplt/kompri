@@ -10,6 +10,9 @@ jobs:
     timeout-minutes: 15
     env:
       NEXT_TELEMETRY_DISABLED: '1'
+      # Optional secret: with it, CI also checks the encrypted answer keys and
+      # the private reference orals; without it, it checks the public content.
+      KOMPRI_CONTENT_KEY: ${{ secrets.KOMPRI_CONTENT_KEY }}
       TURBO_TELEMETRY_DISABLED: '1'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

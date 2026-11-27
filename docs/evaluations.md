@@ -12,13 +12,15 @@ Depuis le 27 novembre 2026, `pnpm evals:live` archive son rapport dans
 `packages/evals/reports/` (métriques et identifiants de références, aucune transcription),
 avec l’empreinte des consignes de l’examinateur. Un test de la CI échoue si les consignes ne
 correspondent plus au dernier rapport archivé : modifier une consigne impose une nouvelle
-mesure réelle. La sonde des questions (`pnpm evals:questions`) est archivée à côté.
+mesure réelle. La sonde des questions (`pnpm evals:questions`) est archivée avec les références
+privées chiffrées, car ses questions visent les défauts à trouver.
 
 ## 27 novembre 2026 — Mesure archivée après l’audit externe
 
 Rapport : `packages/evals/reports/2026-11-27-09-55-claude-sonnet-5-5.json` (Sonnet 5.5, effort
 `medium`, consignes `88301e4429b3ab37`, 16 références × 3). Questions :
-`packages/evals/reports/2026-11-27-questions-claude-sonnet-5-5.md`.
+`2026-11-27-questions-claude-sonnet-5-5.md` dans les références privées chiffrées (les questions
+ciblent les défauts des défis).
 
 - 48/48 verdicts conformes, 0 faux positif, 0 faux négatif, écart moyen 0,37 point.
 - Notation comme en production : deux essais par notation. 2 appels sur 50 se sont emballés

@@ -1,367 +1,566 @@
 - id: git-collaboration-sans-ia
   family: SANS_IA
   title: La branche du formulaire de contact
-  summary: Nettoyer une branche, la rebaser en résolvant des conflits sur deux fichiers, l’intégrer et
-    publier une version.
+  summary: Nettoyer une branche, la rebaser en résolvant des conflits sur deux fichiers, l’intégrer et publier une version.
   estimatedMinutes: 60
-  instructions: "Tu travailles seul, dans ton terminal, sans IA ni recherche en ligne. Tu joues le rôle\n\
-    d’un développeur qui a terminé une petite fonctionnalité sur sa branche personnelle\n`feat/message-obligatoire`,\
-    \ déjà poussée pour sauvegarde mais que **personne d’autre\nn’utilise**. Pendant ce temps, ta collègue\
-    \ Nour a fait évoluer `main`.\n\nEnregistre ce script sous le nom `defi-contact.sh` et lance `bash\
-    \ defi-contact.sh`. Il\nprépare tout dans `~/defi-contact` (supprime ce dossier avant de le relancer).\n\
-    \n```bash\n#!/usr/bin/env bash\n# defi-contact.sh — prépare l'atelier du défi dans ~/defi-contact\n\
-    set -e\nmkdir ~/defi-contact\ncd ~/defi-contact\ngit init --bare serveur.git\ngit clone serveur.git\
-    \ moi\ngit clone serveur.git collegue\n\ncd moi\ngit config user.name \"Moi\"\ngit config user.email\
-    \ \"moi@example.com\"\nmkdir src\nprintf '# Formulaire de contact\\n' > README.md\nprintf '{\\n  \"\
-    type\": \"module\"\\n}\\n' > package.json\ncat > src/contact.js <<'JS'\nexport function validateContact(form)\
-    \ {\n  const errors = [];\n  if (!form.email.includes('@')) {\n    errors.push('Adresse invalide');\n\
-    \  }\n  return errors;\n}\nJS\ncat > src/messages.js <<'JS'\nexport const MESSAGES = {\n  success:\
-    \ 'Merci, votre message a été envoyé.',\n  failure: 'Une erreur est survenue.',\n};\nJS\ngit add .\n\
-    git commit -m \"Ajoute la validation du formulaire de contact\"\ngit tag -a v1.1.0 -m \"Version 1.1.0\"\
-    \ngit push -u origin main --follow-tags\n\n# Ta branche, avec un historique de travail brouillon\n\
-    git switch -c feat/message-obligatoire\ncat > src/contact.js <<'JS'\nimport { MESSAGES } from './messages.js';\n\
-    \nexport function validateContact(form) {\n  const errors = [];\n  if (!form.email.includes('@'))\
-    \ {\n    errors.push(MESSAGES.invalidEmail);\n  }\n  if (form.mesage.trim() === '') {\n    errors.push(MESSAGES.emptyMessage);\n\
-    \  }\n  return errors;\n}\nJS\ncat > src/messages.js <<'JS'\nexport const MESSAGES = {\n  success:\
-    \ 'Merci, votre message a été envoyé.',\n  failure: 'Une erreur est survenue.',\n  invalidEmail: 'Adresse\
-    \ invalide',\n  emptyMessage: 'Le message ne peut pas être vide.',\n};\nJS\ngit commit -am \"Vérifie\
-    \ que le message n'est pas vide\"\ncat > src/contact.js <<'JS'\nimport { MESSAGES } from './messages.js';\n\
-    \nexport function validateContact(form) {\n  console.log('form', form);\n  const errors = [];\n  if\
-    \ (!form.email.includes('@')) {\n    errors.push(MESSAGES.invalidEmail);\n  }\n  if (form.mesage.trim()\
-    \ === '') {\n    errors.push(MESSAGES.emptyMessage);\n  }\n  return errors;\n}\nJS\ngit commit -am\
-    \ \"debug\"\nprintf '\\nLe courriel doit contenir @ et le message ne peut pas être vide.\\n' >> README.md\n\
-    git commit -am \"Documente la validation du formulaire\"\nsed -i.bak 's/form\\.mesage/form.message/'\
-    \ src/contact.js && rm src/contact.js.bak\ngit commit -am \"oups\"\ngit push -u origin feat/message-obligatoire\n\
-    \n# Pendant ce temps, ta collègue améliore main\ncd ../collegue\ngit config user.name \"Nour Haddad\"\
-    \ngit config user.email \"nour@example.com\"\ngit pull\ncat > src/contact.js <<'JS'\nexport function\
-    \ validateContact(form) {\n  const errors = [];\n  if (!form.email || !form.email.includes('@')) {\n\
-    \    errors.push('Adresse électronique invalide');\n  }\n  return errors;\n}\nJS\ngit commit -am \"\
-    Refuse un courriel absent\"\nsed -i.bak \"s/failure: 'Une erreur est survenue.',/failure: 'Une erreur\
-    \ est survenue, réessayez plus tard.',/\" src/messages.js && rm src/messages.js.bak\ngit commit -am\
-    \ \"Précise le message d'échec\"\ngit push\n\ncd ../moi\necho \"Atelier prêt : ~/defi-contact/moi\"\
-    \n```\n\nTravaille ensuite dans `~/defi-contact/moi`.\n\n1. Nettoie l’historique de `feat/message-obligatoire`\
-    \ avec un rebase interactif pour\n   obtenir **exactement deux commits** : « Vérifie que le message\
-    \ n'est pas vide »\n   (faute `mesage` corrigée, sans le `console.log`) puis « Documente la validation\
-    \ du\n   formulaire ». Vérifie avec `git diff ORIG_HEAD` que seule la ligne de débogage a\n   disparu.\n\
-    2. Mets ta branche à jour en la **rebasant** sur la dernière version de `main` du\n   serveur. Résous\
-    \ les conflits pour que le résultat conserve **toutes** les\n   intentions : celles de Nour (courriel\
-    \ absent refusé, formulation des messages) et\n   les tiennes (messages centralisés dans `MESSAGES`,\
-    \ message obligatoire).\n3. Vérifie le résultat en exécutant, depuis `~/defi-contact/moi` :\n   `node\
-    \ -e \"import('./src/contact.js').then((m) => console.log(m.validateContact({ email: '', message:\
-    \ ' ' })))\"`.\n4. Publie ta branche sur le serveur.\n5. Intègre-la dans `main` **sans commit de fusion**,\
-    \ en utilisant une commande qui\n   refuserait d’en créer un, et pousse `main`.\n6. Étiquette cette\
-    \ nouvelle version avec une étiquette **annotée** dont tu choisis le\n   numéro selon SemVer, et publie-la.\n\
-    \nRéponds enfin, en quelques phrases chacune :\n\n- a) Quelle liste d’instructions as-tu écrite à\
-    \ l’étape 1, et pourquoi dans cet ordre ?\n- b) Pendant le conflit de l’étape 2, que contenaient les\
-    \ sections `HEAD` et l’autre\n  section des marqueurs ? Qu’aurait produit `git restore --ours src/contact.js`\
-    \ ?\n- c) Comment as-tu publié ta branche à l’étape 4 et pourquoi cette commande est-elle\n  acceptable\
-    \ ici, alors qu’elle serait une faute sur `main` ?\n- d) Si ton rebasage de l’étape 2 avait mal tourné\
-    \ juste après sa fin, comment\n  serais-tu revenu à l’état précédent ?\n- e) Quel numéro de version\
-    \ as-tu choisi et pourquoi ?\n"
-  deliverable: 'Colle, dans l’ordre : les commandes tapées (historique nettoyé), ta liste d’instructions
+  instructions: |
+    Tu travailles seul, dans ton terminal, sans IA ni recherche en ligne. Tu joues le rôle
+    d’un développeur qui a terminé une petite fonctionnalité sur sa branche personnelle
+    `feat/message-obligatoire`, déjà poussée pour sauvegarde mais que **personne d’autre
+    n’utilise**. Pendant ce temps, ta collègue Nour a fait évoluer `main`.
 
+    Enregistre ce script sous le nom `defi-contact.sh` et lance `bash defi-contact.sh`. Il
+    prépare tout dans `~/defi-contact` (supprime ce dossier avant de le relancer).
+
+    ```bash
+    #!/usr/bin/env bash
+    # defi-contact.sh — prépare l'atelier du défi dans ~/defi-contact
+    set -e
+    mkdir ~/defi-contact
+    cd ~/defi-contact
+    git init --bare serveur.git
+    git clone serveur.git moi
+    git clone serveur.git collegue
+
+    cd moi
+    git config user.name "Moi"
+    git config user.email "moi@example.com"
+    mkdir src
+    printf '# Formulaire de contact\n' > README.md
+    printf '{\n  "type": "module"\n}\n' > package.json
+    cat > src/contact.js <<'JS'
+    export function validateContact(form) {
+      const errors = [];
+      if (!form.email.includes('@')) {
+        errors.push('Adresse invalide');
+      }
+      return errors;
+    }
+    JS
+    cat > src/messages.js <<'JS'
+    export const MESSAGES = {
+      success: 'Merci, votre message a été envoyé.',
+      failure: 'Une erreur est survenue.',
+    };
+    JS
+    git add .
+    git commit -m "Ajoute la validation du formulaire de contact"
+    git tag -a v1.1.0 -m "Version 1.1.0"
+    git push -u origin main --follow-tags
+
+    # Ta branche, avec un historique de travail brouillon
+    git switch -c feat/message-obligatoire
+    cat > src/contact.js <<'JS'
+    import { MESSAGES } from './messages.js';
+
+    export function validateContact(form) {
+      const errors = [];
+      if (!form.email.includes('@')) {
+        errors.push(MESSAGES.invalidEmail);
+      }
+      if (form.mesage.trim() === '') {
+        errors.push(MESSAGES.emptyMessage);
+      }
+      return errors;
+    }
+    JS
+    cat > src/messages.js <<'JS'
+    export const MESSAGES = {
+      success: 'Merci, votre message a été envoyé.',
+      failure: 'Une erreur est survenue.',
+      invalidEmail: 'Adresse invalide',
+      emptyMessage: 'Le message ne peut pas être vide.',
+    };
+    JS
+    git commit -am "Vérifie que le message n'est pas vide"
+    cat > src/contact.js <<'JS'
+    import { MESSAGES } from './messages.js';
+
+    export function validateContact(form) {
+      console.log('form', form);
+      const errors = [];
+      if (!form.email.includes('@')) {
+        errors.push(MESSAGES.invalidEmail);
+      }
+      if (form.mesage.trim() === '') {
+        errors.push(MESSAGES.emptyMessage);
+      }
+      return errors;
+    }
+    JS
+    git commit -am "debug"
+    printf '\nLe courriel doit contenir @ et le message ne peut pas être vide.\n' >> README.md
+    git commit -am "Documente la validation du formulaire"
+    sed -i.bak 's/form\.mesage/form.message/' src/contact.js && rm src/contact.js.bak
+    git commit -am "oups"
+    git push -u origin feat/message-obligatoire
+
+    # Pendant ce temps, ta collègue améliore main
+    cd ../collegue
+    git config user.name "Nour Haddad"
+    git config user.email "nour@example.com"
+    git pull
+    cat > src/contact.js <<'JS'
+    export function validateContact(form) {
+      const errors = [];
+      if (!form.email || !form.email.includes('@')) {
+        errors.push('Adresse électronique invalide');
+      }
+      return errors;
+    }
+    JS
+    git commit -am "Refuse un courriel absent"
+    sed -i.bak "s/failure: 'Une erreur est survenue.',/failure: 'Une erreur est survenue, réessayez plus tard.',/" src/messages.js && rm src/messages.js.bak
+    git commit -am "Précise le message d'échec"
+    git push
+
+    cd ../moi
+    echo "Atelier prêt : ~/defi-contact/moi"
+    ```
+
+    Travaille ensuite dans `~/defi-contact/moi`.
+
+    1. Nettoie l’historique de `feat/message-obligatoire` avec un rebase interactif pour
+       obtenir **exactement deux commits** : « Vérifie que le message n'est pas vide »
+       (faute `mesage` corrigée, sans le `console.log`) puis « Documente la validation du
+       formulaire ». Vérifie avec `git diff ORIG_HEAD` que seule la ligne de débogage a
+       disparu.
+    2. Mets ta branche à jour en la **rebasant** sur la dernière version de `main` du
+       serveur. Résous les conflits pour que le résultat conserve **toutes** les
+       intentions : celles de Nour (courriel absent refusé, formulation des messages) et
+       les tiennes (messages centralisés dans `MESSAGES`, message obligatoire).
+    3. Vérifie le résultat en exécutant, depuis `~/defi-contact/moi` :
+       `node -e "import('./src/contact.js').then((m) => console.log(m.validateContact({ email: '', message: ' ' })))"`.
+    4. Publie ta branche sur le serveur.
+    5. Intègre-la dans `main` **sans commit de fusion**, en utilisant une commande qui
+       refuserait d’en créer un, et pousse `main`.
+    6. Étiquette cette nouvelle version avec une étiquette **annotée** dont tu choisis le
+       numéro selon SemVer, et publie-la.
+
+    Réponds enfin, en quelques phrases chacune :
+
+    - a) Quelle liste d’instructions as-tu écrite à l’étape 1, et pourquoi dans cet ordre ?
+    - b) Pendant le conflit de l’étape 2, que contenaient les sections `HEAD` et l’autre
+      section des marqueurs ? Qu’aurait produit `git restore --ours src/contact.js` ?
+    - c) Comment as-tu publié ta branche à l’étape 4 et pourquoi cette commande est-elle
+      acceptable ici, alors qu’elle serait une faute sur `main` ?
+    - d) Si ton rebasage de l’étape 2 avait mal tourné juste après sa fin, comment
+      serais-tu revenu à l’état précédent ?
+    - e) Quel numéro de version as-tu choisi et pourquoi ?
+  deliverable: |
+    Colle, dans l’ordre : les commandes tapées (historique nettoyé), ta liste d’instructions
     du rebase interactif, la sortie de `git diff ORIG_HEAD` de l’étape 1, les marqueurs de
-
     conflit de `src/contact.js` et `src/messages.js` tels que Git les a écrits, le contenu
-
     final de ces deux fichiers, la sortie de la commande de l’étape 3, la sortie finale de
-
     `git log --oneline --graph --all`, celle de `git ls-remote --tags origin`, puis tes
-
     réponses aux questions a à e.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: history-rewrite
-      description: Nettoie l’historique local avec le rebase interactif et vérifie que le contenu est
-        préservé.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Historique non nettoyé, ou commit de débogage encore présent, ou travail perdu.
-      - score: 1
-        description: Deux commits obtenus mais sans pouvoir expliquer la liste d’instructions ni vérifier
-          le résultat.
-      - score: 2
-        description: Explique pick, fixup, drop et l’ordre des lignes, et vérifie avec git diff ORIG_HEAD.
-      - score: 3
-        description: Explique aussi pourquoi les empreintes changent et comment annuler le rebasage (ORIG_HEAD,
-          reflog).
-    - id: conflicts
-      description: Résout des conflits de rebasage sur plusieurs fichiers en comprenant chaque côté.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Marqueurs laissés, ou travail de Nour ou de l’apprenant écrasé.
-      - score: 1
-        description: Résultat compilable mais une intention perdue, ou confusion entre ours et theirs.
-      - score: 2
-        description: Résultat correct, explique HEAD et le commit rejoué pendant un rebasage, utilise
-          git add puis git rebase --continue.
-      - score: 3
-        description: Repère aussi le conflit sémantique (la nouvelle formulation à reporter dans messages.js)
-          et le vérifie par une exécution.
-    - id: shared-history
-      description: Publie une branche réécrite sans danger et sait où la réécriture est interdite.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Utilise git pull ou git push --force sans justification, ou trouve acceptable de
-          forcer sur main.
-      - score: 1
-        description: Utilise --force-with-lease sans savoir expliquer ce qu’il vérifie.
-      - score: 2
-        description: Explique le refus non-fast-forward, la vérification de --force-with-lease et la règle
-          « pas de réécriture de ce qui est partagé ».
-      - score: 3
-        description: Décrit aussi les conséquences pour un collègue qui aurait possédé la branche et la
-          façon d’y remédier.
-    - id: integration-release
-      description: Intègre sans commit de fusion et publie une version annotée au bon numéro.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Commit de fusion involontaire, ou étiquette absente du serveur.
-      - score: 1
-        description: Intégration correcte mais étiquette légère ou numéro non justifié.
-      - score: 2
-        description: Utilise --ff-only, une étiquette annotée publiée explicitement, et justifie le numéro
-          selon SemVer.
-      - score: 3
-        description: Compare les stratégies d’intégration et explique pourquoi git push n’envoie pas les
-          étiquettes.
+      - id: history-rewrite
+        description: Nettoie l’historique local avec le rebase interactif et vérifie que le contenu est préservé.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Historique non nettoyé, ou commit de débogage encore présent, ou travail perdu.
+          - score: 1
+            description: Deux commits obtenus mais sans pouvoir expliquer la liste d’instructions ni vérifier le résultat.
+          - score: 2
+            description: Explique pick, fixup, drop et l’ordre des lignes, et vérifie avec git diff ORIG_HEAD.
+          - score: 3
+            description: Explique aussi pourquoi les empreintes changent et comment annuler le rebasage (ORIG_HEAD, reflog).
+      - id: conflicts
+        description: Résout des conflits de rebasage sur plusieurs fichiers en comprenant chaque côté.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Marqueurs laissés, ou travail de Nour ou de l’apprenant écrasé.
+          - score: 1
+            description: Résultat compilable mais une intention perdue, ou confusion entre ours et theirs.
+          - score: 2
+            description: Résultat correct, explique HEAD et le commit rejoué pendant un rebasage, utilise git add puis git rebase --continue.
+          - score: 3
+            description: Repère aussi le conflit sémantique (la nouvelle formulation à reporter dans messages.js) et le vérifie par une exécution.
+      - id: shared-history
+        description: Publie une branche réécrite sans danger et sait où la réécriture est interdite.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Utilise git pull ou git push --force sans justification, ou trouve acceptable de forcer sur main.
+          - score: 1
+            description: Utilise --force-with-lease sans savoir expliquer ce qu’il vérifie.
+          - score: 2
+            description: Explique le refus non-fast-forward, la vérification de --force-with-lease et la règle « pas de réécriture de ce qui est partagé ».
+          - score: 3
+            description: Décrit aussi les conséquences pour un collègue qui aurait possédé la branche et la façon d’y remédier.
+      - id: integration-release
+        description: Intègre sans commit de fusion et publie une version annotée au bon numéro.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Commit de fusion involontaire, ou étiquette absente du serveur.
+          - score: 1
+            description: Intégration correcte mais étiquette légère ou numéro non justifié.
+          - score: 2
+            description: Utilise --ff-only, une étiquette annotée publiée explicitement, et justifie le numéro selon SemVer.
+          - score: 3
+            description: Compare les stratégies d’intégration et explique pourquoi git push n’envoie pas les étiquettes.
+
 - id: git-collaboration-avec-ia
   family: AVEC_IA
   title: La trousse de secours de l’équipe
-  summary: Construire avec une IA une démonstration reproductible de git bisect run et une fiche de secours
-    Git, puis les défendre.
+  summary: Construire avec une IA une démonstration reproductible de git bisect run et une fiche de secours Git, puis les défendre.
   estimatedMinutes: 100
-  instructions: "Ton équipe perd régulièrement du temps sur deux problèmes : trouver quel commit a\nintroduit\
-    \ une régression, et réparer les erreurs de manipulation Git. Tu peux utiliser\nune IA autant que\
-    \ tu veux. À l’oral, tu devras expliquer chaque commande, prédire le\nrésultat de variantes et corriger\
-    \ toi-même un comportement.\n\n**Livrable 1 — `bisect-demo.sh`**, lancé avec `bash bisect-demo.sh`,\
-    \ qui :\n\n1. crée un dossier de travail neuf avec `mktemp -d`, affiche son chemin, et ne modifie\n\
-    \   **rien** en dehors : ni ta configuration Git globale, ni tes dépôts ;\n2. y crée un dépôt Git\
-    \ avec une identité configurée **localement** et au moins\n   **dix** commits sur un petit module\
-    \ JavaScript (modules ES, Node.js 24) ;\n3. fait en sorte que l’un de ces commits, au milieu de l’historique,\
-    \ introduise une\n   régression réaliste (pas un `throw` évident), et qu’au moins un commit soit\n\
-    \   **impossible à tester** (par exemple, un fichier nécessaire n’existe pas encore,\n   ou une erreur\
-    \ de syntaxe temporaire) ;\n4. écrit un script de vérification **non suivi par Git**, qui renvoie\
-    \ 0 si le commit\n   est bon, 1 s’il est mauvais et 125 s’il ne peut pas être testé ;\n5. vérifie\
-    \ que ce script répond « mauvais » sur le dernier commit et « bon » sur le\n   premier **avant** de\
-    \ lancer la recherche ;\n6. lance `git bisect run`, puis affiche le commit fautif (empreinte et message)\
-    \ et\n   termine par `git bisect reset`.\n\n**Livrable 2 — `SECOURS.md`**, une fiche d’une à deux\
-    \ pages, en français, qui donne\npour chacune de ces situations la ou les commandes, ce qui peut être\
-    \ perdu, et comment\nrevenir en arrière si la commande elle-même était une erreur :\n\n- un commit\
-    \ poussé sur `main` casse la production ;\n- une fusion poussée sur `main` doit être annulée, puis\
-    \ la branche réintégrée plus tard ;\n- deux commits locaux ont été faits sur `main` au lieu d’une\
-    \ branche ;\n- une branche non fusionnée a été supprimée avec `git branch -D` ;\n- un rebasage terminé\
-    \ a produit un résultat faux ;\n- un conflit de rebasage dont on ne sait plus quoi faire ;\n- sa propre\
-    \ branche de pull request doit être mise à jour avec `main` ;\n- une régression est apparue et on\
-    \ ignore quel commit l’a introduite.\n\nConseil : demande à l’IA d’expliquer chaque commande, puis\
-    \ vérifie chaque ligne de la\nfiche dans un dépôt d’essai. Les IA confondent souvent `ours` et `theirs`\
-    \ pendant un\nrebasage, ou proposent `git push --force` trop vite.\n"
-  deliverable: 'Colle le contenu complet de `bisect-demo.sh`, la sortie complète d’une exécution, le
+  instructions: |
+    Ton équipe perd régulièrement du temps sur deux problèmes : trouver quel commit a
+    introduit une régression, et réparer les erreurs de manipulation Git. Tu peux utiliser
+    une IA autant que tu veux. À l’oral, tu devras expliquer chaque commande, prédire le
+    résultat de variantes et corriger toi-même un comportement.
 
+    **Livrable 1 — `bisect-demo.sh`**, lancé avec `bash bisect-demo.sh`, qui :
+
+    1. crée un dossier de travail neuf avec `mktemp -d`, affiche son chemin, et ne modifie
+       **rien** en dehors : ni ta configuration Git globale, ni tes dépôts ;
+    2. y crée un dépôt Git avec une identité configurée **localement** et au moins
+       **dix** commits sur un petit module JavaScript (modules ES, Node.js 24) ;
+    3. fait en sorte que l’un de ces commits, au milieu de l’historique, introduise une
+       régression réaliste (pas un `throw` évident), et qu’au moins un commit soit
+       **impossible à tester** (par exemple, un fichier nécessaire n’existe pas encore,
+       ou une erreur de syntaxe temporaire) ;
+    4. écrit un script de vérification **non suivi par Git**, qui renvoie 0 si le commit
+       est bon, 1 s’il est mauvais et 125 s’il ne peut pas être testé ;
+    5. vérifie que ce script répond « mauvais » sur le dernier commit et « bon » sur le
+       premier **avant** de lancer la recherche ;
+    6. lance `git bisect run`, puis affiche le commit fautif (empreinte et message) et
+       termine par `git bisect reset`.
+
+    **Livrable 2 — `SECOURS.md`**, une fiche d’une à deux pages, en français, qui donne
+    pour chacune de ces situations la ou les commandes, ce qui peut être perdu, et comment
+    revenir en arrière si la commande elle-même était une erreur :
+
+    - un commit poussé sur `main` casse la production ;
+    - une fusion poussée sur `main` doit être annulée, puis la branche réintégrée plus tard ;
+    - deux commits locaux ont été faits sur `main` au lieu d’une branche ;
+    - une branche non fusionnée a été supprimée avec `git branch -D` ;
+    - un rebasage terminé a produit un résultat faux ;
+    - un conflit de rebasage dont on ne sait plus quoi faire ;
+    - sa propre branche de pull request doit être mise à jour avec `main` ;
+    - une régression est apparue et on ignore quel commit l’a introduite.
+
+    Conseil : demande à l’IA d’expliquer chaque commande, puis vérifie chaque ligne de la
+    fiche dans un dépôt d’essai. Les IA confondent souvent `ours` et `theirs` pendant un
+    rebasage, ou proposent `git push --force` trop vite.
+  deliverable: |
+    Colle le contenu complet de `bisect-demo.sh`, la sortie complète d’une exécution, le
     contenu de `SECOURS.md`, puis quelques lignes sur ce que l’IA t’a apporté, ce qu’elle a
-
     proposé de faux ou de risqué et comment tu l’as vérifié.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: code-ownership
-      description: Explique chaque partie du script et de la fiche sans aide.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas expliquer des commandes importantes de son propre script ou de sa fiche.
-      - score: 1
-        description: Explique le déroulé global mais pas les codes de sortie ni le rôle du script non
-          suivi.
-      - score: 2
-        description: Explique précisément chaque étape, dont la vérification des bornes et git bisect
-          reset.
-      - score: 3
-        description: Explique aussi les choix écartés et ce qu’il a corrigé dans la proposition de l’IA.
-    - id: bisect
-      description: Maîtrise la recherche dichotomique et l’automatisation par codes de sortie.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas ce que fait git bisect ou pourquoi il trouve le commit.
-      - score: 1
-        description: Sait lancer git bisect run mais ignore le rôle du code 125 ou des bornes.
-      - score: 2
-        description: Explique la dichotomie, les codes 0, 1 et 125, et le danger d’un script mal vérifié.
-      - score: 3
-        description: Anticipe les cas limites (script commité, plantage au-delà de 127, borne mal choisie).
-    - id: recovery
-      description: Choisit la bonne commande de réparation selon que le travail est commité, partagé ou
-        non.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Propose reset ou push --force sur main partagée, ou ignore les pertes possibles.
-      - score: 1
-        description: Commandes globalement justes mais sans critère clair de choix.
-      - score: 2
-        description: Justifie revert contre reset, -m 1 pour une fusion, et le reflog pour retrouver une
-          branche.
-      - score: 3
-        description: Explique aussi les limites (reflog local, expiration, non commité perdu) et comment
-          annuler une réparation ratée.
-    - id: modification
-      description: Réalise ou décrit correctement une modification demandée pendant l’oral.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne parvient pas à modifier le script ou la fiche.
-      - score: 1
-        description: Modification partielle ou qui casse la démonstration.
-      - score: 2
-        description: Modification correcte, vérifiée par une exécution.
-      - score: 3
-        description: Modification correcte, vérifiée, avec anticipation d’un cas limite.
+      - id: code-ownership
+        description: Explique chaque partie du script et de la fiche sans aide.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas expliquer des commandes importantes de son propre script ou de sa fiche.
+          - score: 1
+            description: Explique le déroulé global mais pas les codes de sortie ni le rôle du script non suivi.
+          - score: 2
+            description: Explique précisément chaque étape, dont la vérification des bornes et git bisect reset.
+          - score: 3
+            description: Explique aussi les choix écartés et ce qu’il a corrigé dans la proposition de l’IA.
+      - id: bisect
+        description: Maîtrise la recherche dichotomique et l’automatisation par codes de sortie.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas ce que fait git bisect ou pourquoi il trouve le commit.
+          - score: 1
+            description: Sait lancer git bisect run mais ignore le rôle du code 125 ou des bornes.
+          - score: 2
+            description: Explique la dichotomie, les codes 0, 1 et 125, et le danger d’un script mal vérifié.
+          - score: 3
+            description: Anticipe les cas limites (script commité, plantage au-delà de 127, borne mal choisie).
+      - id: recovery
+        description: Choisit la bonne commande de réparation selon que le travail est commité, partagé ou non.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Propose reset ou push --force sur main partagée, ou ignore les pertes possibles.
+          - score: 1
+            description: Commandes globalement justes mais sans critère clair de choix.
+          - score: 2
+            description: Justifie revert contre reset, -m 1 pour une fusion, et le reflog pour retrouver une branche.
+          - score: 3
+            description: Explique aussi les limites (reflog local, expiration, non commité perdu) et comment annuler une réparation ratée.
+      - id: modification
+        description: Réalise ou décrit correctement une modification demandée pendant l’oral.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne parvient pas à modifier le script ou la fiche.
+          - score: 1
+            description: Modification partielle ou qui casse la démonstration.
+          - score: 2
+            description: Modification correcte, vérifiée par une exécution.
+          - score: 3
+            description: Modification correcte, vérifiée, avec anticipation d’un cas limite.
+
 - id: git-collaboration-contre-ia
   family: CONTRE_IA
   title: La procédure de release « propre »
-  summary: Trouver ce qu’une procédure de nettoyage et de publication générée ferait perdre à l’équipe,
-    et la réécrire.
+  summary: Trouver ce qu’une procédure de nettoyage et de publication générée ferait perdre à l’équipe, et la réécrire.
   estimatedMinutes: 60
-  instructions: "Inès, Hugo et toi développez depuis deux semaines le paiement en trois fois sur la\n\
-    branche **partagée** `feat/paiement-3x` : chacun y pousse ses commits. La dernière\nversion publiée\
-    \ est `v1.4.2`. La fonctionnalité est rétrocompatible : aucune fonction\nexistante ne change. Hugo\
-    \ a demandé à un assistant « une procédure pour nettoyer\nl’historique de la branche avant la release\
-    \ et publier la version ». Voici ce qu’il a\nobtenu ; l’équipe s’apprête à l’appliquer telle quelle.\n\
-    \n```text\nProcédure de release — feat/paiement-3x\n\n1. Partir d'un état propre\n   git switch feat/paiement-3x\n\
-    \   git reset --hard\n   git pull\n\n2. Nettoyer l'historique (un seul commit, plus lisible)\n   git\
-    \ fetch origin\n   git rebase -i origin/main\n   -> dans l'éditeur, remplacer tous les « pick » sauf\
-    \ le premier par « squash »\n   En cas de conflit, garder notre version de la branche :\n   git checkout\
-    \ --ours .\n   git add .\n   git rebase --continue\n\n3. Publier la branche nettoyée\n   git push\
-    \ --force\n   Prévenir Inès et Hugo : ils n'ont qu'à faire git pull pour récupérer\n   la nouvelle\
-    \ version de la branche.\n\n4. Intégrer dans main\n   git switch main\n   git pull\n   git merge feat/paiement-3x\n\
-    \   git push\n\n5. Créer la version\n   Nouvelle fonctionnalité importante : on passe en version majeure.\n\
-    \   git tag v2.0\n   git push\n\n6. En cas de problème en production après la release\n   git switch\
-    \ main\n   git reset --hard HEAD~1\n   git push --force\n```\n\nTravail demandé :\n\n1. Pour chaque\
-    \ étape, indique si elle est correcte. Pour chaque défaut : la commande en\n   cause, le scénario\
-    \ concret qui le déclenche, ce qui est perdu ou cassé (et pour\n   qui), et sa gravité.\n2. Reproduis\
-    \ **au moins deux** défauts dans un atelier local (dépôt nu et clones),\n   dont celui de l’étape\
-    \ 2 sur un conflit, et montre ce qui se passe réellement.\n3. Réécris la procédure pour obtenir le\
-    \ même objectif (un historique lisible sur\n   `main`, une version publiée, un plan de retour arrière)\
-    \ **sans réécrire aucun\n   historique partagé**.\n"
-  deliverable: 'Colle ton analyse étape par étape (commande, scénario, conséquence, gravité), les
+  instructions: |
+    Inès, Hugo et toi développez depuis deux semaines le paiement en trois fois sur la
+    branche **partagée** `feat/paiement-3x` : chacun y pousse ses commits. La dernière
+    version publiée est `v1.4.2`. La fonctionnalité est rétrocompatible : aucune fonction
+    existante ne change. Hugo a demandé à un assistant « une procédure pour nettoyer
+    l’historique de la branche avant la release et publier la version ». Voici ce qu’il a
+    obtenu ; l’équipe s’apprête à l’appliquer telle quelle.
 
+    ```text
+    Procédure de release — feat/paiement-3x
+
+    1. Partir d'un état propre
+       git switch feat/paiement-3x
+       git reset --hard
+       git pull
+
+    2. Nettoyer l'historique (un seul commit, plus lisible)
+       git fetch origin
+       git rebase -i origin/main
+       -> dans l'éditeur, remplacer tous les « pick » sauf le premier par « squash »
+       En cas de conflit, garder notre version de la branche :
+       git checkout --ours .
+       git add .
+       git rebase --continue
+
+    3. Publier la branche nettoyée
+       git push --force
+       Prévenir Inès et Hugo : ils n'ont qu'à faire git pull pour récupérer
+       la nouvelle version de la branche.
+
+    4. Intégrer dans main
+       git switch main
+       git pull
+       git merge feat/paiement-3x
+       git push
+
+    5. Créer la version
+       Nouvelle fonctionnalité importante : on passe en version majeure.
+       git tag v2.0
+       git push
+
+    6. En cas de problème en production après la release
+       git switch main
+       git reset --hard HEAD~1
+       git push --force
+    ```
+
+    Travail demandé :
+
+    1. Pour chaque étape, indique si elle est correcte. Pour chaque défaut : la commande en
+       cause, le scénario concret qui le déclenche, ce qui est perdu ou cassé (et pour
+       qui), et sa gravité.
+    2. Reproduis **au moins deux** défauts dans un atelier local (dépôt nu et clones),
+       dont celui de l’étape 2 sur un conflit, et montre ce qui se passe réellement.
+    3. Réécris la procédure pour obtenir le même objectif (un historique lisible sur
+       `main`, une version publiée, un plan de retour arrière) **sans réécrire aucun
+       historique partagé**.
+  deliverable: |
+    Colle ton analyse étape par étape (commande, scénario, conséquence, gravité), les
     commandes et sorties de tes reproductions, puis ta procédure corrigée complète, avec
-
     une phrase de justification par étape.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: defects-found
-      description: Identifie les défauts réels de la procédure, y compris ceux qui ne se voient qu’en
-        équipe.
-      maxScore: 3
-    - id: root-cause
-      description: Explique chaque défaut par le modèle de Git (commits immuables, réécriture, ours/theirs,
-        étiquettes).
-      maxScore: 3
-    - id: fix-quality
-      description: Propose une procédure sûre qui atteint le même objectif sans réécrire l’historique
-        partagé.
-      maxScore: 3
+      - id: defects-found
+        description: Identifie les défauts réels de la procédure, y compris ceux qui ne se voient qu’en équipe.
+        maxScore: 3
+      - id: root-cause
+        description: Explique chaque défaut par le modèle de Git (commits immuables, réécriture, ours/theirs, étiquettes).
+        maxScore: 3
+      - id: fix-quality
+        description: Propose une procédure sûre qui atteint le même objectif sans réécrire l’historique partagé.
+        maxScore: 3
+
 - id: git-collaboration-apres-ia
   family: APRES_IA
   title: Le dépôt de Léo après le « ménage »
-  summary: Diagnostiquer et réparer un dépôt abîmé par des commandes suggérées, puis terminer proprement
-    le travail.
+  summary: Diagnostiquer et réparer un dépôt abîmé par des commandes suggérées, puis terminer proprement le travail.
   estimatedMinutes: 75
-  instructions: "Léo travaillait sur deux branches : `fix/encodage` (une correction, jamais poussée) et\n\
-    `feat/export-commandes` (une fonctionnalité dont deux commits avaient été poussés et un\ntroisième\
-    \ était encore local). Il avait aussi commencé à documenter l’export dans le\n`README.md`, sans commiter.\
-    \ Voulant « mettre sa branche à jour et faire le ménage », il\na suivi les conseils d’un assistant.\
-    \ Il te demande de l’aide **sans tout refaire** : son\ntravail doit être récupéré, pas réécrit.\n\n\
-    Enregistre ce script sous le nom `situation.sh` et lance `bash situation.sh`. Il\nreproduit exactement\
-    \ le dépôt de Léo dans `~/defi-export` (supprime ce dossier avant de\nle relancer). Les dernières\
-    \ lignes sont la session de Léo, reproduite telle quelle.\n\n```bash\n#!/usr/bin/env bash\n# situation.sh\
-    \ — reproduit le dépôt de Léo dans ~/defi-export\nset -e\nmkdir ~/defi-export\ncd ~/defi-export\n\
-    git init --bare serveur.git\ngit clone serveur.git equipe\ngit clone serveur.git leo\n\n# Le projet\
-    \ de départ, publié par l'équipe\ncd equipe\ngit config user.name \"Nour Haddad\"\ngit config user.email\
-    \ \"nour@example.com\"\nmkdir src test\nprintf '{\\n  \"type\": \"module\",\\n  \"scripts\": {\\n\
-    \    \"test\": \"node --test\"\\n  }\\n}\\n' > package.json\nprintf '# Exports CSV\\n' > README.md\n\
-    cat > src/export.js <<'JS'\nexport function toCsv(rows) {\n  return rows.map((row) => row.join(',')).join('\\\
-    n');\n}\nJS\ncat > test/export.test.js <<'JS'\nimport { test } from 'node:test';\nimport assert from\
-    \ 'node:assert/strict';\nimport { toCsv } from '../src/export.js';\n\ntest('sépare les cellules et\
-    \ les lignes', () => {\n  assert.equal(toCsv([['a', 'b'], ['c', 'd']]), 'a,b\\nc,d');\n});\nJS\ngit\
-    \ add .\ngit commit -m \"Ajoute la conversion en CSV\"\ngit tag -a v2.3.0 -m \"Version 2.3.0\"\ngit\
-    \ push -u origin main --follow-tags\n\n# Le travail de Léo\ncd ../leo\ngit config user.name \"Léo\
-    \ Martin\"\ngit config user.email \"leo@example.com\"\ngit pull\ngit switch -c fix/encodage\ncat >\
-    \ src/export.js <<'JS'\nfunction escapeCell(value) {\n  const text = String(value);\n  return /[\"\
-    ,\\n]/.test(text) ? `\"${text.replaceAll('\"', '\"\"')}\"` : text;\n}\n\nexport function toCsv(rows)\
-    \ {\n  return rows.map((row) => row.map(escapeCell).join(',')).join('\\n');\n}\nJS\ncat >> test/export.test.js\
-    \ <<'JS'\n\ntest('échappe les guillemets', () => {\n  assert.equal(toCsv([['dit \"oui\"', 'x']]),\
-    \ '\"dit \"\"oui\"\"\",x');\n});\nJS\ngit commit -am \"Échappe les guillemets dans le CSV\"\n\ngit\
-    \ switch main\ngit switch -c feat/export-commandes\ncat > src/orders-export.js <<'JS'\nimport { toCsv\
-    \ } from './export.js';\n\nexport function exportOrders(orders) {\n  return toCsv(orders.map((order)\
-    \ => [order.id, order.total]));\n}\nJS\ngit add src/orders-export.js\ngit commit -m \"Ajoute l'export\
-    \ des commandes\"\ncat > src/orders-export.js <<'JS'\nimport { toCsv } from './export.js';\n\nexport\
-    \ function exportOrders(orders) {\n  const header = ['id', 'total'];\n  return toCsv([header, ...orders.map((order)\
-    \ => [order.id, order.total])]);\n}\nJS\ngit commit -am \"Ajoute l'en-tête des colonnes\"\ngit push\
-    \ -u origin feat/export-commandes\ncat > test/orders-export.test.js <<'JS'\nimport { test } from 'node:test';\n\
-    import assert from 'node:assert/strict';\nimport { exportOrders } from '../src/orders-export.js';\n\
-    \ntest('exporte les commandes avec un en-tête', () => {\n  assert.equal(exportOrders([{ id: 1, total:\
-    \ 12.5 }]), 'id,total\\n1,12.5');\n});\nJS\ngit add test/orders-export.test.js\ngit commit -m \"Teste\
-    \ l'export des commandes\"\nprintf '\\n## Export des commandes\\n\\nexportOrders(orders) produit un\
-    \ CSV avec un en-tête.\\n' >> README.md\n\n# Pendant ce temps, l'équipe change le séparateur sur main\n\
-    cd ../equipe\ncat > src/export.js <<'JS'\nexport const SEPARATOR = ';';\n\nexport function toCsv(rows)\
-    \ {\n  return rows.map((row) => row.join(SEPARATOR)).join('\\n');\n}\nJS\ncat > test/export.test.js\
-    \ <<'JS'\nimport { test } from 'node:test';\nimport assert from 'node:assert/strict';\nimport { toCsv\
-    \ } from '../src/export.js';\n\ntest('sépare les cellules et les lignes', () => {\n  assert.equal(toCsv([['a',\
-    \ 'b'], ['c', 'd']]), 'a;b\\nc;d');\n});\nJS\ngit commit -am \"Utilise le point-virgule comme séparateur\"\
-    \ngit push\n\n# La session de Léo, qui a suivi les conseils d'un assistant\n# pour « mettre sa branche\
-    \ à jour et faire le ménage »\ncd ../leo\ngit fetch\ngit reset --hard origin/main\ngit branch -D fix/encodage\n\
-    git push --force\necho \"Situation prête : ~/defi-export/leo\"\n```\n\nTravaille ensuite dans `~/defi-export/leo`.\n\
-    \n1. **Diagnostic.** À partir de `git status`, `git log --oneline --graph --all` et\n   `git reflog`,\
-    \ explique ce que chacune des quatre dernières commandes de Léo a fait,\n   sur sa machine **et**\
-    \ sur le serveur. Dresse la liste de ce qui est récupérable\n   (et où) et de ce qui est définitivement\
-    \ perdu.\n2. **Récupération.** Restaure la branche `feat/export-commandes` avec ses trois\n   commits\
-    \ et la branche `fix/encodage` avec son commit, sans les recréer à la main.\n3. **Faire ce que Léo\
-    \ voulait vraiment.** Mets `feat/export-commandes` à jour avec\n   `main`, lance `npm test`, corrige\
-    \ ce qui doit l’être **par un nouveau commit**, et\n   republie la branche sur le serveur. Justifie\
-    \ la commande d’envoi utilisée.\n4. Mets aussi `fix/encodage` à jour avec `main` et publie-la. Le\
-    \ résultat doit\n   respecter le nouveau séparateur **dans tous les cas**, y compris pour une cellule\
-    \ qui\n   contiendrait elle-même un point-virgule. Les tests doivent passer.\n5. Rédige la description\
-    \ de la pull request de `fix/encodage` (pourquoi, ce qui change,\n   comment tester, points d’attention).\n"
-  deliverable: 'Colle ton diagnostic (sorties des trois commandes et explications), la liste
+  instructions: |
+    Léo travaillait sur deux branches : `fix/encodage` (une correction, jamais poussée) et
+    `feat/export-commandes` (une fonctionnalité dont deux commits avaient été poussés et un
+    troisième était encore local). Il avait aussi commencé à documenter l’export dans le
+    `README.md`, sans commiter. Voulant « mettre sa branche à jour et faire le ménage », il
+    a suivi les conseils d’un assistant. Il te demande de l’aide **sans tout refaire** : son
+    travail doit être récupéré, pas réécrit.
 
+    Enregistre ce script sous le nom `situation.sh` et lance `bash situation.sh`. Il
+    reproduit exactement le dépôt de Léo dans `~/defi-export` (supprime ce dossier avant de
+    le relancer). Les dernières lignes sont la session de Léo, reproduite telle quelle.
+
+    ```bash
+    #!/usr/bin/env bash
+    # situation.sh — reproduit le dépôt de Léo dans ~/defi-export
+    set -e
+    mkdir ~/defi-export
+    cd ~/defi-export
+    git init --bare serveur.git
+    git clone serveur.git equipe
+    git clone serveur.git leo
+
+    # Le projet de départ, publié par l'équipe
+    cd equipe
+    git config user.name "Nour Haddad"
+    git config user.email "nour@example.com"
+    mkdir src test
+    printf '{\n  "type": "module",\n  "scripts": {\n    "test": "node --test"\n  }\n}\n' > package.json
+    printf '# Exports CSV\n' > README.md
+    cat > src/export.js <<'JS'
+    export function toCsv(rows) {
+      return rows.map((row) => row.join(',')).join('\n');
+    }
+    JS
+    cat > test/export.test.js <<'JS'
+    import { test } from 'node:test';
+    import assert from 'node:assert/strict';
+    import { toCsv } from '../src/export.js';
+
+    test('sépare les cellules et les lignes', () => {
+      assert.equal(toCsv([['a', 'b'], ['c', 'd']]), 'a,b\nc,d');
+    });
+    JS
+    git add .
+    git commit -m "Ajoute la conversion en CSV"
+    git tag -a v2.3.0 -m "Version 2.3.0"
+    git push -u origin main --follow-tags
+
+    # Le travail de Léo
+    cd ../leo
+    git config user.name "Léo Martin"
+    git config user.email "leo@example.com"
+    git pull
+    git switch -c fix/encodage
+    cat > src/export.js <<'JS'
+    function escapeCell(value) {
+      const text = String(value);
+      return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+    }
+
+    export function toCsv(rows) {
+      return rows.map((row) => row.map(escapeCell).join(',')).join('\n');
+    }
+    JS
+    cat >> test/export.test.js <<'JS'
+
+    test('échappe les guillemets', () => {
+      assert.equal(toCsv([['dit "oui"', 'x']]), '"dit ""oui""",x');
+    });
+    JS
+    git commit -am "Échappe les guillemets dans le CSV"
+
+    git switch main
+    git switch -c feat/export-commandes
+    cat > src/orders-export.js <<'JS'
+    import { toCsv } from './export.js';
+
+    export function exportOrders(orders) {
+      return toCsv(orders.map((order) => [order.id, order.total]));
+    }
+    JS
+    git add src/orders-export.js
+    git commit -m "Ajoute l'export des commandes"
+    cat > src/orders-export.js <<'JS'
+    import { toCsv } from './export.js';
+
+    export function exportOrders(orders) {
+      const header = ['id', 'total'];
+      return toCsv([header, ...orders.map((order) => [order.id, order.total])]);
+    }
+    JS
+    git commit -am "Ajoute l'en-tête des colonnes"
+    git push -u origin feat/export-commandes
+    cat > test/orders-export.test.js <<'JS'
+    import { test } from 'node:test';
+    import assert from 'node:assert/strict';
+    import { exportOrders } from '../src/orders-export.js';
+
+    test('exporte les commandes avec un en-tête', () => {
+      assert.equal(exportOrders([{ id: 1, total: 12.5 }]), 'id,total\n1,12.5');
+    });
+    JS
+    git add test/orders-export.test.js
+    git commit -m "Teste l'export des commandes"
+    printf '\n## Export des commandes\n\nexportOrders(orders) produit un CSV avec un en-tête.\n' >> README.md
+
+    # Pendant ce temps, l'équipe change le séparateur sur main
+    cd ../equipe
+    cat > src/export.js <<'JS'
+    export const SEPARATOR = ';';
+
+    export function toCsv(rows) {
+      return rows.map((row) => row.join(SEPARATOR)).join('\n');
+    }
+    JS
+    cat > test/export.test.js <<'JS'
+    import { test } from 'node:test';
+    import assert from 'node:assert/strict';
+    import { toCsv } from '../src/export.js';
+
+    test('sépare les cellules et les lignes', () => {
+      assert.equal(toCsv([['a', 'b'], ['c', 'd']]), 'a;b\nc;d');
+    });
+    JS
+    git commit -am "Utilise le point-virgule comme séparateur"
+    git push
+
+    # La session de Léo, qui a suivi les conseils d'un assistant
+    # pour « mettre sa branche à jour et faire le ménage »
+    cd ../leo
+    git fetch
+    git reset --hard origin/main
+    git branch -D fix/encodage
+    git push --force
+    echo "Situation prête : ~/defi-export/leo"
+    ```
+
+    Travaille ensuite dans `~/defi-export/leo`.
+
+    1. **Diagnostic.** À partir de `git status`, `git log --oneline --graph --all` et
+       `git reflog`, explique ce que chacune des quatre dernières commandes de Léo a fait,
+       sur sa machine **et** sur le serveur. Dresse la liste de ce qui est récupérable
+       (et où) et de ce qui est définitivement perdu.
+    2. **Récupération.** Restaure la branche `feat/export-commandes` avec ses trois
+       commits et la branche `fix/encodage` avec son commit, sans les recréer à la main.
+    3. **Faire ce que Léo voulait vraiment.** Mets `feat/export-commandes` à jour avec
+       `main`, lance `npm test`, corrige ce qui doit l’être **par un nouveau commit**, et
+       republie la branche sur le serveur. Justifie la commande d’envoi utilisée.
+    4. Mets aussi `fix/encodage` à jour avec `main` et publie-la. Le résultat doit
+       respecter le nouveau séparateur **dans tous les cas**, y compris pour une cellule qui
+       contiendrait elle-même un point-virgule. Les tests doivent passer.
+    5. Rédige la description de la pull request de `fix/encodage` (pourquoi, ce qui change,
+       comment tester, points d’attention).
+  deliverable: |
+    Colle ton diagnostic (sorties des trois commandes et explications), la liste
     récupérable / perdu, toutes les commandes de réparation avec leurs sorties, le contenu
-
     final de `src/export.js` et des fichiers de test modifiés, les sorties de `npm test` sur
-
     les deux branches, la sortie finale de `git log --oneline --graph --all`, et la
-
     description de la pull request.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: diagnosis
-      description: Explique l’effet de chaque commande sur le dépôt local et sur le serveur, et ce qui
-        est perdu.
-      maxScore: 3
-    - id: recovery
-      description: Récupère le travail par le reflog sans le recréer, avec des commandes sûres.
-      maxScore: 3
-    - id: integration
-      description: Met les branches à jour avec main, résout le conflit et détecte le conflit sémantique
-        par les tests.
-      maxScore: 3
-    - id: pull-request
-      description: Rédige une description de pull request utile pour un relecteur.
-      maxScore: 2
+      - id: diagnosis
+        description: Explique l’effet de chaque commande sur le dépôt local et sur le serveur, et ce qui est perdu.
+        maxScore: 3
+      - id: recovery
+        description: Récupère le travail par le reflog sans le recréer, avec des commandes sûres.
+        maxScore: 3
+      - id: integration
+        description: Met les branches à jour avec main, résout le conflit et détecte le conflit sémantique par les tests.
+        maxScore: 3
+      - id: pull-request
+        description: Rédige une description de pull request utile pour un relecteur.
+        maxScore: 2

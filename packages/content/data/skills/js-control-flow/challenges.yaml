@@ -1,270 +1,400 @@
 - id: js-control-flow-sans-ia
   family: SANS_IA
   title: Le relevé météo
-  summary: Analyser une série de températures avec des boucles, des conditions et un switch, puis tracer
-    une boucle à la main.
+  summary: Analyser une série de températures avec des boucles, des conditions et un switch, puis tracer une boucle à la main.
   estimatedMinutes: 50
-  instructions: "Une station météo envoie chaque jour un relevé de température à midi. Quand le\ncapteur\
-    \ est en panne, le relevé vaut `null`. Écris un script `weather.js`, sans\nfonction et sans méthode\
-    \ de tableau (pas de `map`, `filter`, `Math.min(...)` sur le\ntableau, etc.), que tu exécutes avec\
-    \ `node weather.js`.\n\nDonnées de départ, à recopier telles quelles en haut du fichier :\n\n```js\n\
-    const city = 'Grenoble';\nconst month = 'février';\nconst temperatures = [3, -2, null, 5, 12, -4,\
-    \ 31, 8]; // °C, null = capteur en panne\nconst alertThreshold = 30; // alerte canicule au-delà de\
-    \ 30 °C\n```\n\nTravail demandé :\n\n1. Avec une boucle `for...of`, calcule le nombre de relevés valides,\
-    \ la température\n   minimale, la température maximale et la moyenne des relevés valides. Les relevés\n\
-    \   `null` sont ignorés avec `continue`.\n2. Dans la même boucle, compte les jours de gel (température\
-    \ strictement négative).\n3. Avec une boucle `for` et un index, trouve la position du **premier**\
-    \ relevé\n   strictement supérieur à `alertThreshold`, en arrêtant la boucle avec `break` dès\n  \
-    \ qu’il est trouvé. Si aucun relevé ne dépasse le seuil, affiche `Aucune alerte`.\n4. Avec une chaîne\
-    \ `if / else if / else`, qualifie la moyenne : moins de 5 °C\n   « froid », moins de 15 °C « frais\
-    \ », moins de 25 °C « doux », sinon « chaud ».\n5. Avec un `switch`, affiche la saison du mois : décembre,\
-    \ janvier, février pour\n   l’hiver ; mars, avril, mai pour le printemps ; juin, juillet, août pour\
-    \ l’été ;\n   septembre, octobre, novembre pour l’automne ; tout autre texte affiche\n   `Mois inconnu`.\n\
-    6. Affiche un rapport lisible avec des gabarits de chaînes ; la moyenne a deux\n   décimales.\n\n\
-    Trace à la main : sans l’exécuter, remplis le tableau de trace de ce code (colonnes\n`i`, test de\
-    \ la boucle, branche prise, `a`, `b`) et donne sa sortie exacte.\n\n```js\nlet a = 1;\nlet b = 0;\n\
-    for (let i = 0; i < 4; i++) {\n  if (i % 2 === 0) {\n    continue;\n  }\n  b += a;\n  a *= 3;\n}\n\
-    console.log(a, b);\n```\n\nContraintes : `const` par défaut, `let` seulement si la valeur change,\
-    \ comparaisons\nstrictes uniquement.\n"
-  deliverable: 'Colle le contenu complet de `weather.js` et la sortie exacte de `node weather.js`.
+  instructions: |
+    Une station météo envoie chaque jour un relevé de température à midi. Quand le
+    capteur est en panne, le relevé vaut `null`. Écris un script `weather.js`, sans
+    fonction et sans méthode de tableau (pas de `map`, `filter`, `Math.min(...)` sur le
+    tableau, etc.), que tu exécutes avec `node weather.js`.
 
+    Données de départ, à recopier telles quelles en haut du fichier :
+
+    ```js
+    const city = 'Grenoble';
+    const month = 'février';
+    const temperatures = [3, -2, null, 5, 12, -4, 31, 8]; // °C, null = capteur en panne
+    const alertThreshold = 30; // alerte canicule au-delà de 30 °C
+    ```
+
+    Travail demandé :
+
+    1. Avec une boucle `for...of`, calcule le nombre de relevés valides, la température
+       minimale, la température maximale et la moyenne des relevés valides. Les relevés
+       `null` sont ignorés avec `continue`.
+    2. Dans la même boucle, compte les jours de gel (température strictement négative).
+    3. Avec une boucle `for` et un index, trouve la position du **premier** relevé
+       strictement supérieur à `alertThreshold`, en arrêtant la boucle avec `break` dès
+       qu’il est trouvé. Si aucun relevé ne dépasse le seuil, affiche `Aucune alerte`.
+    4. Avec une chaîne `if / else if / else`, qualifie la moyenne : moins de 5 °C
+       « froid », moins de 15 °C « frais », moins de 25 °C « doux », sinon « chaud ».
+    5. Avec un `switch`, affiche la saison du mois : décembre, janvier, février pour
+       l’hiver ; mars, avril, mai pour le printemps ; juin, juillet, août pour l’été ;
+       septembre, octobre, novembre pour l’automne ; tout autre texte affiche
+       `Mois inconnu`.
+    6. Affiche un rapport lisible avec des gabarits de chaînes ; la moyenne a deux
+       décimales.
+
+    Trace à la main : sans l’exécuter, remplis le tableau de trace de ce code (colonnes
+    `i`, test de la boucle, branche prise, `a`, `b`) et donne sa sortie exacte.
+
+    ```js
+    let a = 1;
+    let b = 0;
+    for (let i = 0; i < 4; i++) {
+      if (i % 2 === 0) {
+        continue;
+      }
+      b += a;
+      a *= 3;
+    }
+    console.log(a, b);
+    ```
+
+    Contraintes : `const` par défaut, `let` seulement si la valeur change, comparaisons
+    strictes uniquement.
+  deliverable: |
+    Colle le contenu complet de `weather.js` et la sortie exacte de `node weather.js`.
     Ajoute ton tableau de trace du second extrait et la sortie que tu as prévue, puis
-
     deux ou trois phrases expliquant comment tu as initialisé le minimum et le maximum.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: loops-control
-      description: Choisit et explique les boucles, break et continue, et leurs bornes.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Boucles incorrectes ou incapacité à expliquer leur déroulement.
-      - score: 1
-        description: Boucles correctes mais rôle de break ou continue mal expliqué.
-      - score: 2
-        description: Explique le choix for...of ou for, l’effet de break et continue et la borne de la
-          boucle.
-      - score: 3
-        description: Anticipe les cas limites (aucun dépassement, relevé null en premier, tableau vide).
-    - id: conditions
-      description: Écrit et justifie la chaîne else if et le switch.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Conditions fausses ou switch sans break non compris.
-      - score: 1
-        description: Résultats corrects mais ordre des tests ou regroupement des cas mal expliqué.
-      - score: 2
-        description: Explique l’ordre des else if, la comparaison stricte du switch et le rôle de break.
-      - score: 3
-        description: Discute aussi le choix entre switch et else if et le cas default.
-    - id: absent-values
-      description: Traite correctement les valeurs absentes et les accumulateurs.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Ignore les null ou les traite comme des zéros.
-      - score: 1
-        description: Ignore les null mais initialise le minimum ou le maximum de façon fragile sans le
-          voir.
-      - score: 2
-        description: Justifie le test explicite de null (et non un test falsy) et l’initialisation des
-          accumulateurs.
-    - id: tracing
-      description: Trace l’exécution à la main avec exactitude.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Trace absente ou sortie prévue fausse sans comprendre pourquoi.
-      - score: 1
-        description: Sortie correcte mais trace incomplète (dernier test ou mise à jour après continue
-          oubliés).
-      - score: 2
-        description: Trace complète et exacte, y compris le test qui fait sortir de la boucle, et prévision
-          juste d’une variante demandée à l’oral.
+      - id: loops-control
+        description: Choisit et explique les boucles, break et continue, et leurs bornes.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Boucles incorrectes ou incapacité à expliquer leur déroulement.
+          - score: 1
+            description: Boucles correctes mais rôle de break ou continue mal expliqué.
+          - score: 2
+            description: Explique le choix for...of ou for, l’effet de break et continue et la borne de la boucle.
+          - score: 3
+            description: Anticipe les cas limites (aucun dépassement, relevé null en premier, tableau vide).
+      - id: conditions
+        description: Écrit et justifie la chaîne else if et le switch.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Conditions fausses ou switch sans break non compris.
+          - score: 1
+            description: Résultats corrects mais ordre des tests ou regroupement des cas mal expliqué.
+          - score: 2
+            description: Explique l’ordre des else if, la comparaison stricte du switch et le rôle de break.
+          - score: 3
+            description: Discute aussi le choix entre switch et else if et le cas default.
+      - id: absent-values
+        description: Traite correctement les valeurs absentes et les accumulateurs.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Ignore les null ou les traite comme des zéros.
+          - score: 1
+            description: Ignore les null mais initialise le minimum ou le maximum de façon fragile sans le voir.
+          - score: 2
+            description: Justifie le test explicite de null (et non un test falsy) et l’initialisation des accumulateurs.
+      - id: tracing
+        description: Trace l’exécution à la main avec exactitude.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Trace absente ou sortie prévue fausse sans comprendre pourquoi.
+          - score: 1
+            description: Sortie correcte mais trace incomplète (dernier test ou mise à jour après continue oubliés).
+          - score: 2
+            description: Trace complète et exacte, y compris le test qui fait sortir de la boucle, et prévision juste d’une variante demandée à l’oral.
+
 - id: js-control-flow-avec-ia
   family: AVEC_IA
   title: Le vérificateur de mot de passe
-  summary: Construire avec une IA un vérificateur de mot de passe en ligne de commande, puis en défendre
-    chaque branche.
+  summary: Construire avec une IA un vérificateur de mot de passe en ligne de commande, puis en défendre chaque branche.
   estimatedMinutes: 90
-  instructions: "Tu peux utiliser une IA autant que tu veux pour ce mini-projet. À l’oral, tu devras\n\
-    expliquer chaque ligne sans aide, prévoir la sortie pour un mot de passe donné et\nmodifier une règle\
-    \ toi-même.\n\nObjectif : un script `password.js` qui évalue la robustesse d’un mot de passe passé\n\
-    en argument :\n\n```bash\nnode password.js \"Café-Crème-2025\"\n```\n\nExigences :\n\n1. Le mot de\
-    \ passe est lu avec `process.argv[2]`. S’il est absent, le script lance\n   une erreur avec `throw\
-    \ new Error(...)`, interceptée par un `try...catch` qui\n   affiche un message clair avec `console.error`\
-    \ et fixe `process.exitCode = 1`.\n2. Le mot de passe est parcouru caractère par caractère avec `for...of`.\
-    \ Le script\n   compte les majuscules, les minuscules, les chiffres et les autres caractères\n   (dits\
-    \ « spéciaux »). Les lettres accentuées (`é`, `É`, `ç`…) doivent être\n   reconnues comme des lettres.\n\
-    3. Si une espace est rencontrée, l’analyse s’arrête immédiatement avec `break` et le\n   mot de passe\
-    \ est refusé par une erreur interceptée par le même `catch`.\n4. Cinq règles : au moins 12 caractères,\
-    \ au moins une majuscule, une minuscule, un\n   chiffre et un caractère spécial. Le script affiche\
-    \ chaque règle non respectée et\n   un score sur 5.\n5. Un `switch` sur le score donne le niveau :\
-    \ 5 « robuste », 3 ou 4 « moyen », sinon\n   « faible ».\n6. Un bloc `finally` affiche `Analyse terminée`\
-    \ dans tous les cas.\n7. Pas de fonction et pas d’expression régulière : variables, conditions, boucles\n\
-    \   et méthodes de chaînes suffisent.\n\nConseil : demande à l’IA plusieurs façons de reconnaître\
-    \ une lettre majuscule, puis\nteste chacune avec `É`, `ç`, `7` et `-` dans le mode interactif de Node.js.\n"
-  deliverable: 'Colle le code complet de `password.js`, puis la sortie de ces commandes :
+  instructions: |
+    Tu peux utiliser une IA autant que tu veux pour ce mini-projet. À l’oral, tu devras
+    expliquer chaque ligne sans aide, prévoir la sortie pour un mot de passe donné et
+    modifier une règle toi-même.
 
+    Objectif : un script `password.js` qui évalue la robustesse d’un mot de passe passé
+    en argument :
+
+    ```bash
+    node password.js "Café-Crème-2025"
+    ```
+
+    Exigences :
+
+    1. Le mot de passe est lu avec `process.argv[2]`. S’il est absent, le script lance
+       une erreur avec `throw new Error(...)`, interceptée par un `try...catch` qui
+       affiche un message clair avec `console.error` et fixe `process.exitCode = 1`.
+    2. Le mot de passe est parcouru caractère par caractère avec `for...of`. Le script
+       compte les majuscules, les minuscules, les chiffres et les autres caractères
+       (dits « spéciaux »). Les lettres accentuées (`é`, `É`, `ç`…) doivent être
+       reconnues comme des lettres.
+    3. Si une espace est rencontrée, l’analyse s’arrête immédiatement avec `break` et le
+       mot de passe est refusé par une erreur interceptée par le même `catch`.
+    4. Cinq règles : au moins 12 caractères, au moins une majuscule, une minuscule, un
+       chiffre et un caractère spécial. Le script affiche chaque règle non respectée et
+       un score sur 5.
+    5. Un `switch` sur le score donne le niveau : 5 « robuste », 3 ou 4 « moyen », sinon
+       « faible ».
+    6. Un bloc `finally` affiche `Analyse terminée` dans tous les cas.
+    7. Pas de fonction et pas d’expression régulière : variables, conditions, boucles
+       et méthodes de chaînes suffisent.
+
+    Conseil : demande à l’IA plusieurs façons de reconnaître une lettre majuscule, puis
+    teste chacune avec `É`, `ç`, `7` et `-` dans le mode interactif de Node.js.
+  deliverable: |
+    Colle le code complet de `password.js`, puis la sortie de ces commandes :
     `node password.js`, `node password.js "abc"`, `node password.js "Café-Crème-2025"`,
-
     `node password.js "mot de passe"`. Indique en quelques lignes ce que l’IA t’a apporté
-
     et ce que tu as dû corriger ou vérifier.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: code-ownership
-      description: Explique chaque partie de son code sans hésitation ni lecture d’une aide.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas expliquer des lignes importantes de son propre code.
-      - score: 1
-        description: Explique le déroulé global mais pas la classification des caractères.
-      - score: 2
-        description: Explique précisément chaque condition, la boucle, le switch et le try...catch...finally.
-      - score: 3
-        description: Explique aussi les choix écartés et ce qu’il a corrigé dans la proposition de l’IA.
-    - id: control-flow-reasoning
-      description: Prévoit correctement le déroulement pour une entrée donnée.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne parvient pas à prévoir la sortie d’un cas simple.
-      - score: 1
-        description: Prévoit le score mais se trompe sur l’ordre des affichages ou le finally.
-      - score: 2
-        description: Prévoit exactement la sortie, y compris pour une entrée refusée.
-      - score: 3
-        description: Prévoit aussi les cas limites (chaîne vide, accents, espace en dernière position).
-    - id: error-handling
-      description: Utilise et justifie throw, try, catch, finally et le code de sortie.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Pas de gestion d’erreur, ou catch vide, ou chaîne lancée.
-      - score: 1
-        description: Gestion correcte mais rôle de finally ou de process.exitCode mal expliqué.
-      - score: 2
-        description: Explique le saut vers catch, l’exécution systématique de finally et la différence
-          avec process.exit.
-    - id: modification
-      description: Réalise ou décrit correctement une modification demandée pendant l’oral.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Ne parvient pas à modifier le comportement.
-      - score: 1
-        description: Modification partielle ou qui casse un cas existant.
-      - score: 2
-        description: Modification correcte, vérifiée sur un cas qui la déclenche et un cas qui ne la déclenche
-          pas.
+      - id: code-ownership
+        description: Explique chaque partie de son code sans hésitation ni lecture d’une aide.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas expliquer des lignes importantes de son propre code.
+          - score: 1
+            description: Explique le déroulé global mais pas la classification des caractères.
+          - score: 2
+            description: Explique précisément chaque condition, la boucle, le switch et le try...catch...finally.
+          - score: 3
+            description: Explique aussi les choix écartés et ce qu’il a corrigé dans la proposition de l’IA.
+      - id: control-flow-reasoning
+        description: Prévoit correctement le déroulement pour une entrée donnée.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne parvient pas à prévoir la sortie d’un cas simple.
+          - score: 1
+            description: Prévoit le score mais se trompe sur l’ordre des affichages ou le finally.
+          - score: 2
+            description: Prévoit exactement la sortie, y compris pour une entrée refusée.
+          - score: 3
+            description: Prévoit aussi les cas limites (chaîne vide, accents, espace en dernière position).
+      - id: error-handling
+        description: Utilise et justifie throw, try, catch, finally et le code de sortie.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Pas de gestion d’erreur, ou catch vide, ou chaîne lancée.
+          - score: 1
+            description: Gestion correcte mais rôle de finally ou de process.exitCode mal expliqué.
+          - score: 2
+            description: Explique le saut vers catch, l’exécution systématique de finally et la différence avec process.exit.
+      - id: modification
+        description: Réalise ou décrit correctement une modification demandée pendant l’oral.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Ne parvient pas à modifier le comportement.
+          - score: 1
+            description: Modification partielle ou qui casse un cas existant.
+          - score: 2
+            description: Modification correcte, vérifiée sur un cas qui la déclenche et un cas qui ne la déclenche pas.
+
 - id: js-control-flow-contre-ia
   family: CONTRE_IA
   title: Les frais de port qui déraillent
-  summary: Trouver et corriger les erreurs de boucles, de switch, de valeurs absentes et de gestion d’erreurs
-    d’un script généré.
+  summary: Trouver et corriger les erreurs de boucles, de switch, de valeurs absentes et de gestion d’erreurs d’un script généré.
   estimatedMinutes: 60
-  instructions: "Un assistant a généré ce script qui calcule le total de chaque commande d’une\nboutique\
-    \ en ligne. Règles métier :\n\n- le total d’une commande est la somme des `price × quantity` de ses\
-    \ articles ;\n  une quantité **absente** vaut 1, une quantité de 0 signifie que l’article est\n  resté\
-    \ dans le panier sans être commandé ;\n- frais de port : France (`FR`) 4,90 € ; Belgique (`BE`) et\
-    \ Luxembourg (`LU`)\n  7,50 € ; Suisse (`CH`) 12 € ; les autres pays ne sont pas desservis ;\n- en\
-    \ France, la livraison est gratuite **à partir de** 60 € d’articles (avant\n  remise) ;\n- un coupon\
-    \ est facultatif ; s’il existe, sa remise `rate` s’applique aux articles ;\n- une commande refusée\
-    \ (pays non desservi) ne doit pas empêcher de traiter les\n  suivantes ; le script termine par un\
-    \ bilan.\n\n```js\n// Calcul des totaux de commandes avec frais de port\nconst orders = [\n  {\n \
-    \   id: 'C-101',\n    country: 'FR',\n    items: [{ price: 25, quantity: 2 }, { price: 9.99 }],\n\
-    \  },\n  {\n    id: 'C-102',\n    country: 'BE',\n    items: [\n      { price: 30, quantity: 0 },\n\
-    \      { price: 12, quantity: 1 },\n    ],\n  },\n  { id: 'C-103', country: 'US', items: [{ price:\
-    \ 50, quantity: 1 }] },\n  {\n    id: 'C-104',\n    country: 'FR',\n    items: [{ price: 20, quantity:\
-    \ 3 }],\n    coupon: { code: 'BIENVENUE', rate: 0.1 },\n  },\n];\n\nlet processedCount = 0;\n\ntry\
-    \ {\n  for (const order of orders) {\n    let subtotal = 0;\n    for (let i = 0; i <= order.items.length;\
-    \ i++) {\n      const item = order.items[i];\n      subtotal += item.price * (item.quantity || 1);\n\
-    \    }\n\n    let shipping;\n    switch (order.country) {\n      case 'FR':\n        shipping = 4.9;\n\
-    \      case 'BE':\n      case 'LU':\n        shipping = 7.5;\n        break;\n      case 'CH':\n \
-    \       shipping = 12;\n        break;\n      default:\n        throw 'Pays non desservi : ' + order.country;\n\
-    \    }\n\n    if (order.country === 'FR' && subtotal > 60) {\n      shipping = 0;\n    }\n\n    const\
-    \ discount = subtotal * order.coupon.rate;\n    const total = subtotal - discount + shipping;\n  \
-    \  console.log(`${order.id} : ${total.toFixed(2)} €`);\n    processedCount++;\n  }\n} catch (error)\
-    \ {\n  console.log('Erreur : ' + error.message);\n} finally {\n  console.log(`${processedCount} commande(s)\
-    \ traitée(s)`);\n}\n```\n\nTravail demandé :\n\n1. Exécute le script et décris ce qui se passe réellement.\n\
-    2. Liste chaque défaut que tu trouves : la ligne, le comportement observé ou\n   possible, la cause\
-    \ précise et sa gravité. Certains défauts n’apparaissent\n   qu’après en avoir corrigé d’autres :\
-    \ corrige pas à pas et réexécute.\n3. Pour au moins deux défauts, montre par un tableau de trace ce\
-    \ que fait le code\n   fautif.\n4. Propose une version corrigée qui respecte toutes les règles métier,\
-    \ avec sa\n   sortie. Calcule à la main le total attendu de chaque commande pour la vérifier.\n"
-  deliverable: 'Colle ta liste de défauts (ligne, symptôme, cause, gravité), tes tableaux de trace,
+  instructions: |
+    Un assistant a généré ce script qui calcule le total de chaque commande d’une
+    boutique en ligne. Règles métier :
 
+    - le total d’une commande est la somme des `price × quantity` de ses articles ;
+      une quantité **absente** vaut 1, une quantité de 0 signifie que l’article est
+      resté dans le panier sans être commandé ;
+    - frais de port : France (`FR`) 4,90 € ; Belgique (`BE`) et Luxembourg (`LU`)
+      7,50 € ; Suisse (`CH`) 12 € ; les autres pays ne sont pas desservis ;
+    - en France, la livraison est gratuite **à partir de** 60 € d’articles (avant
+      remise) ;
+    - un coupon est facultatif ; s’il existe, sa remise `rate` s’applique aux articles ;
+    - une commande refusée (pays non desservi) ne doit pas empêcher de traiter les
+      suivantes ; le script termine par un bilan.
+
+    ```js
+    // Calcul des totaux de commandes avec frais de port
+    const orders = [
+      {
+        id: 'C-101',
+        country: 'FR',
+        items: [{ price: 25, quantity: 2 }, { price: 9.99 }],
+      },
+      {
+        id: 'C-102',
+        country: 'BE',
+        items: [
+          { price: 30, quantity: 0 },
+          { price: 12, quantity: 1 },
+        ],
+      },
+      { id: 'C-103', country: 'US', items: [{ price: 50, quantity: 1 }] },
+      {
+        id: 'C-104',
+        country: 'FR',
+        items: [{ price: 20, quantity: 3 }],
+        coupon: { code: 'BIENVENUE', rate: 0.1 },
+      },
+    ];
+
+    let processedCount = 0;
+
+    try {
+      for (const order of orders) {
+        let subtotal = 0;
+        for (let i = 0; i <= order.items.length; i++) {
+          const item = order.items[i];
+          subtotal += item.price * (item.quantity || 1);
+        }
+
+        let shipping;
+        switch (order.country) {
+          case 'FR':
+            shipping = 4.9;
+          case 'BE':
+          case 'LU':
+            shipping = 7.5;
+            break;
+          case 'CH':
+            shipping = 12;
+            break;
+          default:
+            throw 'Pays non desservi : ' + order.country;
+        }
+
+        if (order.country === 'FR' && subtotal > 60) {
+          shipping = 0;
+        }
+
+        const discount = subtotal * order.coupon.rate;
+        const total = subtotal - discount + shipping;
+        console.log(`${order.id} : ${total.toFixed(2)} €`);
+        processedCount++;
+      }
+    } catch (error) {
+      console.log('Erreur : ' + error.message);
+    } finally {
+      console.log(`${processedCount} commande(s) traitée(s)`);
+    }
+    ```
+
+    Travail demandé :
+
+    1. Exécute le script et décris ce qui se passe réellement.
+    2. Liste chaque défaut que tu trouves : la ligne, le comportement observé ou
+       possible, la cause précise et sa gravité. Certains défauts n’apparaissent
+       qu’après en avoir corrigé d’autres : corrige pas à pas et réexécute.
+    3. Pour au moins deux défauts, montre par un tableau de trace ce que fait le code
+       fautif.
+    4. Propose une version corrigée qui respecte toutes les règles métier, avec sa
+       sortie. Calcule à la main le total attendu de chaque commande pour la vérifier.
+  deliverable: |
+    Colle ta liste de défauts (ligne, symptôme, cause, gravité), tes tableaux de trace,
     le script corrigé complet et sa sortie, puis le calcul à la main des quatre totaux.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: defects-found
-      description: Identifie les défauts réels, y compris ceux masqués par d’autres.
-      maxScore: 3
-    - id: root-cause
-      description: Explique la cause technique de chaque défaut, pas seulement le symptôme.
-      maxScore: 3
-    - id: fix-quality
-      description: Propose des corrections justes, minimales et vérifiées.
-      maxScore: 3
+      - id: defects-found
+        description: Identifie les défauts réels, y compris ceux masqués par d’autres.
+        maxScore: 3
+      - id: root-cause
+        description: Explique la cause technique de chaque défaut, pas seulement le symptôme.
+        maxScore: 3
+      - id: fix-quality
+        description: Propose des corrections justes, minimales et vérifiées.
+        maxScore: 3
+
 - id: js-control-flow-apres-ia
   family: APRES_IA
   title: L’analyseur de journal
   summary: Dépanner et faire évoluer un script d’analyse de journal sans le réécrire entièrement.
   estimatedMinutes: 50
-  instructions: "Ce script analyse le journal (en anglais *log*) d’un serveur et affiche un rapport.\n\
-    Chaque ligne commence par la date et l’heure (19 caractères), une espace, le niveau\n(`INFO`, `WARN`,\
-    \ `ERROR` ou `FATAL`), une espace, puis le message. L’équipe l’utilise\nchaque matin : tu dois le\
-    \ faire évoluer **en modifiant le moins de lignes\npossible**, sans le régénérer.\n\n```js\n// Analyse\
-    \ du journal du serveur — lancée chaque matin par l’équipe\nconst logLines = [\n  '2026-11-20 08:00:01\
-    \ INFO Démarrage du serveur',\n  '2026-11-20 08:00:02 INFO Connexion à la base établie',\n  '# maintenance\
-    \ prévue à 12 h',\n  '2026-11-20 09:14:55 WARN Temps de réponse élevé : 1450 ms',\n  '2026-11-20 09:15:10\
-    \ ERROR Échec du paiement de la commande 4512',\n  '',\n  '2026-11-20 10:02:00 INFO Sauvegarde terminée',\n\
-    \  '2026-11-20 10:30:42 FATAL Disque plein',\n  '2026-11-20 10:30:43 ERROR Écriture impossible',\n\
-    \  '2026-11-20 10:30:44 INFO Arrêt du serveur',\n];\n\nlet infoCount = 0;\nlet warnCount = 0;\nlet\
-    \ errorCount = 0;\nlet unknownCount = 0;\n\nfor (const line of logLines) {\n  const message = line.slice(20);\n\
-    \  const level = message.slice(0, message.indexOf(' '));\n\n  switch (level) {\n    case 'INFO':\n\
-    \      infoCount++;\n      break;\n    case 'WARN':\n      warnCount++;\n    case 'ERROR':\n     \
-    \ errorCount++;\n      break;\n    default:\n      unknownCount++;\n  }\n}\n\nconsole.log('=== Rapport\
-    \ du journal ===');\nconsole.log(`INFO : ${infoCount}`);\nconsole.log(`WARN : ${warnCount}`);\nconsole.log(`ERROR\
-    \ : ${errorCount}`);\nconsole.log(`Lignes non reconnues : ${unknownCount}`);\n```\n\nDemandes de l’équipe\
-    \ :\n\n1. **Bug** : le rapport annonce 3 erreurs alors que le journal n’en contient que 2.\n   Trouve\
-    \ la cause, corrige-la et explique-la.\n2. Les lignes de commentaire (qui commencent par `#`) et les\
-    \ lignes vides ou faites\n   d’espaces doivent être ignorées avec `continue`, sans être comptées nulle\
-    \ part.\n3. À la première ligne de niveau `FATAL`, l’analyse doit s’arrêter avec `break` et\n   afficher\
-    \ `Analyse interrompue à la ligne N : ...` suivi du niveau et du message,\n   où N est le numéro de\
-    \ la ligne dans le journal (la première ligne porte le\n   numéro 1). Le rapport s’affiche ensuite\
-    \ avec les comptes des lignes analysées.\n4. Le rapport doit se terminer par `Première erreur : HH:MM:SS`,\
-    \ l’heure de la\n   première ligne `ERROR`, ou `Première erreur : aucune` s’il n’y en a pas. Utilise\n\
-    \   l’opérateur `??`.\n5. Trace à la main ta version finale pour les cinq premières lignes du journal\n\
-    \   (colonnes : numéro de ligne, branche prise, compteurs).\n"
-  deliverable: 'Colle le script modifié, sa sortie, ton tableau de trace, puis la liste des lignes
+  instructions: |
+    Ce script analyse le journal (en anglais *log*) d’un serveur et affiche un rapport.
+    Chaque ligne commence par la date et l’heure (19 caractères), une espace, le niveau
+    (`INFO`, `WARN`, `ERROR` ou `FATAL`), une espace, puis le message. L’équipe l’utilise
+    chaque matin : tu dois le faire évoluer **en modifiant le moins de lignes
+    possible**, sans le régénérer.
 
+    ```js
+    // Analyse du journal du serveur — lancée chaque matin par l’équipe
+    const logLines = [
+      '2026-11-20 08:00:01 INFO Démarrage du serveur',
+      '2026-11-20 08:00:02 INFO Connexion à la base établie',
+      '# maintenance prévue à 12 h',
+      '2026-11-20 09:14:55 WARN Temps de réponse élevé : 1450 ms',
+      '2026-11-20 09:15:10 ERROR Échec du paiement de la commande 4512',
+      '',
+      '2026-11-20 10:02:00 INFO Sauvegarde terminée',
+      '2026-11-20 10:30:42 FATAL Disque plein',
+      '2026-11-20 10:30:43 ERROR Écriture impossible',
+      '2026-11-20 10:30:44 INFO Arrêt du serveur',
+    ];
+
+    let infoCount = 0;
+    let warnCount = 0;
+    let errorCount = 0;
+    let unknownCount = 0;
+
+    for (const line of logLines) {
+      const message = line.slice(20);
+      const level = message.slice(0, message.indexOf(' '));
+
+      switch (level) {
+        case 'INFO':
+          infoCount++;
+          break;
+        case 'WARN':
+          warnCount++;
+        case 'ERROR':
+          errorCount++;
+          break;
+        default:
+          unknownCount++;
+      }
+    }
+
+    console.log('=== Rapport du journal ===');
+    console.log(`INFO : ${infoCount}`);
+    console.log(`WARN : ${warnCount}`);
+    console.log(`ERROR : ${errorCount}`);
+    console.log(`Lignes non reconnues : ${unknownCount}`);
+    ```
+
+    Demandes de l’équipe :
+
+    1. **Bug** : le rapport annonce 3 erreurs alors que le journal n’en contient que 2.
+       Trouve la cause, corrige-la et explique-la.
+    2. Les lignes de commentaire (qui commencent par `#`) et les lignes vides ou faites
+       d’espaces doivent être ignorées avec `continue`, sans être comptées nulle part.
+    3. À la première ligne de niveau `FATAL`, l’analyse doit s’arrêter avec `break` et
+       afficher `Analyse interrompue à la ligne N : ...` suivi du niveau et du message,
+       où N est le numéro de la ligne dans le journal (la première ligne porte le
+       numéro 1). Le rapport s’affiche ensuite avec les comptes des lignes analysées.
+    4. Le rapport doit se terminer par `Première erreur : HH:MM:SS`, l’heure de la
+       première ligne `ERROR`, ou `Première erreur : aucune` s’il n’y en a pas. Utilise
+       l’opérateur `??`.
+    5. Trace à la main ta version finale pour les cinq premières lignes du journal
+       (colonnes : numéro de ligne, branche prise, compteurs).
+  deliverable: |
+    Colle le script modifié, sa sortie, ton tableau de trace, puis la liste des lignes
     modifiées ou ajoutées avec la raison de chaque changement. Indique aussi la sortie
-
     obtenue avec l’`ERROR` de 09:15:10 transformée en `INFO` (demande 4).
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: bug-diagnosis
-      description: Explique la cause du double comptage et la corrige proprement.
-      maxScore: 3
-    - id: loop-control
-      description: Utilise et explique continue, break et le numéro de ligne.
-      maxScore: 3
-    - id: minimal-change
-      description: Fait évoluer le code existant de façon ciblée et vérifiée.
-      maxScore: 2
+      - id: bug-diagnosis
+        description: Explique la cause du double comptage et la corrige proprement.
+        maxScore: 3
+      - id: loop-control
+        description: Utilise et explique continue, break et le numéro de ligne.
+        maxScore: 3
+      - id: minimal-change
+        description: Fait évoluer le code existant de façon ciblée et vérifiée.
+        maxScore: 2

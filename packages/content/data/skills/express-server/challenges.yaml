@@ -1,350 +1,531 @@
 - id: express-server-sans-ia
   family: SANS_IA
   title: Le catalogue du club de lecture
-  summary: Écrire seul un petit serveur Express 5 avec routes, paramètres, corps JSON, middleware, 404
-    et gestion d’erreurs centralisée.
+  summary: Écrire seul un petit serveur Express 5 avec routes, paramètres, corps JSON, middleware, 404 et gestion d’erreurs centralisée.
   estimatedMinutes: 60
-  instructions: "Le club de lecture de ton quartier veut une petite API pour consulter et enrichir son\n\
-    catalogue. Écris-la **sans IA et sans copier un projet existant**, dans un seul\nfichier `server.js`\
-    \ (modules ES, Express 5), plus un dossier `public/`.\n\nDonnées de départ, à recopier en haut du\
-    \ fichier (stockage en mémoire) :\n\n```js\nconst books = [\n  { id: 1, title: 'Le Petit Prince',\
-    \ author: 'Antoine de Saint-Exupéry' },\n  { id: 2, title: 'Germinal', author: 'Émile Zola' },\n \
-    \ { id: 3, title: 'Nana', author: 'Émile Zola' },\n];\nlet nextId = 4;\n```\n\nTravail demandé :\n\
-    \n1. Le port vient de la variable d’environnement `PORT`, 3000 par défaut. Si le\n   serveur ne peut\
-    \ pas démarrer, un message clair s’affiche et le code de sortie\n   vaut 1.\n2. Un middleware global\
-    \ journalise chaque requête sous la forme\n   `GET /api/books -> 200`, statut compris.\n3. `GET /api/books`\
-    \ renvoie la liste. Avec `?author=zola`, elle ne garde que les\n   livres dont l’auteur contient ce\
-    \ texte, sans tenir compte de la casse. Si\n   `author` est répété dans l’URL, réponds 400.\n4. `GET\
-    \ /api/books/:id` renvoie un livre, ou 404 avec un corps JSON d’erreur.\n5. `POST /api/books` crée\
-    \ un livre à partir d’un corps JSON `{ \"title\", \"author\" }`\n   (deux chaînes non vides) et répond\
-    \ 201 avec le livre créé. Sinon, 400.\n6. Toute route inconnue répond 404 en JSON, et toutes les erreurs\
-    \ (y compris un\n   JSON mal formé) passent par **un seul** gestionnaire d’erreurs qui répond en JSON\n\
-    \   sans jamais renvoyer la pile d’appels au client.\n7. Le dossier `public/` contient un `index.html`\
-    \ servi sur `/`, quel que soit le\n   dossier depuis lequel tu lances `node`.\n\nContraintes : Express\
-    \ 5 uniquement (pas d’autre dépendance), `res.status().json()`\npour les réponses JSON, aucune syntaxe\
-    \ d’Express 4.\n"
-  deliverable: 'Colle le contenu complet de `server.js`, puis la sortie exacte de ces commandes,
+  instructions: |
+    Le club de lecture de ton quartier veut une petite API pour consulter et enrichir son
+    catalogue. Écris-la **sans IA et sans copier un projet existant**, dans un seul
+    fichier `server.js` (modules ES, Express 5), plus un dossier `public/`.
 
-    serveur lancé :
+    Données de départ, à recopier en haut du fichier (stockage en mémoire) :
 
-
-    ```bash
-
-    curl -s ''http://localhost:3000/api/books?author=zola''
-
-    curl -s -i http://localhost:3000/api/books/42
-
-    curl -s -i --json ''{"title":"Les Misérables","author":"Victor Hugo"}'' http://localhost:3000/api/books
-
-    curl -s --json ''{"title":""}'' http://localhost:3000/api/books
-
-    curl -s --json ''{"title":'' http://localhost:3000/api/books
-
-    curl -s http://localhost:3000/api/inconnu
-
+    ```js
+    const books = [
+      { id: 1, title: 'Le Petit Prince', author: 'Antoine de Saint-Exupéry' },
+      { id: 2, title: 'Germinal', author: 'Émile Zola' },
+      { id: 3, title: 'Nana', author: 'Émile Zola' },
+    ];
+    let nextId = 4;
     ```
 
+    Travail demandé :
+
+    1. Le port vient de la variable d’environnement `PORT`, 3000 par défaut. Si le
+       serveur ne peut pas démarrer, un message clair s’affiche et le code de sortie
+       vaut 1.
+    2. Un middleware global journalise chaque requête sous la forme
+       `GET /api/books -> 200`, statut compris.
+    3. `GET /api/books` renvoie la liste. Avec `?author=zola`, elle ne garde que les
+       livres dont l’auteur contient ce texte, sans tenir compte de la casse. Si
+       `author` est répété dans l’URL, réponds 400.
+    4. `GET /api/books/:id` renvoie un livre, ou 404 avec un corps JSON d’erreur.
+    5. `POST /api/books` crée un livre à partir d’un corps JSON `{ "title", "author" }`
+       (deux chaînes non vides) et répond 201 avec le livre créé. Sinon, 400.
+    6. Toute route inconnue répond 404 en JSON, et toutes les erreurs (y compris un
+       JSON mal formé) passent par **un seul** gestionnaire d’erreurs qui répond en JSON
+       sans jamais renvoyer la pile d’appels au client.
+    7. Le dossier `public/` contient un `index.html` servi sur `/`, quel que soit le
+       dossier depuis lequel tu lances `node`.
+
+    Contraintes : Express 5 uniquement (pas d’autre dépendance), `res.status().json()`
+    pour les réponses JSON, aucune syntaxe d’Express 4.
+  deliverable: |
+    Colle le contenu complet de `server.js`, puis la sortie exacte de ces commandes,
+    serveur lancé :
+
+    ```bash
+    curl -s 'http://localhost:3000/api/books?author=zola'
+    curl -s -i http://localhost:3000/api/books/42
+    curl -s -i --json '{"title":"Les Misérables","author":"Victor Hugo"}' http://localhost:3000/api/books
+    curl -s --json '{"title":""}' http://localhost:3000/api/books
+    curl -s --json '{"title":' http://localhost:3000/api/books
+    curl -s http://localhost:3000/api/inconnu
+    ```
 
     Ajoute les lignes affichées par ton journal et deux ou trois phrases expliquant
-
     l’ordre de tes `app.use` et de tes routes.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: routing-input
-      description: Définit les routes et lit correctement paramètres de route, query string et corps JSON.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Routes incorrectes ou ne sait pas où se trouvent les données de la requête.
-      - score: 1
-        description: Routes fonctionnelles mais types non maîtrisés (comparaison d’une chaîne à un nombre,
-          tableau ignoré).
-      - score: 2
-        description: Lit chaque source correctement et explique les conversions et contrôles de type.
-      - score: 3
-        description: Explique aussi les cas limites (paramètre répété, corps absent, Content-Type manquant)
-          et les vérifie.
-    - id: middleware-chain
-      description: Explique la chaîne de middlewares et l’importance de l’ordre de déclaration.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas ce que fait next() ni pourquoi l’ordre compte.
-      - score: 1
-        description: Ordre correct mais explication vague ou récitée.
-      - score: 2
-        description: Explique le trajet d’une requête de middleware en middleware et le rôle de next().
-      - score: 3
-        description: Prédit correctement l’effet d’un changement d’ordre proposé à l’oral et justifie
-          res.on('finish').
-    - id: errors-status
-      description: Renvoie les bons statuts et centralise la gestion des erreurs sans fuite d’information.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Statuts incorrects ou erreurs non gérées (page HTML, pile renvoyée au client).
-      - score: 1
-        description: Gestionnaire présent mais statuts approximatifs (tout en 500, ou 200 avec une erreur).
-      - score: 2
-        description: 201, 400 et 404 justes, gestionnaire à quatre paramètres placé en dernier, message
-          générique pour les 500.
-      - score: 3
-        description: Distingue erreurs prévues et imprévues, explique la transmission automatique des
-          rejets en Express 5 et le cas du JSON mal formé.
-    - id: project-setup
-      description: Configure le démarrage et les fichiers statiques de façon robuste.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Port codé en dur et fichiers statiques non servis ou servis par un chemin relatif
-          sans le savoir.
-      - score: 1
-        description: Port et fichiers statiques fonctionnels mais sans justification des choix.
-      - score: 2
-        description: Explique process.env.PORT, l’erreur de démarrage et le chemin absolu de express.static.
+      - id: routing-input
+        description: Définit les routes et lit correctement paramètres de route, query string et corps JSON.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Routes incorrectes ou ne sait pas où se trouvent les données de la requête.
+          - score: 1
+            description: Routes fonctionnelles mais types non maîtrisés (comparaison d’une chaîne à un nombre, tableau ignoré).
+          - score: 2
+            description: Lit chaque source correctement et explique les conversions et contrôles de type.
+          - score: 3
+            description: Explique aussi les cas limites (paramètre répété, corps absent, Content-Type manquant) et les vérifie.
+      - id: middleware-chain
+        description: Explique la chaîne de middlewares et l’importance de l’ordre de déclaration.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas ce que fait next() ni pourquoi l’ordre compte.
+          - score: 1
+            description: Ordre correct mais explication vague ou récitée.
+          - score: 2
+            description: Explique le trajet d’une requête de middleware en middleware et le rôle de next().
+          - score: 3
+            description: Prédit correctement l’effet d’un changement d’ordre proposé à l’oral et justifie res.on('finish').
+      - id: errors-status
+        description: Renvoie les bons statuts et centralise la gestion des erreurs sans fuite d’information.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Statuts incorrects ou erreurs non gérées (page HTML, pile renvoyée au client).
+          - score: 1
+            description: Gestionnaire présent mais statuts approximatifs (tout en 500, ou 200 avec une erreur).
+          - score: 2
+            description: 201, 400 et 404 justes, gestionnaire à quatre paramètres placé en dernier, message générique pour les 500.
+          - score: 3
+            description: Distingue erreurs prévues et imprévues, explique la transmission automatique des rejets en Express 5 et le cas du JSON mal formé.
+      - id: project-setup
+        description: Configure le démarrage et les fichiers statiques de façon robuste.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Port codé en dur et fichiers statiques non servis ou servis par un chemin relatif sans le savoir.
+          - score: 1
+            description: Port et fichiers statiques fonctionnels mais sans justification des choix.
+          - score: 2
+            description: Explique process.env.PORT, l’erreur de démarrage et le chemin absolu de express.static.
+
 - id: express-server-avec-ia
   family: AVEC_IA
   title: Le raccourcisseur de liens
-  summary: Construire avec une IA un raccourcisseur de liens structuré en modules, puis défendre chaque
-    choix d’Express 5.
+  summary: Construire avec une IA un raccourcisseur de liens structuré en modules, puis défendre chaque choix d’Express 5.
   estimatedMinutes: 120
-  instructions: "Tu peux utiliser une IA autant que tu veux pour ce mini-projet. À l’oral, tu devras\n\
-    expliquer chaque fichier sans aide, prédire l’effet d’une modification et corriger\ntoi-même un comportement.\
-    \ Méfie-toi : beaucoup d’exemples produits par les IA sont\nécrits pour Express 4.\n\nObjectif : un\
-    \ service qui transforme une longue URL en lien court, stocké en mémoire.\n\nFonctionnalités :\n\n\
-    1. `POST /api/links` avec le corps JSON `{ \"url\": \"https://exemple.org/un/long/chemin\" }`\n  \
-    \ crée un lien et répond 201 avec `{ \"code\": \"…\", \"url\": \"…\", \"visits\": 0 }`. Le\n   code\
-    \ fait 6 à 10 caractères ; tu peux par exemple prendre le début de\n   `crypto.randomUUID()` (disponible\
-    \ globalement dans Node.js) et vérifier qu’il\n   n’existe pas déjà.\n2. L’URL doit être une adresse\
-    \ absolue en `http:` ou `https:` uniquement. Analyse-la\n   avec `new URL(texte)` (qui lève une `TypeError`\
-    \ si le texte n’est pas une URL)\n   et vérifie sa propriété `protocol`. Sinon : 400 avec un message\
-    \ clair.\n3. `GET /:code` redirige (302) vers l’URL d’origine et incrémente `visits` ; un code\n \
-    \  inconnu répond 404.\n4. `GET /api/links/:code` renvoie le lien et son nombre de visites (404 sinon).\n\
-    5. Une page `public/index.html` (servie sur `/`) explique comment utiliser l’API.\n6. Structure imposée\
-    \ : `src/app.js` (fonction `createApp`), `src/server.js` (seul\n   appel à `listen`, port depuis `PORT`),\
-    \ `src/config.js`, `src/routes/`,\n   `src/middlewares/` (au moins un journal des requêtes, un 404\
-    \ JSON et un\n   gestionnaire d’erreurs centralisé), `src/errors.js`.\n7. Un script `smoke.js` démarre\
-    \ l’application sur le port 0 et vérifie avec `fetch`\n   au moins : la création (201), la redirection\
-    \ (statut 302 et en-tête `Location`,\n   avec l’option `redirect: 'manual'` de `fetch`) et un code\
-    \ inconnu (404).\n\nConseil : demande à l’IA de t’expliquer pourquoi l’ordre entre `express.static`,\
-    \ les\nroutes `/api/…` et la route `/:code` est important, puis vérifie-le toi-même.\n"
-  deliverable: 'Colle le contenu de chaque fichier de `src/` et de `smoke.js` (pas `node_modules`),
+  instructions: |
+    Tu peux utiliser une IA autant que tu veux pour ce mini-projet. À l’oral, tu devras
+    expliquer chaque fichier sans aide, prédire l’effet d’une modification et corriger
+    toi-même un comportement. Méfie-toi : beaucoup d’exemples produits par les IA sont
+    écrits pour Express 4.
 
+    Objectif : un service qui transforme une longue URL en lien court, stocké en mémoire.
+
+    Fonctionnalités :
+
+    1. `POST /api/links` avec le corps JSON `{ "url": "https://exemple.org/un/long/chemin" }`
+       crée un lien et répond 201 avec `{ "code": "…", "url": "…", "visits": 0 }`. Le
+       code fait 6 à 10 caractères ; tu peux par exemple prendre le début de
+       `crypto.randomUUID()` (disponible globalement dans Node.js) et vérifier qu’il
+       n’existe pas déjà.
+    2. L’URL doit être une adresse absolue en `http:` ou `https:` uniquement. Analyse-la
+       avec `new URL(texte)` (qui lève une `TypeError` si le texte n’est pas une URL)
+       et vérifie sa propriété `protocol`. Sinon : 400 avec un message clair.
+    3. `GET /:code` redirige (302) vers l’URL d’origine et incrémente `visits` ; un code
+       inconnu répond 404.
+    4. `GET /api/links/:code` renvoie le lien et son nombre de visites (404 sinon).
+    5. Une page `public/index.html` (servie sur `/`) explique comment utiliser l’API.
+    6. Structure imposée : `src/app.js` (fonction `createApp`), `src/server.js` (seul
+       appel à `listen`, port depuis `PORT`), `src/config.js`, `src/routes/`,
+       `src/middlewares/` (au moins un journal des requêtes, un 404 JSON et un
+       gestionnaire d’erreurs centralisé), `src/errors.js`.
+    7. Un script `smoke.js` démarre l’application sur le port 0 et vérifie avec `fetch`
+       au moins : la création (201), la redirection (statut 302 et en-tête `Location`,
+       avec l’option `redirect: 'manual'` de `fetch`) et un code inconnu (404).
+
+    Conseil : demande à l’IA de t’expliquer pourquoi l’ordre entre `express.static`, les
+    routes `/api/…` et la route `/:code` est important, puis vérifie-le toi-même.
+  deliverable: |
+    Colle le contenu de chaque fichier de `src/` et de `smoke.js` (pas `node_modules`),
     la sortie de `node smoke.js`, et la sortie de ces commandes :
 
-
     ```bash
-
-    curl -s -i --json ''{"url":"https://developer.mozilla.org/fr/"}'' http://localhost:3000/api/links
-
+    curl -s -i --json '{"url":"https://developer.mozilla.org/fr/"}' http://localhost:3000/api/links
     curl -s -i http://localhost:3000/CODE_OBTENU
-
-    curl -s --json ''{"url":"javascript:alert(1)"}'' http://localhost:3000/api/links
-
-    curl -s --json ''{"url":"exemple.org"}'' http://localhost:3000/api/links
-
+    curl -s --json '{"url":"javascript:alert(1)"}' http://localhost:3000/api/links
+    curl -s --json '{"url":"exemple.org"}' http://localhost:3000/api/links
     curl -s -i http://localhost:3000/inexistant
-
     ```
 
-
     Termine par quelques lignes : ce que l’IA t’a apporté, ce que tu as dû corriger ou
-
     vérifier (en particulier les syntaxes d’Express 4).
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: code-ownership
-      description: Explique chaque fichier et chaque middleware de son projet sans aide.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas expliquer des parties importantes de son propre code.
-      - score: 1
-        description: Explique le déroulé global mais pas le rôle précis de chaque module ou middleware.
-      - score: 2
-        description: Explique précisément chaque fichier, l’ordre de createApp et le trajet d’une requête.
-      - score: 3
-        description: Explique aussi les propositions de l’IA qu’il a rejetées ou corrigées, en particulier
-          les syntaxes d’Express 4.
-    - id: validation-security
-      description: Valide l’URL fournie et raisonne sur les entrées malveillantes ou invalides.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Accepte n’importe quelle chaîne ou laisse une URL invalide produire une 500.
-      - score: 1
-        description: 'Rejette les URL invalides mais pas le schéma javascript: ou d’autres protocoles.'
-      - score: 2
-        description: Utilise new URL et vérifie le protocole, avec des réponses 400 cohérentes.
-      - score: 3
-        description: 'Explique le risque d’un lien vers javascript: et les cas limites (espaces, corps
-          absent, champ non textuel).'
-    - id: http-semantics
-      description: Choisit et justifie statuts, en-têtes et méthodes de réponse.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Statuts incorrects (200 à la création, 500 pour une erreur client).
-      - score: 1
-        description: Statuts corrects mais justification partielle de 201, 302 et 404.
-      - score: 2
-        description: Justifie 201, 302 et l’en-tête Location, et sait pourquoi 301 fausserait le compteur.
-    - id: modification
-      description: Réalise ou décrit correctement une modification demandée pendant l’oral.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne parvient pas à modifier le comportement.
-      - score: 1
-        description: Modification partielle ou qui casse une route existante.
-      - score: 2
-        description: Modification correcte, placée au bon endroit de la structure, vérifiée par une requête.
-      - score: 3
-        description: Modification correcte, vérifiée, et ajoutée au script smoke.js.
+      - id: code-ownership
+        description: Explique chaque fichier et chaque middleware de son projet sans aide.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas expliquer des parties importantes de son propre code.
+          - score: 1
+            description: Explique le déroulé global mais pas le rôle précis de chaque module ou middleware.
+          - score: 2
+            description: Explique précisément chaque fichier, l’ordre de createApp et le trajet d’une requête.
+          - score: 3
+            description: Explique aussi les propositions de l’IA qu’il a rejetées ou corrigées, en particulier les syntaxes d’Express 4.
+      - id: validation-security
+        description: Valide l’URL fournie et raisonne sur les entrées malveillantes ou invalides.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Accepte n’importe quelle chaîne ou laisse une URL invalide produire une 500.
+          - score: 1
+            description: 'Rejette les URL invalides mais pas le schéma javascript: ou d’autres protocoles.'
+          - score: 2
+            description: Utilise new URL et vérifie le protocole, avec des réponses 400 cohérentes.
+          - score: 3
+            description: 'Explique le risque d’un lien vers javascript: et les cas limites (espaces, corps absent, champ non textuel).'
+      - id: http-semantics
+        description: Choisit et justifie statuts, en-têtes et méthodes de réponse.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Statuts incorrects (200 à la création, 500 pour une erreur client).
+          - score: 1
+            description: Statuts corrects mais justification partielle de 201, 302 et 404.
+          - score: 2
+            description: Justifie 201, 302 et l’en-tête Location, et sait pourquoi 301 fausserait le compteur.
+      - id: modification
+        description: Réalise ou décrit correctement une modification demandée pendant l’oral.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne parvient pas à modifier le comportement.
+          - score: 1
+            description: Modification partielle ou qui casse une route existante.
+          - score: 2
+            description: Modification correcte, placée au bon endroit de la structure, vérifiée par une requête.
+          - score: 3
+            description: Modification correcte, vérifiée, et ajoutée au script smoke.js.
+
 - id: express-server-contre-ia
   family: CONTRE_IA
   title: L’API de tâches qui répond de travers
   summary: Trouver et corriger les erreurs d’Express 5 cachées dans une petite API générée par un assistant.
   estimatedMinutes: 60
-  instructions: "Un assistant a généré ce serveur pour suivre les tâches d’une petite équipe. Il\ndémarre\
-    \ sans erreur et `GET /api/tasks` fonctionne, mais l’équipe se plaint de\ncomportements étranges.\
-    \ Règles attendues :\n\n- `GET /api/tasks` liste les tâches ; `?done=true` ou `?done=false` filtre\
-    \ ;\n- `GET /api/tasks/stats` renvoie le total, le nombre de tâches terminées et restantes ;\n- `GET\
-    \ /api/tasks/:id` renvoie une tâche ou 404 ;\n- `POST /api/tasks` crée une tâche à partir de `{ \"\
-    title\": \"…\" }` et répond 201 ;\n- `PATCH /api/tasks/:id` avec `{ \"done\": true }` ou `{ \"done\"\
-    : false }` met à jour ;\n- `DELETE /api/tasks/:id` supprime et répond 204, ou 404 si la tâche n’existe\
-    \ pas ;\n- toutes les erreurs sont renvoyées en JSON, sans détail interne ;\n- le port vient de la\
-    \ variable d’environnement `PORT`.\n\n```js\nimport express from 'express';\n\nconst app = express();\n\
-    const PORT = 3000;\n\nlet tasks = [\n  { id: 1, title: 'Configurer le serveur', done: true },\n  {\
-    \ id: 2, title: 'Écrire la documentation', done: false },\n];\n\napp.use(express.static('public'));\n\
-    \n// Liste des tâches, avec filtre optionnel ?done=true|false\napp.get('/api/tasks', (req, res) =>\
-    \ {\n  if (req.query.done !== undefined) {\n    return res.json(tasks.filter((task) => task.done ===\
-    \ req.query.done));\n  }\n  res.json(tasks);\n});\n\n// Détail d'une tâche\napp.get('/api/tasks/:id',\
-    \ (req, res) => {\n  const task = tasks.find((t) => t.id === Number(req.params.id));\n  if (!task)\
-    \ {\n    return res.status(404).json({ error: 'Tâche introuvable' });\n  }\n  res.json(task);\n});\n\
-    \n// Statistiques\napp.get('/api/tasks/stats', (req, res) => {\n  const done = tasks.filter((t) =>\
-    \ t.done).length;\n  res.json({ total: tasks.length, done, remaining: tasks.length - done });\n});\n\
-    \n// Création d'une tâche\napp.post('/api/tasks', (req, res) => {\n  const { title } = req.body;\n\
-    \  if (!title) {\n    return res.status(400).json({ error: 'Le titre est obligatoire' });\n  }\n \
-    \ const task = { id: tasks.length + 1, title, done: false };\n  tasks.push(task);\n  res.json(task,\
-    \ 201);\n});\n\n// Marquer une tâche comme terminée\napp.patch('/api/tasks/:id', (req, res) => {\n\
-    \  const task = tasks.find((t) => t.id === Number(req.params.id));\n  if (!task) {\n    res.status(404).json({\
-    \ error: 'Tâche introuvable' });\n  }\n  task.done = req.body.done;\n  res.json(task);\n});\n\n//\
-    \ Suppression\napp.delete('/api/tasks/:id', (req, res) => {\n  tasks = tasks.filter((t) => t.id !==\
-    \ req.params.id);\n  res.sendStatus(204);\n});\n\napp.use(express.json());\n\n// Gestion des erreurs\n\
-    app.use((err, req, res, next) => {\n  console.error(err);\n  res.status(500).json({ error: err.message\
-    \ });\n});\n\napp.listen(PORT, () => {\n  console.log(`API des tâches démarrée sur le port ${PORT}`);\n\
-    });\n```\n\nTravail demandé :\n\n1. Lance le serveur (Express 5, modules ES) et teste chaque règle\
-    \ avec curl. Note ce\n   qui se passe réellement.\n2. Liste chaque défaut : la ou les lignes, le symptôme\
-    \ observé ou possible, la cause\n   précise et sa gravité.\n3. Propose une version corrigée qui respecte\
-    \ toutes les règles.\n4. Pour chaque défaut, donne la commande curl qui le révèle.\n"
-  deliverable: 'Colle ta liste de défauts (lignes, symptôme, cause, gravité, commande qui le
+  instructions: |
+    Un assistant a généré ce serveur pour suivre les tâches d’une petite équipe. Il
+    démarre sans erreur et `GET /api/tasks` fonctionne, mais l’équipe se plaint de
+    comportements étranges. Règles attendues :
 
+    - `GET /api/tasks` liste les tâches ; `?done=true` ou `?done=false` filtre ;
+    - `GET /api/tasks/stats` renvoie le total, le nombre de tâches terminées et restantes ;
+    - `GET /api/tasks/:id` renvoie une tâche ou 404 ;
+    - `POST /api/tasks` crée une tâche à partir de `{ "title": "…" }` et répond 201 ;
+    - `PATCH /api/tasks/:id` avec `{ "done": true }` ou `{ "done": false }` met à jour ;
+    - `DELETE /api/tasks/:id` supprime et répond 204, ou 404 si la tâche n’existe pas ;
+    - toutes les erreurs sont renvoyées en JSON, sans détail interne ;
+    - le port vient de la variable d’environnement `PORT`.
+
+    ```js
+    import express from 'express';
+
+    const app = express();
+    const PORT = 3000;
+
+    let tasks = [
+      { id: 1, title: 'Configurer le serveur', done: true },
+      { id: 2, title: 'Écrire la documentation', done: false },
+    ];
+
+    app.use(express.static('public'));
+
+    // Liste des tâches, avec filtre optionnel ?done=true|false
+    app.get('/api/tasks', (req, res) => {
+      if (req.query.done !== undefined) {
+        return res.json(tasks.filter((task) => task.done === req.query.done));
+      }
+      res.json(tasks);
+    });
+
+    // Détail d'une tâche
+    app.get('/api/tasks/:id', (req, res) => {
+      const task = tasks.find((t) => t.id === Number(req.params.id));
+      if (!task) {
+        return res.status(404).json({ error: 'Tâche introuvable' });
+      }
+      res.json(task);
+    });
+
+    // Statistiques
+    app.get('/api/tasks/stats', (req, res) => {
+      const done = tasks.filter((t) => t.done).length;
+      res.json({ total: tasks.length, done, remaining: tasks.length - done });
+    });
+
+    // Création d'une tâche
+    app.post('/api/tasks', (req, res) => {
+      const { title } = req.body;
+      if (!title) {
+        return res.status(400).json({ error: 'Le titre est obligatoire' });
+      }
+      const task = { id: tasks.length + 1, title, done: false };
+      tasks.push(task);
+      res.json(task, 201);
+    });
+
+    // Marquer une tâche comme terminée
+    app.patch('/api/tasks/:id', (req, res) => {
+      const task = tasks.find((t) => t.id === Number(req.params.id));
+      if (!task) {
+        res.status(404).json({ error: 'Tâche introuvable' });
+      }
+      task.done = req.body.done;
+      res.json(task);
+    });
+
+    // Suppression
+    app.delete('/api/tasks/:id', (req, res) => {
+      tasks = tasks.filter((t) => t.id !== req.params.id);
+      res.sendStatus(204);
+    });
+
+    app.use(express.json());
+
+    // Gestion des erreurs
+    app.use((err, req, res, next) => {
+      console.error(err);
+      res.status(500).json({ error: err.message });
+    });
+
+    app.listen(PORT, () => {
+      console.log(`API des tâches démarrée sur le port ${PORT}`);
+    });
+    ```
+
+    Travail demandé :
+
+    1. Lance le serveur (Express 5, modules ES) et teste chaque règle avec curl. Note ce
+       qui se passe réellement.
+    2. Liste chaque défaut : la ou les lignes, le symptôme observé ou possible, la cause
+       précise et sa gravité.
+    3. Propose une version corrigée qui respecte toutes les règles.
+    4. Pour chaque défaut, donne la commande curl qui le révèle.
+  deliverable: |
+    Colle ta liste de défauts (lignes, symptôme, cause, gravité, commande qui le
     révèle), puis le fichier corrigé complet et la sortie de tes commandes curl sur la
-
     version corrigée.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: defects-found
-      description: Identifie les défauts réels, y compris ceux qui ne se voient que dans les journaux
-        ou avec certaines entrées.
-      maxScore: 3
-    - id: root-cause
-      description: Explique la cause technique de chaque défaut, pas seulement le symptôme.
-      maxScore: 3
-    - id: fix-quality
-      description: Propose des corrections justes, minimales et vérifiées par des commandes curl.
-      maxScore: 3
+      - id: defects-found
+        description: Identifie les défauts réels, y compris ceux qui ne se voient que dans les journaux ou avec certaines entrées.
+        maxScore: 3
+      - id: root-cause
+        description: Explique la cause technique de chaque défaut, pas seulement le symptôme.
+        maxScore: 3
+      - id: fix-quality
+        description: Propose des corrections justes, minimales et vérifiées par des commandes curl.
+        maxScore: 3
+
 - id: express-server-apres-ia
   family: APRES_IA
   title: La bibliothèque du quartier
-  summary: Faire évoluer et dépanner un petit projet Express structuré, en modifiant le moins de code
-    possible.
+  summary: Faire évoluer et dépanner un petit projet Express structuré, en modifiant le moins de code possible.
   estimatedMinutes: 75
-  instructions: "La bibliothèque du quartier utilise cette petite API depuis quelques semaines. Elle a\n\
-    été produite avec une IA et fonctionne en partie. Tu dois la faire évoluer **en\nmodifiant le moins\
-    \ de lignes possible**, sans la régénérer.\n\nArborescence :\n\n```text\nbibliotheque/\n  package.json\n\
-    \  public/index.html\n  src/server.js\n  src/app.js\n  src/errors.js\n  src/middlewares/error-handler.js\n\
-    \  src/routes/books.js\n```\n\n`package.json` :\n\n```json\n{\n  \"name\": \"bibliotheque\",\n  \"\
-    version\": \"1.0.0\",\n  \"type\": \"module\",\n  \"scripts\": {\n    \"start\": \"node src/server.js\"\
-    \n  },\n  \"dependencies\": {\n    \"express\": \"^5.3.0\"\n  }\n}\n```\n\n`public/index.html` :\n\
-    \n```html\n<!doctype html>\n<html lang=\"fr\">\n  <head>\n    <meta charset=\"utf-8\">\n    <title>Bibliothèque\
-    \ du quartier</title>\n  </head>\n  <body>\n    <h1>Bibliothèque du quartier</h1>\n    <p>Catalogue\
-    \ : <a href=\"/api/books\">/api/books</a></p>\n  </body>\n</html>\n```\n\n`src/server.js` :\n\n```js\n\
-    import { createApp } from './app.js';\n\nconst app = createApp();\n\napp.listen(3000, () => {\n  console.log('Serveur\
-    \ prêt sur http://localhost:3000');\n});\n```\n\n`src/app.js` :\n\n```js\nimport express from 'express';\n\
-    import { booksRouter } from './routes/books.js';\nimport { errorHandler } from './middlewares/error-handler.js';\n\
-    \nexport function createApp() {\n  const app = express();\n\n  app.use(express.static('public'));\n\
-    \  app.use(express.json());\n\n  app.use('/api/books', booksRouter);\n\n  app.use((req, res) => {\n\
-    \    res.status(404).json({ error: 'Route introuvable' });\n  });\n  app.use(errorHandler);\n\n  return\
-    \ app;\n}\n```\n\n`src/errors.js` :\n\n```js\nexport class HttpError extends Error {\n  constructor(status,\
-    \ message) {\n    super(message);\n    this.name = 'HttpError';\n    this.status = status;\n  }\n\
-    }\n```\n\n`src/middlewares/error-handler.js` :\n\n```js\nexport function errorHandler(err, req, res,\
-    \ next) {\n  const status = err.status ?? 500;\n  if (status === 500) {\n    console.error(err);\n\
-    \  }\n  res.status(status).json({\n    error: status === 500 ? 'Erreur interne du serveur' : err.message,\n\
-    \  });\n}\n```\n\n`src/routes/books.js` :\n\n```js\nimport { Router } from 'express';\nimport { HttpError\
-    \ } from '../errors.js';\n\nconst books = [\n  { id: 1, title: 'Le Petit Prince', author: 'Antoine\
-    \ de Saint-Exupéry' },\n  { id: 2, title: 'Vingt mille lieues sous les mers', author: 'Jules Verne'\
-    \ },\n  { id: 3, title: 'Le Comte de Monte-Cristo', author: 'Alexandre Dumas' },\n];\nlet nextId =\
-    \ 4;\n\nexport const booksRouter = Router();\n\nbooksRouter.get('/', (req, res) => {\n  res.json(books);\n\
-    });\n\nbooksRouter.get('/:id', (req, res) => {\n  const book = books.find((item) => item.id === Number(req.params.id));\n\
-    \  if (!book) {\n    throw new HttpError(404, `Livre ${req.params.id} introuvable`);\n  }\n  res.json(book);\n\
-    });\n\nbooksRouter.get('/search', (req, res) => {\n  const q = typeof req.query.q === 'string' ? req.query.q.toLowerCase()\
-    \ : '';\n  res.json(books.filter((book) => book.title.toLowerCase().includes(q)));\n});\n\nbooksRouter.post('/',\
-    \ (req, res) => {\n  const { title, author } = req.body ?? {};\n  if (typeof title !== 'string' ||\
-    \ title.trim() === '') {\n    throw new HttpError(400, 'Le titre est obligatoire');\n  }\n  if (typeof\
-    \ author !== 'string' || author.trim() === '') {\n    throw new HttpError(400, 'L’auteur est obligatoire');\n\
-    \  }\n  const book = { id: nextId, title: title.trim(), author: author.trim() };\n  nextId += 1;\n\
-    \  books.push(book);\n  res.status(201).json(book);\n});\n```\n\nDemandes de l’équipe :\n\n1. **Bug**\
-    \ : `GET /api/books/search?q=prince` répond\n   `{\"error\":\"Livre search introuvable\"}`. Corrige\
-    \ et explique la cause.\n2. **Bug** : la page d’accueil fonctionne avec `npm start`, mais répond 404\
-    \ quand le\n   serveur est lancé depuis le dossier parent avec `node bibliotheque/src/server.js`.\n\
-    \   Corrige et explique.\n3. Le port doit venir de la variable `PORT` (3000 par défaut). Si le port\
-    \ est\n   occupé, le serveur affiche un message clair et se termine avec le code de sortie 1.\n4.\
-    \ Ajoute un middleware `requestId` dans `src/middlewares/request-id.js` : chaque\n   réponse porte\
-    \ un en-tête `X-Request-Id` dont la valeur est produite par\n   `randomUUID()` du module `node:crypto`\
-    \ ; les erreurs journalisées par le\n   gestionnaire d’erreurs commencent par cet identifiant, et\
-    \ les réponses d’erreur\n   JSON contiennent un champ `requestId`.\n5. Ajoute `DELETE /api/books/:id`\
-    \ qui répond 204, ou 404 si le livre n’existe pas.\n"
-  deliverable: 'Colle uniquement les fichiers modifiés ou créés, en entier, puis une liste des lignes
+  instructions: |
+    La bibliothèque du quartier utilise cette petite API depuis quelques semaines. Elle a
+    été produite avec une IA et fonctionne en partie. Tu dois la faire évoluer **en
+    modifiant le moins de lignes possible**, sans la régénérer.
 
-    modifiées ou ajoutées avec la raison de chaque changement. Ajoute la sortie de :
+    Arborescence :
 
-
-    ```bash
-
-    curl -s -i ''http://localhost:3000/api/books/search?q=prince''
-
-    curl -s http://localhost:3000/api/books/99
-
-    curl -s -i -X DELETE http://localhost:3000/api/books/1
-
-    curl -s -i -X DELETE http://localhost:3000/api/books/1
-
+    ```text
+    bibliotheque/
+      package.json
+      public/index.html
+      src/server.js
+      src/app.js
+      src/errors.js
+      src/middlewares/error-handler.js
+      src/routes/books.js
     ```
 
+    `package.json` :
+
+    ```json
+    {
+      "name": "bibliotheque",
+      "version": "1.0.0",
+      "type": "module",
+      "scripts": {
+        "start": "node src/server.js"
+      },
+      "dependencies": {
+        "express": "^5.3.0"
+      }
+    }
+    ```
+
+    `public/index.html` :
+
+    ```html
+    <!doctype html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8">
+        <title>Bibliothèque du quartier</title>
+      </head>
+      <body>
+        <h1>Bibliothèque du quartier</h1>
+        <p>Catalogue : <a href="/api/books">/api/books</a></p>
+      </body>
+    </html>
+    ```
+
+    `src/server.js` :
+
+    ```js
+    import { createApp } from './app.js';
+
+    const app = createApp();
+
+    app.listen(3000, () => {
+      console.log('Serveur prêt sur http://localhost:3000');
+    });
+    ```
+
+    `src/app.js` :
+
+    ```js
+    import express from 'express';
+    import { booksRouter } from './routes/books.js';
+    import { errorHandler } from './middlewares/error-handler.js';
+
+    export function createApp() {
+      const app = express();
+
+      app.use(express.static('public'));
+      app.use(express.json());
+
+      app.use('/api/books', booksRouter);
+
+      app.use((req, res) => {
+        res.status(404).json({ error: 'Route introuvable' });
+      });
+      app.use(errorHandler);
+
+      return app;
+    }
+    ```
+
+    `src/errors.js` :
+
+    ```js
+    export class HttpError extends Error {
+      constructor(status, message) {
+        super(message);
+        this.name = 'HttpError';
+        this.status = status;
+      }
+    }
+    ```
+
+    `src/middlewares/error-handler.js` :
+
+    ```js
+    export function errorHandler(err, req, res, next) {
+      const status = err.status ?? 500;
+      if (status === 500) {
+        console.error(err);
+      }
+      res.status(status).json({
+        error: status === 500 ? 'Erreur interne du serveur' : err.message,
+      });
+    }
+    ```
+
+    `src/routes/books.js` :
+
+    ```js
+    import { Router } from 'express';
+    import { HttpError } from '../errors.js';
+
+    const books = [
+      { id: 1, title: 'Le Petit Prince', author: 'Antoine de Saint-Exupéry' },
+      { id: 2, title: 'Vingt mille lieues sous les mers', author: 'Jules Verne' },
+      { id: 3, title: 'Le Comte de Monte-Cristo', author: 'Alexandre Dumas' },
+    ];
+    let nextId = 4;
+
+    export const booksRouter = Router();
+
+    booksRouter.get('/', (req, res) => {
+      res.json(books);
+    });
+
+    booksRouter.get('/:id', (req, res) => {
+      const book = books.find((item) => item.id === Number(req.params.id));
+      if (!book) {
+        throw new HttpError(404, `Livre ${req.params.id} introuvable`);
+      }
+      res.json(book);
+    });
+
+    booksRouter.get('/search', (req, res) => {
+      const q = typeof req.query.q === 'string' ? req.query.q.toLowerCase() : '';
+      res.json(books.filter((book) => book.title.toLowerCase().includes(q)));
+    });
+
+    booksRouter.post('/', (req, res) => {
+      const { title, author } = req.body ?? {};
+      if (typeof title !== 'string' || title.trim() === '') {
+        throw new HttpError(400, 'Le titre est obligatoire');
+      }
+      if (typeof author !== 'string' || author.trim() === '') {
+        throw new HttpError(400, 'L’auteur est obligatoire');
+      }
+      const book = { id: nextId, title: title.trim(), author: author.trim() };
+      nextId += 1;
+      books.push(book);
+      res.status(201).json(book);
+    });
+    ```
+
+    Demandes de l’équipe :
+
+    1. **Bug** : `GET /api/books/search?q=prince` répond
+       `{"error":"Livre search introuvable"}`. Corrige et explique la cause.
+    2. **Bug** : la page d’accueil fonctionne avec `npm start`, mais répond 404 quand le
+       serveur est lancé depuis le dossier parent avec `node bibliotheque/src/server.js`.
+       Corrige et explique.
+    3. Le port doit venir de la variable `PORT` (3000 par défaut). Si le port est
+       occupé, le serveur affiche un message clair et se termine avec le code de sortie 1.
+    4. Ajoute un middleware `requestId` dans `src/middlewares/request-id.js` : chaque
+       réponse porte un en-tête `X-Request-Id` dont la valeur est produite par
+       `randomUUID()` du module `node:crypto` ; les erreurs journalisées par le
+       gestionnaire d’erreurs commencent par cet identifiant, et les réponses d’erreur
+       JSON contiennent un champ `requestId`.
+    5. Ajoute `DELETE /api/books/:id` qui répond 204, ou 404 si le livre n’existe pas.
+  deliverable: |
+    Colle uniquement les fichiers modifiés ou créés, en entier, puis une liste des lignes
+    modifiées ou ajoutées avec la raison de chaque changement. Ajoute la sortie de :
+
+    ```bash
+    curl -s -i 'http://localhost:3000/api/books/search?q=prince'
+    curl -s http://localhost:3000/api/books/99
+    curl -s -i -X DELETE http://localhost:3000/api/books/1
+    curl -s -i -X DELETE http://localhost:3000/api/books/1
+    ```
 
     et ce qu’affiche le serveur quand tu le lances deux fois sur le même port.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: bug-diagnosis
-      description: Explique la cause des deux bugs (ordre des routes, chemin relatif) et les corrige proprement.
-      maxScore: 3
-    - id: middleware-design
-      description: Conçoit et place correctement le middleware requestId et son usage dans les erreurs.
-      maxScore: 3
-    - id: minimal-change
-      description: Fait évoluer le code existant de façon ciblée et vérifiée.
-      maxScore: 2
+      - id: bug-diagnosis
+        description: Explique la cause des deux bugs (ordre des routes, chemin relatif) et les corrige proprement.
+        maxScore: 3
+      - id: middleware-design
+        description: Conçoit et place correctement le middleware requestId et son usage dans les erreurs.
+        maxScore: 3
+      - id: minimal-change
+        description: Fait évoluer le code existant de façon ciblée et vérifiée.
+        maxScore: 2

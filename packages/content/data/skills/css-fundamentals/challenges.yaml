@@ -1,321 +1,591 @@
 - id: css-fundamentals-sans-ia
   family: SANS_IA
   title: La carte de profil
-  summary: Mettre en forme une carte de profil avec des sélecteurs précis, le modèle de boîte et des variables,
-    puis prédire le résultat de la cascade.
+  summary: Mettre en forme une carte de profil avec des sélecteurs précis, le modèle de boîte et des variables, puis prédire le résultat de la cascade.
   estimatedMinutes: 55
-  instructions: "Tu mets en forme la carte de profil d’une développeuse. Travaille sans aide : ni IA,\n\
-    ni recherche en ligne. L’inspecteur du navigateur est autorisé.\n\nVoici `index.html`. Tu ne dois\
-    \ **pas** modifier le contenu du `<body>` : ni balise,\nni classe, ni attribut. Tu peux seulement\
-    \ ajouter ce qu’il faut dans le `<head>`.\n\n```html\n<!doctype html>\n<html lang=\"fr\">\n  <head>\n\
-    \    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"\
-    >\n    <title>Profil</title>\n  </head>\n  <body>\n    <article class=\"profile\">\n      <img class=\"\
-    profile-photo\" src=\"photo.jpg\" alt=\"Portrait de Camille Martin\" width=\"96\" height=\"96\">\n\
-    \      <h2 class=\"profile-name\">Camille Martin</h2>\n      <p class=\"profile-role\">Développeuse\
-    \ front-end</p>\n      <p class=\"profile-bio\">Passionnée d’accessibilité, elle aime les interfaces\
-    \ sobres et rapides.</p>\n      <ul class=\"profile-links\">\n        <li><a href=\"https://example.com/portfolio\"\
-    >Portfolio</a></li>\n        <li><a href=\"https://example.com/blog\">Blog</a></li>\n        <li><a\
-    \ href=\"mailto:camille@example.com\">E-mail</a></li>\n      </ul>\n    </article>\n  </body>\n</html>\n\
-    ```\n\n## Partie 1 — La feuille de style\n\nCrée `profile.css`, lie-la à la page, et obtiens le résultat\
-    \ suivant :\n\n1. Sur `:root`, au moins trois propriétés personnalisées : la couleur principale,\n\
-    \   la couleur du texte et une unité d’espacement. Chacune est utilisée au moins deux\n   fois dans\
-    \ la feuille.\n2. Tous les éléments utilisent `box-sizing: border-box`.\n3. La carte mesure **au plus\
-    \ 360 px de large, bordure comprise**, a 24 px d’espace\n   intérieur, une bordure fine de la couleur\
-    \ principale, et est centrée\n   horizontalement dans la page.\n4. Texte : une pile de polices terminée\
-    \ par une famille générique, des tailles de\n   police en `rem`, un interligne sans unité. Le nom\
-    \ fait 1,5 fois la taille de\n   base.\n5. Le rôle (« Développeuse front-end ») s’affiche en majuscules\
-    \ avec un léger\n   espacement des lettres, **sans modifier le texte HTML**.\n6. La liste de liens\
-    \ n’a ni puces ni retrait ; une bordure fine sépare les liens,\n   mais il n’y en a pas après le dernier.\n\
-    7. Le lien de contact par e-mail est en gras. Tu dois le cibler **par son\n   attribut** `href`, pas\
-    \ par sa position.\n8. Un lien qui reçoit le focus au clavier affiche un contour bien visible.\n\n\
-    ## Partie 2 — Prédire sans exécuter\n\nRéponds d’abord par écrit, **puis** vérifie dans le navigateur.\
-    \ Si ta prédiction\nétait fausse, garde-la et explique ton erreur.\n\na. On ajoute ces trois règles\
-    \ à la fin de ta feuille :\n\n```css\n.profile p {\n  color: #555555;\n}\n\np.profile-role {\n  color:\
-    \ var(--color-primary);\n}\n\narticle p:first-of-type {\n  color: black;\n}\n```\n\nQuelle est la\
-    \ couleur de `.profile-role` ? Et celle de `.profile-bio` ? Donne la\nspécificité de chaque sélecteur\
-    \ sous la forme (A, B, C) et justifie.\n\nb. Si on retirait `box-sizing: border-box` et qu’on écrivait\
-    \ `width: 360px;` avec\n24 px de padding et une bordure de 1 px, quelle serait la largeur visible\
-    \ de la\ncarte ? Détaille le calcul.\n\nc. On écrit `.profile-name { margin: 0 0 8px; }` et\n`.profile-role\
-    \ { margin: 16px 0 0; }`. Quel espace vertical sépare le nom du rôle ?\nPourquoi ?\n"
-  deliverable: 'Colle le `<head>` modifié, le contenu complet de `profile.css`, puis tes réponses
+  instructions: |
+    Tu mets en forme la carte de profil d’une développeuse. Travaille sans aide : ni IA,
+    ni recherche en ligne. L’inspecteur du navigateur est autorisé.
 
+    Voici `index.html`. Tu ne dois **pas** modifier le contenu du `<body>` : ni balise,
+    ni classe, ni attribut. Tu peux seulement ajouter ce qu’il faut dans le `<head>`.
+
+    ```html
+    <!doctype html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Profil</title>
+      </head>
+      <body>
+        <article class="profile">
+          <img class="profile-photo" src="photo.jpg" alt="Portrait de Camille Martin" width="96" height="96">
+          <h2 class="profile-name">Camille Martin</h2>
+          <p class="profile-role">Développeuse front-end</p>
+          <p class="profile-bio">Passionnée d’accessibilité, elle aime les interfaces sobres et rapides.</p>
+          <ul class="profile-links">
+            <li><a href="https://example.com/portfolio">Portfolio</a></li>
+            <li><a href="https://example.com/blog">Blog</a></li>
+            <li><a href="mailto:camille@example.com">E-mail</a></li>
+          </ul>
+        </article>
+      </body>
+    </html>
+    ```
+
+    ## Partie 1 — La feuille de style
+
+    Crée `profile.css`, lie-la à la page, et obtiens le résultat suivant :
+
+    1. Sur `:root`, au moins trois propriétés personnalisées : la couleur principale,
+       la couleur du texte et une unité d’espacement. Chacune est utilisée au moins deux
+       fois dans la feuille.
+    2. Tous les éléments utilisent `box-sizing: border-box`.
+    3. La carte mesure **au plus 360 px de large, bordure comprise**, a 24 px d’espace
+       intérieur, une bordure fine de la couleur principale, et est centrée
+       horizontalement dans la page.
+    4. Texte : une pile de polices terminée par une famille générique, des tailles de
+       police en `rem`, un interligne sans unité. Le nom fait 1,5 fois la taille de
+       base.
+    5. Le rôle (« Développeuse front-end ») s’affiche en majuscules avec un léger
+       espacement des lettres, **sans modifier le texte HTML**.
+    6. La liste de liens n’a ni puces ni retrait ; une bordure fine sépare les liens,
+       mais il n’y en a pas après le dernier.
+    7. Le lien de contact par e-mail est en gras. Tu dois le cibler **par son
+       attribut** `href`, pas par sa position.
+    8. Un lien qui reçoit le focus au clavier affiche un contour bien visible.
+
+    ## Partie 2 — Prédire sans exécuter
+
+    Réponds d’abord par écrit, **puis** vérifie dans le navigateur. Si ta prédiction
+    était fausse, garde-la et explique ton erreur.
+
+    a. On ajoute ces trois règles à la fin de ta feuille :
+
+    ```css
+    .profile p {
+      color: #555555;
+    }
+
+    p.profile-role {
+      color: var(--color-primary);
+    }
+
+    article p:first-of-type {
+      color: black;
+    }
+    ```
+
+    Quelle est la couleur de `.profile-role` ? Et celle de `.profile-bio` ? Donne la
+    spécificité de chaque sélecteur sous la forme (A, B, C) et justifie.
+
+    b. Si on retirait `box-sizing: border-box` et qu’on écrivait `width: 360px;` avec
+    24 px de padding et une bordure de 1 px, quelle serait la largeur visible de la
+    carte ? Détaille le calcul.
+
+    c. On écrit `.profile-name { margin: 0 0 8px; }` et
+    `.profile-role { margin: 16px 0 0; }`. Quel espace vertical sépare le nom du rôle ?
+    Pourquoi ?
+  deliverable: |
+    Colle le `<head>` modifié, le contenu complet de `profile.css`, puis tes réponses
     aux questions a, b et c (prédiction, vérification, et explication de l’écart
-
     éventuel).
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: selectors
-      description: Choisit et explique des sélecteurs précis et robustes (classe, attribut, pseudo-classes,
-        combinateurs).
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Sélecteurs erronés ou incapacité à expliquer ce qu’ils ciblent.
-      - score: 1
-        description: Sélecteurs qui fonctionnent mais dépendent de la position ou ne respectent pas les
-          contraintes (attribut, dernier élément).
-      - score: 2
-        description: Sélecteurs corrects et justifiés, dont l’attribut href et la pseudo-classe de séparation.
-      - score: 3
-        description: Explique aussi la robustesse de ses choix face à une modification du HTML et propose
-          une alternative équivalente.
-    - id: cascade
-      description: Prédit le style appliqué en calculant la spécificité et en raisonnant sur l’héritage.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas calculer une spécificité ou répond au hasard.
-      - score: 1
-        description: Calcule des spécificités mais se trompe sur l’élément ciblé ou sur la règle gagnante.
-      - score: 2
-        description: Prédit correctement les deux couleurs avec les triplets et le rôle de :first-of-type.
-      - score: 3
-        description: Propose en plus une correction sans !important et explique quand l’ordre d’apparition
-          départage.
-    - id: box-model
-      description: Maîtrise le modèle de boîte, box-sizing et la fusion des marges.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne distingue pas padding, bordure et marge.
-      - score: 1
-        description: Utilise border-box sans savoir expliquer ce qu’il change, ou se trompe dans le calcul.
-      - score: 2
-        description: Calcule 410 px, explique border-box et la fusion des marges (16 px).
-      - score: 3
-        description: Explique aussi le centrage par marges automatiques et cite une situation où les marges
-          ne fusionnent pas.
-    - id: values-variables
-      description: Utilise à bon escient unités relatives, typographie et propriétés personnalisées.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Valeurs en dur partout, ou ne sait pas ce qu’est une variable CSS.
-      - score: 1
-        description: Variables et rem présents mais justification absente ou erronée.
-      - score: 2
-        description: Justifie rem, l’interligne sans unité et l’intérêt des variables sur :root.
-      - score: 3
-        description: Explique aussi l’héritage des variables et ce qui se passe avec une variable non
-          définie ou une valeur de repli.
+      - id: selectors
+        description: Choisit et explique des sélecteurs précis et robustes (classe, attribut, pseudo-classes, combinateurs).
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Sélecteurs erronés ou incapacité à expliquer ce qu’ils ciblent.
+          - score: 1
+            description: Sélecteurs qui fonctionnent mais dépendent de la position ou ne respectent pas les contraintes (attribut, dernier élément).
+          - score: 2
+            description: Sélecteurs corrects et justifiés, dont l’attribut href et la pseudo-classe de séparation.
+          - score: 3
+            description: Explique aussi la robustesse de ses choix face à une modification du HTML et propose une alternative équivalente.
+      - id: cascade
+        description: Prédit le style appliqué en calculant la spécificité et en raisonnant sur l’héritage.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas calculer une spécificité ou répond au hasard.
+          - score: 1
+            description: Calcule des spécificités mais se trompe sur l’élément ciblé ou sur la règle gagnante.
+          - score: 2
+            description: Prédit correctement les deux couleurs avec les triplets et le rôle de :first-of-type.
+          - score: 3
+            description: Propose en plus une correction sans !important et explique quand l’ordre d’apparition départage.
+      - id: box-model
+        description: Maîtrise le modèle de boîte, box-sizing et la fusion des marges.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne distingue pas padding, bordure et marge.
+          - score: 1
+            description: Utilise border-box sans savoir expliquer ce qu’il change, ou se trompe dans le calcul.
+          - score: 2
+            description: Calcule 410 px, explique border-box et la fusion des marges (16 px).
+          - score: 3
+            description: Explique aussi le centrage par marges automatiques et cite une situation où les marges ne fusionnent pas.
+      - id: values-variables
+        description: Utilise à bon escient unités relatives, typographie et propriétés personnalisées.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Valeurs en dur partout, ou ne sait pas ce qu’est une variable CSS.
+          - score: 1
+            description: Variables et rem présents mais justification absente ou erronée.
+          - score: 2
+            description: Justifie rem, l’interligne sans unité et l’intérêt des variables sur :root.
+          - score: 3
+            description: Explique aussi l’héritage des variables et ce qui se passe avec une variable non définie ou une valeur de repli.
+
 - id: css-fundamentals-avec-ia
   family: AVEC_IA
   title: Le menu du bistrot, clair et sombre
-  summary: Construire avec une IA la feuille de style d’un menu avec deux thèmes pilotés par des variables,
-    puis défendre chaque décision de cascade.
+  summary: Construire avec une IA la feuille de style d’un menu avec deux thèmes pilotés par des variables, puis défendre chaque décision de cascade.
   estimatedMinutes: 90
-  instructions: "Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras expliquer chaque\nligne\
-    \ sans aide, prédire l’effet d’une modification et diagnostiquer un style dans\nl’inspecteur.\n\n\
-    Voici le HTML du menu d’un bistrot. Tu peux seulement ajouter le lien vers la\nfeuille et une classe\
-    \ sur la balise `<html>`.\n\n```html\n<!doctype html>\n<html lang=\"fr\">\n  <head>\n    <meta charset=\"\
-    utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <title>Le\
-    \ Bistrot du Marché — Menu</title>\n  </head>\n  <body>\n    <header class=\"menu-header\">\n    \
-    \  <h1>Le Bistrot du Marché</h1>\n      <p class=\"tagline\">Cuisine de saison, produits locaux</p>\n\
-    \    </header>\n    <main class=\"menu\">\n      <section class=\"menu-section\">\n        <h2>Entrées</h2>\n\
-    \        <article class=\"dish\">\n          <h3 class=\"dish-name\">Velouté de potimarron</h3>\n\
-    \          <p class=\"dish-desc\">Crème légère, graines torréfiées.</p>\n          <p class=\"dish-price\"\
-    >7,50 €</p>\n        </article>\n        <article class=\"dish dish--veggie\">\n          <h3 class=\"\
-    dish-name\">Salade de lentilles</h3>\n          <p class=\"dish-desc\">Vinaigrette à la moutarde,\
-    \ herbes fraîches.</p>\n          <p class=\"dish-price\">8 €</p>\n        </article>\n      </section>\n\
-    \      <section class=\"menu-section\">\n        <h2>Plats</h2>\n        <article class=\"dish\">\n\
-    \          <h3 class=\"dish-name\">Filet de truite</h3>\n          <p class=\"dish-desc\">Beurre blanc,\
-    \ poireaux fondants. <strong>Arrivage du jour.</strong></p>\n          <p class=\"dish-price\">18\
-    \ €</p>\n        </article>\n      </section>\n    </main>\n    <footer class=\"menu-footer\">\n \
-    \     <p>Prix nets, service compris. <a href=\"allergenes.html\">Liste des allergènes</a></p>\n  \
-    \  </footer>\n  </body>\n</html>\n```\n\nExigences :\n\n1. Toutes les couleurs, la police et l’unité\
-    \ d’espacement sont des propriétés\n   personnalisées déclarées sur `:root`. Aucune couleur n’est\
-    \ écrite en dur ailleurs.\n2. Un **thème sombre** s’active en ajoutant la classe `theme-dark` sur\
-    \ `<html>`.\n   La règle `.theme-dark` ne fait que **redéfinir des variables** : aucune autre\n  \
-    \ propriété.\n3. `box-sizing: border-box` pour tous les éléments ; contenu centré, d’une largeur\n\
-    \   maximale exprimée en `ch` pour garder des lignes lisibles.\n4. Typographie : pile de polices terminée\
-    \ par une famille générique, tailles en\n   `rem`, interligne sans unité. Le prix est en gras et de\
-    \ la couleur principale.\n5. Les plats végétariens (`.dish--veggie`) ont une bordure gauche colorée\
-    \ et la\n   mention « Végétarien » ajoutée **par CSS** après le nom du plat.\n6. Les liens restent\
-    \ soulignés et ont un indicateur de focus visible au clavier.\n7. Chaque couple texte-fond atteint\
-    \ au moins **4,5:1** de contraste dans les deux\n   thèmes. Mesure-les avec l’inspecteur (sélecteur\
-    \ de couleur).\n8. Aucun `!important`, aucun sélecteur d’identifiant.\n\nConseil : demande à l’IA\
-    \ de commenter chaque règle, puis vérifie chaque\naffirmation dans l’inspecteur. Méfie-toi des propositions\
-    \ qui dépassent l’énoncé\n(media queries, frameworks) : tu devras les expliquer aussi.\n"
-  deliverable: "Colle :\n- le `<head>` modifié et la balise `<html>` avec la classe ;\n- le contenu complet\
-    \ de ta feuille de style ;\n- un tableau des contrastes mesurés (texte normal, prix, liens) dans les\
-    \ deux thèmes ;\n- une déclaration barrée que tu as observée dans le volet Styles de l’inspecteur\
-    \ :\n  quelle règle gagne à sa place, et pourquoi (spécificité, ordre ou héritage) ;\n- en quelques\
-    \ lignes : ce que l’IA t’a apporté, et ce que tu as dû corriger ou\n  vérifier.\n"
+  instructions: |
+    Tu peux utiliser une IA autant que tu veux. À l’oral, tu devras expliquer chaque
+    ligne sans aide, prédire l’effet d’une modification et diagnostiquer un style dans
+    l’inspecteur.
+
+    Voici le HTML du menu d’un bistrot. Tu peux seulement ajouter le lien vers la
+    feuille et une classe sur la balise `<html>`.
+
+    ```html
+    <!doctype html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Le Bistrot du Marché — Menu</title>
+      </head>
+      <body>
+        <header class="menu-header">
+          <h1>Le Bistrot du Marché</h1>
+          <p class="tagline">Cuisine de saison, produits locaux</p>
+        </header>
+        <main class="menu">
+          <section class="menu-section">
+            <h2>Entrées</h2>
+            <article class="dish">
+              <h3 class="dish-name">Velouté de potimarron</h3>
+              <p class="dish-desc">Crème légère, graines torréfiées.</p>
+              <p class="dish-price">7,50 €</p>
+            </article>
+            <article class="dish dish--veggie">
+              <h3 class="dish-name">Salade de lentilles</h3>
+              <p class="dish-desc">Vinaigrette à la moutarde, herbes fraîches.</p>
+              <p class="dish-price">8 €</p>
+            </article>
+          </section>
+          <section class="menu-section">
+            <h2>Plats</h2>
+            <article class="dish">
+              <h3 class="dish-name">Filet de truite</h3>
+              <p class="dish-desc">Beurre blanc, poireaux fondants. <strong>Arrivage du jour.</strong></p>
+              <p class="dish-price">18 €</p>
+            </article>
+          </section>
+        </main>
+        <footer class="menu-footer">
+          <p>Prix nets, service compris. <a href="allergenes.html">Liste des allergènes</a></p>
+        </footer>
+      </body>
+    </html>
+    ```
+
+    Exigences :
+
+    1. Toutes les couleurs, la police et l’unité d’espacement sont des propriétés
+       personnalisées déclarées sur `:root`. Aucune couleur n’est écrite en dur ailleurs.
+    2. Un **thème sombre** s’active en ajoutant la classe `theme-dark` sur `<html>`.
+       La règle `.theme-dark` ne fait que **redéfinir des variables** : aucune autre
+       propriété.
+    3. `box-sizing: border-box` pour tous les éléments ; contenu centré, d’une largeur
+       maximale exprimée en `ch` pour garder des lignes lisibles.
+    4. Typographie : pile de polices terminée par une famille générique, tailles en
+       `rem`, interligne sans unité. Le prix est en gras et de la couleur principale.
+    5. Les plats végétariens (`.dish--veggie`) ont une bordure gauche colorée et la
+       mention « Végétarien » ajoutée **par CSS** après le nom du plat.
+    6. Les liens restent soulignés et ont un indicateur de focus visible au clavier.
+    7. Chaque couple texte-fond atteint au moins **4,5:1** de contraste dans les deux
+       thèmes. Mesure-les avec l’inspecteur (sélecteur de couleur).
+    8. Aucun `!important`, aucun sélecteur d’identifiant.
+
+    Conseil : demande à l’IA de commenter chaque règle, puis vérifie chaque
+    affirmation dans l’inspecteur. Méfie-toi des propositions qui dépassent l’énoncé
+    (media queries, frameworks) : tu devras les expliquer aussi.
+  deliverable: |
+    Colle :
+    - le `<head>` modifié et la balise `<html>` avec la classe ;
+    - le contenu complet de ta feuille de style ;
+    - un tableau des contrastes mesurés (texte normal, prix, liens) dans les deux thèmes ;
+    - une déclaration barrée que tu as observée dans le volet Styles de l’inspecteur :
+      quelle règle gagne à sa place, et pourquoi (spécificité, ordre ou héritage) ;
+    - en quelques lignes : ce que l’IA t’a apporté, et ce que tu as dû corriger ou
+      vérifier.
   rubric:
     passRatio: 0.7
     criteria:
-    - id: code-ownership
-      description: Explique chaque règle de sa feuille sans aide, y compris celles proposées par l’IA.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas expliquer des règles importantes de sa propre feuille.
-      - score: 1
-        description: Explique le rôle global des règles mais pas leur détail (sélecteurs, valeurs).
-      - score: 2
-        description: Explique précisément chaque sélecteur et chaque valeur, et pourquoi elle s’applique.
-      - score: 3
-        description: Explique aussi les propositions de l’IA qu’il a rejetées ou corrigées et pourquoi.
-    - id: variables-theming
-      description: Comprend la portée, l’héritage et la redéfinition des propriétés personnalisées.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas pourquoi redéfinir les variables change les couleurs.
-      - score: 1
-        description: Sait que le thème change les variables mais ne peut expliquer l’héritage ni l’ordre
-          des règles.
-      - score: 2
-        description: Explique l’héritage depuis la racine et pourquoi .theme-dark l’emporte sur :root.
-      - score: 3
-        description: Anticipe les cas limites (variable non définie, valeur invalide, élément qui ne suit
-          pas le thème comme les liens).
-    - id: cascade-debugging
-      description: Utilise l’inspecteur pour diagnostiquer une déclaration perdante et l’explique par
-        la cascade.
-      maxScore: 3
-      levels:
-      - score: 0
-        description: Ne sait pas lire le volet Styles ni dire pourquoi une déclaration est barrée.
-      - score: 1
-        description: Repère la règle gagnante sans pouvoir expliquer pourquoi elle gagne.
-      - score: 2
-        description: Explique la règle gagnante par la spécificité, l’ordre ou l’héritage, avec le triplet.
-      - score: 3
-        description: Corrige en direct dans l’inspecteur et propose une correction durable sans !important.
-    - id: accessibility
-      description: Vérifie et justifie le contraste et la visibilité du focus.
-      maxScore: 2
-      levels:
-      - score: 0
-        description: Aucun contraste mesuré, ou focus supprimé.
-      - score: 1
-        description: Contrastes mesurés pour une partie des couples ou focus visible sans justification.
-      - score: 2
-        description: Contrastes mesurés dans les deux thèmes, seuils WCAG connus, focus visible justifié.
+      - id: code-ownership
+        description: Explique chaque règle de sa feuille sans aide, y compris celles proposées par l’IA.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas expliquer des règles importantes de sa propre feuille.
+          - score: 1
+            description: Explique le rôle global des règles mais pas leur détail (sélecteurs, valeurs).
+          - score: 2
+            description: Explique précisément chaque sélecteur et chaque valeur, et pourquoi elle s’applique.
+          - score: 3
+            description: Explique aussi les propositions de l’IA qu’il a rejetées ou corrigées et pourquoi.
+      - id: variables-theming
+        description: Comprend la portée, l’héritage et la redéfinition des propriétés personnalisées.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas pourquoi redéfinir les variables change les couleurs.
+          - score: 1
+            description: Sait que le thème change les variables mais ne peut expliquer l’héritage ni l’ordre des règles.
+          - score: 2
+            description: Explique l’héritage depuis la racine et pourquoi .theme-dark l’emporte sur :root.
+          - score: 3
+            description: Anticipe les cas limites (variable non définie, valeur invalide, élément qui ne suit pas le thème comme les liens).
+      - id: cascade-debugging
+        description: Utilise l’inspecteur pour diagnostiquer une déclaration perdante et l’explique par la cascade.
+        maxScore: 3
+        levels:
+          - score: 0
+            description: Ne sait pas lire le volet Styles ni dire pourquoi une déclaration est barrée.
+          - score: 1
+            description: Repère la règle gagnante sans pouvoir expliquer pourquoi elle gagne.
+          - score: 2
+            description: Explique la règle gagnante par la spécificité, l’ordre ou l’héritage, avec le triplet.
+          - score: 3
+            description: Corrige en direct dans l’inspecteur et propose une correction durable sans !important.
+      - id: accessibility
+        description: Vérifie et justifie le contraste et la visibilité du focus.
+        maxScore: 2
+        levels:
+          - score: 0
+            description: Aucun contraste mesuré, ou focus supprimé.
+          - score: 1
+            description: Contrastes mesurés pour une partie des couples ou focus visible sans justification.
+          - score: 2
+            description: Contrastes mesurés dans les deux thèmes, seuils WCAG connus, focus visible justifié.
+
 - id: css-fundamentals-contre-ia
   family: CONTRE_IA
   title: Le blog qui s’affiche mal
-  summary: Trouver et corriger les défauts de cascade, de modèle de boîte et de valeurs dans une feuille
-    de style générée.
+  summary: Trouver et corriger les défauts de cascade, de modèle de boîte et de valeurs dans une feuille de style générée.
   estimatedMinutes: 60
-  instructions: "Léa a demandé à un assistant une feuille de style pour son blog. « Tout a l’air\ncorrect\
-    \ », dit-elle, mais plusieurs détails clochent sur son site. Le fichier HTML\nest correct ; la feuille\
-    \ de style est dans `css/style.css`.\n\n```html\n<!doctype html>\n<html lang=\"fr\">\n  <head>\n \
-    \   <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"\
-    >\n    <title>Le carnet de Léa</title>\n    <link rel=\"stylesheet\" href=\"css/style.css\">\n  </head>\n\
-    \  <body>\n    <header class=\"site-header\">\n      <h1 class=\"site-title\">Le carnet de Léa</h1>\n\
-    \      <nav class=\"site-nav\">\n        <a href=\"index.html\">Accueil</a>\n        <a href=\"archives.html\"\
-    >Archives</a>\n      </nav>\n    </header>\n    <main class=\"content\">\n      <article class=\"\
-    post\">\n        <h2 class=\"post-title\">Mon premier potager</h2>\n        <p class=\"post-meta\"\
-    >Publié le 3 mai</p>\n        <p>Cette année, j’ai planté des tomates, des courgettes et du basilic\
-    \ sur mon balcon.</p>\n        <section class=\"comments\">\n          <h3>Commentaires</h3>\n   \
-    \       <div class=\"comment\">\n            <p>Bravo, ça donne envie !</p>\n            <div class=\"\
-    comment\">\n              <p>Merci beaucoup.</p>\n              <div class=\"comment\">\n        \
-    \        <p>Avec plaisir.</p>\n              </div>\n            </div>\n          </div>\n      \
-    \  </section>\n        <form class=\"comment-form\">\n          <label for=\"message\">Ton commentaire</label>\n\
-    \          <textarea id=\"message\" name=\"message\" placeholder=\"Écris ici…\"></textarea>\n    \
-    \      <button type=\"submit\" class=\"btn\">Envoyer</button>\n        </form>\n      </article>\n\
-    \    </main>\n  </body>\n</html>\n```\n\n```css\n/* Styles du blog, proposés par un assistant */\n\
-    :root {\n  --primary: #2563eb;\n  --text: #1f2937;\n  --muted: #6b7280;\n}\n\nbody {\n  font-family:\
-    \ \"Inter\", sans-serif;\n  color: var(--text);\n  line-height: 24px;\n  margin: 0;\n}\n\n.site-header\
-    \ {\n  background-color: var(--primary);\n  color: white;\n}\n\n.site-title {\n  margin-top: 32px;\n\
-    \  padding: 0 16px;\n  font-size: 2.5rem;\n}\n\n.site-nav {\n  padding: 8px 16px 16px;\n}\n\n.site-nav\
-    \ a {\n  color: white;\n  margin-right: 16px;\n}\n\n.site-nav a:focus {\n  outline: none;\n}\n\n.content\
-    \ {\n  max-width: 720px;\n  margin: 0 auto;\n  padding: 16px;\n}\n\n.post-meta {\n  color: var(--muted);\n\
-    \  font-size: 0.875rem;\n}\n\n.post p {\n  color: var(--text);\n}\n\n.comment {\n  font-size: 0.9em;\n\
-    \  border: 1px var(--muted);\n  padding: 8px 12px;\n  margin-left: 16px;\n}\n\n.comment-form label\
-    \ {\n  font-weight: bold;\n}\n\n.comment-form textarea {\n  width: 100%;\n  padding: 12px;\n  border:\
-    \ 1px solid var(--muted);\n  font: inherit;\n}\n\ntextarea::placeholder,\ntextarea:-ms-input-placeholder\
-    \ {\n  color: var(--muted);\n}\n\n.btn {\n  background-color: var(--primary);\n  color: white;\n \
-    \ border: none;\n  padding: 8px 16px;\n  font: inherit;\n}\n\n.btn:hover {\n  background-color: var(--primary-dark);\n\
-    }\n```\n\nCe que Léa voulait : un bandeau bleu qui commence tout en haut de la page, une date\nde\
-    \ publication en gris, des réponses aux commentaires encadrées et en retrait, un\ntexte d’exemple\
-    \ gris dans le champ, un bouton qui fonce au survol, un site\nutilisable au clavier.\n\nTravail demandé\
-    \ :\n\n1. Ouvre la page dans un navigateur, inspecte-la et décris ce qui s’affiche\n   réellement.\n\
-    2. Liste chaque défaut : la règle concernée, le symptôme observé ou possible, la\n   cause précise\
-    \ (avec la spécificité ou le mécanisme CSS en jeu) et sa gravité.\n3. Propose une feuille corrigée\
-    \ qui respecte les intentions de Léa, en modifiant le\n   moins de lignes possible et sans `!important`.\n\
-    4. Pour chaque correction, indique comment tu l’as vérifiée (inspecteur, valeur\n   calculée, situation\
-    \ de test).\n"
-  deliverable: 'Colle ta liste de défauts (règle, symptôme, cause, gravité), puis la feuille corrigée
+  instructions: |
+    Léa a demandé à un assistant une feuille de style pour son blog. « Tout a l’air
+    correct », dit-elle, mais plusieurs détails clochent sur son site. Le fichier HTML
+    est correct ; la feuille de style est dans `css/style.css`.
 
+    ```html
+    <!doctype html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Le carnet de Léa</title>
+        <link rel="stylesheet" href="css/style.css">
+      </head>
+      <body>
+        <header class="site-header">
+          <h1 class="site-title">Le carnet de Léa</h1>
+          <nav class="site-nav">
+            <a href="index.html">Accueil</a>
+            <a href="archives.html">Archives</a>
+          </nav>
+        </header>
+        <main class="content">
+          <article class="post">
+            <h2 class="post-title">Mon premier potager</h2>
+            <p class="post-meta">Publié le 3 mai</p>
+            <p>Cette année, j’ai planté des tomates, des courgettes et du basilic sur mon balcon.</p>
+            <section class="comments">
+              <h3>Commentaires</h3>
+              <div class="comment">
+                <p>Bravo, ça donne envie !</p>
+                <div class="comment">
+                  <p>Merci beaucoup.</p>
+                  <div class="comment">
+                    <p>Avec plaisir.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <form class="comment-form">
+              <label for="message">Ton commentaire</label>
+              <textarea id="message" name="message" placeholder="Écris ici…"></textarea>
+              <button type="submit" class="btn">Envoyer</button>
+            </form>
+          </article>
+        </main>
+      </body>
+    </html>
+    ```
+
+    ```css
+    /* Styles du blog, proposés par un assistant */
+    :root {
+      --primary: #2563eb;
+      --text: #1f2937;
+      --muted: #6b7280;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      color: var(--text);
+      line-height: 24px;
+      margin: 0;
+    }
+
+    .site-header {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .site-title {
+      margin-top: 32px;
+      padding: 0 16px;
+      font-size: 2.5rem;
+    }
+
+    .site-nav {
+      padding: 8px 16px 16px;
+    }
+
+    .site-nav a {
+      color: white;
+      margin-right: 16px;
+    }
+
+    .site-nav a:focus {
+      outline: none;
+    }
+
+    .content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .post-meta {
+      color: var(--muted);
+      font-size: 0.875rem;
+    }
+
+    .post p {
+      color: var(--text);
+    }
+
+    .comment {
+      font-size: 0.9em;
+      border: 1px var(--muted);
+      padding: 8px 12px;
+      margin-left: 16px;
+    }
+
+    .comment-form label {
+      font-weight: bold;
+    }
+
+    .comment-form textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--muted);
+      font: inherit;
+    }
+
+    textarea::placeholder,
+    textarea:-ms-input-placeholder {
+      color: var(--muted);
+    }
+
+    .btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font: inherit;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-dark);
+    }
+    ```
+
+    Ce que Léa voulait : un bandeau bleu qui commence tout en haut de la page, une date
+    de publication en gris, des réponses aux commentaires encadrées et en retrait, un
+    texte d’exemple gris dans le champ, un bouton qui fonce au survol, un site
+    utilisable au clavier.
+
+    Travail demandé :
+
+    1. Ouvre la page dans un navigateur, inspecte-la et décris ce qui s’affiche
+       réellement.
+    2. Liste chaque défaut : la règle concernée, le symptôme observé ou possible, la
+       cause précise (avec la spécificité ou le mécanisme CSS en jeu) et sa gravité.
+    3. Propose une feuille corrigée qui respecte les intentions de Léa, en modifiant le
+       moins de lignes possible et sans `!important`.
+    4. Pour chaque correction, indique comment tu l’as vérifiée (inspecteur, valeur
+       calculée, situation de test).
+  deliverable: |
+    Colle ta liste de défauts (règle, symptôme, cause, gravité), puis la feuille corrigée
     complète, puis tes vérifications.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: defects-found
-      description: Identifie les défauts réels, y compris ceux qui dépendent d’une interaction ou de la
-        taille de l’écran.
-      maxScore: 4
-    - id: root-cause
-      description: Explique la cause de chaque défaut par le mécanisme CSS en jeu, pas seulement le symptôme.
-      maxScore: 3
-    - id: fix-quality
-      description: Propose des corrections minimales, justes, vérifiées et sans !important.
-      maxScore: 3
-    - id: accessibility
-      description: Évalue l’impact des défauts sur les utilisateurs du clavier et la lisibilité.
-      maxScore: 2
+      - id: defects-found
+        description: Identifie les défauts réels, y compris ceux qui dépendent d’une interaction ou de la taille de l’écran.
+        maxScore: 4
+      - id: root-cause
+        description: Explique la cause de chaque défaut par le mécanisme CSS en jeu, pas seulement le symptôme.
+        maxScore: 3
+      - id: fix-quality
+        description: Propose des corrections minimales, justes, vérifiées et sans !important.
+        maxScore: 3
+      - id: accessibility
+        description: Évalue l’impact des défauts sur les utilisateurs du clavier et la lisibilité.
+        maxScore: 2
+
 - id: css-fundamentals-apres-ia
   family: APRES_IA
   title: Le site des Jardins partagés
   summary: Faire évoluer et dépanner la feuille de style existante d’une association, sans la réécrire.
   estimatedMinutes: 60
-  instructions: "Une association de jardins partagés a un petit site en ligne. La feuille de style\na\
-    \ été produite il y a quelques mois avec une IA et fonctionne à peu près. Tu dois\nla faire évoluer\
-    \ **en modifiant le moins de lignes possible**, sans la régénérer et\nsans toucher au HTML.\n\n`index.html`\
-    \ :\n\n```html\n<!doctype html>\n<html lang=\"fr\">\n  <head>\n    <meta charset=\"utf-8\">\n    <title>Les\
-    \ Jardins partagés</title>\n    <link rel=\"stylesheet\" href=\"styles.css\">\n  </head>\n  <body>\n\
-    \    <section id=\"hero\" class=\"hero\">\n      <h1>Les Jardins partagés</h1>\n      <p>Cultivons\
-    \ ensemble, au cœur du quartier.</p>\n      <a class=\"btn btn-cta\" href=\"adhesion.html\">Adhérer</a>\n\
-    \      <a class=\"btn\" href=\"agenda.html\">Voir l’agenda</a>\n    </section>\n    <main class=\"\
-    cards\">\n      <article class=\"card\">\n        <h2>Ateliers</h2>\n        <p>Chaque samedi matin,\
-    \ apprends à semer, tailler et récolter.</p>\n      </article>\n      <article class=\"card card--highlight\"\
-    >\n        <h2>Parcelles</h2>\n        <p>Douze parcelles de 4 m² sont attribuées chaque printemps.</p>\n\
-    \      </article>\n    </main>\n    <footer class=\"site-footer\">\n      <p>Association loi 1901\
-    \ — <a href=\"contact.html\">Nous contacter</a></p>\n    </footer>\n  </body>\n</html>\n```\n\n`styles.css`\
-    \ :\n\n```css\nbody {\n  font-family: Verdana, sans-serif;\n  color: #1f2937;\n  line-height: 1.5;\n\
-    \  margin: 0;\n}\n\nh1,\nh2 {\n  color: #0f766e;\n}\n\n.hero {\n  background-color: #ecfdf5;\n  padding:\
-    \ 32px 16px;\n  text-align: center;\n}\n\n#hero .btn {\n  display: inline-block;\n  background-color:\
-    \ #0f766e;\n  color: white;\n  padding: 8px 16px;\n  text-decoration: none;\n}\n\n.btn-cta {\n  background-color:\
-    \ darkorange;\n}\n\n.card {\n  width: 300px;\n  padding: 24px;\n  border: 1px solid #0f766e;\n  margin:\
-    \ 16px auto;\n}\n\n.card h2 {\n  margin-top: 0;\n  border-bottom: 2px solid #0f766e;\n}\n\n.site-footer\
-    \ {\n  background-color: #134e4a;\n  color: #d1d5db;\n  padding: 16px;\n}\n```\n\nDemandes de l’association\
-    \ :\n\n1. **Bug** : le bouton « Adhérer » devrait être orange, mais il est vert comme\n   l’autre\
-    \ bouton. Corrige-le **sans `!important`** et explique la cause.\n2. **Bug** : le lien « Nous contacter\
-    \ » du pied de page est presque invisible.\n   Corrige-le et explique pourquoi la couleur du pied\
-    \ de page ne s’applique pas au\n   lien.\n3. **Évolution** : la nouvelle charte remplace le vert `#0f766e`\
-    \ par le violet\n   `#7c3aed`, partout. Fais-le de sorte que le prochain changement de couleur ne\n\
-    \   demande qu’une seule ligne.\n4. **Bug** : la maquette indique des cartes de 300 px de large, bordure\
-    \ comprise.\n   Mesure-les dans l’inspecteur, explique l’écart et corrige-le.\n5. **Évolution** :\
-    \ la carte `.card--highlight` doit avoir un fond `#fef3c7`, et sa\n   bordure, son titre et le trait\
-    \ sous le titre en `#b45309`. Cette variante ne\n   doit redéfinir **que des variables**.\n"
-  deliverable: 'Colle la feuille modifiée complète, puis la liste des lignes modifiées ou ajoutées
+  instructions: |
+    Une association de jardins partagés a un petit site en ligne. La feuille de style
+    a été produite il y a quelques mois avec une IA et fonctionne à peu près. Tu dois
+    la faire évoluer **en modifiant le moins de lignes possible**, sans la régénérer et
+    sans toucher au HTML.
 
+    `index.html` :
+
+    ```html
+    <!doctype html>
+    <html lang="fr">
+      <head>
+        <meta charset="utf-8">
+        <title>Les Jardins partagés</title>
+        <link rel="stylesheet" href="styles.css">
+      </head>
+      <body>
+        <section id="hero" class="hero">
+          <h1>Les Jardins partagés</h1>
+          <p>Cultivons ensemble, au cœur du quartier.</p>
+          <a class="btn btn-cta" href="adhesion.html">Adhérer</a>
+          <a class="btn" href="agenda.html">Voir l’agenda</a>
+        </section>
+        <main class="cards">
+          <article class="card">
+            <h2>Ateliers</h2>
+            <p>Chaque samedi matin, apprends à semer, tailler et récolter.</p>
+          </article>
+          <article class="card card--highlight">
+            <h2>Parcelles</h2>
+            <p>Douze parcelles de 4 m² sont attribuées chaque printemps.</p>
+          </article>
+        </main>
+        <footer class="site-footer">
+          <p>Association loi 1901 — <a href="contact.html">Nous contacter</a></p>
+        </footer>
+      </body>
+    </html>
+    ```
+
+    `styles.css` :
+
+    ```css
+    body {
+      font-family: Verdana, sans-serif;
+      color: #1f2937;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    h1,
+    h2 {
+      color: #0f766e;
+    }
+
+    .hero {
+      background-color: #ecfdf5;
+      padding: 32px 16px;
+      text-align: center;
+    }
+
+    #hero .btn {
+      display: inline-block;
+      background-color: #0f766e;
+      color: white;
+      padding: 8px 16px;
+      text-decoration: none;
+    }
+
+    .btn-cta {
+      background-color: darkorange;
+    }
+
+    .card {
+      width: 300px;
+      padding: 24px;
+      border: 1px solid #0f766e;
+      margin: 16px auto;
+    }
+
+    .card h2 {
+      margin-top: 0;
+      border-bottom: 2px solid #0f766e;
+    }
+
+    .site-footer {
+      background-color: #134e4a;
+      color: #d1d5db;
+      padding: 16px;
+    }
+    ```
+
+    Demandes de l’association :
+
+    1. **Bug** : le bouton « Adhérer » devrait être orange, mais il est vert comme
+       l’autre bouton. Corrige-le **sans `!important`** et explique la cause.
+    2. **Bug** : le lien « Nous contacter » du pied de page est presque invisible.
+       Corrige-le et explique pourquoi la couleur du pied de page ne s’applique pas au
+       lien.
+    3. **Évolution** : la nouvelle charte remplace le vert `#0f766e` par le violet
+       `#7c3aed`, partout. Fais-le de sorte que le prochain changement de couleur ne
+       demande qu’une seule ligne.
+    4. **Bug** : la maquette indique des cartes de 300 px de large, bordure comprise.
+       Mesure-les dans l’inspecteur, explique l’écart et corrige-le.
+    5. **Évolution** : la carte `.card--highlight` doit avoir un fond `#fef3c7`, et sa
+       bordure, son titre et le trait sous le titre en `#b45309`. Cette variante ne
+       doit redéfinir **que des variables**.
+  deliverable: |
+    Colle la feuille modifiée complète, puis la liste des lignes modifiées ou ajoutées
     avec, pour chacune, la demande concernée et la raison du changement. Ajoute la
-
     largeur mesurée des cartes avant et après ta correction.
-
-    '
   rubric:
     passRatio: 0.7
     criteria:
-    - id: bug-diagnosis
-      description: Explique les deux bugs de couleur par la spécificité et l’héritage, et les corrige
-        proprement.
-      maxScore: 3
-    - id: box-model
-      description: Mesure l’écart de largeur, l’explique et choisit une correction adaptée.
-      maxScore: 2
-    - id: variables
-      description: Introduit des variables globales et de composant de façon cohérente.
-      maxScore: 3
-    - id: minimal-change
-      description: Fait évoluer le code existant de façon ciblée et vérifiée.
-      maxScore: 2
+      - id: bug-diagnosis
+        description: Explique les deux bugs de couleur par la spécificité et l’héritage, et les corrige proprement.
+        maxScore: 3
+      - id: box-model
+        description: Mesure l’écart de largeur, l’explique et choisit une correction adaptée.
+        maxScore: 2
+      - id: variables
+        description: Introduit des variables globales et de composant de façon cohérente.
+        maxScore: 3
+      - id: minimal-change
+        description: Fait évoluer le code existant de façon ciblée et vérifiée.
+        maxScore: 2

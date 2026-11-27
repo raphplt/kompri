@@ -120,9 +120,7 @@ Format de `challenges.yaml` :
     …
   deliverable: | # Markdown : ce qu’il colle dans le formulaire de soumission
     …
-  examinerNotes:
-    | # Invisible pour l’apprenant, transmis seulement à l’examinateur
-    …
+  # examinerNotes : pas ici, dans les clés de correction privées (voir en fin de guide)
   rubric:
     passRatio: 0.7
     criteria:
@@ -154,3 +152,22 @@ Format de `challenges.yaml` :
 Le contenu rédigé par une IA porte le statut de relecture humaine en attente dans la
 journal de projet. Une relecture d’exactitude indépendante vérifie chaque leçon : code
 exécuté ou raisonné, affirmations comparées aux sources, liens contrôlés.
+
+## Clés de correction : privées
+
+Les notes d’examinateur (`examinerNotes`), les niveaux détaillés des grilles des défis
+`CONTRE_IA` et `APRES_IA` (ils nomment les défauts à trouver) et les oraux de référence
+réalistes ne sont jamais en clair dans le dépôt, qui est public. Ils vivent dans
+`packages/content/private/answers.yaml` et `packages/evals/private/*.yaml`, ignorés par Git,
+et seule leur version chiffrée est commitée (`packages/content/data/answers.enc`,
+`packages/evals/references.enc`, AES-256-GCM).
+
+- `KOMPRI_CONTENT_KEY=… pnpm content:unlock` écrit les copies en clair ;
+- on édite `answers.yaml` (une entrée par défi : `examinerNotes`, et pour `CONTRE_IA` et
+  `APRES_IA` les `levels` par identifiant de critère) ;
+- `pnpm content:validate` vérifie que chaque défi a ses notes et ses niveaux ;
+- `KOMPRI_CONTENT_KEY=… pnpm content:lock` rechiffre avant le commit.
+
+Le validateur refuse des `levels` dans un défi `CONTRE_IA` ou `APRES_IA` public, et le schéma
+refuse `examinerNotes` dans `challenges.yaml`. La clé se conserve dans un gestionnaire de mots
+de passe : sans elle, les clés de correction sont perdues.

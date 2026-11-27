@@ -2,8 +2,11 @@ import { readdir, readFile } from 'node:fs/promises';
 import { parse } from 'yaml';
 import { z } from 'zod';
 import { lintMarkdown, splitFrontMatter } from './markdown.ts';
+import { readPrivate } from './private.ts';
 import {
+  answersSchema,
   challengeFileEntrySchema,
+  defectFindingFamilies,
   challengeSchema,
   domainSchema,
   lessonFrontMatterSchema,
@@ -15,6 +18,12 @@ import type { Challenge, Lesson, Rubric } from './schemas.ts';
 
 export * from './schemas.ts';
 export { codeLanguages, calloutKinds, lintMarkdown } from './markdown.ts';
+export {
+  decryptPrivate,
+  encryptPrivate,
+  generateContentKey,
+  readPrivate,
+} from './private.ts';
 
 const families = ['SANS_IA', 'AVEC_IA', 'CONTRE_IA', 'APRES_IA'] as const;
 
@@ -206,8 +215,37 @@ export async function loadContent(
       `skills/${skillId}/challenges.yaml`,
     );
     for (const { rubric, ...challenge } of entries) {
+      if (
+        (defectFindingFamilies as readonly string[]).includes(
+          challenge.family,
+        ) &&
+        rubric.criteria.some((criterion) => criterion.levels)
+      )
+        throw new Error(
+          `skills/${skillId}/challenges.yaml: ${challenge.id} levels name the defects; keep them in the private answers`,
+        );
       challenges.push({ ...challenge, skillId, rubricId: challenge.id });
       rubrics.push({ ...rubric, id: challenge.id });
+    }
+  }
+  // Answer keys are merged only when available (plaintext copy or key).
+  const privateText = await readPrivate(
+    new URL('../private/answers.yaml', directory),
+    new URL('answers.enc', directory),
+  );
+  if (privateText !== null) {
+    const answers = located(answersSchema, parse(privateText), 'answers');
+    for (const id of Object.keys(answers))
+      if (!challenges.some((c) => c.id === id))
+        throw new Error(`answers: unknown challenge ${id}`);
+    for (const challenge of challenges) {
+      const answer = answers[challenge.id];
+      if (!answer) continue;
+      challenge.examinerNotes = answer.examinerNotes;
+      const rubric = rubrics.find((r) => r.id === challenge.rubricId)!;
+      for (const criterion of rubric.criteria)
+        if (answer.levels?.[criterion.id])
+          criterion.levels = answer.levels[criterion.id];
     }
   }
   return located(

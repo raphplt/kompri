@@ -71,17 +71,18 @@ Pour utiliser un proxy existant à la place, omettre le profil et le faire point
 
 ## Variables
 
-| Variable                                          | Rôle                                                            |
-| ------------------------------------------------- | --------------------------------------------------------------- |
-| `POSTGRES_PASSWORD`                               | Mot de passe PostgreSQL, utilisé pour construire `DATABASE_URL` |
-| `ORAL_QUESTION_COUNT`, `ORAL_ANSWER_SECONDS`      | Nombre de questions et temps par réponse                        |
-| `ORAL_LIMIT_PER_WINDOW`, `ORAL_WINDOW_HOURS`      | Quota d’oraux sur une fenêtre glissante                         |
-| `VALIDATION_DAYS`, `SESSION_DAYS`                 | Durée d’une validation et d’une session de connexion            |
-| `LLM_<USAGE>_PROVIDER`, `_MODEL`, tarifs          | Fournisseur et modèle par usage (voir `.env.example`)           |
-| `<FOURNISSEUR>_API_KEY`, `<FOURNISSEUR>_BASE_URL` | Clé et endpoint du fournisseur                                  |
-| `LLM_MONTHLY_BUDGET_USD`                          | Plafond mensuel de dépense IA estimée (voir ci-dessous)         |
-| `WEB_PORT`                                        | Port publié sur la boucle locale (3000 par défaut)              |
-| `WEB_INSECURE_COOKIES=true`                       | Uniquement pour un essai local sans HTTPS                       |
+| Variable                                          | Rôle                                                                 |
+| ------------------------------------------------- | -------------------------------------------------------------------- |
+| `POSTGRES_PASSWORD`                               | Mot de passe PostgreSQL, utilisé pour construire `DATABASE_URL`      |
+| `ORAL_QUESTION_COUNT`, `ORAL_ANSWER_SECONDS`      | Nombre de questions et temps par réponse                             |
+| `ORAL_LIMIT_PER_WINDOW`, `ORAL_WINDOW_HOURS`      | Quota d’oraux sur une fenêtre glissante                              |
+| `VALIDATION_DAYS`, `SESSION_DAYS`                 | Durée d’une validation et d’une session de connexion                 |
+| `LLM_<USAGE>_PROVIDER`, `_MODEL`, tarifs          | Fournisseur et modèle par usage (voir `.env.example`)                |
+| `<FOURNISSEUR>_API_KEY`, `<FOURNISSEUR>_BASE_URL` | Clé et endpoint du fournisseur                                       |
+| `LLM_MONTHLY_BUDGET_USD`                          | Plafond mensuel de dépense IA estimée (voir ci-dessous)              |
+| `KOMPRI_CONTENT_KEY`                              | Déchiffre les clés de correction au seed ; obligatoire en production |
+| `WEB_PORT`                                        | Port publié sur la boucle locale (3000 par défaut)                   |
+| `WEB_INSECURE_COOKIES=true`                       | Uniquement pour un essai local sans HTTPS                            |
 
 ## Administrateurs et tâche quotidienne
 
