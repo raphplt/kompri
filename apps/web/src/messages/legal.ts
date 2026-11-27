@@ -43,9 +43,9 @@ d’apprentissage. Le travail que tu soumets reste le tien.
 
 ## 6. Contenus pédagogiques
 
-Les cours ont été rédigés avec l’assistance d’outils d’IA, puis vérifiés en exécutant leurs
-exemples et relus pour leur exactitude. Une relecture par des formateurs est en cours. Ils
-peuvent malgré tout contenir des erreurs : signale-les à l’adresse de contact.
+Les cours ont été rédigés avec l’assistance d’outils d’IA ; leurs exemples ont été exécutés,
+puis un second outil d’IA les a relus en réexécutant le code. Ils n’ont pas encore été relus
+par des formateurs et peuvent contenir des erreurs : signale-les à l’adresse de contact.
 
 ## 7. Données personnelles et cookies
 
@@ -271,9 +271,10 @@ Quand ton travail est prêt, tu le soumets puis tu passes l’oral :
   modification, bug introduit, cas limite ;
 - ${settings.minutes} minutes par réponse, affichées par un minuteur ; une réponse non envoyée à
   temps compte comme absente ;
-- pas d’aide ni de copier-coller : c’est ta compréhension qui est évaluée ;
-- une notation critère par critère, selon la grille publiée sur la page du défi, avec une
-  justification et un retour écrit.
+- sans aide extérieure : c’est ta compréhension qui est évaluée, et le minuteur laisse peu de
+  temps pour autre chose ;
+- une notation critère par critère, selon la grille du défi (ses critères sont publiés sur la
+  page du défi), avec une justification et un retour écrit.
 
 Tu peux passer jusqu’à ${settings.orals} oraux par période de ${settings.hours} heures. Pour retenter un
 oral, soumets une nouvelle version de ton travail.
@@ -282,11 +283,13 @@ oral, soumets une nouvelle version de ton travail.
 
 Une compétence validée l’est pour ${settings.validityDays} jours. Ensuite, elle passe « à renouveler » :
 un nouvel oral la revalide. Pour passer l’oral d’une compétence, ses prérequis doivent avoir
-été validés au moins une fois.
+été validés au moins une fois, sauf en oral de positionnement : il permet à une personne déjà
+expérimentée de commencer plus loin, et le valider reconnaît aussi les prérequis.
 
 ## Ce que l’examinateur n’est pas
 
 L’examinateur est un modèle de langage guidé par une grille, des notes de correction et des
 garde-fous. Il peut se tromper : chaque note est justifiée et tu peux demander un réexamen
-humain. Sa fiabilité est mesurée en continu sur des oraux de référence.`;
+humain. Sa fiabilité est mesurée sur des oraux de référence avant chaque changement de
+consignes ou de modèle.`;
 }

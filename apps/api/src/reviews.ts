@@ -27,7 +27,7 @@ import { AdminGuard, AuthGuard, CurrentUser } from './auth.ts';
 import type { AuthenticatedUser } from './auth.ts';
 import { CLOCK, DATABASE, days, MAILER, SETTINGS } from './context.ts';
 import type { Clock, Settings } from './context.ts';
-import { conflict, notFound, parseInput } from './errors.ts';
+import { conflict, forbidden, notFound, parseInput } from './errors.ts';
 import { buildResult, reviewStatus } from './learning.ts';
 import type { Mailer } from './mailer.ts';
 import { monthlySpend, monthOf } from './spend.ts';
@@ -243,6 +243,11 @@ export class ReviewService {
     const review = await this.load(rawId);
     if (review.status !== 'OPEN')
       throw conflict('review_closed', 'This review was already decided');
+    if (review.userId === admin.id)
+      throw forbidden(
+        'own_review',
+        'Another administrator must decide on your own oral',
+      );
     const { session } = review;
     const challenge = challengeSchema.parse(session.attempt.challengeSnapshot);
     const now = this.now();

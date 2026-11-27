@@ -18,9 +18,20 @@ import { notFound, parseInput } from './errors.ts';
 const live = { archivedAt: null };
 const slugSchema = z.string().regex(/^[a-z0-9][a-z0-9-]*$/);
 
-export const toPublicRubric = (snapshot: unknown) => {
+/**
+ * The rubric shown to learners. In challenges where finding the defects is the
+ * task (CONTRE_IA, APRES_IA), the detailed levels name those defects: only the
+ * criteria are shown, and the examiner keeps the full rubric.
+ */
+export const toPublicRubric = (snapshot: unknown, family: string) => {
   const rubric = rubricSchema.parse(snapshot);
-  return { passRatio: rubric.passRatio, criteria: rubric.criteria };
+  const levelsArePublic = family === 'SANS_IA' || family === 'AVEC_IA';
+  return {
+    passRatio: rubric.passRatio,
+    criteria: rubric.criteria.map(({ levels, ...criterion }) =>
+      levelsArePublic && levels ? { ...criterion, levels } : criterion,
+    ),
+  };
 };
 
 @ApiTags('content')
@@ -158,7 +169,7 @@ export class ContentController {
       skillTitle: challenge.skill.title,
       instructions: challenge.instructions,
       deliverable: challenge.deliverable,
-      rubric: toPublicRubric(challenge.rubricSnapshot),
+      rubric: toPublicRubric(challenge.rubricSnapshot, challenge.family),
     });
   }
 }

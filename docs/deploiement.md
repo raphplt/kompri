@@ -49,7 +49,9 @@ docker compose -f compose.prod.yaml --env-file .env.production up -d
 docker compose -f compose.prod.yaml --env-file .env.production ps
 ```
 
-`POSTGRES_PASSWORD` doit être long et aléatoire (par exemple `openssl rand -base64 32`).
+`POSTGRES_PASSWORD` doit être long et aléatoire, sans caractère spécial d’URL (par exemple
+`openssl rand -hex 32`) : il est inséré tel quel dans `DATABASE_URL`, où un `/` ou un `+` du
+base64 casserait l’adresse.
 Derrière un proxy d’entreprise qui inspecte TLS, ajouter au build
 `--secret id=extra_ca,src=/chemin/ca.pem` (option du Dockerfile, sans effet sinon).
 
@@ -115,14 +117,14 @@ migrations ne sont pas réversibles automatiquement.
 
 ## Sauvegardes
 
-```bash
-docker compose -f compose.prod.yaml exec -T postgres \
-  pg_dump -U kompri -d kompri --format=custom > kompri-$(date +%F).dump
-```
+Le service `backup` de `compose.prod.yaml` exécute `deploy/backup.sh` : un fichier
+`backups/kompri-<date>.dump` par jour, au format de `pg_dump --format=custom`, conservé
+`BACKUP_DAYS` jours (30 par défaut, durée annoncée dans la politique de confidentialité).
+Une sauvegarde manquée n’arrête pas le service et n’écrit aucun fichier partiel ; surveillez
+la ligne `backup written` dans `docker compose -f compose.prod.yaml logs backup`.
 
-Planifier cette commande chaque jour (cron), garder 30 jours de sauvegardes (durée annoncée
-dans la politique de confidentialité), les chiffrer et les copier hors du serveur,
-et tester régulièrement une restauration :
+Restent à faire par l’exploitant : chiffrer et copier `backups/` hors du serveur (les copies
+distantes doivent respecter la même durée), et tester régulièrement une restauration :
 
 ```bash
 docker compose -f compose.prod.yaml exec -T postgres \
@@ -165,8 +167,13 @@ figurer dans la politique de confidentialité.
 Chaque appel payant ajoute son coût estimé (jetons × tarifs `LLM_*_USD_PER_MILLION`) à la
 table `LlmMonthlySpend`, par mois civil UTC. Quand `LLM_MONTHLY_BUDGET_USD` est atteint,
 l’API refuse les nouveaux oraux et les messages au tuteur (`503 llm_budget_exhausted`) jusqu’au
-mois suivant ; un oral déjà commencé va jusqu’à sa notation, le dépassement reste donc limité
-aux oraux en cours. Les administrateurs voient la dépense du mois dans les statistiques.
+mois suivant. Chaque oral en cours garde une réserve (`LLM_ORAL_RESERVE_USD`, 0,10 $ par
+défaut) : un nouvel oral n’est accepté que si la dépense du mois, plus la réserve de chaque oral
+en cours et la sienne, reste sous le plafond, et ce contrôle est fait sous verrou au moment où
+l’oral est créé. Un oral commencé va jusqu’à sa notation, avec un seul appel au modèle à la fois
+et un nombre de notations borné. Le dépassement est donc limité à l’écart entre la réserve et
+le coût réel des oraux en cours. Les administrateurs voient la dépense du mois dans les
+statistiques.
 
 Ce plafond repose sur une estimation : réglez aussi une limite de dépense mensuelle dans la
 console du fournisseur, qui reste la seule garantie stricte.

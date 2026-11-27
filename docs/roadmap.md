@@ -45,7 +45,7 @@ Application :
 
 - ✅ Tableau de bord : compétences validées, expirées, disponibles, verrouillées
 - ✅ Expiration et renouvellement des validations
-- ✅ Quotas d’oraux réservés atomiquement
+- ✅ Quotas d’oraux, budget et appels au modèle réservés sous verrou (après l’audit externe)
 - ✅ Oral de positionnement pour entrer au bon endroit de l’arbre
 
 ## Jalon 3 bis — Finitions du compte et réexamen
@@ -65,15 +65,17 @@ Application :
 ## Jalon 5 — Fiabilité de l’examinateur
 
 - ✅ Grilles par niveaux et notes d’examinateur exploitées par les prompts
-- ✅ Références d’évaluation par famille de défi (7 oraux, dont 4 réalistes)
+- ✅ Références d’évaluation : 16 oraux sur 8 défis et les quatre familles (couverture encore
+  faible : 8 défis sur 120)
 - ✅ Mesure avec un vrai modèle sur 16 oraux de référence, dont des cas d’attaque :
   Sonnet 5.5 retenu, 48/48 verdicts conformes, 0 faux positif ([mesures](evaluations.md))
 - ✅ Robustesse des appels : nouvelles tentatives, effort explicite, coût des réponses
   inutilisables compté
 - ⏳ Relecture humaine des références
 - ✅ Plafond mensuel de dépense IA (20 $ en production, soit moins de 20 €)
-- ✅ Défenses contre l’injection de consignes et les réponses assistées : minuteur, collage
-  bloqué, tuteur coupé pendant l’oral, indicateurs de déroulement visibles au réexamen
+- ✅ Défenses contre l’injection de consignes et les réponses assistées : contenu de
+  l’apprenant transmis comme données, minuteur côté serveur, tuteur coupé pendant l’oral ; le
+  blocage du collage et les indicateurs de déroulement sont côté navigateur, donc indicatifs
 - ✅ Tuteur IA pendant l’apprentissage (autorisé), coupé pendant l’oral (interdit)
 
 ## Jalon 6 — Préparation au déploiement

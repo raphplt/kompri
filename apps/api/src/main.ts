@@ -13,8 +13,16 @@ const { examiner, tutor } = createLlmFromEnvironment(
   process.env,
   spendLogger(db),
 );
-if (process.env.NODE_ENV === 'production' && env.MAIL_TRANSPORT !== 'smtp')
-  throw new Error('Production requires MAIL_TRANSPORT=smtp and SMTP_URL');
+if (process.env.NODE_ENV === 'production') {
+  if (env.MAIL_TRANSPORT !== 'smtp')
+    throw new Error('Production requires MAIL_TRANSPORT=smtp and SMTP_URL');
+  // The mock grades by answer length: it must never examine real learners.
+  for (const usage of ['EXAMINER', 'TUTOR'])
+    if (process.env[`LLM_${usage}_PROVIDER`] === 'mock')
+      throw new Error(
+        `Production requires a real model for LLM_${usage}_PROVIDER`,
+      );
+}
 const mailer = createMailer(env);
 const app = await createApi({ db, examiner, tutor, mailer, settings: env });
 await app.listen(env.API_PORT, env.API_HOST);

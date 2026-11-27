@@ -116,8 +116,29 @@ export class TutorService {
       : null;
     if (body.lessonSlug && !lesson) throw notFound('Lesson');
     await assertBudget(this.db, this.settings, this.now(), 'tutor');
-    await this.db.tutorUsage.create({
-      data: { userId: user.id, consumedAt: this.now() },
+    // Recount and reserve under a per-learner lock: parallel messages cannot
+    // all pass on the same count.
+    await this.db.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`tutor:${user.id}`}))`;
+      const used = await tx.tutorUsage.count({
+        where: {
+          userId: user.id,
+          consumedAt: {
+            gte: new Date(
+              this.now().getTime() - hours(this.settings.TUTOR_WINDOW_HOURS),
+            ),
+          },
+        },
+      });
+      if (used >= this.settings.TUTOR_LIMIT_PER_WINDOW)
+        throw new ApiException(
+          HttpStatus.TOO_MANY_REQUESTS,
+          'tutor_quota_exceeded',
+          'Tutor quota reached for the current period',
+        );
+      await tx.tutorUsage.create({
+        data: { userId: user.id, consumedAt: this.now() },
+      });
     });
     const context = {
       skill: {

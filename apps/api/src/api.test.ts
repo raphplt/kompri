@@ -187,6 +187,19 @@ describe('search', () => {
 });
 
 describe('content', () => {
+  it('hides the detailed levels of defect-finding challenges', async () => {
+    const rubricOf = async (id: string) =>
+      challengeDetailSchema.parse((await call(`/challenges/${id}`)).body)
+        .rubric;
+    const solo = await rubricOf('js-basics-sans-ia');
+    expect(solo.criteria.every((c) => c.levels?.length)).toBe(true);
+    for (const id of ['js-basics-contre-ia', 'js-basics-apres-ia']) {
+      const rubric = await rubricOf(id);
+      expect(rubric.criteria.length).toBeGreaterThan(0);
+      expect(rubric.criteria.every((c) => c.levels === undefined)).toBe(true);
+    }
+  });
+
   it('checks the database and serves the tree, skills and challenges', async () => {
     expect((await call('/health')).body).toEqual({
       status: 'ok',
@@ -318,6 +331,36 @@ describe('accounts', () => {
       ).status,
     ).toBe(401);
   }, 30_000);
+
+  it('exports a section for every table that holds personal rows', async () => {
+    const user = await register();
+    const exported = z
+      .record(z.string(), z.unknown())
+      .parse((await call('/me/export', { token: user.token })).body);
+    const tables = await db.$queryRaw<{ table_name: string }[]>`
+      SELECT table_name FROM information_schema.columns
+      WHERE table_schema = 'public' AND column_name = 'userId'`;
+    const section: Record<string, string> = {
+      AuthSession: 'authSessions',
+      Attempt: 'attempts',
+      OralSession: 'sessions',
+      Validation: 'validations',
+      OralUsage: 'oralUsage',
+      TutorUsage: 'tutorUsage',
+      PasswordReset: 'passwordResets',
+      EmailVerification: 'emailChecks',
+      ReviewRequest: 'reviewRequests',
+      LessonProgress: 'lessonProgress',
+    };
+    for (const { table_name } of tables) {
+      expect(section, `no export section for ${table_name}`).toHaveProperty(
+        table_name,
+      );
+      expect(exported).toHaveProperty(section[table_name]!);
+    }
+    expect(exported).toHaveProperty('lastActiveAt');
+    expect(JSON.stringify(exported)).not.toContain('scrypt$');
+  });
 
   it('exports and deletes the account with every personal row', async () => {
     const user = await register();
@@ -847,6 +890,46 @@ describe('account', () => {
 });
 
 describe('human review', () => {
+  it('does not let an administrator decide on their own oral', async () => {
+    const admin = await register('Admin');
+    await db.user.update({ where: { id: admin.id }, data: { role: 'ADMIN' } });
+    let oral = oralViewSchema.parse(
+      (
+        await call(`/attempts/${await newAttempt(admin.token)}/oral`, {
+          method: 'POST',
+          token: admin.token,
+        })
+      ).body,
+    );
+    oral = oralViewSchema.parse(
+      (
+        await call(`/orals/${oral.id}/abandon`, {
+          method: 'POST',
+          token: admin.token,
+        })
+      ).body,
+    );
+    expect(
+      (
+        await call(`/orals/${oral.id}/review`, {
+          token: admin.token,
+          body: {
+            message: 'Je conteste ma propre note pour vérifier la règle.',
+          },
+        })
+      ).status,
+    ).toBe(201);
+    const review = await db.reviewRequest.findFirstOrThrow({
+      where: { oralSessionId: oral.id },
+    });
+    const decided = await call(`/admin/reviews/${review.id}/decision`, {
+      token: admin.token,
+      body: { decision: 'overturn', response: 'Je me donne raison.' },
+    });
+    expect(decided.status).toBe(403);
+    expect(decided.body).toMatchObject({ code: 'own_review' });
+  });
+
   it('lets a learner contest a grade and an administrator overturn it', async () => {
     const user = await register();
     const admin = await register('Admin');
@@ -915,7 +998,10 @@ describe('human review', () => {
     const list = z
       .array(z.object({ id: z.string(), status: z.string() }))
       .parse((await call('/admin/reviews', { token: admin.token })).body);
-    const review = list.find((r) => r.status === 'open')!;
+    const own = await db.reviewRequest.findFirstOrThrow({
+      where: { oralSessionId: oral.id },
+    });
+    const review = list.find((r) => r.id === own.id && r.status === 'open')!;
     const detail = await call(`/admin/reviews/${review.id}`, {
       token: admin.token,
     });
@@ -1287,6 +1373,22 @@ describe('monthly AI budget', () => {
 });
 
 describe('tutor', () => {
+  it('keeps the tutor quota under parallel messages', async () => {
+    const user = await register();
+    const body = {
+      skillId: 'js-basics',
+      messages: [{ role: 'user', content: 'Une question rapide' }],
+    };
+    const results = await Promise.all(
+      Array.from({ length: 8 }, () =>
+        call('/tutor/messages', { token: user.token, body }),
+      ),
+    );
+    // TUTOR_LIMIT_PER_WINDOW is 2 in this suite.
+    expect(results.filter((r) => r.status === 200)).toHaveLength(2);
+    expect(await db.tutorUsage.count({ where: { userId: user.id } })).toBe(2);
+  });
+
   it('streams answers within a quota, refuses during an oral and stores no content', async () => {
     const user = await register();
     const body = {

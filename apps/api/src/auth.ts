@@ -11,6 +11,7 @@ import {
   Injectable,
   Post,
   UseGuards,
+  Logger,
 } from '@nestjs/common';
 import type { CanActivate, ExecutionContext } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -80,6 +81,7 @@ export const toUserResponse = (user: {
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger('Auth');
   constructor(
     @Inject(DATABASE) private readonly db: PrismaClient,
     @Inject(SETTINGS) private readonly settings: Settings,
@@ -198,17 +200,22 @@ export class AuthService {
       input,
     );
     const passwordHash = await hashPassword(password);
+    let user;
     try {
-      const user = await this.db.user.create({
+      user = await this.db.user.create({
         data: { email, displayName, passwordHash, createdAt: this.now() },
       });
-      await this.sendVerification(user, email);
-      return await this.openSession(user);
     } catch (error) {
       if (isUniqueViolation(error))
         throw conflict('email_taken', 'An account already uses this email');
       throw error;
     }
+    // The account exists: a mail outage must not fail the sign-up. The learner
+    // can ask for a new link from the account page.
+    await this.sendVerification(user, email).catch(() =>
+      this.logger.warn('Verification e-mail not sent at sign-up'),
+    );
+    return this.openSession(user);
   }
 
   async login(input: unknown) {
@@ -452,11 +459,57 @@ export class AuthService {
   async exportData(user: AuthenticatedUser) {
     const data = await this.db.user.findUniqueOrThrow({
       where: { id: user.id },
+      // Every table holding personal rows is exported (a test checks it
+      // against the database). Password hashes and lock counters are omitted:
+      // they are security internals, not information about the person.
       select: {
         id: true,
         email: true,
         displayName: true,
+        role: true,
+        emailVerifiedAt: true,
+        lastActiveAt: true,
+        inactivityNoticeAt: true,
         createdAt: true,
+        authSessions: {
+          orderBy: { createdAt: 'asc' },
+          select: {
+            createdAt: true,
+            lastSeenAt: true,
+            expiresAt: true,
+          },
+        },
+        passwordResets: {
+          orderBy: { createdAt: 'asc' },
+          select: { createdAt: true, expiresAt: true, usedAt: true },
+        },
+        emailChecks: {
+          orderBy: { createdAt: 'asc' },
+          select: {
+            email: true,
+            createdAt: true,
+            expiresAt: true,
+            usedAt: true,
+          },
+        },
+        reviewRequests: {
+          orderBy: { createdAt: 'asc' },
+          select: {
+            oralSessionId: true,
+            message: true,
+            status: true,
+            response: true,
+            createdAt: true,
+            decidedAt: true,
+          },
+        },
+        reviewsDecided: {
+          select: { oralSessionId: true, status: true, decidedAt: true },
+        },
+        tutorUsage: {
+          orderBy: { consumedAt: 'asc' },
+          select: { consumedAt: true },
+        },
         attempts: {
           orderBy: { createdAt: 'asc' },
           select: {
