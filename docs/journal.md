@@ -3,6 +3,30 @@
 Entrées les plus récentes en haut. Chaque entrée résume ce qui a été livré, les décisions
 prises sans attendre de validation et la suite prévue.
 
+## 27 novembre 2026 — Audit externe et correctifs
+
+- Un agent sans contexte a audité le projet avec `docs/prompt-revue-critique.md`. Verdict :
+  pas encore ouvrable à de vrais apprenants. Ses preuves étaient reproductibles ; tous ses
+  constats ont été traités le jour même.
+- Bloquants corrigés : le plafond de dépense se contournait par requêtes parallèles (21 $
+  pour 1 $ de plafond) ; un oral pouvait rester bloqué pour toujours après un redémarrage ou un
+  changement de modèle ; deux notations concurrentes validaient une compétence affichée
+  « refusée » ; la latence du modèle était retirée du temps de réponse. Désormais : oral réservé
+  avant tout appel payant, un seul appel au modèle à la fois par oral, réserve de budget par
+  oral en cours, échéance calculée après l’appel, récupération par abandon ou relance.
+- Connexion : verrouillage atomique (le 40ᵉ essai parallèle ouvrait une session), limites par
+  adresse de visiteur, hachages simultanés bornés, compte verrouillé indiscernable.
+- Autres : niveaux de grille masqués pour les défis où trouver les défauts est l’épreuve
+  (24 grilles sur 30 les nommaient), export RGPD complet et testé contre la base, refus du mock
+  en production, tuteur réel configuré, quota du tuteur atomique, inscription résistante à une
+  panne d’e-mail, auto-réexamen interdit, sauvegardes quotidiennes automatisées, textes publics
+  corrigés là où ils promettaient plus que la réalité.
+- Mesures de l’examinateur archivées dans le dépôt avec l’empreinte des consignes ; la CI
+  refuse une consigne modifiée sans nouvelle mesure. Mesure archivée : 48/48, 0 faux positif.
+- Restent ouverts : dépôt public (les notes d’examinateur, clés de correction, y sont
+  lisibles), relecture des références et des cours par des formateurs, image Docker qui
+  embarque les dépendances de développement, CI qui ne construit pas l’image.
+
 ## 26 novembre 2026 — Fiabilisation de l’examinateur
 
 - `main` avancé sur la branche de travail à la demande du porteur du projet.

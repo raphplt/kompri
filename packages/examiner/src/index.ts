@@ -8,6 +8,12 @@ import {
   prepareInstructions,
 } from './prompts.ts';
 
+export {
+  followUpInstructions,
+  gradeInstructions,
+  prepareInstructions,
+} from './prompts.ts';
+
 export const turnSchema = z.object({
   speaker: z.enum(['examiner', 'learner']),
   text: z.string().trim().min(1).max(20_000),

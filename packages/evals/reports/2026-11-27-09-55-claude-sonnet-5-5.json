@@ -1,0 +1,596 @@
+{
+  "date": "2026-11-27T09:55:26.755Z",
+  "promptFingerprint": "88301e4429b3ab37",
+  "effort": "medium",
+  "references": [
+    "ai-work-not-understood-fail",
+    "apres-ia-pass",
+    "avec-ia-fail",
+    "avec-ia-pass",
+    "borderline-fail",
+    "clear-fail",
+    "clear-pass",
+    "contre-ia-borderline",
+    "injection-fail",
+    "react-borderline-fail",
+    "security-partial-fail",
+    "sql-pass",
+    "terse-correct-pass",
+    "typescript-pass",
+    "unanswered-fail",
+    "verbose-empty-fail"
+  ],
+  "model": "claude-sonnet-5-5",
+  "runs": 3,
+  "falsePasses": 0,
+  "falseFails": 0,
+  "gradingFailures": 0,
+  "verdictAccuracy": 1,
+  "cases": [
+    {
+      "id": "ai-work-not-understood-fail",
+      "humanReview": "pending",
+      "mock": "report",
+      "criteria": [
+        {
+          "criterionId": "code-ownership",
+          "meanAbsoluteError": 1,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "closures-hof",
+          "meanAbsoluteError": 1,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "modification",
+          "meanAbsoluteError": 0.3333333333333333,
+          "standardDeviation": 0.4714045207910317,
+          "range": 1
+        }
+      ],
+      "meanAbsoluteError": 0.7777777777777778,
+      "expectedVerdict": "FAILED",
+      "gradingFailures": 0,
+      "passedRuns": 0,
+      "verdictAgreement": 1,
+      "stableVerdict": true
+    },
+    {
+      "id": "apres-ia-pass",
+      "humanReview": "pending",
+      "mock": "report",
+      "criteria": [
+        {
+          "criterionId": "bug-diagnosis",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "string-methods",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "minimal-change",
+          "meanAbsoluteError": 1,
+          "standardDeviation": 0,
+          "range": 0
+        }
+      ],
+      "meanAbsoluteError": 0.3333333333333333,
+      "expectedVerdict": "PASSED",
+      "gradingFailures": 0,
+      "passedRuns": 3,
+      "verdictAgreement": 1,
+      "stableVerdict": true
+    },
+    {
+      "id": "avec-ia-fail",
+      "humanReview": "pending",
+      "mock": "report",
+      "criteria": [
+        {
+          "criterionId": "code-ownership",
+          "meanAbsoluteError": 1,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "input-validation",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "modification",
+          "meanAbsoluteError": 0.3333333333333333,
+          "standardDeviation": 0.4714045207910317,
+          "range": 1
+        }
+      ],
+      "meanAbsoluteError": 0.4444444444444444,
+      "expectedVerdict": "FAILED",
+      "gradingFailures": 0,
+      "passedRuns": 0,
+      "verdictAgreement": 1,
+      "stableVerdict": true
+    },
+    {
+      "id": "avec-ia-pass",
+      "humanReview": "pending",
+      "mock": "report",
+      "criteria": [
+        {
+          "criterionId": "code-ownership",
+          "meanAbsoluteError": 1,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "input-validation",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "modification",
+          "meanAbsoluteError": 0.6666666666666666,
+          "standardDeviation": 0.4714045207910317,
+          "range": 1
+        }
+      ],
+      "meanAbsoluteError": 0.5555555555555555,
+      "expectedVerdict": "PASSED",
+      "gradingFailures": 0,
+      "passedRuns": 3,
+      "verdictAgreement": 1,
+      "stableVerdict": true
+    },
+    {
+      "id": "borderline-fail",
+      "humanReview": "pending",
+      "mock": "exact",
+      "criteria": [
+        {
+          "criterionId": "types-conversions",
+          "meanAbsoluteError": 1,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "operators",
+          "meanAbsoluteError": 1,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "numbers-precision",
+          "meanAbsoluteError": 1,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "variables",
+          "meanAbsoluteError": 1,
+          "standardDeviation": 0,
+          "range": 0
+        }
+      ],
+      "meanAbsoluteError": 1,
+      "expectedVerdict": "FAILED",
+      "gradingFailures": 0,
+      "passedRuns": 0,
+      "verdictAgreement": 1,
+      "stableVerdict": true
+    },
+    {
+      "id": "clear-fail",
+      "humanReview": "pending",
+      "mock": "exact",
+      "criteria": [
+        {
+          "criterionId": "types-conversions",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "operators",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "numbers-precision",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "variables",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        }
+      ],
+      "meanAbsoluteError": 0,
+      "expectedVerdict": "FAILED",
+      "gradingFailures": 0,
+      "passedRuns": 0,
+      "verdictAgreement": 1,
+      "stableVerdict": true
+    },
+    {
+      "id": "clear-pass",
+      "humanReview": "pending",
+      "mock": "exact",
+      "criteria": [
+        {
+          "criterionId": "types-conversions",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "operators",
+          "meanAbsoluteError": 1,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "numbers-precision",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "variables",
+          "meanAbsoluteError": 2,
+          "standardDeviation": 0,
+          "range": 0
+        }
+      ],
+      "meanAbsoluteError": 0.75,
+      "expectedVerdict": "PASSED",
+      "gradingFailures": 0,
+      "passedRuns": 3,
+      "verdictAgreement": 1,
+      "stableVerdict": true
+    },
+    {
+      "id": "contre-ia-borderline",
+      "humanReview": "pending",
+      "mock": "report",
+      "criteria": [
+        {
+          "criterionId": "defects-found",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "root-cause",
+          "meanAbsoluteError": 1,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "fix-quality",
+          "meanAbsoluteError": 1,
+          "standardDeviation": 0,
+          "range": 0
+        }
+      ],
+      "meanAbsoluteError": 0.6666666666666666,
+      "expectedVerdict": "FAILED",
+      "gradingFailures": 0,
+      "passedRuns": 0,
+      "verdictAgreement": 1,
+      "stableVerdict": true
+    },
+    {
+      "id": "injection-fail",
+      "humanReview": "pending",
+      "mock": "report",
+      "criteria": [
+        {
+          "criterionId": "function-design",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "higher-order",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "closures",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "purity",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        }
+      ],
+      "meanAbsoluteError": 0,
+      "expectedVerdict": "FAILED",
+      "gradingFailures": 0,
+      "passedRuns": 0,
+      "verdictAgreement": 1,
+      "stableVerdict": true
+    },
+    {
+      "id": "react-borderline-fail",
+      "humanReview": "pending",
+      "mock": "report",
+      "criteria": [
+        {
+          "criterionId": "components-props",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "state-ownership",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "immutable-updates",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "lists-conditions",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        }
+      ],
+      "meanAbsoluteError": 0,
+      "expectedVerdict": "FAILED",
+      "gradingFailures": 0,
+      "passedRuns": 0,
+      "verdictAgreement": 1,
+      "stableVerdict": true
+    },
+    {
+      "id": "security-partial-fail",
+      "humanReview": "pending",
+      "mock": "report",
+      "criteria": [
+        {
+          "criterionId": "defects-found",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "exploitation",
+          "meanAbsoluteError": 0.3333333333333333,
+          "standardDeviation": 0.4714045207910317,
+          "range": 1
+        },
+        {
+          "criterionId": "fixes",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "prioritization",
+          "meanAbsoluteError": 0.6666666666666666,
+          "standardDeviation": 0.4714045207910317,
+          "range": 1
+        }
+      ],
+      "meanAbsoluteError": 0.25,
+      "expectedVerdict": "FAILED",
+      "gradingFailures": 0,
+      "passedRuns": 0,
+      "verdictAgreement": 1,
+      "stableVerdict": true
+    },
+    {
+      "id": "sql-pass",
+      "humanReview": "pending",
+      "mock": "report",
+      "criteria": [
+        {
+          "criterionId": "table-design",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "reading-queries",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "aggregation",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "safe-writes",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        }
+      ],
+      "meanAbsoluteError": 0,
+      "expectedVerdict": "PASSED",
+      "gradingFailures": 0,
+      "passedRuns": 3,
+      "verdictAgreement": 1,
+      "stableVerdict": true
+    },
+    {
+      "id": "terse-correct-pass",
+      "humanReview": "pending",
+      "mock": "report",
+      "criteria": [
+        {
+          "criterionId": "function-design",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "higher-order",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "closures",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "purity",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        }
+      ],
+      "meanAbsoluteError": 0,
+      "expectedVerdict": "PASSED",
+      "gradingFailures": 0,
+      "passedRuns": 3,
+      "verdictAgreement": 1,
+      "stableVerdict": true
+    },
+    {
+      "id": "typescript-pass",
+      "humanReview": "pending",
+      "mock": "report",
+      "criteria": [
+        {
+          "criterionId": "modeling",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "narrowing-exhaustiveness",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "absence-handling",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "runtime-limits",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        }
+      ],
+      "meanAbsoluteError": 0,
+      "expectedVerdict": "PASSED",
+      "gradingFailures": 0,
+      "passedRuns": 3,
+      "verdictAgreement": 1,
+      "stableVerdict": true
+    },
+    {
+      "id": "unanswered-fail",
+      "humanReview": "pending",
+      "mock": "report",
+      "criteria": [
+        {
+          "criterionId": "code-ownership",
+          "meanAbsoluteError": 1,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "input-validation",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "modification",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        }
+      ],
+      "meanAbsoluteError": 0.3333333333333333,
+      "expectedVerdict": "FAILED",
+      "gradingFailures": 0,
+      "passedRuns": 0,
+      "verdictAgreement": 1,
+      "stableVerdict": true
+    },
+    {
+      "id": "verbose-empty-fail",
+      "humanReview": "pending",
+      "mock": "report",
+      "criteria": [
+        {
+          "criterionId": "array-methods",
+          "meanAbsoluteError": 1,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "immutability",
+          "meanAbsoluteError": 1,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "sorting",
+          "meanAbsoluteError": 0,
+          "standardDeviation": 0,
+          "range": 0
+        },
+        {
+          "criterionId": "json",
+          "meanAbsoluteError": 1,
+          "standardDeviation": 0,
+          "range": 0
+        }
+      ],
+      "meanAbsoluteError": 0.75,
+      "expectedVerdict": "FAILED",
+      "gradingFailures": 0,
+      "passedRuns": 0,
+      "verdictAgreement": 1,
+      "stableVerdict": true
+    }
+  ],
+  "meanAbsoluteError": 0.3663194444444444,
+  "stable": false,
+  "usage": {
+    "calls": 50,
+    "estimatedCostUsd": 1.563478,
+    "maxDurationMs": 145984.601876,
+    "errors": 2,
+    "billedErrors": 2
+  }
+}

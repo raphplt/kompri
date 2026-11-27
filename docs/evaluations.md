@@ -6,6 +6,34 @@ par le modèle configuré et compare le résultat aux notes attendues. Les réf�
 Ces mesures disent donc si le modèle s’accorde avec ces références, pas s’il est fiable au
 sens d’une évaluation humaine.
 
+## Règle : toute consigne mesurée, toute mesure archivée
+
+Depuis le 27 novembre 2026, `pnpm evals:live` archive son rapport dans
+`packages/evals/reports/` (métriques et identifiants de références, aucune transcription),
+avec l’empreinte des consignes de l’examinateur. Un test de la CI échoue si les consignes ne
+correspondent plus au dernier rapport archivé : modifier une consigne impose une nouvelle
+mesure réelle. La sonde des questions (`pnpm evals:questions`) est archivée à côté.
+
+## 27 novembre 2026 — Mesure archivée après l’audit externe
+
+Rapport : `packages/evals/reports/2026-11-27-09-55-claude-sonnet-5-5.json` (Sonnet 5.5, effort
+`medium`, consignes `88301e4429b3ab37`, 16 références × 3). Questions :
+`packages/evals/reports/2026-11-27-questions-claude-sonnet-5-5.md`.
+
+- 48/48 verdicts conformes, 0 faux positif, 0 faux négatif, écart moyen 0,37 point.
+- Notation comme en production : deux essais par notation. 2 appels sur 50 se sont emballés
+  dans leur réflexion jusqu’au plafond de 32 000 jetons (146 s, environ 0,32 $ chacun) ; le
+  second essai a chaque fois réussi, et leur coût est compté dans le budget. Coût total
+  1,56 $. À surveiller en production : une notation exceptionnellement lente et plus chère.
+
+Ce que ces chiffres ne disent pas, d’après l’audit externe et à juste titre :
+
+- 0 faux positif sur 30 notations de 10 références à refuser ne borne pas finement le taux
+  réel : avec 10 cas peu indépendants, la borne haute à 95 % reste de l’ordre de 25 %.
+- Les 16 références couvrent 8 défis sur 120 et ont été écrites par l’équipe qui a écrit les
+  consignes. Il faut des références écrites et notées par des formateurs extérieurs, sur
+  toutes les familles, et une mesure de la boucle complète (questions, relances, notation).
+
 ## 27 novembre 2026 — Génération des questions (Sonnet 5.5)
 
 `pnpm evals:questions` (appel réel, jamais en CI) prépare un oral sur 8 références des quatre

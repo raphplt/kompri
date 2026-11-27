@@ -1,10 +1,11 @@
-import { readFile, readdir } from 'node:fs/promises';
+import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { parse } from 'yaml';
 import { loadContent } from '@kompri/content';
 import { loadEnvironment } from '@kompri/shared/load-env';
 import { createRegistry } from '@kompri/llm';
 import { examinerMockResponder } from '@kompri/examiner/testing';
 import { evaluate, referenceSchema } from './index.ts';
+import { promptFingerprint } from './fingerprint.ts';
 loadEnvironment();
 const live = process.argv.includes('--live');
 const env = live
@@ -23,7 +24,14 @@ if (
     'Live evals require an explicit non-mock LLM_EXAMINER_PROVIDER configuration',
   );
 // Call metrics stay out of stdout so the report remains valid JSON.
-const usage = { calls: 0, estimatedCostUsd: 0, maxDurationMs: 0, errors: 0 };
+const usage = {
+  calls: 0,
+  estimatedCostUsd: 0,
+  maxDurationMs: 0,
+  errors: 0,
+  /** Failed calls the provider billed (refused or truncated output). */
+  billedErrors: 0,
+};
 const client = createRegistry(
   env,
   (metric) => {
@@ -31,6 +39,7 @@ const client = createRegistry(
     usage.estimatedCostUsd += metric.estimatedCostUsd ?? 0;
     usage.maxDurationMs = Math.max(usage.maxDurationMs, metric.durationMs);
     if (metric.status !== 'ok') usage.errors += 1;
+    if (metric.status !== 'ok' && metric.tokens) usage.billedErrors += 1;
   },
   examinerMockResponder,
 ).forUsage('examiner');
@@ -52,10 +61,31 @@ const report = await evaluate(
   client,
   runsArgument ? Number(runsArgument.slice('--runs='.length)) : undefined,
 );
-console.log(JSON.stringify({ ...report, usage }, null, 2));
+const archived = {
+  date: new Date().toISOString(),
+  promptFingerprint: promptFingerprint(),
+  effort: live ? (env.ANTHROPIC_EFFORT ?? null) : null,
+  references: references.map((r) => r.id),
+  ...report,
+  usage,
+};
+console.log(JSON.stringify(archived, null, 2));
+// Live runs are archived so that results can be checked and compared; the
+// report holds metrics and reference ids only, no transcript.
+if (live) {
+  const reports = new URL('../reports/', import.meta.url);
+  await mkdir(reports, { recursive: true });
+  const name = `${archived.date.slice(0, 16).replace(/[:T]/g, '-')}-${report.model}.json`;
+  await writeFile(
+    new URL(name, reports),
+    `${JSON.stringify(archived, null, 2)}\n`,
+  );
+  console.error(`Rapport archivé : packages/evals/reports/${name}`);
+}
 console.error(
   `${report.model}: ${report.cases.length} références × ${report.runs}, ` +
     `faux positifs ${report.falsePasses}, faux négatifs ${report.falseFails}, ` +
+    `notations échouées ${report.gradingFailures}, ` +
     `accord ${(report.verdictAccuracy * 100).toFixed(1)} %, ` +
     `écart moyen ${report.meanAbsoluteError.toFixed(2)} pt, ` +
     `${usage.calls} appels, ${usage.estimatedCostUsd.toFixed(3)} $`,
